@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import '../models/game_model.dart';
-import '../games/quiz_game.dart';
-import '../games/tick_tock_boom.dart';
-import '../games/multi_touch_screen.dart';
-import '../games/balance_game.dart';
-import '../games/five_seconds_game.dart';
+import '../games/offline/quiz_game.dart';
+import '../games/offline/tick_tock_boom.dart';
+import '../games/offline/multi_touch_screen.dart';
+import '../games/offline/balance_game.dart';
+import '../games/offline/five_seconds_game.dart';
 
-import '../games/reverse_quiz.dart';
-import '../games/odd_one_out.dart';
-import '../games/first_letter_game.dart';
-import '../games/opposite_day.dart';
-import '../games/xo_game.dart';
-import '../games/seega_game.dart';
-import '../games/who_am_i_game.dart';
-import '../games/word_chain_game.dart';
-import '../games/truth_or_dare_game.dart';
+import '../games/offline/reverse_quiz.dart';
+import '../games/offline/odd_one_out.dart';
+import '../games/offline/first_letter_game.dart';
+import '../games/offline/opposite_day.dart';
+import '../games/offline/xo_game.dart';
+import '../games/offline/seega_game.dart';
+import '../games/offline/who_am_i_game.dart';
+import '../games/offline/word_chain_game.dart';
+import '../games/offline/truth_or_dare_game.dart';
 
-import '../games/pictionary_game.dart';
-import '../games/song_lyrics_game.dart';
-import '../games/charades_game.dart';
-import '../games/gobblet_game.dart';
-import '../games/truth_or_lie_game.dart';
+import '../games/offline/pictionary_game.dart';
+import '../games/offline/charades_game.dart';
+import '../games/offline/gobblet_game.dart';
+import '../games/offline/truth_or_lie_game.dart';
+import '../games/offline/ranking_challenge_game.dart';
+
+import '../games/offline/bus_complete_game.dart';
 
 class GameRegistry {
   static const List<GameModel> games = [
@@ -32,14 +34,14 @@ class GameRegistry {
       screen: TicTacToeGame(),
     ),
     GameModel(
-      title: '🎮 سيجا',
-      description: 'لعبة السيجا الشعبية 3x3',
+      title: '🎮 السيجة',
+      description: 'لعبة السيجة الشعبية 3x3',
       icon: Icons.grid_3x3,
       color: Colors.brown,
       screen: SeegaGame(),
     ),
     GameModel(
-      title: '👾 الكبير ياكل الصغير',
+      title: '👾 جوبلت',
       description: 'تيك تاك تو بس الأحجام بتفرق! الكبير ياكل الصغير',
       icon: Icons.smart_toy,
       color: Colors.deepOrange,
@@ -60,27 +62,26 @@ class GameRegistry {
       screen: TickTockBoom(),
     ),
     GameModel(
-      title: '👆 اختيار عشوائي',
+      title: '👆 تحدي اللمس',
       description: 'كل واحد يحط صباعه والتطبيق يختار واحد',
       icon: Icons.touch_app,
       color: Colors.green,
       screen: MultiTouchScreen(),
     ),
     GameModel(
-      title: '⚖️ الميزان',
-      description: 'حافظ على الكرة في النص!',
+      title: '⚖️ تحدي التوازن',
+      description: 'حافظ على توازن الكرة أطول فترة ممكنة',
       icon: Icons.balance,
       color: Colors.teal,
       screen: BalanceGame(),
     ),
     GameModel(
-      title: '⏱️ خمس ثواني',
-      description: 'أجب على السؤال في 5 ثواني بس!',
+      title: '⏱️ تحدي الـ ٥ ثواني',
+      description: 'جاوب على السؤال في 5 ثواني بس',
       icon: Icons.speed,
       color: Colors.pink,
       screen: FiveSecondsGame(),
     ),
-
     GameModel(
       title: '🔄 الأسئلة المعكوسة',
       description: 'الإجابة موجودة، خمن السؤال!',
@@ -89,7 +90,7 @@ class GameRegistry {
       screen: ReverseQuiz(),
     ),
     GameModel(
-      title: '🎯 الخيار الثالث',
+      title: '🎯 طلع الغريب',
       description: 'مين الدخيل من الأربعة؟',
       icon: Icons.filter_3,
       color: Colors.amber,
@@ -117,33 +118,25 @@ class GameRegistry {
       screen: WhoAmIGame(),
     ),
     GameModel(
-      title: '⏱️ تحدي التعريف',
+      title: '⏱️ سلسلة الكلمات',
       description: 'عرّف الكلمة بدون ما تقولها في 60 ثانية!',
       icon: Icons.record_voice_over,
       color: Color(0xFF004D40),
       screen: WordChainGame(),
     ),
     GameModel(
-      title: '🎲 حقيقة أم جرأة',
-      description: 'جاوب بصدق أو نفّذ الجرأة!',
+      title: '🎲 صراحة ولا جرأة',
+      description: 'اللعبة الكلاسيكية للتحدي والصراحة',
       icon: Icons.casino,
       color: Color(0xFFB71C1C),
       screen: TruthOrDareGame(),
     ),
-
     GameModel(
       title: '🎨 ارسم وخمّن',
       description: 'ارسم بصباعك والثاني يخمّن!',
       icon: Icons.brush,
       color: Color(0xFF0D47A1),
       screen: PictionaryGame(),
-    ),
-    GameModel(
-      title: '🎵 أكمل الأغنية',
-      description: 'اختار الجملة الصح من الأغنية!',
-      icon: Icons.music_note,
-      color: Color(0xFF880E4F),
-      screen: SongLyricsGame(),
     ),
     GameModel(
       title: '🎭 تمثيل صامت',
@@ -158,6 +151,20 @@ class GameRegistry {
       icon: Icons.lightbulb_outline,
       color: Color(0xFF14B8A6),
       screen: TruthOrLieGame(),
+    ),
+    GameModel(
+      title: '🔢 تحدي الترتيب',
+      description: 'اكتب موضوع والـ AI يرتبهم سريًا، خمّن ترتيبهم!',
+      icon: Icons.leaderboard_rounded,
+      color: Color(0xFF6A1B9A),
+      screen: RankingChallengeGame(),
+    ),
+    GameModel(
+      title: '🚌 أتوبيس كومبليت',
+      description: 'لعبة الأتوبيس الشهيرة: ولد، بنت، جماد...',
+      icon: Icons.directions_bus_rounded,
+      color: Colors.orange,
+      screen: BusCompleteGame(),
     ),
   ];
 }

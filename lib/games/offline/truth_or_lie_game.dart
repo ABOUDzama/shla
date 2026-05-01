@@ -7,6 +7,7 @@ import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../services/raw_data_manager.dart';
 import '../../data/truth_or_lie_data.dart';
+import '../../services/audio_service.dart';
 
 class TruthOrLieGame extends StatefulWidget {
   const TruthOrLieGame({super.key});
@@ -24,14 +25,12 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
   int _charIndex = 0;
   List<int> _shuffledIndices = [];
   bool _showIntro = true;
-  bool _isGeneratingAi = false;
   List<Map<String, dynamic>> _currentData = [];
   final List<String> _aiHistory = [];
 
   void _generateAiContent() async {
     if (!SettingsService.isAiEnabled) return;
 
-    setState(() => _isGeneratingAi = true);
     try {
       final content = await AIService.fetchGameContent(
         'truth_or_lie',
@@ -85,10 +84,9 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
         );
       }
     } finally {
-      setState(() => _isGeneratingAi = false);
+      // Done
     }
   }
-
 
   Future<void> _loadLocalData() async {
     final rawData = await RawDataManager.getGameData('truth_or_lie', {});
@@ -96,12 +94,15 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
       List<Map<String, dynamic>> parsed = [];
       for (var item in rawData['items']) {
         if (item is Map) {
-          parsed.add({
-            'statement': item['statement']?.toString() ?? '',
-            'isTrue': item['isTrue'] ?? true,
-            'explanation': item['explanation']?.toString() ?? '',
-            'icon': item['icon']?.toString() ?? '💡',
-          });
+          final statement = (item['statement'] ?? item['text'])?.toString() ?? '';
+          if (statement.isNotEmpty) {
+            parsed.add({
+              'statement': statement,
+              'isTrue': item['isTrue'] ?? true,
+              'explanation': (item['explanation'] ?? item['exp'])?.toString() ?? 'هذه هي الإجابة الصحيحة.',
+              'icon': item['icon']?.toString() ?? '💡',
+            });
+          }
         }
       }
       if (parsed.isNotEmpty) {
@@ -173,6 +174,11 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
       _showExplanation = true;
       _isCorrect = (userSaidTruth == isActuallyTrue);
     });
+    if (_isCorrect!) {
+      AudioService.playSuccess();
+    } else {
+      AudioService.playFailure();
+    }
   }
 
   void _nextQuestion() {
@@ -185,6 +191,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
       _showExplanation = false;
       _isCorrect = null;
     });
+    AudioService.playClick();
     _startTextAnimation();
   }
 
@@ -192,11 +199,12 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
   Widget build(BuildContext context) {
     if (_showIntro) {
       return OfflineGameScaffold(
-        title: '🤔 حقيقة أو هبد؟',
+        title: '🤔 حقيقة أو هبد',
         backgroundColor: const Color(0xFF0F172A),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'حقيقة أو هبد؟',
-          icon: '🤔',
+          title: '🤔 حقيقة أو هبد',
+          icon: '🤥',
           description:
               'يا ترى المعلومة دي حقيقة بجد؟ ولا مجرد هبد؟ شغل دماغك وكشف الكدب من الحقيقة!',
           onStart: () => setState(() => _showIntro = false),
@@ -206,8 +214,9 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
 
     if (_currentData.isEmpty || _shuffledIndices.isEmpty) {
       return OfflineGameScaffold(
-        title: '🤔 حقيقة أو هبد؟',
+        title: '🤔 حقيقة أو هبد',
         backgroundColor: const Color(0xFF0F172A),
+        showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),
@@ -218,24 +227,14 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
     final currentFact = _currentData[actualIndex];
 
     return OfflineGameScaffold(
-      title: '🤔 حقيقة أو هبد؟',
+      title: '🤔 حقيقة أو هبد',
       backgroundColor: const Color(0xFF0F172A),
+      showAi: false,
       actions: [
-        if (SettingsService.isAiEnabled)
-          IconButton(
-            icon: _isGeneratingAi
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Icon(Icons.auto_awesome),
-            tooltip: 'توليد بالذكاء الاصطناعي',
-            onPressed: _isGeneratingAi ? null : _generateAiContent,
-          ),
+        IconButton(
+          icon: const Icon(Icons.home, color: Colors.white70),
+          onPressed: () => setState(() => _showIntro = true),
+        ),
       ],
       body: Center(
         child: Padding(
@@ -445,5 +444,3 @@ class _ActionButton extends StatelessWidget {
     );
   }
 }
-
-

@@ -8,6 +8,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../services/raw_data_manager.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
+import '../../services/audio_service.dart';
 
 class ReverseQuiz extends StatefulWidget {
   const ReverseQuiz({super.key});
@@ -20,7 +21,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
   bool isLoadingData = true;
   bool _showIntro = true;
   List<Map<String, String>> questions = [];
-  bool _isGeneratingAi = false;
+  bool isLoadingQuestions = true;
   final List<String> _aiHistory = [];
 
   final List<Map<String, dynamic>> _players = [];
@@ -455,7 +456,6 @@ class _ReverseQuizState extends State<ReverseQuiz> {
   void _generateAiContent() async {
     if (!SettingsService.isAiEnabled) return;
 
-    setState(() => _isGeneratingAi = true);
     try {
       final content = await AIService.fetchGameContent(
         'reverse_quiz',
@@ -511,7 +511,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
         );
       }
     } finally {
-      setState(() => _isGeneratingAi = false);
+      // Done
     }
   }
 
@@ -548,6 +548,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
         }
       } else {
         setState(() => _secondsLeft--);
+        AudioService.playTick();
       }
     });
   }
@@ -558,6 +559,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
       _isFlipped = true;
       if (timeout) {
         _roundOver = true;
+        AudioService.playFailure();
       }
     });
   }
@@ -567,15 +569,21 @@ class _ReverseQuizState extends State<ReverseQuiz> {
       setState(() {
         _hintUsed = true;
       });
+      AudioService.playClick();
     }
   }
 
   void _handleResult(bool success) {
     setState(() {
-      if (success && _players.isNotEmpty) {
-        int points = _hintUsed ? 1 : 2;
-        _players[_currentPlayerTurn]['score'] =
-            (_players[_currentPlayerTurn]['score'] as int) + points;
+      if (success) {
+        if (_players.isNotEmpty) {
+          int points = _hintUsed ? 1 : 2;
+          _players[_currentPlayerTurn]['score'] =
+              (_players[_currentPlayerTurn]['score'] as int) + points;
+        }
+        AudioService.playSuccess();
+      } else {
+        AudioService.playFailure();
       }
       _gameActive = false;
       _roundOver = true;
@@ -596,9 +604,10 @@ class _ReverseQuizState extends State<ReverseQuiz> {
       return OfflineGameScaffold(
         title: '🔄 الأسئلة المعكوسة',
         backgroundColor: const Color(0xFF00838F),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'الأسئلة المعكوسة',
-          icon: '🔄',
+          title: '🔄 الأسئلة المعكوسة',
+          icon: '🧠',
           description:
               'اللعبة هنا بالعكس! إحنا هنديك الإجابة، وأنت تقولنا كان إيه السؤال.. التايمر بيجري فكر بسرعة وخمن السؤال أو استسلم واقلب الكارت!',
           onStart: () => setState(() => _showIntro = false),
@@ -610,6 +619,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
       return OfflineGameScaffold(
         title: '🔄 الأسئلة المعكوسة',
         backgroundColor: const Color(0xFF00838F),
+        showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),
@@ -620,6 +630,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
       return OfflineGameScaffold(
         title: '🔄 الأسئلة المعكوسة',
         backgroundColor: const Color(0xFF00838F),
+        showAi: false,
         actions: [
         ],
         body: Center(
@@ -672,8 +683,12 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                               },
                             ),
                           ),
-                        );
-                      },
+                          ).then((_) {
+                            if (mounted && !_setupDone) {
+                              setState(() => _showIntro = true);
+                            }
+                          });
+                        },
                       icon: const Icon(Icons.people_alt, size: 28),
                       label: Text(
                         'اختار اللعيبة وابدأ!',
@@ -724,23 +739,10 @@ class _ReverseQuizState extends State<ReverseQuiz> {
 
     return OfflineGameScaffold(
       title: '🔄 الأسئلة المعكوسة',
-      backgroundColor: const Color(0xFF00838F),
+      backgroundColor: Colors.blueGrey,
+      showAi: false,
+      onAiRefresh: _generateAiContent,
       actions: [
-        if (SettingsService.isAiEnabled)
-          IconButton(
-            icon: _isGeneratingAi
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Icon(Icons.auto_awesome),
-            tooltip: 'توليد بالذكاء الاصطناعي',
-            onPressed: _isGeneratingAi ? null : _generateAiContent,
-          ),
         IconButton(
           icon: const Icon(Icons.home),
           onPressed: () => setState(() {

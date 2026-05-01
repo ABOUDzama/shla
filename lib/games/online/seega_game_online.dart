@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/base_game_scaffold.dart';
+import '../../services/audio_service.dart';
 import '../../services/socket_service.dart';
+import '../../services/haptic_service.dart';
 
 class SeegaGameOnline extends StatefulWidget {
   final bool isHost;
@@ -37,21 +39,28 @@ class _SeegaGameOnlineState extends State<SeegaGameOnline> {
   void initState() {
     super.initState();
     SocketService().socket.on('seega_state_updated', _onGameMove);
+    SocketService().socket.on('game_move', _onGameMove);
     SocketService().socket.on('reset_game', _onResetGame);
   }
-
 
   @override
   void dispose() {
     SocketService().socket.off('seega_state_updated', _onGameMove);
+    SocketService().socket.off('game_move', _onGameMove);
     SocketService().socket.off('reset_game', _onResetGame);
     super.dispose();
   }
 
   void _onGameMove(dynamic data) {
     if (!mounted) return;
-    int index = data['index'];
-    _processTap(index, isFromNetwork: true);
+
+    final Map<String, dynamic> move = (data is Map && data['moveData'] != null)
+        ? Map<String, dynamic>.from(data['moveData'])
+        : Map<String, dynamic>.from(data);
+
+    if (move['index'] != null) {
+      _processTap(move['index'], isFromNetwork: true);
+    }
   }
 
   void _onResetGame(dynamic data) {
@@ -112,6 +121,8 @@ class _SeegaGameOnlineState extends State<SeegaGameOnline> {
           selectedIndex = null;
           _checkWinner();
           currentPlayer = currentPlayer == 1 ? 2 : 1;
+          HapticService.vibrate();
+          AudioService.playTick();
         });
       } else if (board[index] == currentPlayer) {
         setState(() => selectedIndex = index);
@@ -128,9 +139,14 @@ class _SeegaGameOnlineState extends State<SeegaGameOnline> {
 
   void _checkWinner() {
     const lines = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8],
-      [0, 3, 6], [1, 4, 7], [2, 5, 8],
-      [0, 4, 8], [2, 4, 6],
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
     ];
     for (var line in lines) {
       if (board[line[0]] != 0 &&
@@ -161,220 +177,234 @@ class _SeegaGameOnlineState extends State<SeegaGameOnline> {
 
   @override
   Widget build(BuildContext context) {
+    bool myTurn =
+        (widget.isHost && currentPlayer == 1) ||
+        (!widget.isHost && currentPlayer == 2);
+    final statusText = winner != null
+        ? 'المنتصر: $winner! 🏆'
+        : (myTurn
+              ? 'دورك الحين! 🔥'
+              : 'دور ${widget.opponentName ?? "الخصم"} ⏳');
+
     return BaseGameScaffold(
-      title: '🎮 لعبة السيجا (أونلاين)',
-      backgroundColor: const Color(0xFF3E2723),
+      isHost: widget.isHost,
+      gameName: 'seega',
+      title: 'لعبة السيجة (أونلاين)',
+      backgroundColor: const Color(0xFF0F172A),
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
-          onPressed: _resetGame,
-        ),
-      ],
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.center,
-            radius: 1.2,
-            colors: [
-              const Color(0xFF5D4037),
-              const Color(0xFF3E2723),
-              const Color(0xFF21130D),
-            ],
-            stops: const [0.0, 0.4, 1.0],
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 24),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1B1B1B).withValues(alpha: 0.8),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.white10),
-              ),
+      showAi: false,
+      body: Stack(
+        children: [
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    isPlacementPhase ? 'مرحلة التوزيع' : 'مرحلة التحريك',
-                    style: GoogleFonts.cairo(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 18,
+                  Container(
+                    padding: const EdgeInsets.all(25),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: Colors.white10),
+                      boxShadow: [
+                        const BoxShadow(color: Colors.black26, blurRadius: 10),
+                      ],
                     ),
-                  ),
-                  Text(
-                    isPlacementPhase
-                        ? 'حط حصواتك الـ 3 في الأماكن الفاضية'
-                        : 'حرك حصواتك جنب بعض عشان تكسب',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
-                      fontSize: 14,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.bold,
+                    child: Column(
+                      children: [
+                        Text(
+                          isPlacementPhase ? 'مرحلة التوزيع' : 'مرحلة التحريك',
+                          style: GoogleFonts.cairo(
+                            color: Colors.amberAccent,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          isPlacementPhase
+                              ? 'حط حصواتك الـ 3 في الأماكن الفاضية'
+                              : 'حرك حصواتك جنب بعض عشان تكسب',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.cairo(
+                            fontSize: 14,
+                            color: Colors.white54,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
+                  ).animate().fadeIn().slideY(begin: -0.2),
+
+                  const SizedBox(height: 40),
+
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          (currentPlayer == 1
+                                  ? Colors.redAccent
+                                  : Colors.blueAccent)
+                              .withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color:
+                            (currentPlayer == 1
+                                    ? Colors.redAccent
+                                    : Colors.blueAccent)
+                                .withValues(alpha: 0.5),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Text(
+                      statusText,
+                      style: GoogleFonts.cairo(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: winner != null
+                            ? Colors.amberAccent
+                            : Colors.white,
+                      ),
+                    ),
+                  ).animate(key: ValueKey(statusText)).scale().fadeIn(),
+
+                  const SizedBox(height: 40),
+
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 450),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(40),
+                      border: Border.all(color: Colors.white12, width: 2),
+                      boxShadow: [
+                        const BoxShadow(color: Colors.black26, blurRadius: 10),
+                      ],
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 15,
+                              mainAxisSpacing: 15,
+                            ),
+                        itemCount: 9,
+                        itemBuilder: (context, index) {
+                          final value = board[index];
+                          final isSelected = selectedIndex == index;
+
+                          return GestureDetector(
+                            onTap: () => _handleTap(index),
+                            child: AnimatedContainer(
+                              duration: 300.ms,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? Colors.amberAccent.withValues(alpha: 0.2)
+                                    : Colors.white.withValues(alpha: 0.02),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Colors.amberAccent
+                                      : Colors.white10,
+                                  width: isSelected ? 2.5 : 1,
+                                ),
+                              ),
+                              child: Center(
+                                child: value == 0
+                                    ? null
+                                    : Container(
+                                        width: 55,
+                                        height: 55,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient: RadialGradient(
+                                            center: const Alignment(-0.3, -0.3),
+                                            radius: 0.8,
+                                            colors: value == 1
+                                                ? [
+                                                    const Color(0xFFF87171),
+                                                    const Color(0xFFB91C1C),
+                                                  ]
+                                                : [
+                                                    const Color(0xFF60A5FA),
+                                                    const Color(0xFF1D4ED8),
+                                                  ],
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  (value == 1
+                                                          ? Colors.redAccent
+                                                          : Colors.blueAccent)
+                                                      .withValues(alpha: 0.5),
+                                              blurRadius: 15,
+                                              spreadRadius: 2,
+                                            ),
+                                          ],
+                                          border: Border.all(
+                                            color: Colors.white24,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ).animate().scale(
+                                        curve: Curves.easeOutBack,
+                                        duration: 500.ms,
+                                      ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ).animate().fadeIn().scale(delay: 300.ms),
+
+                  const SizedBox(height: 50),
+
+                  if (winner != null)
+                    GestureDetector(
+                      onTap: _resetGame,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 18,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+                          ),
+                          borderRadius: BorderRadius.circular(35),
+                          border: Border.all(color: Colors.white10),
+                          boxShadow: [
+                            const BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 10,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'إعادة التحدي 🔄',
+                          style: GoogleFonts.cairo(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.amberAccent,
+                          ),
+                        ),
+                      ),
+                    ).animate().fadeIn().scale(),
                 ],
               ),
-            ).animate().fadeIn().slideY(begin: -0.2, end: 0),
-            const SizedBox(height: 20),
-            Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black45,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white12),
-                  ),
-                  child: Text(
-                    winner != null
-                        ? 'المنتصر: $winner! 🏆'
-                        : (((widget.isHost && currentPlayer == 1) || (!widget.isHost && currentPlayer == 2))
-                              ? 'دورك'
-                              : 'دور ${widget.opponentName ?? 'المنافس'}'),
-                    style: GoogleFonts.cairo(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w900,
-                      color: winner != null
-                          ? Colors.amberAccent
-                          : (currentPlayer == 1
-                                ? Colors.redAccent.shade100
-                                : Colors.blueAccent.shade100),
-                    ),
-                  ),
-                )
-                .animate(key: ValueKey(winner ?? currentPlayer.toString()))
-                .scale()
-                .fadeIn(),
-            const SizedBox(height: 30),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2D1B17),
-                    borderRadius: BorderRadius.circular(40),
-                    border: Border.all(
-                      color: const Color(0xFF1E100D),
-                      width: 12,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black54,
-                        blurRadius: 20,
-                        offset: const Offset(8, 8),
-                      ),
-                    ],
-                  ),
-                  child: GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 15,
-                          mainAxisSpacing: 15,
-                        ),
-                    itemCount: 9,
-                    itemBuilder: (context, index) {
-                      final value = board[index];
-                      final isSelected = selectedIndex == index;
-                      return GestureDetector(
-                        onTap: () => _handleTap(index),
-                        child: AnimatedContainer(
-                          duration: 250.ms,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1A1A1A).withValues(alpha: 0.9),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: isSelected ? Colors.amber : Colors.white10,
-                              width: 2,
-                            ),
-                          ),
-                          child: Center(
-                            child: value == 0
-                                ? null
-                                : Container(
-                                    width: 55,
-                                    height: 55,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: RadialGradient(
-                                        center: const Alignment(-0.3, -0.3),
-                                        radius: 0.9,
-                                        colors: value == 1
-                                            ? [
-                                                const Color(0xFFEF9A9A),
-                                                const Color(0xFFD32F2F),
-                                                const Color(0xFF8B0000),
-                                              ]
-                                            : [
-                                                const Color(0xFF90CAF9),
-                                                const Color(0xFF1976D2),
-                                                const Color(0xFF0D47A1),
-                                              ],
-                                      ),
-                                      border: Border.all(
-                                        color: value == 1
-                                            ? const Color(0xFFFFCDD2)
-                                            : const Color(0xFFBBDEFB),
-                                        width: 2,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: value == 1
-                                              ? Colors.red.withValues(alpha: 0.6)
-                                              : Colors.blue.withValues(alpha: 0.6),
-                                          blurRadius: 12,
-                                          spreadRadius: 2,
-                                        ),
-                                      ],
-                                    ),
-                                  ).animate().scale(
-                                    curve: Curves.elasticOut,
-                                    duration: 600.ms,
-                                  ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
             ),
-            const SizedBox(height: 25),
-            if (winner != null)
-              ElevatedButton(
-                onPressed: _resetGame,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF5D4037),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  'إعادة التحدي',
-                  style: GoogleFonts.cairo(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.amberAccent,
-                  ),
-                ),
-              ).animate().fadeIn().scale(),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

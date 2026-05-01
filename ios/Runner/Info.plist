@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>نحتاج للوصول للميكروفون لتتمكن من التحدث مع أصدقائك في الغرفة.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>نحتاج للوصول للكاميرا لتحسين تجربة الاتصال (مطلوب بواسطة مكتبة WebRTC).</string>
 </dict>
 </plist>

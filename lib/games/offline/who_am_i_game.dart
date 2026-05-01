@@ -9,6 +9,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../data/who_am_i_data.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
+import '../../services/audio_service.dart';
 
 class WhoAmIGame extends StatefulWidget {
   const WhoAmIGame({super.key});
@@ -21,12 +22,10 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
   List<Map<String, dynamic>> characters = [];
   bool _showIntro = true;
   bool isLoadingData = true;
-  bool _isGeneratingAi = false;
 
   void _generateAiContent() async {
     if (!SettingsService.isAiEnabled) return;
 
-    setState(() => _isGeneratingAi = true);
     try {
       final content = await AIService.fetchGameContent(
         'who_am_i',
@@ -85,8 +84,6 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
           ),
         );
       }
-    } finally {
-      setState(() => _isGeneratingAi = false);
     }
   }
 
@@ -184,6 +181,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
   void _revealHint() {
     if (_hintsRevealed < (_shuffled[_currentIndex]['hints'] as List).length) {
       setState(() => _hintsRevealed++);
+      AudioService.playTick();
     }
   }
 
@@ -203,9 +201,10 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🎭 مين أنا؟',
-        backgroundColor: const Color(0xFF6A1B9A),
+        backgroundColor: const Color(0xFF1B5E20),
+        onAiRefresh: _generateAiContent,
         body: GameIntroWidget(
-          title: 'أنا مين؟',
+          title: '🎭 مين أنا؟',
           icon: '👤',
           description:
               'البس التاج وخلي أصحابك يوصفولك أنت مين! ممثل؟ لاعب كورة؟ ولا حيوان؟ لازم تخمن قبل ما الوقت يخلص!',
@@ -226,9 +225,10 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
 
     if (!_gameStarted) {
       return OfflineGameScaffold(
-        title: '🎭 مين أنا؟',
-        backgroundColor: const Color(0xFF6A1B9A),
-        actions: const [],
+      title: '🎭 مين أنا؟',
+      backgroundColor: const Color(0xFF1B5E20),
+      onAiRefresh: _generateAiContent,
+      actions: const [],
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -314,37 +314,19 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
     final card = _shuffled[_currentIndex];
     final hints = card['hints'] as List<String>;
 
-    return Scaffold(
+    return OfflineGameScaffold(
+      title: '🎭 مين أنا؟',
       backgroundColor: const Color(0xFF6A1B9A),
-      appBar: AppBar(
-        title: const Text('🎭 مين أنا؟'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          if (SettingsService.isAiEnabled)
-            IconButton(
-              icon: _isGeneratingAi
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Icon(Icons.auto_awesome),
-              tooltip: 'توليد بالذكاء الاصطناعي',
-              onPressed: _isGeneratingAi ? null : _generateAiContent,
-            ),
-          IconButton(
-            icon: const Icon(Icons.exit_to_app, color: Colors.white70),
-            onPressed: () => setState(() {
-              _gameStarted = false;
-              _players.clear();
-            }),
-          ),
-        ],
-      ),
+      onAiRefresh: _generateAiContent,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.exit_to_app, color: Colors.white70),
+          onPressed: () => setState(() {
+            _gameStarted = false;
+            _players.clear();
+          }),
+        ),
+      ],
       body: SafeArea(
         child: Column(
           children: [
@@ -640,7 +622,10 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                             children: [
                               Expanded(
                                 child: ElevatedButton.icon(
-                                  onPressed: () => _nextCard(correct: true),
+                                  onPressed: () {
+                                    _nextCard(correct: true);
+                                    AudioService.playSuccess();
+                                  },
                                   icon: const Icon(Icons.check_circle),
                                   label: Text(
                                     'عرفها ✅\n+${(4 - _hintsRevealed.clamp(0, 3))} نقط',
@@ -664,7 +649,10 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: ElevatedButton.icon(
-                                  onPressed: () => _nextCard(correct: false),
+                                  onPressed: () {
+                                    _nextCard(correct: false);
+                                    AudioService.playFailure();
+                                  },
                                   icon: const Icon(Icons.cancel),
                                   label: Text(
                                     'ما عرفش ❌',

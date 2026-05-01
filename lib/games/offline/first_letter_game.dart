@@ -9,6 +9,7 @@ import '../../services/settings_service.dart';
 import '../../services/ai_service.dart';
 import '../../services/raw_data_manager.dart';
 import '../../widgets/game_intro_widget.dart';
+import '../../services/audio_service.dart';
 
 class FirstLetterGame extends StatefulWidget {
   const FirstLetterGame({super.key});
@@ -22,7 +23,6 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
   Map<String, List<Map<String, String>>> examples = {};
   bool _showIntro = true;
   bool isLoadingData = true;
-  bool _isGeneratingAi = false;
   final List<String> _aiHistory = [];
 
   final List<Map<String, dynamic>> _players = [];
@@ -451,6 +451,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
         _handleResult(false);
       } else {
         setState(() => _secondsLeft--);
+        AudioService.playTick();
       }
     });
   }
@@ -461,6 +462,9 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
       if (success && _players.isNotEmpty) {
         _players[_currentPlayerTurn]['score'] =
             (_players[_currentPlayerTurn]['score'] as int) + 1;
+        AudioService.playSuccess();
+      } else if (!success) {
+        AudioService.playFailure();
       }
       _gameActive = false;
       _roundOver = true;
@@ -483,7 +487,6 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
   void _generateAiContent() async {
     if (!SettingsService.isAiEnabled) return;
 
-    setState(() => _isGeneratingAi = true);
     try {
       final content = await AIService.fetchGameContent(
         'letter_bomb',
@@ -548,7 +551,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
         );
       }
     } finally {
-      setState(() => _isGeneratingAi = false);
+      // Done
     }
   }
 
@@ -627,7 +630,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
         title: '🔤 أول حرف',
         backgroundColor: const Color(0xFFE64A19),
         body: GameIntroWidget(
-          title: 'لعبة أول حرف',
+          title: '🔤 أول حرف',
           icon: '🅰️',
           description:
               'سرعة البديهة هي الحل! أول ما الحرف يظهر، قول بسرعة الحاجة المطلوبة.\n\nركز مع التايمر عشان ميفوتكش الوقت!',
@@ -641,20 +644,6 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
         title: '🔤 أول حرف',
         backgroundColor: const Color(0xFFE64A19),
         actions: [
-          if (SettingsService.isAiEnabled)
-            IconButton(
-              icon: _isGeneratingAi
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Icon(Icons.auto_awesome),
-              onPressed: _isGeneratingAi ? null : _generateAiContent,
-            ),
         ],
         body: Center(
           child: SingleChildScrollView(
@@ -744,16 +733,18 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
     return OfflineGameScaffold(
       title: '🔤 أول حرف',
       backgroundColor: const Color(0xFFE64A19),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home),
-          onPressed: () => setState(() {
-            _timer?.cancel();
-            _setupDone = false;
-          }),
-        ),
-      ],
-      body: SafeArea(
+        onAiRefresh: _generateAiContent,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.home, color: Colors.white70),
+            onPressed: () {
+              setState(() {
+                _setupDone = false;
+                _players.clear();
+              });
+            },
+          ),
+        ],body: SafeArea(
         child: Column(
           children: [
             // Scoreboard (Premium)

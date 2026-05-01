@@ -5,7 +5,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../screens/global_player_selection_screen.dart';
+import '../../services/ai_service.dart';
 import '../../services/raw_data_manager.dart';
+import '../../services/audio_service.dart';
 
 class OppositeDay extends StatefulWidget {
   const OppositeDay({super.key});
@@ -352,6 +354,65 @@ class _OppositeDayState extends State<OppositeDay> {
     _loadGameData();
   }
 
+  final List<String> _aiHistory = [];
+
+  Future<void> _generateAiContent() async {
+    try {
+      final content = await AIService.fetchGameContent(
+        'opposite_day',
+        count: 10,
+        history: _aiHistory,
+      );
+
+      if (content.isNotEmpty) {
+        List<Map<String, dynamic>> aiQuestions = [];
+        for (var item in content) {
+          final q = item['question']?.toString() ?? '';
+          if (q.isNotEmpty) {
+            _aiHistory.add(q);
+            aiQuestions.add({
+              'question': q,
+              'forbidden': item['forbidden'] is List
+                  ? List<String>.from(item['forbidden'].map((e) => e.toString()))
+                  : ['لا يوجد'],
+              'icon': item['icon']?.toString() ?? '🎲',
+            });
+          }
+        }
+
+        if (_aiHistory.length > 50) {
+          _aiHistory.removeRange(0, _aiHistory.length - 50);
+        }
+
+        if (aiQuestions.isNotEmpty) {
+          setState(() {
+            questions = aiQuestions;
+            _shuffledIndices = [];
+            _pointer = 0;
+            _setupDone = false;
+          });
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('تم توليد أسئلة جديدة بالذكاء الاصطناعي! ✨'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('فشل توليد محتوى AI: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _loadGameData() async {
     final rawData = await RawDataManager.getGameData('opposite_game', {});
 
@@ -416,6 +477,7 @@ class _OppositeDayState extends State<OppositeDay> {
         _handleResult(false);
       } else {
         setState(() => _secondsLeft--);
+        AudioService.playTick();
       }
     });
   }
@@ -423,9 +485,14 @@ class _OppositeDayState extends State<OppositeDay> {
   void _handleResult(bool success) {
     _timer?.cancel();
     setState(() {
-      if (success && _players.isNotEmpty) {
-        _players[_currentPlayerTurn]['score'] =
-            (_players[_currentPlayerTurn]['score'] as int) + 1;
+      if (success) {
+        AudioService.playSuccess();
+        if (_players.isNotEmpty) {
+          _players[_currentPlayerTurn]['score'] =
+              (_players[_currentPlayerTurn]['score'] as int) + 1;
+        }
+      } else {
+        AudioService.playFailure();
       }
       _gameActive = false;
       _roundOver = true;
@@ -446,8 +513,9 @@ class _OppositeDayState extends State<OppositeDay> {
       return OfflineGameScaffold(
         title: '🙃 عكس العكاس',
         backgroundColor: const Color(0xFF3E2723),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'عكس العكاس',
+          title: '🙃 عكس العكاس',
           icon: '🙃',
           description:
               'اللعبة اللي بتشقلب الدماغ! هيظهرلك سؤال بسيط، ومطلوب منك تجاوب إجابة غلط تماماً وبسرعة في 5 ثواني!\n\nركز مع التايمر عشان ميفوتكش الوقت!',
@@ -459,7 +527,8 @@ class _OppositeDayState extends State<OppositeDay> {
     if (isLoadingData || questions.isEmpty) {
       return OfflineGameScaffold(
         title: '🙃 عكس العكاس',
-        backgroundColor: const Color(0xFF3E2723), // Darker Brown
+        backgroundColor: const Color(0xFF3E2723),
+        showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),
@@ -470,6 +539,7 @@ class _OppositeDayState extends State<OppositeDay> {
       return OfflineGameScaffold(
         title: '🙃 عكس العكاس',
         backgroundColor: const Color(0xFF3E2723),
+        showAi: false,
         actions: [
         ],
         body: Center(
@@ -522,8 +592,12 @@ class _OppositeDayState extends State<OppositeDay> {
                               },
                             ),
                           ),
-                        );
-                      },
+                          ).then((_) {
+                            if (mounted && !_setupDone) {
+                              setState(() => _showIntro = true);
+                            }
+                          });
+                        },
                       icon: const Icon(Icons.people_alt, size: 28),
                       label: Text(
                         'اختار شلتك وابدأ!',
@@ -562,6 +636,8 @@ class _OppositeDayState extends State<OppositeDay> {
     return OfflineGameScaffold(
       title: '🙃 عكس العكاس',
       backgroundColor: const Color(0xFF3E2723),
+      showAi: false,
+      onAiRefresh: _generateAiContent,
       actions: [
         IconButton(
           icon: const Icon(Icons.home),

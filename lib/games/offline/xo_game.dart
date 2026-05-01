@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
@@ -145,10 +145,11 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
   Widget build(BuildContext context) {
     if (_showIntro) {
       return OfflineGameScaffold(
-        title: '✏️ صبورة إكس أو',
+        title: '🎯 إكس أو',
         backgroundColor: const Color(0xFF0D1B12),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'إكس أو',
+          title: '🎯 إكس أو',
           icon: '✏️',
           description:
               'اللعبة الكلاسيكية اللي ما بتخلصش! إكس ولا أو؟ فكر في حركتك صح وحاول تعمل خط قبل خصمك!',
@@ -158,25 +159,18 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
     }
 
     return OfflineGameScaffold(
-      title: '✏️ صبورة إكس أو',
-      backgroundColor: const Color(0xFF0D1B12), // Darker Chalkboard Green
+      title: '🎯 إكس أو',
+      backgroundColor: Colors.blueGrey,
+      showAi: false,
       actions: [
         IconButton(
-          icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
-          onPressed: _resetGame,
+          icon: const Icon(Icons.home, color: Colors.white70),
+          onPressed: () => setState(() => _showIntro = true),
         ),
       ],
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [const Color(0xFF0D1B12), const Color(0xFF08120C)],
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
             // Chalk Message
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -299,8 +293,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
                   side: const BorderSide(color: Colors.white38),
                 ),
               ).animate().fadeIn().scale(),
-          ],
-        ),
+        ],
       ),
     );
   }

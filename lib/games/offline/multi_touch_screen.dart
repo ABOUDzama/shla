@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
 import 'package:google_fonts/google_fonts.dart';
@@ -91,11 +91,12 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
   Widget build(BuildContext context) {
     if (_showIntro) {
       return OfflineGameScaffold(
-        title: '👆 اختيار عشوائي',
+        title: '👆 تحدي اللمس',
         backgroundColor: const Color(0xFF1B5E20),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'اختيار عشوائي',
-          icon: '👆',
+          title: '👆 تحدي اللمس',
+          icon: '🖐️',
           description:
               'مش عارفين تختاروا مين يبدأ؟ كل واحد يحط صباعه على الشاشة والتطبيق هيختار واحد عشوائي في ثواني!\n\nأسرع طريقة لفض الاشتباك!',
           onStart: () => setState(() => _showIntro = false),
@@ -104,15 +105,10 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
     }
 
     return OfflineGameScaffold(
-      title: '👆 اختيار عشوائي',
+      title: '👆 تحدي اللمس',
       backgroundColor: const Color(0xFF1B5E20),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh, color: Colors.white),
-          onPressed: reset,
-          tooltip: 'إعادة تعيين',
-        ),
-      ],
+      showAi: false,
+      actions: const [],
       body: Stack(
         children: [
           // Gradient background
@@ -353,7 +349,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                         padding: const EdgeInsets.only(bottom: 50),
                         child: ElevatedButton.icon(
                           onPressed: reset,
-                          icon: const Icon(Icons.refresh_rounded, size: 24),
+                          icon: const Icon(Icons.play_arrow, size: 24),
                           label: Text(
                             'العب تاني 🎲',
                             style: GoogleFonts.cairo(

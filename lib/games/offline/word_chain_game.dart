@@ -9,6 +9,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../services/raw_data_manager.dart';
 import '../../services/settings_service.dart';
 import '../../services/ai_service.dart';
+import '../../services/audio_service.dart';
 
 class WordChainGame extends StatefulWidget {
   const WordChainGame({super.key});
@@ -21,7 +22,6 @@ class _WordChainGameState extends State<WordChainGame> {
   Map<String, List<String>> categoryWords = {};
   bool _showIntro = true;
   bool isLoadingData = true;
-  bool _isGeneratingAi = false;
   final List<String> _aiHistory = [];
 
   // Category → [words]
@@ -277,7 +277,6 @@ class _WordChainGameState extends State<WordChainGame> {
   void _generateAiContent() async {
     if (!SettingsService.isAiEnabled) return;
 
-    setState(() => _isGeneratingAi = true);
     try {
       final content = await AIService.fetchGameContent(
         'word_chain_game',
@@ -331,7 +330,7 @@ class _WordChainGameState extends State<WordChainGame> {
         );
       }
     } finally {
-      setState(() => _isGeneratingAi = false);
+      // Done
     }
   }
 
@@ -382,6 +381,7 @@ class _WordChainGameState extends State<WordChainGame> {
           _gameActive = false;
           _roundOver = true;
         });
+        AudioService.playFailure();
         // Add score to current player
         if (_players.isNotEmpty) {
           _players[_currentPlayerTurn]['score'] =
@@ -389,6 +389,7 @@ class _WordChainGameState extends State<WordChainGame> {
         }
       } else {
         setState(() => _secondsLeft--);
+        AudioService.playTick();
       }
     });
   }
@@ -401,8 +402,10 @@ class _WordChainGameState extends State<WordChainGame> {
       );
       if (correct) {
         _successCount++;
+        AudioService.playSuccess();
       } else {
         _skipCount++;
+        AudioService.playClick();
       }
       _currentWordIndex++;
 
@@ -434,13 +437,14 @@ class _WordChainGameState extends State<WordChainGame> {
   Widget build(BuildContext context) {
     if (_showIntro) {
       return OfflineGameScaffold(
-        title: '⏱️ تحدي التعريف',
+        title: '⏱️ سلسلة الكلمات',
         backgroundColor: const Color(0xFF004D40),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'تحدي التعريف',
-          icon: '⏱️',
+          title: '⏱️ سلسلة الكلمات',
+          icon: '🔗',
           description:
-              'اشرح الكلمة لزميلك بدون ما تقول الكلمة نفسها!\nأكتر كلمة في الدقيقة = الفايز!',
+              'اللعبة اللي محتاجة سرعة بديهة! لازم تقول كلمة بتبدأ بآخر حرف من الكلمة اللي قالها زميلك.. السلسلة لازم تفضل شغالة!',
           onStart: () => setState(() => _showIntro = false),
         ),
       );
@@ -448,33 +452,19 @@ class _WordChainGameState extends State<WordChainGame> {
 
     if (isLoadingData || categoryWords.isEmpty) {
       return OfflineGameScaffold(
-        title: '⏱️ تحدي التعريف',
+        title: '⏱️ سلسلة الكلمات',
         backgroundColor: const Color(0xFF004D40),
+        showAi: false,
         body: const PremiumLoadingIndicator(message: 'جاري ربط الكلمات...'),
       );
     }
 
     if (!_setupDone) {
       return OfflineGameScaffold(
-        title: '⏱️ تحدي التعريف',
+        title: '⏱️ سلسلة الكلمات',
         backgroundColor: const Color(0xFF004D40), // Dark Teal
-        actions: [
-          if (SettingsService.isAiEnabled)
-            IconButton(
-              icon: _isGeneratingAi
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Icon(Icons.auto_awesome),
-              tooltip: 'توليد بالذكاء الاصطناعي',
-              onPressed: _isGeneratingAi ? null : _generateAiContent,
-            ),
-        ],
+        showAi: false,
+        actions: const [],
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -486,13 +476,13 @@ class _WordChainGameState extends State<WordChainGame> {
                 ).animate().scale(),
                 const SizedBox(height: 12),
                 Text(
-                  'تحدي التعريف',
+                  'سلسلة الكلمات',
                   style: GoogleFonts.cairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
                   ),
-                ),
+                ).animate().fadeIn(),
                 const SizedBox(height: 8),
                 Text(
                   'اشرح الكلمة لزميلك بدون ما تقول الكلمة نفسها!\nأكتر كلمة في الدقيقة = الفايز!',
@@ -562,7 +552,7 @@ class _WordChainGameState extends State<WordChainGame> {
                                 MaterialPageRoute(
                                   builder: (context) =>
                                       GlobalPlayerSelectionScreen(
-                                        gameTitle: 'تحدي التعريف',
+                                        gameTitle: 'سلسلة الكلمات',
                                         minPlayers: 2,
                                         onStartGame: (ctx, selectedPlayers) {
                                           Navigator.pop(ctx);
@@ -625,8 +615,10 @@ class _WordChainGameState extends State<WordChainGame> {
 
     // Game Screen
     return OfflineGameScaffold(
-      title: '⏱️ تحدي التعريف',
-      backgroundColor: const Color(0xFF004D40),
+      title: '⏱️ سلسلة الكلمات',
+      backgroundColor: const Color(0xFF2E7D32),
+      showAi: false,
+      onAiRefresh: _generateAiContent,
       actions: [
         IconButton(
           icon: const Icon(Icons.home, color: Colors.white70),
@@ -1019,7 +1011,7 @@ class _WordChainGameState extends State<WordChainGame> {
                       else
                         ElevatedButton.icon(
                           onPressed: _startRound,
-                          icon: const Icon(Icons.refresh),
+                          icon: const Icon(Icons.play_arrow),
                           label: Text(
                             'العب تاني',
                             style: GoogleFonts.cairo(

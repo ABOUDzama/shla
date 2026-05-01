@@ -148,6 +148,16 @@ io.on('connection', (socket) => {
         socket.to(roomCode).emit('webrtc_ice_candidate', { candidate, callerId });
     });
 
+    // Chat System
+    socket.on('send_chat_message', ({ roomCode, message, playerName }) => {
+        io.to(roomCode).emit('receive_chat_message', {
+            message,
+            playerName,
+            senderId: socket.id,
+            timestamp: new Date().toISOString()
+        });
+    });
+
     socket.on('reset_game', ({ roomCode }) => {
         io.to(roomCode).emit('reset_game');
     });

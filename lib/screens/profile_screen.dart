@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../services/settings_service.dart';
 import '../services/haptic_service.dart';
+import '../services/socket_service.dart' as ss;
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -27,12 +28,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _pickAvatar() async {
     if (_isPickingImage) return;
+
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: const Color(0xFF1E293B),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 8),
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.white24,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ListTile(
+            leading: const Icon(Icons.photo_library_outlined, color: Colors.white70),
+            title: Text('المعرض', style: GoogleFonts.cairo(color: Colors.white)),
+            onTap: () => Navigator.pop(context, ImageSource.gallery),
+          ),
+          ListTile(
+            leading: const Icon(Icons.camera_alt_outlined, color: Colors.white70),
+            title: Text('الكاميرا', style: GoogleFonts.cairo(color: Colors.white)),
+            onTap: () => Navigator.pop(context, ImageSource.camera),
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+
+    if (source == null) return;
+
     setState(() => _isPickingImage = true);
 
     try {
       final picker = ImagePicker();
       final image = await picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         maxWidth: 512,
         maxHeight: 512,
         imageQuality: 75,
@@ -61,6 +99,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     await SettingsService.setUserName(name);
     await SettingsService.setUserAvatar(_avatarBase64);
+    
+    // Sync with SocketService if active
+    final socket = ss.SocketService();
+    if (socket.currentRoomCode != null) {
+      await socket.setRoomContext(
+        socket.currentRoomCode!,
+        name,
+        avatar: _avatarBase64,
+      );
+      // Re-join to announce the update to other players
+      socket.forceRoomSync();
+    }
     
     HapticService.success();
     if (mounted) {

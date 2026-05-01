@@ -10,6 +10,7 @@ import '../../widgets/premium_loading_indicator.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
+import '../../services/audio_service.dart';
 
 // ─── Drawing model ───────────────────────────────
 class DrawPoint {
@@ -121,40 +122,38 @@ class _PictionaryGameState extends State<PictionaryGame> {
     {'word': 'بطة', 'category': '🐾 حيوانات'},
     {'word': 'فيل', 'category': '🐾 حيوانات'},
     {'word': 'زرافة', 'category': '🐾 حيوانات'},
-    {'word': 'خنفسة', 'category': '🐾 حيوانات'},
     {'word': 'أرنب', 'category': '🐾 حيوانات'},
     {'word': 'نمر', 'category': '🐾 حيوانات'},
     {'word': 'قرد', 'category': '🐾 حيوانات'},
     {'word': 'دلفين', 'category': '🐾 حيوانات'},
-    {'word': 'خرتيت', 'category': '🐾 حيوانات'},
-    {'word': 'طيطوى', 'category': '🐾 حيوانات'},
     {'word': 'سلحفاة', 'category': '🐾 حيوانات'},
     {'word': 'تمساح', 'category': '🐾 حيوانات'},
+    {'word': 'سمكة', 'category': '🐾 حيوانات'},
+    {'word': 'عصفور', 'category': '🐾 حيوانات'},
     {'word': 'بيتزا', 'category': '🍕 أكل'},
     {'word': 'كيكة', 'category': '🍕 أكل'},
     {'word': 'برغر', 'category': '🍕 أكل'},
-    {'word': 'آيس كريم', 'category': '🍕 أكل'},
+    {'word': 'عنب', 'category': '🍕 أكل'},
     {'word': 'شاورما', 'category': '🍕 أكل'},
     {'word': 'كنافة', 'category': '🍕 أكل'},
     {'word': 'سوشي', 'category': '🍕 أكل'},
-    {'word': 'لازانيا', 'category': '🍕 أكل'},
+    {'word': 'موز', 'category': '🍕 أكل'},
     {'word': 'كشري', 'category': '🍕 أكل'},
     {'word': 'فلافل', 'category': '🍕 أكل'},
-    {'word': 'قطايف', 'category': '🍕 أكل'},
-    {'word': 'هوت دوج', 'category': '🍕 أكل'},
+    {'word': 'تفاحة', 'category': '🍕 أكل'},
+    {'word': 'بطيخ', 'category': '🍕 أكل'},
     {'word': 'موبايل', 'category': '📱 تكنولوجيا'},
-    {'word': 'كمبيوتر', 'category': '📱 تكنولوجيا'},
+    {'word': 'حاسوب', 'category': '📱 تكنولوجيا'},
     {'word': 'روبوت', 'category': '📱 تكنولوجيا'},
     {'word': 'كاميرا', 'category': '📱 تكنولوجيا'},
-    {'word': 'تلفزيون', 'category': '📱 تكنولوجيا'},
+    {'word': 'تلفاز', 'category': '📱 تكنولوجيا'},
     {'word': 'سماعة', 'category': '📱 تكنولوجيا'},
     {'word': 'طيارة', 'category': '🚗 مواصلات'},
     {'word': 'عربية', 'category': '🚗 مواصلات'},
     {'word': 'دراجة', 'category': '🚗 مواصلات'},
-    {'word': 'قطر', 'category': '🚗 مواصلات'},
+    {'word': 'قطار', 'category': '🚗 مواصلات'},
     {'word': 'مركب', 'category': '🚗 مواصلات'},
-    {'word': 'دراجة نارية', 'category': '🚗 مواصلات'},
-    {'word': 'مروحية', 'category': '🚗 مواصلات'},
+    {'word': 'حافلة', 'category': '🚗 مواصلات'},
     {'word': 'صاروخ', 'category': '🚗 مواصلات'},
     {'word': 'ساعة', 'category': '🏠 أشياء'},
     {'word': 'مظلة', 'category': '🏠 أشياء'},
@@ -174,24 +173,25 @@ class _PictionaryGameState extends State<PictionaryGame> {
     {'word': 'شجرة', 'category': '🌍 طبيعة'},
     {'word': 'مطر', 'category': '🌍 طبيعة'},
     {'word': 'برق', 'category': '🌍 طبيعة'},
-    {'word': 'كرة قدم', 'category': '⚽ رياضة'},
+    {'word': 'وردة', 'category': '🌍 طبيعة'},
+    {'word': 'كرة', 'category': '⚽ رياضة'},
     {'word': 'سباحة', 'category': '⚽ رياضة'},
     {'word': 'ملاكمة', 'category': '⚽ رياضة'},
     {'word': 'تنس', 'category': '⚽ رياضة'},
-    {'word': 'كرة سلة', 'category': '⚽ رياضة'},
+    {'word': 'ركض', 'category': '⚽ رياضة'},
     {'word': 'غوص', 'category': '⚽ رياضة'},
     {'word': 'بتمان', 'category': '🎭 شخصيات'},
-    {'word': 'سبايدرمان', 'category': '🎭 شخصيات'},
-    {'word': 'سبونج بوب', 'category': '🎭 شخصيات'},
-    {'word': 'ميكي ماوس', 'category': '🎭 شخصيات'},
-    {'word': 'شخص يغني', 'category': '🎭 أفعال'},
-    {'word': 'شخص ينام', 'category': '🎭 أفعال'},
-    {'word': 'شخص يطير', 'category': '🎭 أفعال'},
-    {'word': 'شخص يبكي', 'category': '🎭 أفعال'},
-    {'word': 'شخص يرقص', 'category': '🎭 أفعال'},
-    {'word': 'شخص يسبح', 'category': '🎭 أفعال'},
-    {'word': 'شخص يأكل', 'category': '🎭 أفعال'},
-    {'word': 'شخص يقفز', 'category': '🎭 أفعال'},
+    {'word': 'فأر', 'category': '🎭 شخصيات'},
+    {'word': 'ملك', 'category': '🎭 شخصيات'},
+    {'word': 'شرطي', 'category': '🎭 شخصيات'},
+    {'word': 'غناء', 'category': '🎭 أفعال'},
+    {'word': 'نوم', 'category': '🎭 أفعال'},
+    {'word': 'طيران', 'category': '🎭 أفعال'},
+    {'word': 'بكاء', 'category': '🎭 أفعال'},
+    {'word': 'رقص', 'category': '🎭 أفعال'},
+    {'word': 'سباحة', 'category': '🎭 أفعال'},
+    {'word': 'أكل', 'category': '🎭 أفعال'},
+    {'word': 'قفز', 'category': '🎭 أفعال'},
   ];
 
   List<DrawPoint> _points = [];
@@ -304,6 +304,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
       _drawing = false;
       _guessing = true;
     });
+    AudioService.playClick();
   }
 
   void _submitGuess() {
@@ -316,6 +317,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
       _showResult = true;
       _guessing = false;
     });
+    AudioService.playClick();
   }
 
   void _drawerDecide(bool correct) {
@@ -325,6 +327,11 @@ class _PictionaryGameState extends State<PictionaryGame> {
         // Guesser gets 1 point
         final guessIdx = (_drawerIndex + 1) % _players.length;
         _players[guessIdx]['score'] = (_players[guessIdx]['score'] as int) + 1;
+      }
+      if (correct) {
+        AudioService.playSuccess();
+      } else {
+        AudioService.playFailure();
       }
     });
   }
@@ -354,7 +361,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
         title: '🎨 ارسم وخمّن',
         backgroundColor: const Color(0xFF0D47A1),
         body: GameIntroWidget(
-          title: 'ارسم وخمّن',
+          title: '🎨 ارسم وخمّن',
           icon: '🎨',
           description:
               'واحد يرسم والكل يخمّن! اللعبة اللي هتكشف مواهبك المدفونة في الرسم (أو الكارثية!)... مين هيقدر يوصّل المعلومة بالرسم؟',
@@ -375,23 +382,6 @@ class _PictionaryGameState extends State<PictionaryGame> {
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
         backgroundColor: const Color(0xFF0D47A1),
-        actions: [
-          if (SettingsService.isAiEnabled)
-            IconButton(
-              icon: _isGeneratingAi
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Icon(Icons.auto_awesome),
-              tooltip: 'توليد بالذكاء الاصطناعي',
-              onPressed: _isGeneratingAi ? null : _generateAiContent,
-            ),
-        ],
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -485,6 +475,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
         backgroundColor: const Color(0xFF0D47A1),
+        onAiRefresh: _generateAiContent,
         actions: [
           IconButton(
             icon: const Icon(Icons.home, color: Colors.white70),
@@ -1034,7 +1025,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     const SizedBox(height: 40),
                     ElevatedButton.icon(
                       onPressed: _nextRound,
-                      icon: const Icon(Icons.refresh_rounded, size: 24),
+                      icon: const Icon(Icons.play_arrow, size: 24),
                       label: Text(
                         'دور جديد 🎨',
                         style: GoogleFonts.cairo(

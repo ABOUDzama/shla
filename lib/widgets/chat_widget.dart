@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/socket_service.dart';
 import 'package:intl/intl.dart' as intl;
 import 'dart:convert';
+import 'dart:async';
 
 class ChatWidget extends StatefulWidget {
   final String roomCode;
@@ -23,55 +24,45 @@ class ChatWidget extends StatefulWidget {
 class _ChatWidgetState extends State<ChatWidget> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  StreamSubscription? _chatSub;
+  Timer? _statusTimer;
 
   @override
   void initState() {
     super.initState();
-    SocketService().socket.on('receive_chat_message', _handleIncomingMessage);
+    SocketService().isChatOpen = true;
+    _chatSub = SocketService().chatStream.listen((msg) {
+      if (mounted) {
+        setState(() {}); // SocketService already updated the global list
+        _scrollToBottom();
+      }
+    });
     _scrollToBottom();
+
+    // Periodically refresh UI to catch connection status changes
+    _statusTimer = Timer.periodic(const Duration(seconds: 2), (t) {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void dispose() {
-    SocketService().socket.off('receive_chat_message', _handleIncomingMessage);
+    SocketService().isChatOpen = false;
+    _chatSub?.cancel();
+    _statusTimer?.cancel();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _handleIncomingMessage(dynamic data) {
-    if (mounted) {
-      setState(() {
-        // Just trigger rebuild, the SocketService already added it to the global list
-      });
-      _scrollToBottom();
-    }
   }
 
   void _sendMessage() {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
-    final String msgId = '${DateTime.now().millisecondsSinceEpoch}_${widget.playerName}';
-    final Map<String, dynamic> localMsg = {
-      'roomCode': widget.roomCode,
-      'message': text,
-      'playerName': widget.playerName,
-      'name': widget.playerName,
-      'avatar': SocketService().currentAvatar, // Include my avatar
-      'timestamp': DateTime.now().toIso8601String(),
-      'msgId': msgId,
-    };
+    // Use centralized service for robust broadcasting and local echo
+    SocketService().sendMessage(text);
 
-    // Local Echo: Add to list immediately
-    setState(() {
-      SocketService().chatMessages.add(localMsg);
-    });
     _scrollToBottom();
-
-    // Emit to server
-    SocketService().socket.emit('send_chat_message', localMsg);
-
     _messageController.clear();
   }
 
@@ -112,7 +103,7 @@ class _ChatWidgetState extends State<ChatWidget> {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
             child: Row(
@@ -123,19 +114,75 @@ class _ChatWidgetState extends State<ChatWidget> {
                     color: Colors.blueAccent.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.auto_awesome, color: Colors.blueAccent, size: 20),
-                ),
-                const SizedBox(width: 15),
-                Text(
-                  'غرفة الدردشة',
-                  style: GoogleFonts.cairo(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
+                  child: const Icon(
+                    Icons.auto_awesome,
+                    color: Colors.blueAccent,
+                    size: 20,
                   ),
                 ),
+                const SizedBox(width: 15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'غرفة الدردشة',
+                      style: GoogleFonts.cairo(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: SocketService().isConnected
+                                ? Colors.greenAccent
+                                : Colors.redAccent,
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    (SocketService().isConnected
+                                            ? Colors.greenAccent
+                                            : Colors.redAccent)
+                                        .withValues(alpha: 0.5),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          SocketService().isConnected
+                              ? 'متصل'
+                              : 'فارغ من الاتصال',
+                          style: GoogleFonts.cairo(
+                            fontSize: 10,
+                            color: Colors.white60,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
                 const Spacer(),
+                if (!SocketService().isConnected)
+                  IconButton(
+                    icon: const Icon(
+                      Icons.sync_problem_rounded,
+                      color: Colors.orangeAccent,
+                    ),
+                    onPressed: () {
+                      SocketService().initSocket();
+                      SocketService().forceRoomSync();
+                    },
+                    tooltip: 'إعادة الاتصال',
+                  ),
                 IconButton(
                   icon: const Icon(Icons.close_rounded, color: Colors.white38),
                   onPressed: () => Navigator.pop(context),
@@ -147,14 +194,15 @@ class _ChatWidgetState extends State<ChatWidget> {
               ],
             ),
           ),
-          
+
           const Divider(color: Colors.white12, height: 1),
 
           // Messages List with Premium Styling
           Expanded(
             child: SocketService().chatMessages.isEmpty
                 ? Center(
-                    child: SingleChildScrollView( // Fix Overflow
+                    child: SingleChildScrollView(
+                      // Fix Overflow
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -165,9 +213,9 @@ class _ChatWidgetState extends State<ChatWidget> {
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
-                              Icons.chat_bubble_rounded, 
-                              size: 70, 
-                              color: Colors.blueAccent.withValues(alpha: 0.2)
+                              Icons.chat_bubble_rounded,
+                              size: 70,
+                              color: Colors.blueAccent.withValues(alpha: 0.2),
                             ),
                           ),
                           const SizedBox(height: 25),
@@ -186,13 +234,28 @@ class _ChatWidgetState extends State<ChatWidget> {
                   )
                 : ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 25,
+                    ),
                     itemCount: SocketService().chatMessages.length,
                     itemBuilder: (context, index) {
                       final msg = SocketService().chatMessages[index];
+                      if (msg['isSystem'] == true) {
+                        return _buildSystemMessage(msg);
+                      }
+
                       // Robust identity check
-                      final sender = (msg['playerName'] ?? msg['name'] ?? msg['sender'] ?? '').toString().trim().toLowerCase();
-                      final isMe = sender == widget.playerName.trim().toLowerCase();
+                      final sender =
+                          (msg['playerName'] ??
+                                  msg['name'] ??
+                                  msg['sender'] ??
+                                  '')
+                              .toString()
+                              .trim()
+                              .toLowerCase();
+                      final isMe =
+                          sender == widget.playerName.trim().toLowerCase();
                       return _buildMessageBubble(msg, isMe);
                     },
                   ),
@@ -230,9 +293,15 @@ class _ChatWidgetState extends State<ChatWidget> {
                       style: const TextStyle(color: Colors.white, fontSize: 16),
                       decoration: InputDecoration(
                         hintText: 'اكتب حاجة عظمة...',
-                        hintStyle: GoogleFonts.cairo(color: Colors.white24, fontSize: 15),
+                        hintStyle: GoogleFonts.cairo(
+                          color: Colors.white24,
+                          fontSize: 15,
+                        ),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 25,
+                          vertical: 12,
+                        ),
                       ),
                       onSubmitted: (_) => _sendMessage(),
                     ),
@@ -278,32 +347,50 @@ class _ChatWidgetState extends State<ChatWidget> {
     String timeStr = '';
     try {
       if (msg['timestamp'] != null) {
-        timeStr = intl.DateFormat('hh:mm').format(DateTime.parse(msg['timestamp']));
+        timeStr = intl.DateFormat(
+          'hh:mm',
+        ).format(DateTime.parse(msg['timestamp']));
       }
     } catch (_) {
       timeStr = '';
     }
-    
+
     // Improved sender info extraction
-    var senderName = (msg['playerName']?.toString() ?? msg['name']?.toString() ?? msg['sender']?.toString() ?? (msg['user'] is Map ? msg['user']['name']?.toString() : null) ?? 'لاعب').trim();
+    var senderName =
+        (msg['playerName']?.toString() ??
+                msg['name']?.toString() ??
+                msg['sender']?.toString() ??
+                (msg['user'] is Map ? msg['user']['name']?.toString() : null) ??
+                'لاعب')
+            .trim();
     if (senderName.isEmpty) senderName = 'لاعب';
-    
-    final avatarData = msg['avatar']?.toString() ?? (msg['user'] is Map ? msg['user']['avatar']?.toString() : null);
+
+    final avatarData =
+        msg['avatar']?.toString() ??
+        (msg['user'] is Map ? msg['user']['avatar']?.toString() : null);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe) _buildAvatar(senderName, avatarBase64: avatarData),
           const SizedBox(width: 10),
           Flexible(
             child: Column(
-              crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isMe
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    bottom: 5,
+                  ),
                   child: Text(
                     isMe ? 'أنت' : senderName,
                     style: GoogleFonts.cairo(
@@ -314,30 +401,38 @@ class _ChatWidgetState extends State<ChatWidget> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
-                    gradient: isMe 
-                      ? const LinearGradient(
-                          colors: [Color(0xFF2962FF), Color(0xFF6200EA)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        )
-                      : LinearGradient(
-                          colors: [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)],
-                        ),
+                    gradient: isMe
+                        ? const LinearGradient(
+                            colors: [Color(0xFF2962FF), Color(0xFF6200EA)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          )
+                        : LinearGradient(
+                            colors: [
+                              Colors.white.withValues(alpha: 0.1),
+                              Colors.white.withValues(alpha: 0.05),
+                            ],
+                          ),
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(22),
                       topRight: const Radius.circular(22),
                       bottomLeft: Radius.circular(isMe ? 22 : 4),
                       bottomRight: Radius.circular(isMe ? 4 : 22),
                     ),
-                    boxShadow: isMe ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      )
-                    ] : null,
+                    boxShadow: isMe
+                        ? [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                        : null,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,37 +461,111 @@ class _ChatWidgetState extends State<ChatWidget> {
             ),
           ),
           const SizedBox(width: 10),
-          if (isMe) _buildAvatar('Me', isSelf: true, avatarBase64: avatarData),
+          if (isMe)
+            _buildAvatar(senderName, isSelf: true, avatarBase64: avatarData),
         ],
       ),
     );
   }
 
-  Widget _buildAvatar(String name, {bool isSelf = false, String? avatarBase64}) {
+  Widget _buildSystemMessage(Map<String, dynamic> msg) {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white10),
+        ),
+        child: Text(
+          msg['message'] ?? '',
+          style: GoogleFonts.cairo(
+            fontSize: 11,
+            color: Colors.white60,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  String? _getAvatarForPlayer(String name) {
+    if (SocketService().currentPlayers.isEmpty) return null;
+    final normalized = name.trim().toLowerCase();
+
+    try {
+      final player = SocketService().currentPlayers.firstWhere(
+        (p) =>
+            (p['playerName'] ?? p['name'] ?? '')
+                .toString()
+                .trim()
+                .toLowerCase() ==
+            normalized,
+      );
+      return player['avatar']?.toString();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Widget _buildAvatar(
+    String name, {
+    bool isSelf = false,
+    String? avatarBase64,
+  }) {
     // If we have base64 data, render it
-    if (avatarBase64 != null && avatarBase64.isNotEmpty) {
+    var data = avatarBase64;
+
+    // Fallback seek in global player list if missing
+    if ((data == null || data.isEmpty) && !isSelf) {
+      data = _getAvatarForPlayer(name);
+    }
+
+    // Special handling for self if missing
+    if ((data == null || data.isEmpty) && isSelf) {
+      data = SocketService().currentAvatar;
+    }
+
+    if (data != null && data.isNotEmpty) {
       try {
+        // Clean prefix if exists (e.g. data:image/png;base64,...)
+        if (data.contains(',')) {
+          data = data.split(',').last.trim();
+        }
+
         return Container(
           width: 35,
           height: 35,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: isSelf ? Colors.purpleAccent.withAlpha(100) : Colors.blueAccent.withAlpha(100),
+              color: isSelf
+                  ? Colors.purpleAccent.withValues(alpha: 0.4)
+                  : Colors.blueAccent.withValues(alpha: 0.4),
               width: 1.5,
             ),
-            image: DecorationImage(
-              image: MemoryImage(base64Decode(avatarBase64)),
+          ),
+          child: ClipOval(
+            child: Image.memory(
+              base64Decode(data),
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return _buildInitialsAvatar(name, isSelf);
+              },
             ),
           ),
         );
       } catch (e) {
         debugPrint('Error decoding chat avatar: $e');
-        // Fallback to initials
+        return _buildInitialsAvatar(name, isSelf);
       }
     }
 
+    return _buildInitialsAvatar(name, isSelf);
+  }
+
+  Widget _buildInitialsAvatar(String name, bool isSelf) {
     final firstChar = name.isNotEmpty ? name[0].toUpperCase() : '?';
     return Container(
       width: 35,
@@ -407,7 +576,7 @@ class _ChatWidgetState extends State<ChatWidget> {
         border: Border.all(color: Colors.white10, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(50),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -426,4 +595,3 @@ class _ChatWidgetState extends State<ChatWidget> {
     );
   }
 }
-

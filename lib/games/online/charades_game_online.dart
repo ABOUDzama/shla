@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:math';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/base_game_scaffold.dart';
 import '../../services/socket_service.dart';
-import 'dart:async';
+import '../../services/audio_service.dart';
 
 class CharadesGameOnline extends StatefulWidget {
   final bool isHost;
   final String roomCode;
-  final String? opponentName;
   final String? playerName;
   final List<dynamic>? roomPlayers;
 
@@ -14,7 +17,6 @@ class CharadesGameOnline extends StatefulWidget {
     super.key,
     required this.isHost,
     required this.roomCode,
-    this.opponentName,
     this.playerName,
     this.roomPlayers,
   });
@@ -24,11 +26,27 @@ class CharadesGameOnline extends StatefulWidget {
 }
 
 class _CharadesGameOnlineState extends State<CharadesGameOnline> {
-  bool _active = false;
+  final Map<String, List<String>> _fallbackWords = {
+    '🎬 أفلام ومسلسلات': [
+      'تيتانيك',
+      'هاري بوتر',
+      'الأسد الملك',
+      'باتمان',
+      'سبايدرمان',
+    ],
+    '🐾 حيوانات': ['فيل', 'قرد', 'تمساح', 'طاووس', 'بطريق'],
+    '⚽ رياضة': ['كرة قدم', 'سباحة', 'تنس', 'كرة سلة', 'جمباز'],
+  };
+
+  String? _currentWord;
+  String? _currentCategory;
+  String? _actorId;
   int _secondsLeft = 60;
-  String _currentWord = 'انتظر...';
-  int _currentPlayer = 0;
   Timer? _timer;
+  bool _gameActive = false;
+  int _correctCount = 0;
+  String _statusText = 'بانتظار المضيف...';
+  final _rand = Random();
 
   @override
   void initState() {
@@ -37,104 +55,401 @@ class _CharadesGameOnlineState extends State<CharadesGameOnline> {
   }
 
   void _setupSocket() {
-    SocketService().socket.on('charades_sync', (data) {
-      if (!mounted) return;
-      final action = data['action'];
-      setState(() {
-        if (action == 'start_round') {
-          _active = true; _secondsLeft = data['secondsLeft'];
-          _currentWord = data['shuffledWords'][data['wordIndex']];
-          _startLocalTimer();
-        } else if (action == 'timeout') {
-          _active = false; _timer?.cancel();
-        } else if (action == 'next_player') {
-          _currentPlayer = data['currentPlayer']; _active = false;
-        }
-      });
+    SocketService().socket.on('game_move', _onCharadesSync);
+  }
+
+  void _onCharadesSync(dynamic data) {
+    if (!mounted) return;
+
+    final Map<String, dynamic> move = (data is Map && data['moveData'] != null)
+        ? Map<String, dynamic>.from(data['moveData'])
+        : Map<String, dynamic>.from(data);
+
+    final type = move['type'];
+
+    setState(() {
+      if (type == 'start_game') {
+        _actorId = move['actorId'];
+        _currentWord = move['word'];
+        _currentCategory = move['category'];
+        _correctCount = 0;
+        _secondsLeft = 60;
+        _gameActive = true;
+        _statusText = (_actorId == SocketService().socket.id)
+            ? 'أنت الممثل! 🎭'
+            : 'خمن التمثيلية! 🤫';
+        _startTimer();
+        AudioService.playTick();
+      } else if (type == 'next_word') {
+        _currentWord = move['word'];
+        if (move['correct']) _correctCount++;
+        _statusText = (_actorId == SocketService().socket.id)
+            ? 'الكلمة التالية: $_currentWord'
+            : 'خمن التمثيلية! 🕵️';
+        if (move['correct']) AudioService.playSuccess();
+      } else if (type == 'timer_sync') {
+        _secondsLeft = move['seconds'];
+      } else if (type == 'game_over') {
+        _gameActive = false;
+        _timer?.cancel();
+        _statusText = 'انتهى الوقت! النتيجة: $_correctCount ✅';
+        AudioService.playFailure();
+      }
     });
   }
 
-  void _startLocalTimer() {
+  void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
       if (_secondsLeft <= 0) {
         t.cancel();
+        if (widget.isHost) _emitGameOver();
       } else {
         setState(() => _secondsLeft--);
+        AudioService.playTick();
       }
     });
+  }
+
+  void _emitStart() {
+    final cat = _fallbackWords.keys
+        .toList()[_rand.nextInt(_fallbackWords.length)];
+    final word =
+        _fallbackWords[cat]![_rand.nextInt(_fallbackWords[cat]!.length)];
+
+    final moveData = {
+      'type': 'start_game',
+      'word': word,
+      'category': cat,
+      'actorId': SocketService().socket.id,
+    };
+
+    SocketService().socket.emit('game_move', {
+      'roomCode': widget.roomCode,
+      'moveData': moveData,
+    });
+
+    _onCharadesSync(moveData);
+  }
+
+  void _emitNext(bool correct) {
+    if (SocketService().socket.id != _actorId) return;
+    final cat = _currentCategory!;
+    final word =
+        _fallbackWords[cat]![_rand.nextInt(_fallbackWords[cat]!.length)];
+
+    final moveData = {'type': 'next_word', 'word': word, 'correct': correct};
+
+    SocketService().socket.emit('game_move', {
+      'roomCode': widget.roomCode,
+      'moveData': moveData,
+    });
+
+    _onCharadesSync(moveData);
+  }
+
+  void _emitGameOver() {
+    final moveData = {'type': 'game_over'};
+    SocketService().socket.emit('game_move', {
+      'roomCode': widget.roomCode,
+      'moveData': moveData,
+    });
+    _onCharadesSync(moveData);
   }
 
   @override
   void dispose() {
     _timer?.cancel();
-    SocketService().socket.off('charades_sync');
+    SocketService().socket.off('game_move', _onCharadesSync);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isMyTurn = (widget.roomPlayers != null && _currentPlayer < widget.roomPlayers!.length) 
-        ? widget.roomPlayers![_currentPlayer]['name'] == widget.playerName : false;
+    final isActor = SocketService().socket.id == _actorId;
 
     return BaseGameScaffold(
-      title: '🎭 تمثيل صامت (أونلاين)',
-      backgroundColor: const Color(0xFF1A237E),
+      isHost: widget.isHost,
+      gameName: 'charades',
+      title: 'بدون كلام (أونلاين)',
+      backgroundColor: const Color(0xFF0F172A),
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,
       body: Center(
-        child: _active ? _buildActive(isMyTurn) : _buildWaiting(isMyTurn),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          child: AnimatedSwitcher(
+            duration: 600.ms,
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            child: Column(
+              key: ValueKey(_gameActive),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (_gameActive) _buildTimer(),
+                const SizedBox(height: 30),
+                _buildGameCard(isActor),
+                const SizedBox(height: 50),
+                if (isActor && _gameActive) _buildActorControls(),
+                if (widget.isHost && !_gameActive) _buildStartButton(),
+                if (!isActor && !_gameActive)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 15,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.03),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'بانتظار المضيف يبدأ الغرفة... 💤',
+                      style: GoogleFonts.cairo(
+                        color: Colors.white38,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildActive(bool isMyTurn) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildTimer() {
+    Color color = _secondsLeft > 10 ? Colors.indigoAccent : Colors.redAccent;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
+        boxShadow: [
+          BoxShadow(color: color.withValues(alpha: 0.1), blurRadius: 15),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.timer_outlined, color: color, size: 20),
+          const SizedBox(width: 10),
+          Text(
+            '$_secondsLeft ثانية',
+            style: GoogleFonts.cairo(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    ).animate(target: _secondsLeft < 10 ? 1 : 0).shake(hz: 5);
+  }
+
+  Widget _buildGameCard(bool isActor) {
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints(maxWidth: 350, minHeight: 280),
+      padding: const EdgeInsets.all(35),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(45),
+        border: Border.all(color: Colors.white12, width: 1.5),
+        boxShadow: [
+          const BoxShadow(color: Colors.black38, blurRadius: 40),
+          BoxShadow(
+            color: Colors.indigoAccent.withValues(alpha: 0.05),
+            blurRadius: 20,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              _currentCategory?.split(' ').last ?? '---',
+              style: GoogleFonts.cairo(
+                color: Colors.white54,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.1,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            _currentCategory?.split(' ').first ?? '🎭',
+            style: const TextStyle(fontSize: 40),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 25),
+            child: Divider(color: Colors.white10, height: 1),
+          ),
+          if (isActor && _gameActive)
+            Text(
+                  _currentWord ?? '---',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.cairo(
+                    fontSize: 42,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      const Shadow(color: Colors.indigoAccent, blurRadius: 20),
+                    ],
+                  ),
+                )
+                .animate(key: ValueKey(_currentWord))
+                .scale(duration: 400.ms, curve: Curves.easeOutBack)
+          else if (_gameActive)
+            Text(
+              'جاري التمثيل... 🤫',
+              style: GoogleFonts.cairo(
+                color: Colors.indigoAccent,
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
+            ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 2.seconds)
+          else
+            Text(
+              _statusText,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: _correctCount > 0
+                    ? Colors.greenAccent
+                    : Colors.amberAccent,
+                height: 1.4,
+              ),
+            ),
+        ],
+      ),
+    ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack);
+  }
+
+  Widget _buildActorControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Text('$_secondsLeft', style: TextStyle(fontSize: 40, color: Colors.redAccent)),
-        const SizedBox(height: 30),
-        Text(isMyTurn ? _currentWord : 'خمّن ماذا يمثّل!', style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.bold)),
-        if (isMyTurn) ...[
-          const SizedBox(height: 40),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(icon: const Icon(Icons.check, color: Colors.green, size: 50), onPressed: () => _sendAnswer(true)),
-              const SizedBox(width: 30),
-              IconButton(icon: const Icon(Icons.close, color: Colors.red, size: 50), onPressed: () => _sendAnswer(false)),
-            ],
-          )
-        ]
+        _buildActionButton(
+          'تخطي ➡️',
+          Colors.white.withValues(alpha: 0.05),
+          () => _emitNext(false),
+          borderColor: Colors.white10,
+        ),
+        _buildActionButton(
+          'صح ✅',
+          Colors.greenAccent,
+          () => _emitNext(true),
+          textColor: Colors.black,
+          glow: true,
+        ),
       ],
+    ).animate().fadeIn().slideY(begin: 0.2);
+  }
+
+  Widget _buildActionButton(
+    String label,
+    Color color,
+    VoidCallback? onTap, {
+    Color textColor = Colors.white,
+    Color? borderColor,
+    bool glow = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(25),
+          border: borderColor != null ? Border.all(color: borderColor) : null,
+          boxShadow: [
+            if (glow)
+              BoxShadow(
+                color: color.withValues(alpha: 0.3),
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+          ],
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.cairo(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: textColor,
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildWaiting(bool isMyTurn) {
-    String pName = (widget.roomPlayers != null && _currentPlayer < widget.roomPlayers!.length) 
-        ? widget.roomPlayers![_currentPlayer]['name'] : 'اللاعب';
+  Widget _buildStartButton() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(isMyTurn ? 'دورك تمثّل!' : 'دور $pName يمثّل', style: TextStyle(fontSize: 24, color: Colors.white)),
-        const SizedBox(height: 20),
-        if (widget.isHost) ElevatedButton(onPressed: _startRound, child: const Text('ابدأ الجولة'))
+        if (_correctCount > 0) ...[
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.02),
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(color: Colors.white10),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.stars_rounded, color: Colors.amberAccent),
+                const SizedBox(width: 10),
+                Text(
+                  'النتيجة: $_correctCount ✅',
+                  style: GoogleFonts.cairo(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.amberAccent,
+                  ),
+                ),
+              ],
+            ),
+          ).animate().fadeIn().scale(),
+          const SizedBox(height: 50),
+        ],
+        GestureDetector(
+          onTap: _emitStart,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 18),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Colors.indigoAccent, Colors.blueAccent],
+              ),
+              borderRadius: BorderRadius.circular(35),
+              boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
+            ),
+            child: Text(
+              'ابدأ الغرفة 🚀',
+              style: GoogleFonts.cairo(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ).animate().scale(),
       ],
     );
-  }
-
-  void _startRound() {
-    if (!widget.isHost) return;
-    SocketService().socket.emit('charades_sync', {
-      'roomCode': widget.roomCode, 'action': 'start_round', 'shuffledWords': ['كرة قدم', 'ميسي', 'تيتانيك'],
-      'wordIndex': 0, 'correct': 0, 'skip': 0, 'secondsLeft': 60, 'currentPlayer': _currentPlayer
-    });
-  }
-
-  void _sendAnswer(bool correct) {
-    SocketService().socket.emit('game_move', {
-      'roomCode': widget.roomCode, 'gameName': 'charades', 'action': 'client_answer', 'isCorrect': correct
-    });
   }
 }

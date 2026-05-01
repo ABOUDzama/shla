@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
@@ -184,11 +184,12 @@ class _SeegaGameState extends State<SeegaGame> {
   Widget build(BuildContext context) {
     if (_showIntro) {
       return OfflineGameScaffold(
-        title: '🎮 لعبة السيجا التاريخية',
+        title: '🎮 السيجة',
         backgroundColor: const Color(0xFF3E2723),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'السيجا التاريخية',
-          icon: '🎮',
+          title: '🎮 السيجة',
+          icon: '♟️',
           description:
               'اللعبة القديمة الأصيلة اللي محتاجة ذكاء وتخطيط! السجا هي لعبة مصرية عريقة.. وزع حصواتك وفكر إزاي تحاصر خصمك وتكسب!',
           onStart: () => setState(() => _showIntro = false),
@@ -197,30 +198,18 @@ class _SeegaGameState extends State<SeegaGame> {
     }
 
     return OfflineGameScaffold(
-      title: '🎮 لعبة السيجا التاريخية',
-      backgroundColor: const Color(0xFF3E2723), // Darker Brown
+      title: '🎮 السيجة',
+      backgroundColor: Colors.brown,
+      showAi: false,
       actions: [
         IconButton(
-          icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
-          onPressed: _resetGame,
+          icon: const Icon(Icons.home, color: Colors.white70),
+          onPressed: () => setState(() => _showIntro = true),
         ),
       ],
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.center,
-            radius: 1.2,
-            colors: [
-              const Color(0xFF5D4037),
-              const Color(0xFF3E2723),
-              const Color(0xFF21130D), // Much darker for contrast
-            ],
-            stops: const [0.0, 0.4, 1.0],
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 24),
               padding: const EdgeInsets.all(16),
@@ -424,7 +413,6 @@ class _SeegaGameState extends State<SeegaGame> {
               ).animate().fadeIn().scale(),
           ],
         ),
-      ),
     );
   }
 }

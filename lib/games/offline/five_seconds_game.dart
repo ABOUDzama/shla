@@ -9,6 +9,7 @@ import '../../data/five_seconds_data.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
+import '../../services/audio_service.dart';
 
 class FiveSecondsGame extends StatefulWidget {
   const FiveSecondsGame({super.key});
@@ -32,13 +33,11 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
   Timer? timer;
   bool showAnswer = false;
   bool isQuestionRevealed = false; // New flag for fair play
-  bool _isGeneratingAi = false;
   final List<String> _aiHistory = [];
 
   void _generateAiQuestions() async {
     if (!SettingsService.isAiEnabled) return;
 
-    setState(() => _isGeneratingAi = true);
     try {
       final content = await AIService.fetchGameContent(
         'five_seconds',
@@ -83,7 +82,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
         );
       }
     } finally {
-      setState(() => _isGeneratingAi = false);
+      // Done
     }
   }
 
@@ -156,12 +155,14 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
       setState(() {
         timeLeft--;
       });
+      AudioService.playTick();
       if (timeLeft <= 0) {
         timer.cancel();
         setState(() {
           isTimerRunning = false;
           showAnswer = true;
         });
+        AudioService.playFailure();
       }
     });
   }
@@ -188,13 +189,13 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (isLoadingData || questions.isEmpty) {
       return OfflineGameScaffold(
-        title: '⏱️ خمس ثواني',
+        title: '⏱️ تحدي الـ ٥ ثواني',
         backgroundColor: const Color(0xFFAD1457), // Deeper Pink
+        showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),
@@ -203,10 +204,11 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
 
     if (_showIntro) {
       return OfflineGameScaffold(
-        title: '⏱️ خمس ثواني',
+        title: '⏱️ تحدي الـ ٥ ثواني',
         backgroundColor: const Color(0xFFAD1457),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'لعبة الـ 5 ثواني',
+          title: '⏱️ تحدي الـ ٥ ثواني',
           icon: '⏱️',
           description:
               'قدامك 5 ثواني بس عشان تجاوب على السؤال! تفتكر هتلحق؟\n\nاللعبة دي محتاجة تركيز وسرعة رهيبة!',
@@ -217,26 +219,14 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
 
     final currentQuestion = questions[currentQuestionIndex];
     return OfflineGameScaffold(
-      title: '⏱️ خمس ثواني',
-      backgroundColor: const Color(0xFFAD1457),
+      title: '⏱️ تحدي الـ ٥ ثواني',
+      backgroundColor: Colors.deepOrange,
+      showAi: false,
       actions: [
-        if (SettingsService.isAiEnabled)
-          IconButton(
-            icon: _isGeneratingAi
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Icon(Icons.auto_awesome),
-            tooltip: 'توليد بالذكاء الاصطناعي',
-            onPressed: isTimerRunning || _isGeneratingAi
-                ? null
-                : _generateAiQuestions,
-          ),
+        IconButton(
+          icon: const Icon(Icons.home, color: Colors.white70),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ],
       body: Container(
         decoration: const BoxDecoration(
@@ -461,6 +451,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
                 scoreService.addScore(scoreService.players[0].name, 1);
               }
               timer?.cancel();
+              AudioService.playSuccess();
               setState(() {
                 isTimerRunning = false;
                 showAnswer = true;
@@ -520,5 +511,3 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
     );
   }
 }
-
-

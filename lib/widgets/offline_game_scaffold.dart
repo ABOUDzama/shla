@@ -1,7 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../screens/settings_screen.dart';
+import '../services/settings_service.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class OfflineGameScaffold extends StatelessWidget {
   final String title;
@@ -9,6 +10,8 @@ class OfflineGameScaffold extends StatelessWidget {
   final Color backgroundColor;
   final List<Widget>? actions;
   final Widget? floatingActionButton;
+  final VoidCallback? onAiRefresh;
+  final bool showAi;
 
   const OfflineGameScaffold({
     super.key,
@@ -17,6 +20,8 @@ class OfflineGameScaffold extends StatelessWidget {
     required this.backgroundColor,
     this.actions,
     this.floatingActionButton,
+    this.onAiRefresh,
+    this.showAi = false,
   });
 
   @override
@@ -24,24 +29,38 @@ class OfflineGameScaffold extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        flexibleSpace: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(color: backgroundColor.withValues(alpha: 0.2)),
-          ),
-        ),
+        flexibleSpace: Container(color: backgroundColor.withValues(alpha: 0.8)),
         title: Text(
           title,
+          textAlign: TextAlign.center,
           style: GoogleFonts.cairo(
             fontWeight: FontWeight.w900,
-            fontSize: 22,
+            fontSize: 18, // Reduced from 22
             letterSpacing: 0.5,
+            color: Colors.white,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         actions: [
+          if (SettingsService.isAiEnabled && showAi)
+            IconButton(
+                  icon: const Icon(
+                    Icons.auto_awesome,
+                    color: Colors.blueAccent,
+                  ),
+                  onPressed: onAiRefresh ?? () {},
+                )
+                .animate(onPlay: (c) => c.repeat(reverse: true))
+                .shimmer(duration: 3.seconds, color: Colors.white30)
+                .scale(
+                  begin: const Offset(1, 1),
+                  end: const Offset(1.1, 1.1),
+                  duration: 2.seconds,
+                ),
           ...?actions,
           IconButton(
             icon: const Icon(Icons.settings_outlined),
@@ -71,45 +90,9 @@ class OfflineGameScaffold extends StatelessWidget {
             ),
           ),
           // Game specific color tint
-          Container(
-            color: backgroundColor.withValues(alpha: 0.15),
-          ),
-          // Top highlight blob (Neon effect)
-          Positioned(
-            top: -100,
-            right: -80,
-            child: Container(
-              width: 350,
-              height: 350,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    backgroundColor.withValues(alpha: 0.25),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // Bottom highlight blob
-          Positioned(
-            bottom: -80,
-            left: -80,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFF6366F1).withValues(alpha: 0.15), // Indigo glow
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
+          Container(color: backgroundColor.withValues(alpha: 0.15)),
+          // Game specific color tint
+          Container(color: backgroundColor.withValues(alpha: 0.15)),
           // Main Content
           SafeArea(child: body),
         ],

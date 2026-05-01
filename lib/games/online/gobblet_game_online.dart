@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/base_game_scaffold.dart';
+import '../../services/audio_service.dart';
 import '../../services/socket_service.dart';
+import '../../services/haptic_service.dart';
 
 class Piece {
   final int player; // 1 for Red, 2 for Blue
@@ -43,24 +46,30 @@ class _GobbletGameOnlineState extends State<GobbletGameOnline> {
     super.initState();
     _initGame();
     SocketService().socket.on('gobblet_state_updated', _onGameMove);
+    SocketService().socket.on('game_move', _onGameMove);
     SocketService().socket.on('reset_game', _onResetGame);
   }
-
 
   @override
   void dispose() {
     SocketService().socket.off('gobblet_state_updated', _onGameMove);
+    SocketService().socket.off('game_move', _onGameMove);
     SocketService().socket.off('reset_game', _onResetGame);
     super.dispose();
   }
 
   void _onGameMove(dynamic data) {
     if (!mounted) return;
-    String type = data['type'];
+
+    final Map<String, dynamic> move = (data is Map && data['moveData'] != null)
+        ? Map<String, dynamic>.from(data['moveData'])
+        : Map<String, dynamic>.from(data);
+
+    String? type = move['type'];
     if (type == 'tap') {
-      _processTap(data['row'], data['col'], isFromNetwork: true);
+      _processTap(move['row'], move['col'], isFromNetwork: true);
     } else if (type == 'inventory') {
-      _processInventorySelect(data['sizeIndex'], isFromNetwork: true);
+      _processInventorySelect(move['sizeIndex'], isFromNetwork: true);
     }
   }
 
@@ -73,8 +82,8 @@ class _GobbletGameOnlineState extends State<GobbletGameOnline> {
     setState(() {
       _board = List.generate(3, (_) => List.generate(3, (_) => []));
       _inventory = [
-        [2, 2, 2],
-        [2, 2, 2],
+        [3, 3, 3],
+        [3, 3, 3],
       ];
       _currentPlayer = 1;
       _isGameOver = false;
@@ -92,7 +101,9 @@ class _GobbletGameOnlineState extends State<GobbletGameOnline> {
     if (_isGameOver) return;
 
     if (!isFromNetwork) {
-      bool myTurn = (widget.isHost && _currentPlayer == 1) || (!widget.isHost && _currentPlayer == 2);
+      bool myTurn =
+          (widget.isHost && _currentPlayer == 1) ||
+          (!widget.isHost && _currentPlayer == 2);
       if (!myTurn) return;
     }
 
@@ -125,6 +136,8 @@ class _GobbletGameOnlineState extends State<GobbletGameOnline> {
           _checkWin();
           if (!_isGameOver) {
             _currentPlayer = _currentPlayer == 1 ? 2 : 1;
+            HapticService.vibrate();
+            AudioService.playTick();
             _selectedRow = null;
             _selectedCol = null;
             _selectedPiece = null;
@@ -152,7 +165,9 @@ class _GobbletGameOnlineState extends State<GobbletGameOnline> {
   void _processInventorySelect(int sizeIndex, {required bool isFromNetwork}) {
     if (_isGameOver) return;
     if (!isFromNetwork) {
-      bool myTurn = (widget.isHost && _currentPlayer == 1) || (!widget.isHost && _currentPlayer == 2);
+      bool myTurn =
+          (widget.isHost && _currentPlayer == 1) ||
+          (!widget.isHost && _currentPlayer == 2);
       if (!myTurn) return;
     }
 
@@ -172,20 +187,36 @@ class _GobbletGameOnlineState extends State<GobbletGameOnline> {
   }
 
   void _checkWin() {
-    Piece? getTop(int r, int c) => _board[r][c].isNotEmpty ? _board[r][c].last : null;
+    Piece? getTop(int r, int c) =>
+        _board[r][c].isNotEmpty ? _board[r][c].last : null;
     bool checkLine(Piece? p1, Piece? p2, Piece? p3) {
       if (p1 == null || p2 == null || p3 == null) return false;
       return p1.player == p2.player && p2.player == p3.player;
     }
 
     for (int i = 0; i < 3; i++) {
-      if (checkLine(getTop(i, 0), getTop(i, 1), getTop(i, 2))) { _endGame(getTop(i, 0)!.player); return; }
-      if (checkLine(getTop(0, i), getTop(1, i), getTop(2, i))) { _endGame(getTop(0, i)!.player); return; }
+      if (checkLine(getTop(i, 0), getTop(i, 1), getTop(i, 2))) {
+        _endGame(getTop(i, 0)!.player);
+        return;
+      }
+      if (checkLine(getTop(0, i), getTop(1, i), getTop(2, i))) {
+        _endGame(getTop(0, i)!.player);
+        return;
+      }
     }
-    if (checkLine(getTop(0, 0), getTop(1, 1), getTop(2, 2))) { _endGame(getTop(0, 0)!.player); return; }
-    if (checkLine(getTop(0, 2), getTop(1, 1), getTop(2, 0))) { _endGame(getTop(0, 2)!.player); return; }
+    if (checkLine(getTop(0, 0), getTop(1, 1), getTop(2, 2))) {
+      _endGame(getTop(0, 0)!.player);
+      return;
+    }
+    if (checkLine(getTop(0, 2), getTop(1, 1), getTop(2, 0))) {
+      _endGame(getTop(0, 2)!.player);
+      return;
+    }
 
-    if (_inventory.every((p) => p.every((count) => count == 0)) && !_isGameOver) { _endGame(null); }
+    if (_inventory.every((p) => p.every((count) => count == 0)) &&
+        !_isGameOver) {
+      _endGame(null);
+    }
   }
 
   void _endGame(int? winnerPlayer) {
@@ -195,111 +226,305 @@ class _GobbletGameOnlineState extends State<GobbletGameOnline> {
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         title: Text(
-          winnerPlayer != null ? '🎉 مبروك اللاعب ${winnerPlayer == 1 ? "الأحمر" : "الأزرق"} فاز!' : 'تعادل!',
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold), textAlign: TextAlign.center,
+          winnerPlayer != null
+              ? '🎉 مبروك اللاعب ${winnerPlayer == 1 ? "الأحمر" : "الأزرق"} فاز!'
+              : 'تعادل!',
+          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
-        content: Text('تحب تلعب دور تاني؟', style: GoogleFonts.cairo(), textAlign: TextAlign.center),
+        content: Text(
+          'تحب تلعب دور تاني؟',
+          style: GoogleFonts.cairo(),
+          textAlign: TextAlign.center,
+        ),
         actionsAlignment: MainAxisAlignment.center,
         actions: [
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
               _initGame();
-              SocketService().socket.emit('reset_game', {'roomCode': widget.roomCode});
+              SocketService().socket.emit('reset_game', {
+                'roomCode': widget.roomCode,
+              });
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, foregroundColor: Colors.white),
-            child: Text('العب تاني', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(
+              'العب تاني',
+              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPieceWidget(Piece piece, {bool isSelected = false}) {
-    double sizePx = 0;
-    switch (piece.size) {
-      case 1: sizePx = 35; break;
-      case 2: sizePx = 55; break;
-      case 3: sizePx = 75; break;
-    }
-    Color baseColor = piece.player == 1 ? const Color(0xFFE53935) : const Color(0xFF1E88E5);
-    Color topColor = piece.player == 1 ? const Color(0xFFFF8A80) : const Color(0xFF82B1FF);
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300), width: sizePx, height: sizePx,
-      decoration: BoxDecoration(
-        color: baseColor, shape: BoxShape.circle,
-        gradient: RadialGradient(colors: [topColor, baseColor], center: const Alignment(-0.3, -0.5), radius: 0.8),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: isSelected ? 8 : 4, offset: Offset(0, isSelected ? 6 : 3)),
-          if (isSelected) BoxShadow(color: Colors.yellowAccent.withValues(alpha: 0.6), blurRadius: 15, spreadRadius: 5),
-        ],
-        border: isSelected ? Border.all(color: Colors.yellowAccent, width: 3) : null,
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(top: sizePx * 0.25, child: Row(mainAxisSize: MainAxisSize.min, children: [_buildEye(sizePx), SizedBox(width: sizePx * 0.1), _buildEye(sizePx)])),
-          Positioned(bottom: sizePx * 0.15, child: Container(width: sizePx * 0.6, height: sizePx * 0.25, decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(sizePx * 0.3), bottomRight: Radius.circular(sizePx * 0.3))), child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: List.generate(3, (index) => Container(width: sizePx * 0.12, height: sizePx * 0.15, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(sizePx * 0.05), bottomRight: Radius.circular(sizePx * 0.05)))))))),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEye(double sizePx) {
-    return Container(width: sizePx * 0.25, height: sizePx * 0.25, decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle), child: Center(child: Container(margin: EdgeInsets.only(top: sizePx * 0.05, right: sizePx * 0.05), width: sizePx * 0.1, height: sizePx * 0.1, decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle))));
-  }
-
   @override
   Widget build(BuildContext context) {
     return BaseGameScaffold(
-      title: 'الكبير ياكل الصغير (أونلاين)',
-      backgroundColor: Colors.orange.shade50,
+      isHost: widget.isHost,
+      gameName: 'gobblet',
+      title: 'جووبليت (أونلاين)',
+      backgroundColor: const Color(0xFF0F172A),
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,
+      showAi: false,
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 16),
-            Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: _buildInventory(2)),
+            const SizedBox(height: 20),
+            _buildInventoryUI(2), // Blue Player (Top)
             const Spacer(),
-            Container(margin: const EdgeInsets.symmetric(horizontal: 24), padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.orange.shade400, borderRadius: BorderRadius.circular(24), boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 10))]), child: AspectRatio(aspectRatio: 1, child: Column(children: List.generate(3, (row) => Expanded(child: Row(children: List.generate(3, (col) => Expanded(child: _buildGridCell(row, col))))))))),
+            _buildBoardUI(),
             const Spacer(),
-            Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: _buildInventory(1)),
-            const SizedBox(height: 24),
+            _buildInventoryUI(1), // Red Player (Bottom)
+            if (_isGameOver) ...[
+              const SizedBox(height: 20),
+              _buildResetButton(),
+            ],
+            const SizedBox(height: 30),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildGridCell(int row, int col) {
-    final stack = _board[row][col];
-    final topPiece = stack.isNotEmpty ? stack.last : null;
-    final isSelected = _selectedRow == row && _selectedCol == col;
-    return GestureDetector(onTap: () => _handleTap(row, col), child: Container(margin: const EdgeInsets.all(4), decoration: BoxDecoration(color: Colors.orange.shade100, borderRadius: BorderRadius.circular(16), border: Border.all(color: isSelected ? Colors.yellowAccent : Colors.orange.shade300, width: isSelected ? 4 : 2), boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 2))]), child: Center(child: topPiece != null ? _buildPieceWidget(topPiece, isSelected: isSelected) : null)));
-  }
+  Widget _buildInventoryUI(int player) {
+    bool isMe =
+        (widget.isHost && player == 1) || (!widget.isHost && player == 2);
+    bool isTurn = _currentPlayer == player && !_isGameOver && isMe;
 
-  Widget _buildInventory(int player) {
-    final isOnlineMyTurn = (widget.isHost && player == 1) || (!widget.isHost && player == 2);
-    final isCurrent = _currentPlayer == player && !_isGameOver && isOnlineMyTurn;
-    final color = player == 1 ? Colors.red.shade50 : Colors.blue.shade50;
-    final borderColor = player == 1 ? Colors.red.shade300 : Colors.blue.shade300;
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(color: isCurrent ? color : Colors.grey.shade100, borderRadius: BorderRadius.circular(20), border: Border.all(color: isCurrent ? borderColor : Colors.transparent, width: 3)),
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isTurn
+            ? Colors.white.withValues(alpha: 0.08)
+            : Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: isTurn
+              ? (player == 1 ? Colors.redAccent : Colors.blueAccent).withValues(
+                  alpha: 0.5,
+                )
+              : Colors.white10,
+          width: 2,
+        ),
+      ),
       child: Column(
         children: [
-          Text((widget.isHost && player == 1) || (!widget.isHost && player == 2) ? 'أنت (${player == 1 ? 'أحمر' : 'أزرق'})' : '${widget.opponentName ?? 'المنافس'} (${player == 1 ? 'أحمر' : 'أزرق'})', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: player == 1 ? Colors.red.shade800 : Colors.blue.shade800)),
-          const SizedBox(height: 8),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: List.generate(3, (sizeIndex) {
-            final count = _inventory[player - 1][sizeIndex];
-            final isSelected = _selectedRow == -1 && _selectedCol == sizeIndex && _currentPlayer == player;
-            return GestureDetector(onTap: isCurrent ? () => _selectFromInventory(sizeIndex) : null, child: Opacity(opacity: count > 0 ? 1.0 : 0.3, child: Column(children: [_buildPieceWidget(Piece(player: player, size: sizeIndex + 1), isSelected: isSelected), const SizedBox(height: 4), Text('x$count', style: GoogleFonts.cairo(fontWeight: FontWeight.bold))])));
-          })),
+          Text(
+            isMe
+                ? 'إمداداتك (أنت)'
+                : 'إمدادات ${widget.opponentName ?? "الخصم"}',
+            style: GoogleFonts.cairo(
+              color: player == 1 ? Colors.redAccent : Colors.blueAccent,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(3, (sizeIndex) {
+              final count = _inventory[player - 1][sizeIndex];
+              final isSelected =
+                  _selectedRow == -1 &&
+                  _selectedCol == sizeIndex &&
+                  _currentPlayer == player;
+
+              return GestureDetector(
+                    onTap: isTurn
+                        ? () => _selectFromInventory(sizeIndex)
+                        : null,
+                    child: Column(
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            _buildPieceIcon(
+                              player,
+                              sizeIndex + 1,
+                              isSelected: isSelected,
+                            ),
+                            if (count == 0)
+                              Container(
+                                width: 40,
+                                height: 40,
+                                color: Colors.transparent,
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white24,
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black26,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            'x$count',
+                            style: GoogleFonts.cairo(
+                              color: Colors.white70,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  .animate(target: isSelected ? 1 : 0)
+                  .scale(
+                    begin: const Offset(1, 1),
+                    end: const Offset(1.1, 1.1),
+                  );
+            }),
+          ),
         ],
       ),
     );
+  }
+
+  Widget _buildBoardUI() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(40),
+        border: Border.all(color: Colors.white10, width: 2),
+        boxShadow: [const BoxShadow(color: Colors.black26, blurRadius: 10)],
+      ),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Column(
+          children: List.generate(
+            3,
+            (row) => Expanded(
+              child: Row(
+                children: List.generate(
+                  3,
+                  (col) => Expanded(child: _buildCellUI(row, col)),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCellUI(int row, int col) {
+    final stack = _board[row][col];
+    final topPiece = stack.isNotEmpty ? stack.last : null;
+    final isSelected = _selectedRow == row && _selectedCol == col;
+
+    return GestureDetector(
+      onTap: () => _handleTap(row, col),
+      child: Container(
+        margin: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.02),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? Colors.amberAccent : Colors.white10,
+            width: isSelected ? 3 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.amberAccent.withValues(alpha: 0.2),
+                    blurRadius: 10,
+                  ),
+                ]
+              : null,
+        ),
+        child: Center(
+          child: topPiece != null
+              ? _buildPieceIcon(
+                  topPiece.player,
+                  topPiece.size,
+                  isSelected: isSelected,
+                )
+              : null,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPieceIcon(int player, int size, {bool isSelected = false}) {
+    double baseSize = 35.0 + (size - 1) * 20.0;
+
+    return Container(
+          width: baseSize,
+          height: baseSize,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              center: const Alignment(-0.3, -0.3),
+              radius: 0.8,
+              colors: player == 1
+                  ? [const Color(0xFFF87171), const Color(0xFFB91C1C)]
+                  : [const Color(0xFF60A5FA), const Color(0xFF1D4ED8)],
+            ),
+            border: Border.all(color: Colors.white24, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: (player == 1 ? Colors.redAccent : Colors.blueAccent)
+                    .withValues(alpha: isSelected ? 0.6 : 0.3),
+                blurRadius: isSelected ? 20 : 10,
+                spreadRadius: isSelected ? 2 : 0,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Icon(
+              Icons.lens,
+              size: baseSize * 0.4,
+              color: Colors.white.withValues(alpha: 0.2),
+            ),
+          ),
+        )
+        .animate(target: isSelected ? 1 : 0)
+        .shimmer(duration: const Duration(seconds: 2))
+        .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1));
+  }
+
+  Widget _buildResetButton() {
+    return GestureDetector(
+      onTap: () {
+        _initGame();
+        SocketService().socket.emit('reset_game', {
+          'roomCode': widget.roomCode,
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: Colors.white12),
+        ),
+        child: Text(
+          'العب مرة ثانية 🔄',
+          style: GoogleFonts.cairo(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.orangeAccent,
+          ),
+        ),
+      ),
+    ).animate().fadeIn();
   }
 }

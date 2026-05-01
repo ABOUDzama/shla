@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import 'package:vibration/vibration.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../services/raw_data_manager.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
+import '../../services/audio_service.dart';
+import '../../services/haptic_service.dart';
 
 class TickTockBoom extends StatefulWidget {
   const TickTockBoom({super.key});
@@ -29,13 +30,11 @@ class _TickTockBoomState extends State<TickTockBoom>
 
   Map<String, List<String>> categoryLetters = {};
   Map<String, Map<String, List<String>>> allExamples = {};
-  bool _isGeneratingAi = false;
   final List<String> _aiHistory = [];
 
   void _generateAiContent() async {
     if (!SettingsService.isAiEnabled) return;
 
-    setState(() => _isGeneratingAi = true);
     try {
       final content = await AIService.fetchGameContent(
         'letter_bomb',
@@ -91,7 +90,7 @@ class _TickTockBoomState extends State<TickTockBoom>
         );
       }
     } finally {
-      setState(() => _isGeneratingAi = false);
+      // Done
     }
   }
 
@@ -508,20 +507,17 @@ class _TickTockBoomState extends State<TickTockBoom>
       setState(() {
         tickCount++;
       });
+      AudioService.playTick();
 
       // Vibration intensity increases as we get closer to explosion
       final remaining = explosionTime - tickCount;
       if (remaining <= 5 && remaining > 0) {
         // Short increasing vibrations as countdown reaches end
-        Vibration.hasVibrator().then((has) {
-          if (has == true) {
-            final duration = 50 + ((5 - remaining) * 30);
-            Vibration.vibrate(
-              duration: duration,
-              amplitude: 80 + ((5 - remaining) * 35),
-            );
-          }
-        });
+        final vDuration = 50 + ((5 - remaining) * 30);
+        HapticService.vibrate(
+          duration: vDuration,
+          amplitude: 80 + ((5 - remaining) * 35),
+        );
       }
 
       if (tickCount >= explosionTime) {
@@ -536,13 +532,10 @@ class _TickTockBoomState extends State<TickTockBoom>
       hasExploded = true;
       isPlaying = false;
     });
+    AudioService.playExplosion();
     _explosionController.forward(from: 0);
     // Strong explosion vibration
-    Vibration.hasVibrator().then((has) {
-      if (has == true) {
-        Vibration.vibrate(pattern: [0, 400, 100, 400, 100, 600]);
-      }
-    });
+    HapticService.vibrate(pattern: [0, 400, 100, 400, 100, 600]);
   }
 
   void resetGame() {
@@ -555,7 +548,6 @@ class _TickTockBoomState extends State<TickTockBoom>
     });
     timer?.cancel();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -572,24 +564,12 @@ class _TickTockBoomState extends State<TickTockBoom>
     return OfflineGameScaffold(
       title: '💣 قنبلة الحروف',
       backgroundColor: hasExploded ? Colors.black : const Color(0xFFC62828),
+      showAi: false,
       actions: [
-        if (SettingsService.isAiEnabled)
-          IconButton(
-            icon: _isGeneratingAi
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Icon(Icons.auto_awesome),
-            tooltip: 'توليد بالذكاء الاصطناعي',
-            onPressed: isPlaying || hasExploded || _isGeneratingAi
-                ? null
-                : _generateAiContent,
-          ),
+        IconButton(
+          icon: const Icon(Icons.home, color: Colors.white70),
+          onPressed: resetGame,
+        ),
       ],
       body: SafeArea(
         child: Center(
@@ -607,24 +587,7 @@ class _TickTockBoomState extends State<TickTockBoom>
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: resetGame,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withValues(alpha: 0.1),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 15,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: const BorderSide(color: Colors.white24),
-                    ),
-                  ),
-                  child: const Text('إيقاف اللعبة'),
-                ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 50),
                 ElevatedButton.icon(
                   onPressed: startGame,
                   style: ElevatedButton.styleFrom(
@@ -818,5 +781,3 @@ class _TickTockBoomState extends State<TickTockBoom>
     return letterExamples.take(3).map((e) => '• $e').join('\n');
   }
 }
-
-

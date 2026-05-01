@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
@@ -84,10 +84,10 @@ class _GobbletGameState extends State<GobbletGame> {
   void _initGame() {
     setState(() {
       _board = List.generate(3, (_) => List.generate(3, (_) => []));
-      // 2 small, 2 medium, 2 large per player
+      // 3 small, 3 medium, 3 large per player
       _inventory = [
-        [2, 2, 2], // Player 1 (Red)
-        [2, 2, 2], // Player 2 (Blue)
+        [3, 3, 3], // Player 1 (Red)
+        [3, 3, 3], // Player 2 (Blue)
       ];
       _currentPlayer = 1;
       _isGameOver = false;
@@ -535,11 +535,12 @@ class _GobbletGameState extends State<GobbletGame> {
   Widget build(BuildContext context) {
     if (_showIntro) {
       return OfflineGameScaffold(
-        title: '👾 الكبير ياكل الصغير',
-        backgroundColor: Colors.orange.shade50,
+        title: '👾 جوبلت',
+        backgroundColor: const Color(0xFF311B92),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'الكبير ياكل الصغير',
-          icon: '👾',
+          title: '👾 جوبلت',
+          icon: '🔵',
           description:
               'اللعبة الاستراتيجية الممتعة! حاول تعمل صف من تلات قطع، بس خلي بالك.. القطع الكبيرة ممكن تاكل القطع الصغيرة!\n\nمين هيعرف يسيطر على البورد؟',
           onStart: () => setState(() => _showIntro = false),
@@ -548,8 +549,9 @@ class _GobbletGameState extends State<GobbletGame> {
     }
 
     return OfflineGameScaffold(
-      title: 'الكبير ياكل الصغير',
-      backgroundColor: Colors.orange.shade50,
+      title: '👾 جوبلت',
+      backgroundColor: const Color(0xFF311B92),
+      showAi: false,
       body: SafeArea(
         child: Column(
           children: [

@@ -1,11 +1,3 @@
 node_modules/
+elshla/
 *.class
-build/
-.dart_tool/
-.packages
-.pub-cache/
-.pub/
-android/app/google-services.json
-backend/serviceAccountKey.json
-backend/social.json
-*.json.json

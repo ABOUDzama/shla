@@ -17,15 +17,9 @@ class ScoreboardScreen extends StatelessWidget {
         final players = scoreService.rankedPlayers;
 
         return BaseGameScaffold(
-          title: '🏆 لوحة الشرف',
+          title: 'لوحة الشرف',
           backgroundColor: const Color(0xFF121212),
           actions: [
-            if (players.isNotEmpty)
-              IconButton(
-                icon: const Icon(Icons.refresh, color: Colors.white70),
-                tooltip: 'تصفير النقاط',
-                onPressed: () => _showResetConfirm(context, scoreService),
-              ),
             if (players.isNotEmpty)
               IconButton(
                 icon: const Icon(Icons.delete_sweep, color: Colors.redAccent),
@@ -166,36 +160,6 @@ class ScoreboardScreen extends StatelessWidget {
         ),
       ),
     ).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.2, end: 0);
-  }
-
-  void _showResetConfirm(BuildContext context, ScoreService service) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.grey[900],
-        title: Text(
-          'تصفير النقاط؟',
-          style: GoogleFonts.cairo(color: Colors.white),
-        ),
-        content: Text(
-          'متأكد إنك عايز تخلي كل النقط صفر؟',
-          style: GoogleFonts.cairo(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('إلغاء'),
-          ),
-          TextButton(
-            onPressed: () {
-              service.resetScores();
-              Navigator.pop(ctx);
-            },
-            child: const Text('تصفير', style: TextStyle(color: Colors.amber)),
-          ),
-        ],
-      ),
-    );
   }
 
   void _showClearConfirm(BuildContext context, ScoreService service) {

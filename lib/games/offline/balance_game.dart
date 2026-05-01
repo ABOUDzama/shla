@@ -195,10 +195,11 @@ class _BalanceGameState extends State<BalanceGame> {
   Widget build(BuildContext context) {
     if (_showIntro) {
       return OfflineGameScaffold(
-        title: '⚖️ الميزان',
-        backgroundColor: Colors.teal,
+        title: '⚖️ تحدي التوازن',
+        backgroundColor: const Color(0xFF004D40),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'الميزان',
+          title: '⚖️ تحدي التوازن',
           icon: '⚖️',
           description:
               'حافظ على الكرة في النص! حط الموبايل على إيدك وحاول متخليش الكرة توصل للحافة أو تخبط في العوائق!',
@@ -211,8 +212,9 @@ class _BalanceGameState extends State<BalanceGame> {
     final fullH = MediaQuery.of(context).size.height - 300;
 
     return OfflineGameScaffold(
-      title: '⚖️ الميزان',
-      backgroundColor: Colors.teal,
+      title: '⚖️ تحدي التوازن',
+      backgroundColor: const Color(0xFF004D40),
+      showAi: false,
       body: Stack(
         children: [
           Center(
@@ -338,7 +340,7 @@ class _BalanceGameState extends State<BalanceGame> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        icon: const Icon(Icons.refresh_rounded),
+                        icon: const Icon(Icons.play_arrow_rounded),
                         label: const Text('العب تاني'),
                       ),
                     ],

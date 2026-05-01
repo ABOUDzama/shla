@@ -7,8 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../services/raw_data_manager.dart';
 import '../../services/ai_service.dart';
-import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
+import '../../services/audio_service.dart';
 
 class CharadesGame extends StatefulWidget {
   const CharadesGame({super.key});
@@ -19,13 +19,9 @@ class CharadesGame extends StatefulWidget {
 class _CharadesGameState extends State<CharadesGame> {
   Map<String, List<String>> categoryWords = {};
   bool isLoadingData = true;
-  bool _isGeneratingAi = false;
   final List<String> _aiHistory = [];
 
   void _generateAiContent() async {
-    if (!SettingsService.isAiEnabled) return;
-
-    setState(() => _isGeneratingAi = true);
     try {
       final content = await AIService.fetchGameContent(
         'charades',
@@ -88,7 +84,7 @@ class _CharadesGameState extends State<CharadesGame> {
         ),
       );
     } finally {
-      setState(() => _isGeneratingAi = false);
+      // Done
     }
   }
 
@@ -374,13 +370,14 @@ class _CharadesGameState extends State<CharadesGame> {
   void _startRound() {
     if (_selectedCategories.isEmpty) return;
 
-    _shuffledWords = [];
-    for (String cat in _selectedCategories) {
-      if (categoryWords.containsKey(cat)) {
-        _shuffledWords.addAll(categoryWords[cat]!);
+    if (_shuffledWords.isEmpty) {
+      for (String cat in _selectedCategories) {
+        if (categoryWords.containsKey(cat)) {
+          _shuffledWords.addAll(categoryWords[cat]!);
+        }
       }
+      _shuffledWords.shuffle(_rand);
     }
-    _shuffledWords.shuffle(_rand);
 
     if (_shuffledWords.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -413,8 +410,10 @@ class _CharadesGameState extends State<CharadesGame> {
           _players[_currentPlayer] =
               '${_players[_currentPlayer].split('|').first}|$_correct';
         }
+        AudioService.playFailure();
       } else {
         setState(() => _secondsLeft--);
+        AudioService.playTick();
       }
     });
   }
@@ -424,8 +423,10 @@ class _CharadesGameState extends State<CharadesGame> {
     setState(() {
       if (correct) {
         _correct++;
+        AudioService.playSuccess();
       } else {
         _skip++;
+        AudioService.playClick();
       }
       _wordIndex = (_wordIndex + 1) % _shuffledWords.length;
     });
@@ -452,13 +453,13 @@ class _CharadesGameState extends State<CharadesGame> {
     return Colors.red;
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (isLoadingData || categoryWords.isEmpty) {
       return OfflineGameScaffold(
         title: '🎭 تمثيل صامت',
         backgroundColor: const Color(0xFF1A237E),
+        showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),
@@ -468,12 +469,13 @@ class _CharadesGameState extends State<CharadesGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🎭 تمثيل صامت',
-        backgroundColor: const Color(0xFF1A237E),
+        backgroundColor: const Color(0xFF1A1A2E),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'تمثيل صامت',
-          icon: '🎭',
+          title: '🎭 تمثيل صامت',
+          icon: '🤫',
           description:
-              'مثّل الكلمة من غير ما تتكلم!\n\nفريقك لازم يخمّن الكلمة في 60 ثانية بس. ممنوع الكلام أو الإشارات الصوتية!',
+              'اللعبة اللي بتبين مواهب التمثيل اللي جواك! مثّل الكلمة لفريقك من غير ما تنطق ولا حرف.. أسرع فريق يجمع نقط هو الكسبان!',
           onStart: () => setState(() => _showIntro = false),
         ),
       );
@@ -482,24 +484,8 @@ class _CharadesGameState extends State<CharadesGame> {
     if (!_started) {
       return OfflineGameScaffold(
         title: '🎭 تمثيل صامت',
-        backgroundColor: const Color(0xFF1A237E),
-        actions: [
-          if (SettingsService.isAiEnabled)
-            IconButton(
-              icon: _isGeneratingAi
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Icon(Icons.auto_awesome),
-              tooltip: 'توليد بالذكاء الاصطناعي',
-              onPressed: _isGeneratingAi ? null : _generateAiContent,
-            ),
-        ],
+        backgroundColor: const Color(0xFF1E3A8A),
+        showAi: false,
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -602,6 +588,16 @@ class _CharadesGameState extends State<CharadesGame> {
                                             );
                                             _currentPlayer = 0;
                                             _started = true;
+                                            
+                                            // تهيئة الكلمات وتوزيعه مرة واحدة لكل اللعبة
+                                            _shuffledWords = [];
+                                            for (String cat in _selectedCategories) {
+                                              if (categoryWords.containsKey(cat)) {
+                                                _shuffledWords.addAll(categoryWords[cat]!);
+                                              }
+                                            }
+                                            _shuffledWords.shuffle(_rand);
+                                            _wordIndex = 0;
                                           });
                                         },
                                       ),
@@ -649,7 +645,8 @@ class _CharadesGameState extends State<CharadesGame> {
 
     return OfflineGameScaffold(
       title: '🎭 تمثيل صامت',
-      backgroundColor: const Color(0xFF1A237E),
+      backgroundColor: const Color(0xFF1E398D),
+      showAi: false,
       actions: [
         IconButton(
           icon: const Icon(Icons.home, color: Colors.white70),
@@ -1006,7 +1003,7 @@ class _CharadesGameState extends State<CharadesGame> {
                       else
                         ElevatedButton.icon(
                           onPressed: _startRound,
-                          icon: const Icon(Icons.refresh),
+                          icon: const Icon(Icons.play_arrow),
                           label: Text(
                             'العب تاني',
                             style: GoogleFonts.cairo(
@@ -1037,5 +1034,3 @@ class _CharadesGameState extends State<CharadesGame> {
     );
   }
 }
-
-

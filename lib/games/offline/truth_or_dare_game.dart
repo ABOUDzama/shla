@@ -9,6 +9,7 @@ import '../../services/ai_service.dart';
 import '../../widgets/premium_loading_indicator.dart';
 import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
+import '../../services/audio_service.dart';
 
 class TruthOrDareGame extends StatefulWidget {
   const TruthOrDareGame({super.key});
@@ -470,6 +471,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
         }
         _currentCard = _shuffledDares[_dareIndex++];
       }
+      AudioService.playClick();
     });
   }
 
@@ -481,12 +483,11 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (isLoadingData || truths.isEmpty || dares.isEmpty) {
       return OfflineGameScaffold(
-        title: '🎲 حقيقة أم جرأة',
+        title: '🎲 صراحة ولا جرأة',
         backgroundColor: const Color(0xFFB71C1C),
         body: const PremiumLoadingIndicator(message: 'جاري تحضير التحديات...'),
       );
@@ -494,11 +495,12 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
 
     if (_showIntro) {
       return OfflineGameScaffold(
-        title: '🎲 حقيقة أم جرأة',
-        backgroundColor: const Color(0xFFB71C1C),
+        title: '🎲 صراحة ولا جرأة',
+        backgroundColor: const Color(0xFF4A148C),
+        showAi: false,
         body: GameIntroWidget(
-          title: 'حقيقة أم جرأة',
-          icon: '😈',
+          title: '🎲 صراحة ولا جرأة',
+          icon: '🔥',
           description:
               'اللعبة الأشهر في العالم! اختار حقيقة عشان نكشف أسرارك، أو جرأة عشان تنفذ تحديات مجنونة.\n\nمستعد تواجه الحقيقة؟',
           onStart: () => setState(() => _showIntro = false),
@@ -508,25 +510,9 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
 
     if (!_started) {
       return OfflineGameScaffold(
-        title: '🎲 حقيقة أم جرأة',
+        title: '🎲 صراحة ولا جرأة',
         backgroundColor: const Color(0xFFB71C1C),
-        actions: [
-          if (SettingsService.isAiEnabled)
-            IconButton(
-              icon: _isGeneratingAi
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Icon(Icons.auto_awesome),
-              tooltip: 'توليد بالذكاء الاصطناعي',
-              onPressed: _isGeneratingAi ? null : _generateAiContent,
-            ),
-        ],
+        showAi: false,
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -571,7 +557,11 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                               },
                             ),
                           ),
-                        );
+                        ).then((_) {
+                          if (mounted && !_started) {
+                            setState(() => _showIntro = true);
+                          }
+                        });
                       },
                       icon: const Icon(Icons.people_alt, size: 30),
                       label: Text(
@@ -609,24 +599,10 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
     }
 
     return OfflineGameScaffold(
-      title: '🎲 حقيقة أم جرأة',
-      backgroundColor: const Color(0xFFB71C1C),
+      title: '🎲 صراحة ولا جرأة',
+      backgroundColor: const Color(0xFF4A148C),
+      showAi: false,
       actions: [
-        if (SettingsService.isAiEnabled)
-          IconButton(
-            icon: _isGeneratingAi
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Icon(Icons.auto_awesome),
-            tooltip: 'توليد بالذكاء الاصطناعي',
-            onPressed: _isGeneratingAi ? null : _generateAiContent,
-          ),
         IconButton(
           icon: const Icon(Icons.home, color: Colors.white70),
           onPressed: () => setState(() {
@@ -813,7 +789,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: () => _pick(_isTruth),
-                          icon: const Icon(Icons.refresh_rounded),
+                          icon: const Icon(Icons.play_arrow),
                           label: Text(
                             'غيّر',
                             style: GoogleFonts.cairo(
@@ -867,5 +843,3 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
     );
   }
 }
-
-
