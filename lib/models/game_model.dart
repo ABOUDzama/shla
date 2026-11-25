@@ -6,6 +6,7 @@ class GameModel {
   final IconData icon;
   final Color color;
   final Widget screen;
+  final String? badge;
 
   const GameModel({
     required this.title,
@@ -13,5 +14,6 @@ class GameModel {
     required this.icon,
     required this.color,
     required this.screen,
+    this.badge,
   });
 }

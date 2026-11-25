@@ -356,7 +356,10 @@ class _GameCard extends StatelessWidget {
     return Hero(
       tag: 'game_${game.title}',
       child:
-          Container(
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(16),
@@ -381,8 +384,22 @@ class _GameCard extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: game.color.withValues(alpha: 0.1),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    game.color.withValues(alpha: 0.35),
+                                    game.color.withValues(alpha: 0.08),
+                                  ],
+                                ),
                                 shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: game.color.withValues(alpha: 0.35),
+                                    blurRadius: 18,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
                               ),
                               child: FittedBox(
                                 child: Icon(
@@ -426,7 +443,37 @@ class _GameCard extends StatelessWidget {
                     ),
                   ),
                 ),
-              )
+              ),
+              if (game.badge != null)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          game.color,
+                          game.color.withValues(alpha: 0.75),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      game.badge!,
+                      style: GoogleFonts.cairo(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          )
               .animate()
               .fadeIn(duration: 500.ms, delay: (index * 100).ms)
               .slideY(begin: 0.2, end: 0, curve: Curves.easeOutBack),

@@ -13,6 +13,7 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false; // Cairo bundled in assets/fonts
   await SettingsService.init();
   await SupabaseService.initialize();
 
