@@ -29,6 +29,13 @@ class ArcadeSectionScreen extends StatefulWidget {
     'كورة اللمسة': [2, 3, 4],
   };
 
+  /// Original illustrated covers (drawn in-house). Cards with a cover show
+  /// the artwork; the rest keep the gradient placeholder until their art
+  /// lands (tagged 'غلاف مؤقت').
+  static const Map<String, String> covers = {
+    'حية الشلة': 'assets/covers/snake_arena.png',
+  };
+
   static const Map<String, String> _emoji = {
     'أسرع رد فعل': '⚡',
     'حية الشلة': '🐍',
@@ -95,6 +102,7 @@ class _ArcadeSectionScreenState extends State<ArcadeSectionScreen> {
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, i) => _ArcadeCard(
+                  cover: ArcadeSectionScreen.covers[games[i].title],
                   game: games[i],
                   emoji: ArcadeSectionScreen._emoji[games[i].title] ?? '🎮',
                   counts:
@@ -135,7 +143,10 @@ class _ArcadeCard extends StatelessWidget {
     required this.emoji,
     required this.counts,
     required this.onTap,
+    this.cover,
   });
+
+  final String? cover;
 
   static const _emojiFallback = ['Noto Color Emoji'];
   static const _arDigits = ['١', '٢', '٣', '٤'];
@@ -177,13 +188,27 @@ class _ArcadeCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Center(
-                    child: Text(
-                      emoji,
-                      style: const TextStyle(fontSize: 46)
-                          .copyWith(fontFamilyFallback: _emojiFallback),
+                  if (cover != null)
+                    Image.asset(
+                      cover!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Center(
+                        child: Text(
+                          emoji,
+                          style: const TextStyle(fontSize: 46).copyWith(
+                              fontFamilyFallback: _emojiFallback),
+                        ),
+                      ),
+                    )
+                  else
+                    Center(
+                      child: Text(
+                        emoji,
+                        style: const TextStyle(fontSize: 46)
+                            .copyWith(fontFamilyFallback: _emojiFallback),
+                      ),
                     ),
-                  ),
+                  if (cover == null)
                   Positioned(
                     top: 6,
                     left: 6,

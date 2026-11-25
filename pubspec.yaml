@@ -61,6 +61,7 @@ flutter:
     - assets/icon.png
     - assets/games/
     - assets/tiles/
+    - assets/covers/
     - assets/avatars/
     - assets/avatars_2d/
     - assets/sounds/

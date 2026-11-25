@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/screens/home_screen.dart';
+import 'package:shella/screens/arcade_section_screen.dart';
 import 'package:shella/services/settings_service.dart';
 
 void main() {
@@ -152,6 +153,13 @@ Future<void> warmGoogleFonts(WidgetTester tester) async {
     for (var i = 0; i < 4; i++) {
       await tester.pump(const Duration(milliseconds: 400));
     }
+    final homeCtx = tester.element(find.byType(HomeScreen));
+    await tester.runAsync(() async {
+      for (final path in ArcadeSectionScreen.covers.values) {
+        await precacheImage(AssetImage(path), homeCtx);
+      }
+    });
+    await tester.pump();
     await expectLater(
       find.byType(HomeScreen),
       matchesGoldenFile('goldens/home_arcade_section.png'),
