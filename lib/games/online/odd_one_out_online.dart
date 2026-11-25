@@ -4,6 +4,7 @@ import '../../services/socket_service.dart';
 import 'dart:async';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../theme/funky_theme.dart';
 
 class OddOneOutOnline extends StatefulWidget {
   final bool isHost;
@@ -87,7 +88,7 @@ class _OddOneOutOnlineState extends State<OddOneOutOnline> {
       isHost: widget.isHost,
       gameName: 'odd_one_out',
       title: 'استخرج الغريب (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.coral,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,

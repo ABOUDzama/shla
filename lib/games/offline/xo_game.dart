@@ -5,6 +5,7 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../services/score_service.dart';
 import '../../services/socket_service.dart';
 import '../../widgets/game_intro_widget.dart';
+import '../../theme/funky_theme.dart';
 
 class TicTacToeGame extends StatefulWidget {
   final bool online;
@@ -146,7 +147,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🎯 إكس أو',
-        backgroundColor: const Color(0xFF0D1B12),
+        backgroundColor: FunkyColors.mint,
         showAi: false,
         body: GameIntroWidget(
           title: '🎯 إكس أو',

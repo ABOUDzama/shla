@@ -6,6 +6,7 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../../data/ranking_challenge_data.dart';
+import '../../theme/funky_theme.dart';
 
 /// تحدي الترتيب: a secret ranking appears shuffled, every player arranges it
 /// privately, then scores are given by closeness to the correct order.
@@ -136,7 +137,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
   Widget build(BuildContext context) {
     return OfflineGameScaffold(
       title: 'تحدي الترتيب 🔢',
-      backgroundColor: const Color(0xFF6A1B9A),
+      backgroundColor: FunkyColors.coral,
       body: switch (_phase) {
         _Phase.setup => _buildSetup(),
         _Phase.passDevice => _buildPassDevice(),
@@ -186,7 +187,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
               IconButton.filled(
                 onPressed: _addPlayer,
                 icon: const Icon(Icons.add),
-                style: IconButton.styleFrom(backgroundColor: const Color(0xFF6A1B9A)),
+                style: IconButton.styleFrom(backgroundColor: FunkyColors.coral),
               ),
             ],
           ),
@@ -330,7 +331,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: const Color(0xFF6A1B9A),
+                    backgroundColor: FunkyColors.coral,
                     child: Text('${i + 1}', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                   title: Text(_currentGuess[i], style: GoogleFonts.cairo(color: Colors.white, fontSize: 16)),

@@ -7,6 +7,7 @@ import '../../services/socket_service.dart';
 import '../../services/audio_service.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
+import '../../theme/funky_theme.dart';
 
 class ReverseQuizOnline extends StatefulWidget {
   final bool isHost;
@@ -231,7 +232,7 @@ class _ReverseQuizOnlineState extends State<ReverseQuizOnline> {
       isHost: widget.isHost,
       gameName: 'reverse_quiz',
       title: 'تحدي الإجابة المقلوبة (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.mint,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,

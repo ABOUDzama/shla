@@ -10,6 +10,7 @@ import '../../services/settings_service.dart';
 import '../../services/haptic_service.dart';
 import '../../data/who_am_i_data.dart';
 import '../../widgets/game_result_overlay.dart';
+import '../../theme/funky_theme.dart';
 
 
 class WhoAmIGameOnline extends StatefulWidget {
@@ -261,7 +262,7 @@ class _WhoAmIGameOnlineState extends State<WhoAmIGameOnline> {
       isHost: widget.isHost,
       gameName: 'who_am_i',
       title: 'من أنا؟ (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.sky,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,

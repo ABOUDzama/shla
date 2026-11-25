@@ -8,6 +8,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../services/ai_service.dart';
 import '../../services/raw_data_manager.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class OppositeDay extends StatefulWidget {
   const OppositeDay({super.key});
@@ -512,7 +513,7 @@ class _OppositeDayState extends State<OppositeDay> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🙃 عكس العكاس',
-        backgroundColor: const Color(0xFF3E2723),
+        backgroundColor: FunkyColors.lime,
         showAi: false,
         body: GameIntroWidget(
           title: '🙃 عكس العكاس',
@@ -527,7 +528,7 @@ class _OppositeDayState extends State<OppositeDay> {
     if (isLoadingData || questions.isEmpty) {
       return OfflineGameScaffold(
         title: '🙃 عكس العكاس',
-        backgroundColor: const Color(0xFF3E2723),
+        backgroundColor: FunkyColors.lime,
         showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
@@ -538,7 +539,7 @@ class _OppositeDayState extends State<OppositeDay> {
     if (!_setupDone) {
       return OfflineGameScaffold(
         title: '🙃 عكس العكاس',
-        backgroundColor: const Color(0xFF3E2723),
+        backgroundColor: FunkyColors.lime,
         showAi: false,
         actions: [
         ],
@@ -635,7 +636,7 @@ class _OppositeDayState extends State<OppositeDay> {
 
     return OfflineGameScaffold(
       title: '🙃 عكس العكاس',
-      backgroundColor: const Color(0xFF3E2723),
+      backgroundColor: FunkyColors.lime,
       showAi: false,
       onAiRefresh: _generateAiContent,
       actions: [

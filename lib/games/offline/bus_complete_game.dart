@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
+import '../../theme/funky_theme.dart';
 
 /// أتوبيس كومبليت (لعبة الأتوبيس): letter + categories, fill fast, unique
 /// answers score double. Pass-and-play on one device.
@@ -218,7 +219,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
   Widget build(BuildContext context) {
     return OfflineGameScaffold(
       title: 'أتوبيس كومبليت 🚌',
-      backgroundColor: Colors.orange,
+      backgroundColor: FunkyColors.amber,
       body: switch (_phase) {
         _Phase.setup => _buildSetup(),
         _Phase.passDevice => _buildPassDevice(),

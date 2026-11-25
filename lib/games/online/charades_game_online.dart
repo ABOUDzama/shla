@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/base_game_scaffold.dart';
 import '../../services/socket_service.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class CharadesGameOnline extends StatefulWidget {
   final bool isHost;
@@ -176,7 +177,7 @@ class _CharadesGameOnlineState extends State<CharadesGameOnline> {
       isHost: widget.isHost,
       gameName: 'charades',
       title: 'بدون كلام (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.violet,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,

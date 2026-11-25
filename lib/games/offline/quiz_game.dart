@@ -12,6 +12,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
 import '../../services/ai_cache_service.dart';
 import '../../services/played_history_service.dart';
+import '../../theme/funky_theme.dart';
 
 class QuizGame extends StatefulWidget {
   const QuizGame({super.key});
@@ -240,7 +241,7 @@ class _QuizGameState extends State<QuizGame> {
     if (isLoadingData) {
       return OfflineGameScaffold(
         title: 'تحدي المعرفة',
-        backgroundColor: const Color(0xFF0F172A),
+        backgroundColor: FunkyColors.amber,
         showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
@@ -251,7 +252,7 @@ class _QuizGameState extends State<QuizGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: 'تحدي المعرفة',
-        backgroundColor: const Color(0xFF0F172A),
+        backgroundColor: FunkyColors.amber,
         showAi: false,
         body: GameIntroWidget(
           title: 'تحدي الأسئلة الكبرى',
@@ -266,7 +267,7 @@ class _QuizGameState extends State<QuizGame> {
     if (!gameStarted) {
       return OfflineGameScaffold(
         title: 'تحدي المعرفة',
-        backgroundColor: const Color(0xFF0F172A),
+        backgroundColor: FunkyColors.amber,
         showAi: false,
         body: Center(
           child: SingleChildScrollView(
@@ -374,7 +375,7 @@ class _QuizGameState extends State<QuizGame> {
 
     return OfflineGameScaffold(
       title: 'تحدي المعرفة',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.amber,
       showAi: false,
       actions: [
         IconButton(

@@ -9,6 +9,7 @@ import '../../services/raw_data_manager.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class ReverseQuiz extends StatefulWidget {
   const ReverseQuiz({super.key});
@@ -603,7 +604,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🔄 الأسئلة المعكوسة',
-        backgroundColor: const Color(0xFF00838F),
+        backgroundColor: FunkyColors.mint,
         showAi: false,
         body: GameIntroWidget(
           title: '🔄 الأسئلة المعكوسة',
@@ -618,7 +619,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
     if (isLoadingData || questions.isEmpty) {
       return OfflineGameScaffold(
         title: '🔄 الأسئلة المعكوسة',
-        backgroundColor: const Color(0xFF00838F),
+        backgroundColor: FunkyColors.mint,
         showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
@@ -629,7 +630,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
     if (!_setupDone) {
       return OfflineGameScaffold(
         title: '🔄 الأسئلة المعكوسة',
-        backgroundColor: const Color(0xFF00838F),
+        backgroundColor: FunkyColors.mint,
         showAi: false,
         actions: [
         ],

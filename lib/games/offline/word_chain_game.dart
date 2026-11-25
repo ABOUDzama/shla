@@ -10,6 +10,7 @@ import '../../services/raw_data_manager.dart';
 import '../../services/settings_service.dart';
 import '../../services/ai_service.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class WordChainGame extends StatefulWidget {
   const WordChainGame({super.key});
@@ -438,7 +439,7 @@ class _WordChainGameState extends State<WordChainGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '⏱️ سلسلة الكلمات',
-        backgroundColor: const Color(0xFF004D40),
+        backgroundColor: FunkyColors.lime,
         showAi: false,
         body: GameIntroWidget(
           title: '⏱️ سلسلة الكلمات',
@@ -453,7 +454,7 @@ class _WordChainGameState extends State<WordChainGame> {
     if (isLoadingData || categoryWords.isEmpty) {
       return OfflineGameScaffold(
         title: '⏱️ سلسلة الكلمات',
-        backgroundColor: const Color(0xFF004D40),
+        backgroundColor: FunkyColors.lime,
         showAi: false,
         body: const PremiumLoadingIndicator(message: 'جاري ربط الكلمات...'),
       );
@@ -462,7 +463,7 @@ class _WordChainGameState extends State<WordChainGame> {
     if (!_setupDone) {
       return OfflineGameScaffold(
         title: '⏱️ سلسلة الكلمات',
-        backgroundColor: const Color(0xFF004D40), // Dark Teal
+        backgroundColor: FunkyColors.lime, // Dark Teal
         showAi: false,
         actions: const [],
         body: Center(
@@ -616,7 +617,7 @@ class _WordChainGameState extends State<WordChainGame> {
     // Game Screen
     return OfflineGameScaffold(
       title: '⏱️ سلسلة الكلمات',
-      backgroundColor: const Color(0xFF2E7D32),
+      backgroundColor: FunkyColors.lime,
       showAi: false,
       onAiRefresh: _generateAiContent,
       actions: [

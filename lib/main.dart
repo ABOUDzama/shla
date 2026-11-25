@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'services/settings_service.dart';
+import 'theme/funky_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'dart:async';
@@ -92,7 +93,7 @@ class _MyAppState extends State<MyApp> {
             Expanded(child: Text(message)),
           ],
         ),
-        backgroundColor: isError ? Colors.red.shade900 : Colors.green.shade900,
+        backgroundColor: isError ? const Color(0xFFB71C4A) : const Color(0xFF1B7A4B),
         duration: const Duration(seconds: 3),
       ),
     );
@@ -107,14 +108,15 @@ class _MyAppState extends State<MyApp> {
 
       theme: ThemeData(
         useMaterial3: true,
-        // Dark & modern theme base
-        scaffoldBackgroundColor: const Color(0xFF0F172A), // Slate 900
+        // Funky party theme base: deep space purple + vivid accents
+        scaffoldBackgroundColor: FunkyColors.bgDeep,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6366F1), // Indigo
+          seedColor: FunkyColors.violet,
           brightness: Brightness.dark,
-          primary: const Color(0xFF6366F1),
-          secondary: const Color(0xFF14B8A6), // Teal
-          surface: const Color(0xFF1E293B), // Slate 800
+          primary: FunkyColors.magenta,
+          secondary: FunkyColors.cyan,
+          tertiary: FunkyColors.lime,
+          surface: FunkyColors.card,
         ),
         textTheme: GoogleFonts.cairoTextTheme(ThemeData.dark().textTheme),
         appBarTheme: AppBarTheme(
@@ -131,19 +133,19 @@ class _MyAppState extends State<MyApp> {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF6366F1),
+            backgroundColor: FunkyColors.magenta,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(24),
             ),
             elevation: 8,
-            shadowColor: const Color(0xFF6366F1).withAlpha(150),
+            shadowColor: FunkyColors.magenta.withAlpha(150),
           ),
         ),
         snackBarTheme: SnackBarThemeData(
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFF1E293B),
+          backgroundColor: FunkyColors.cardLight,
           contentTextStyle: GoogleFonts.cairo(color: Colors.white, fontSize: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           elevation: 10,

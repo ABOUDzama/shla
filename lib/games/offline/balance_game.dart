@@ -6,6 +6,7 @@ import 'dart:ui';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../services/score_service.dart';
 import '../../widgets/game_intro_widget.dart';
+import '../../theme/funky_theme.dart';
 
 class BalanceGame extends StatefulWidget {
   const BalanceGame({super.key});
@@ -196,7 +197,7 @@ class _BalanceGameState extends State<BalanceGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '⚖️ تحدي التوازن',
-        backgroundColor: const Color(0xFF004D40),
+        backgroundColor: FunkyColors.cyan,
         showAi: false,
         body: GameIntroWidget(
           title: '⚖️ تحدي التوازن',
@@ -213,7 +214,7 @@ class _BalanceGameState extends State<BalanceGame> {
 
     return OfflineGameScaffold(
       title: '⚖️ تحدي التوازن',
-      backgroundColor: const Color(0xFF004D40),
+      backgroundColor: FunkyColors.cyan,
       showAi: false,
       body: Stack(
         children: [

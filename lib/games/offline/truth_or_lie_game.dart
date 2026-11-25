@@ -8,6 +8,7 @@ import '../../services/settings_service.dart';
 import '../../services/raw_data_manager.dart';
 import '../../data/truth_or_lie_data.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class TruthOrLieGame extends StatefulWidget {
   const TruthOrLieGame({super.key});
@@ -200,7 +201,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🤔 حقيقة أو هبد',
-        backgroundColor: const Color(0xFF0F172A),
+        backgroundColor: FunkyColors.cyan,
         showAi: false,
         body: GameIntroWidget(
           title: '🤔 حقيقة أو هبد',
@@ -215,7 +216,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
     if (_currentData.isEmpty || _shuffledIndices.isEmpty) {
       return OfflineGameScaffold(
         title: '🤔 حقيقة أو هبد',
-        backgroundColor: const Color(0xFF0F172A),
+        backgroundColor: FunkyColors.cyan,
         showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),

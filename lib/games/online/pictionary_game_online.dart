@@ -9,6 +9,7 @@ import '../../services/audio_service.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../services/haptic_service.dart';
+import '../../theme/funky_theme.dart';
 
 // ─── Drawing models ───────────────────────────────
 class DrawPoint {
@@ -357,7 +358,7 @@ class _PictionaryGameOnlineState extends State<PictionaryGameOnline> {
       isHost: widget.isHost,
       gameName: 'pictionary',
       title: 'خمن الرسمة (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.sky,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,

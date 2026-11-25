@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
+import '../../theme/funky_theme.dart';
 
 class MultiTouchScreen extends StatefulWidget {
   const MultiTouchScreen({super.key});
@@ -92,7 +93,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '👆 تحدي اللمس',
-        backgroundColor: const Color(0xFF1B5E20),
+        backgroundColor: FunkyColors.mint,
         showAi: false,
         body: GameIntroWidget(
           title: '👆 تحدي اللمس',
@@ -106,7 +107,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
 
     return OfflineGameScaffold(
       title: '👆 تحدي اللمس',
-      backgroundColor: const Color(0xFF1B5E20),
+      backgroundColor: FunkyColors.mint,
       showAi: false,
       actions: const [],
       body: Stack(

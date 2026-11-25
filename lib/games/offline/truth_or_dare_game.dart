@@ -10,6 +10,7 @@ import '../../widgets/premium_loading_indicator.dart';
 import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class TruthOrDareGame extends StatefulWidget {
   const TruthOrDareGame({super.key});
@@ -488,7 +489,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
     if (isLoadingData || truths.isEmpty || dares.isEmpty) {
       return OfflineGameScaffold(
         title: '🎲 صراحة ولا جرأة',
-        backgroundColor: const Color(0xFFB71C1C),
+        backgroundColor: FunkyColors.magenta,
         body: const PremiumLoadingIndicator(message: 'جاري تحضير التحديات...'),
       );
     }
@@ -496,7 +497,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🎲 صراحة ولا جرأة',
-        backgroundColor: const Color(0xFF4A148C),
+        backgroundColor: FunkyColors.violet,
         showAi: false,
         body: GameIntroWidget(
           title: '🎲 صراحة ولا جرأة',
@@ -511,7 +512,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
     if (!_started) {
       return OfflineGameScaffold(
         title: '🎲 صراحة ولا جرأة',
-        backgroundColor: const Color(0xFFB71C1C),
+        backgroundColor: FunkyColors.magenta,
         showAi: false,
         body: Center(
           child: SingleChildScrollView(
@@ -600,7 +601,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
 
     return OfflineGameScaffold(
       title: '🎲 صراحة ولا جرأة',
-      backgroundColor: const Color(0xFF4A148C),
+      backgroundColor: FunkyColors.violet,
       showAi: false,
       actions: [
         IconButton(

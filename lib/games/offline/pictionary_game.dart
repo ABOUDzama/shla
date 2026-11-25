@@ -11,6 +11,7 @@ import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 // ─── Drawing model ───────────────────────────────
 class DrawPoint {
@@ -359,7 +360,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
-        backgroundColor: const Color(0xFF0D47A1),
+        backgroundColor: FunkyColors.sky,
         body: GameIntroWidget(
           title: '🎨 ارسم وخمّن',
           icon: '🎨',
@@ -373,7 +374,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
     if (isLoadingData || wordCategories.isEmpty) {
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
-        backgroundColor: const Color(0xFF0D47A1),
+        backgroundColor: FunkyColors.sky,
         body: const PremiumLoadingIndicator(message: 'جاري تجهيز الألوان...'),
       );
     }
@@ -381,7 +382,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
     if (!_started) {
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
-        backgroundColor: const Color(0xFF0D47A1),
+        backgroundColor: FunkyColors.sky,
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -474,7 +475,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
     if (_drawing && _currentWord != null) {
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
-        backgroundColor: const Color(0xFF0D47A1),
+        backgroundColor: FunkyColors.sky,
         onAiRefresh: _generateAiContent,
         actions: [
           IconButton(
@@ -692,7 +693,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
     if (_guessing) {
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
-        backgroundColor: const Color(0xFF0D47A1),
+        backgroundColor: FunkyColors.sky,
         body: Column(
           children: [
             Container(
@@ -1057,7 +1058,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
 
     return OfflineGameScaffold(
       title: '🎨 ارسم وخمّن',
-      backgroundColor: const Color(0xFF0D47A1),
+      backgroundColor: FunkyColors.sky,
       body: Center(
         child: ElevatedButton(
           onPressed: _pickWord,

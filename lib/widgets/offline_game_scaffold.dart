@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/settings_screen.dart';
+import '../theme/funky_theme.dart';
 import '../services/settings_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -29,7 +30,24 @@ class OfflineGameScaffold extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        flexibleSpace: Container(color: backgroundColor.withValues(alpha: 0.8)),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerRight,
+              end: Alignment.centerLeft,
+              colors: [
+                FunkyColors.bgDeep.withValues(alpha: 0.92),
+                backgroundColor.withValues(alpha: 0.85),
+              ],
+            ),
+            border: Border(
+              bottom: BorderSide(
+                color: backgroundColor.withValues(alpha: 0.8),
+                width: 2,
+              ),
+            ),
+          ),
+        ),
         title: Text(
           title,
           textAlign: TextAlign.center,
@@ -74,28 +92,9 @@ class OfflineGameScaffold extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: Stack(
-        children: [
-          // Solid background color - dark base
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  const Color(0xFF0F172A), // Slate 900
-                  const Color(0xFF1E1B4B), // Indigo 950
-                ],
-              ),
-            ),
-          ),
-          // Game specific color tint
-          Container(color: backgroundColor.withValues(alpha: 0.15)),
-          // Game specific color tint
-          Container(color: backgroundColor.withValues(alpha: 0.15)),
-          // Main Content
-          SafeArea(child: body),
-        ],
+      body: FunkyBackground(
+        accent: backgroundColor,
+        child: SafeArea(child: body),
       ),
       floatingActionButton: floatingActionButton,
     );

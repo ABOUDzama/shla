@@ -9,6 +9,7 @@ import '../../services/raw_data_manager.dart';
 import '../../services/ai_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class CharadesGame extends StatefulWidget {
   const CharadesGame({super.key});
@@ -458,7 +459,7 @@ class _CharadesGameState extends State<CharadesGame> {
     if (isLoadingData || categoryWords.isEmpty) {
       return OfflineGameScaffold(
         title: '🎭 تمثيل صامت',
-        backgroundColor: const Color(0xFF1A237E),
+        backgroundColor: FunkyColors.violet,
         showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
@@ -469,7 +470,7 @@ class _CharadesGameState extends State<CharadesGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🎭 تمثيل صامت',
-        backgroundColor: const Color(0xFF1A1A2E),
+        backgroundColor: FunkyColors.violet,
         showAi: false,
         body: GameIntroWidget(
           title: '🎭 تمثيل صامت',
@@ -484,7 +485,7 @@ class _CharadesGameState extends State<CharadesGame> {
     if (!_started) {
       return OfflineGameScaffold(
         title: '🎭 تمثيل صامت',
-        backgroundColor: const Color(0xFF1E3A8A),
+        backgroundColor: FunkyColors.violet,
         showAi: false,
         body: Center(
           child: SingleChildScrollView(
@@ -645,7 +646,7 @@ class _CharadesGameState extends State<CharadesGame> {
 
     return OfflineGameScaffold(
       title: '🎭 تمثيل صامت',
-      backgroundColor: const Color(0xFF1E398D),
+      backgroundColor: FunkyColors.violet,
       showAi: false,
       actions: [
         IconButton(

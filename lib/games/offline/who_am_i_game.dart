@@ -10,6 +10,7 @@ import '../../data/who_am_i_data.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class WhoAmIGame extends StatefulWidget {
   const WhoAmIGame({super.key});
@@ -201,7 +202,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🎭 مين أنا؟',
-        backgroundColor: const Color(0xFF1B5E20),
+        backgroundColor: FunkyColors.sky,
         onAiRefresh: _generateAiContent,
         body: GameIntroWidget(
           title: '🎭 مين أنا؟',
@@ -216,7 +217,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
     if (isLoadingData || characters.isEmpty) {
       return OfflineGameScaffold(
         title: '🎭 مين أنا؟',
-        backgroundColor: const Color(0xFF6A1B9A),
+        backgroundColor: FunkyColors.violet,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),
@@ -226,7 +227,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
     if (!_gameStarted) {
       return OfflineGameScaffold(
       title: '🎭 مين أنا؟',
-      backgroundColor: const Color(0xFF1B5E20),
+      backgroundColor: FunkyColors.sky,
       onAiRefresh: _generateAiContent,
       actions: const [],
         body: Center(
@@ -316,7 +317,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
 
     return OfflineGameScaffold(
       title: '🎭 مين أنا؟',
-      backgroundColor: const Color(0xFF6A1B9A),
+      backgroundColor: FunkyColors.violet,
       onAiRefresh: _generateAiContent,
       actions: [
         IconButton(

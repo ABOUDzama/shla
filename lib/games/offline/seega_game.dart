@@ -5,6 +5,7 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../services/score_service.dart';
 import '../../services/socket_service.dart';
 import '../../widgets/game_intro_widget.dart';
+import '../../theme/funky_theme.dart';
 
 class SeegaGame extends StatefulWidget {
   final bool online;
@@ -185,7 +186,7 @@ class _SeegaGameState extends State<SeegaGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🎮 السيجة',
-        backgroundColor: const Color(0xFF3E2723),
+        backgroundColor: FunkyColors.orange,
         showAi: false,
         body: GameIntroWidget(
           title: '🎮 السيجة',

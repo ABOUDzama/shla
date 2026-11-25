@@ -8,6 +8,7 @@ import '../../services/audio_service.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../services/haptic_service.dart';
+import '../../theme/funky_theme.dart';
 
 class TruthOrDareGameOnline extends StatefulWidget {
   final bool isHost;
@@ -179,7 +180,7 @@ class _TruthOrDareGameOnlineState extends State<TruthOrDareGameOnline>
       isHost: widget.isHost,
       gameName: 'truth_or_dare',
       title: '🎲 حقيقة أم جرأة (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.magenta,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,

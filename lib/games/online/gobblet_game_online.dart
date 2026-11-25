@@ -5,6 +5,7 @@ import '../../widgets/base_game_scaffold.dart';
 import '../../services/audio_service.dart';
 import '../../services/socket_service.dart';
 import '../../services/haptic_service.dart';
+import '../../theme/funky_theme.dart';
 
 class Piece {
   final int player; // 1 for Red, 2 for Blue
@@ -267,7 +268,7 @@ class _GobbletGameOnlineState extends State<GobbletGameOnline> {
       isHost: widget.isHost,
       gameName: 'gobblet',
       title: 'جووبليت (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.pink,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,

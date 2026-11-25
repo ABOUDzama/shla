@@ -10,6 +10,7 @@ import '../../services/ai_service.dart';
 import '../../services/raw_data_manager.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class FirstLetterGame extends StatefulWidget {
   const FirstLetterGame({super.key});
@@ -628,7 +629,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🔤 أول حرف',
-        backgroundColor: const Color(0xFFE64A19),
+        backgroundColor: FunkyColors.orange,
         body: GameIntroWidget(
           title: '🔤 أول حرف',
           icon: '🅰️',
@@ -642,7 +643,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
     if (!_setupDone) {
       return OfflineGameScaffold(
         title: '🔤 أول حرف',
-        backgroundColor: const Color(0xFFE64A19),
+        backgroundColor: FunkyColors.orange,
         actions: [
         ],
         body: Center(
@@ -732,7 +733,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
 
     return OfflineGameScaffold(
       title: '🔤 أول حرف',
-      backgroundColor: const Color(0xFFE64A19),
+      backgroundColor: FunkyColors.orange,
         onAiRefresh: _generateAiContent,
         actions: [
           IconButton(

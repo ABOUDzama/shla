@@ -12,6 +12,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:shella/services/audio_service.dart';
 import 'package:shella/services/haptic_service.dart';
 import 'package:shella/widgets/game_result_overlay.dart';
+import 'package:shella/theme/funky_theme.dart';
 
 class BaseGameScaffold extends StatefulWidget {
   final String title;
@@ -217,6 +218,24 @@ class _BaseGameScaffoldState extends State<BaseGameScaffold> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerRight,
+              end: Alignment.centerLeft,
+              colors: [
+                FunkyColors.bgDeep.withValues(alpha: 0.92),
+                widget.backgroundColor.withValues(alpha: 0.85),
+              ],
+            ),
+            border: Border(
+              bottom: BorderSide(
+                color: widget.backgroundColor.withValues(alpha: 0.8),
+                width: 2,
+              ),
+            ),
+          ),
+        ),
         leading: widget.title.isEmpty
             ? null
             : IconButton(
@@ -336,8 +355,10 @@ class _BaseGameScaffoldState extends State<BaseGameScaffold> {
       ),
       body: Stack(
         children: [
-          // Standard dark background
-          Container(color: const Color(0xFF0F172A)),
+          // Funky party background with accent glows
+          Positioned.fill(
+            child: FunkyBackground(accent: widget.backgroundColor),
+          ),
 
           // Main Content
           SafeArea(child: widget.body),

@@ -4,6 +4,7 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/score_service.dart';
 import '../../services/socket_service.dart';
+import '../../theme/funky_theme.dart';
 
 class Piece {
   final int player; // 1 for Red, 2 for Blue
@@ -536,7 +537,7 @@ class _GobbletGameState extends State<GobbletGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '👾 جوبلت',
-        backgroundColor: const Color(0xFF311B92),
+        backgroundColor: FunkyColors.pink,
         showAi: false,
         body: GameIntroWidget(
           title: '👾 جوبلت',
@@ -550,7 +551,7 @@ class _GobbletGameState extends State<GobbletGame> {
 
     return OfflineGameScaffold(
       title: '👾 جوبلت',
-      backgroundColor: const Color(0xFF311B92),
+      backgroundColor: FunkyColors.pink,
       showAi: false,
       body: SafeArea(
         child: Column(

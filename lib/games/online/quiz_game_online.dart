@@ -9,6 +9,7 @@ import '../../services/ai_service.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../../widgets/premium_loading_indicator.dart';
+import '../../theme/funky_theme.dart';
 
 class QuizGameOnline extends StatefulWidget {
   final bool isHost;
@@ -328,7 +329,7 @@ class _QuizGameOnlineState extends State<QuizGameOnline> {
       isHost: widget.isHost,
       gameName: 'quiz',
       title: 'تحدي المعلومات (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.amber,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,

@@ -8,6 +8,7 @@ import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../offline/ranking_challenge_game.dart';
 import '../../data/ranking_challenge_data.dart';
+import '../../theme/funky_theme.dart';
 
 /// Online تحدي الترتيب: the host picks a deck, players submit their secret
 /// orders, and the host reveals the true order at round end. Every client
@@ -184,7 +185,7 @@ class _RankingChallengeGameOnlineState extends State<RankingChallengeGameOnline>
   Widget build(BuildContext context) {
     return BaseGameScaffold(
       title: 'تحدي الترتيب 🔢',
-      backgroundColor: const Color(0xFF6A1B9A),
+      backgroundColor: FunkyColors.coral,
       roomCode: widget.roomCode,
       playerName: widget.playerName,
       body: switch (_phase) {
@@ -287,7 +288,7 @@ class _RankingChallengeGameOnlineState extends State<RankingChallengeGameOnline>
               ),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: const Color(0xFF6A1B9A),
+                  backgroundColor: FunkyColors.coral,
                   child: Text('${i + 1}', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
                 title: Text(_guess[i], style: GoogleFonts.cairo(color: Colors.white, fontSize: 16)),

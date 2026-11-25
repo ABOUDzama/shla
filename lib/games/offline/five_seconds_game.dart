@@ -10,6 +10,7 @@ import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class FiveSecondsGame extends StatefulWidget {
   const FiveSecondsGame({super.key});
@@ -194,7 +195,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
     if (isLoadingData || questions.isEmpty) {
       return OfflineGameScaffold(
         title: '⏱️ تحدي الـ ٥ ثواني',
-        backgroundColor: const Color(0xFFAD1457), // Deeper Pink
+        backgroundColor: FunkyColors.magenta, // Deeper Pink
         showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
@@ -205,7 +206,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '⏱️ تحدي الـ ٥ ثواني',
-        backgroundColor: const Color(0xFFAD1457),
+        backgroundColor: FunkyColors.magenta,
         showAi: false,
         body: GameIntroWidget(
           title: '⏱️ تحدي الـ ٥ ثواني',

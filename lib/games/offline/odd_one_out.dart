@@ -7,6 +7,7 @@ import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
+import '../../theme/funky_theme.dart';
 
 class OddOneOut extends StatefulWidget {
   const OddOneOut({super.key});
@@ -265,7 +266,7 @@ class _OddOneOutState extends State<OddOneOut> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '🎯 طلع الغريب',
-        backgroundColor: Colors.amber.shade900,
+        backgroundColor: FunkyColors.coral,
         showAi: false,
         body: GameIntroWidget(
           title: '🎯 طلع الغريب',

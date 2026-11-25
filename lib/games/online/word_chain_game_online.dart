@@ -8,6 +8,7 @@ import '../../services/audio_service.dart';
 import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../services/haptic_service.dart';
+import '../../theme/funky_theme.dart';
 
 class WordChainGameOnline extends StatefulWidget {
   final bool isHost;
@@ -235,7 +236,7 @@ class _WordChainGameOnlineState extends State<WordChainGameOnline>
       isHost: widget.isHost,
       gameName: 'word_chain',
       title: '⏱️ تحدي التعريف (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.lime,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,

@@ -7,6 +7,7 @@ import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
+import '../../theme/funky_theme.dart';
 
 class TickTockBoom extends StatefulWidget {
   const TickTockBoom({super.key});
@@ -554,7 +555,7 @@ class _TickTockBoomState extends State<TickTockBoom>
     if (isLoadingData) {
       return OfflineGameScaffold(
         title: '💣 قنبلة الحروف',
-        backgroundColor: const Color(0xFF1B1B1B),
+        backgroundColor: FunkyColors.coral,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),

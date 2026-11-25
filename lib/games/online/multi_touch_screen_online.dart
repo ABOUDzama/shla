@@ -5,6 +5,7 @@ import '../../services/socket_service.dart';
 import '../../widgets/base_game_scaffold.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../theme/funky_theme.dart';
 
 class MultiTouchScreenOnline extends StatefulWidget {
   final bool isHost;
@@ -133,7 +134,7 @@ class _MultiTouchScreenOnlineState extends State<MultiTouchScreenOnline> {
       isHost: widget.isHost,
       gameName: 'multi_touch',
       title: 'تحدى اللمس المتعدد (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.mint,
       showAi: false,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,

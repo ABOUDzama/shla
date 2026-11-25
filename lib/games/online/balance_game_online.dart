@@ -8,6 +8,7 @@ import '../../widgets/base_game_scaffold.dart';
 import '../../services/socket_service.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
+import '../../theme/funky_theme.dart';
 
 class BalanceGameOnline extends StatefulWidget {
   final bool isHost;
@@ -312,7 +313,7 @@ class _BalanceGameOnlineState extends State<BalanceGameOnline>
       isHost: widget.isHost,
       gameName: 'balance',
       title: 'لعبة التوازن (أونلاين)',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.cyan,
       roomCode: widget.roomCode,
       myId: SocketService().socket.id,
       playerName: widget.playerName,

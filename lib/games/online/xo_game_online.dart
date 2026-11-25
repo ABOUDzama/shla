@@ -6,6 +6,7 @@ import '../../widgets/player_avatar.dart';
 import '../../services/socket_service.dart' as ss;
 import '../../services/haptic_service.dart';
 import '../../widgets/game_result_overlay.dart';
+import '../../theme/funky_theme.dart';
 
 class TicTacToeGameOnline extends StatefulWidget {
   final bool isHost;
@@ -150,7 +151,7 @@ class _TicTacToeGameOnlineState extends State<TicTacToeGameOnline> {
       isHost: widget.isHost,
       gameName: 'xo',
       title: 'إكس أو أونلاين',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.mint,
       roomCode: widget.roomCode,
       myId: ss.SocketService().socket.id,
       playerName: widget.playerName,

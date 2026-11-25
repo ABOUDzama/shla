@@ -5,6 +5,7 @@ import 'dart:convert';
 import '../services/settings_service.dart';
 import '../services/game_registry.dart';
 import '../models/game_model.dart';
+import '../theme/funky_theme.dart';
 import 'lobby_screen.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
@@ -40,20 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Elegant Dark Neon Background
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF0F172A), // Slate 900
-                  Color(0xFF1E1B4B), // Indigo 950
-                  Color(0xFF312E81), // Indigo 900
-                ],
-              ),
-            ),
-          ),
+          // Funky party background
+          const FunkyBackground(accent: FunkyColors.magenta),
           // Main Content Switcher
           Positioned.fill(
             child: AnimatedSwitcher(
@@ -83,15 +72,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: const Color(
-                                      0xFF6366F1,
-                                    ).withAlpha(100),
+                                    color: FunkyColors.cyan.withAlpha(140),
                                     width: 1.5,
                                   ),
                                 ),
                                 child: CircleAvatar(
                                   radius: 16,
-                                  backgroundColor: const Color(0xFF1E293B),
+                                  backgroundColor: FunkyColors.card,
                                   backgroundImage:
                                       SettingsService.userAvatar != null
                                           ? MemoryImage(
@@ -141,13 +128,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fit: StackFit.expand,
                                 children: [
                                   Container(
-                                    decoration: const BoxDecoration(
+                                    decoration: BoxDecoration(
                                       gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
+                                        begin: Alignment.topRight,
+                                        end: Alignment.bottomLeft,
                                         colors: [
-                                          Color(0xFF1E1B4B), // Indigo 950
-                                          Color(0xFF0F172A), // Slate 900
+                                          FunkyColors.magenta
+                                              .withValues(alpha: 0.55),
+                                          FunkyColors.violet
+                                              .withValues(alpha: 0.35),
+                                          FunkyColors.bgDeep,
                                         ],
                                       ),
                                     ),
@@ -215,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               height: 80,
               decoration: BoxDecoration(
-                color: const Color(0xFF1E293B),
+                color: FunkyColors.card,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.white.withAlpha(20), width: 1),
                 boxShadow: [
@@ -243,8 +233,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           gradient: !_isOnlineMode
                               ? LinearGradient(
                                   colors: [
-                                    const Color(0xFF6366F1).withAlpha(100),
-                                    const Color(0xFF6366F1).withAlpha(40),
+                                    FunkyColors.magenta.withAlpha(110),
+                                    FunkyColors.violet.withAlpha(50),
                                   ],
                                 )
                               : null,
@@ -296,8 +286,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           gradient: _isOnlineMode
                               ? LinearGradient(
                                   colors: [
-                                    const Color(0xFF6366F1).withAlpha(100),
-                                    const Color(0xFF6366F1).withAlpha(40),
+                                    FunkyColors.cyan.withAlpha(110),
+                                    FunkyColors.violet.withAlpha(50),
                                   ],
                                 )
                               : null,
@@ -365,19 +355,35 @@ class _GameCard extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    width: 1,
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      game.color.withValues(alpha: 0.85),
+                      game.color.withValues(alpha: 0.30),
+                      FunkyColors.card,
+                    ],
+                    stops: const [0.0, 0.45, 1.0],
                   ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: game.color.withValues(alpha: 0.9),
+                    width: 1.6,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: game.color.withValues(alpha: 0.45),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: onTap,
-                    splashColor: game.color.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(16),
+                    splashColor: Colors.white.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(20),
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: Column(
@@ -388,20 +394,16 @@ class _GameCard extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    game.color.withValues(alpha: 0.35),
-                                    game.color.withValues(alpha: 0.08),
-                                  ],
-                                ),
+                                color: Colors.white.withValues(alpha: 0.22),
                                 shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.5),
+                                  width: 1.4,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: game.color.withValues(alpha: 0.35),
-                                    blurRadius: 18,
-                                    spreadRadius: 1,
+                                    color: Colors.black.withValues(alpha: 0.25),
+                                    blurRadius: 12,
                                   ),
                                 ],
                               ),
@@ -409,7 +411,7 @@ class _GameCard extends StatelessWidget {
                                 child: Icon(
                                   game.icon,
                                   size: 40,
-                                  color: game.color.withValues(alpha: 0.9),
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -437,7 +439,7 @@ class _GameCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.cairo(
                                 fontSize: 11,
-                                color: Colors.white.withValues(alpha: 0.7),
+                                color: Colors.white.withValues(alpha: 0.92),
                                 height: 1.1,
                               ),
                             ),
@@ -458,20 +460,21 @@ class _GameCard extends StatelessWidget {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          game.color,
-                          game.color.withValues(alpha: 0.75),
-                        ],
-                      ),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 6,
+                        ),
+                      ],
                     ),
                     child: Text(
                       game.badge!,
                       style: GoogleFonts.cairo(
                         fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        color: game.color,
                       ),
                     ),
                   ),
