@@ -580,6 +580,129 @@ void main() {
     });
   });
 
+  group('undercover: mr white free-text guess and concealment', () {
+    const names = ['أحمد', 'منى', 'كريم', 'سارة', 'عمر', 'ليلى'];
+
+    /// Replicates the game's seeded draws to learn roles and the word pair.
+    (List<String> roles, String civWord) expectedDeal() {
+      final rng = Random(11);
+      final roles = UndercoverGame.rolesFor(names.length, rng);
+      final pairIndex = rng.nextInt(UndercoverGame.wordPairs.length);
+      return (roles, UndercoverGame.wordPairs[pairIndex][0]);
+    }
+
+    Future<void> dealAll(WidgetTester tester) async {
+      for (var deal = 0; deal < names.length; deal++) {
+        await tapText(tester, 'شوف كلمتك يا ${names[deal]}');
+        await tapText(tester,
+            deal == names.length - 1 ? 'ابدأ الوصف' : 'اللاعب اللي بعده');
+      }
+    }
+
+    Future<void> voteOutMrWhite(WidgetTester tester, String mwName) async {
+      for (final voter in names) {
+        if (voter == mwName) {
+          // Mr. White cannot vote for himself; vote the first other player.
+          await tapText(tester, names.firstWhere((n) => n != mwName));
+        } else {
+          await tapText(tester, mwName);
+        }
+      }
+    }
+
+    testWidgets('ousted mr white wins by normalized free-text guess',
+        (tester) async {
+      final (roles, civWord) = expectedDeal();
+      final mwName = names[roles.indexOf(UndercoverGame.mrWhite)];
+      final variant = civWord.contains('ة')
+          ? civWord.replaceAll('ة', 'ه')
+          : (civWord.contains('ا')
+              ? civWord.replaceFirst('ا', 'أ')
+              : ' $civWord ');
+      await pumpGame(tester, const UndercoverGame(seed: 11));
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, names);
+      await dealAll(tester);
+      await voteOutMrWhite(tester, mwName);
+
+      expect(find.text('مستر وايت انكشف! 👤'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), variant);
+      await tapText(tester, 'خمّن!');
+      expect(find.text('مستر وايت خمّن الكلمة! 👤'), findsOneWidget);
+      expect(find.text('العب تاني'), findsOneWidget);
+      await flushFontCallbacks(tester);
+    });
+
+    testWidgets('wrong guess keeps the game going; ousted player stops voting',
+        (tester) async {
+      final (roles, civWord) = expectedDeal();
+      final mwName = names[roles.indexOf(UndercoverGame.mrWhite)];
+      await pumpGame(tester, const UndercoverGame(seed: 11));
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, names);
+      await dealAll(tester);
+      await voteOutMrWhite(tester, mwName);
+
+      expect(find.text('مستر وايت انكشف! 👤'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'كلام فاضي خالص');
+      await tapText(tester, 'خمّن!');
+
+      // Wrong guess: no immediate Mr. White win; his ousted screen shows,
+      // then the game proceeds to the next vote without him.
+      expect(find.text('مستر وايت خمّن الكلمة! 👤'), findsNothing);
+      expect(find.text('كمّلوا'), findsOneWidget);
+      await tapText(tester, 'كمّلوا');
+      // Next ballot exists and the ousted Mr. White never votes again.
+      var guard = 0;
+      while (find.text('العب تاني').evaluate().isEmpty && guard < 30) {
+        guard++;
+        expect(find.textContaining('يا $mwName،').evaluate().isEmpty, isTrue,
+            reason: 'ousted player was asked to vote');
+        if (find.text('مستر وايت انكشف! 👤').evaluate().isNotEmpty) {
+          await tester.enterText(find.byType(TextField), civWord);
+          await tapText(tester, 'خمّن!');
+        } else if (find.text('كمّلوا').evaluate().isNotEmpty) {
+          await tapText(tester, 'كمّلوا');
+        } else {
+          final listView = find.byType(ListView);
+          expect(listView, findsOneWidget, reason: 'expected a ballot');
+          await tester.tap(find
+              .descendant(of: listView, matching: find.byType(Text))
+              .first);
+          await tester.pump(const Duration(milliseconds: 120));
+          await flushFontCallbacks(tester);
+        }
+      }
+      expect(find.text('العب تاني'), findsOneWidget);
+      await flushFontCallbacks(tester);
+    });
+
+    testWidgets('deal concealment: word hidden again after every pass',
+        (tester) async {
+      final (roles, civWord) = expectedDeal();
+      final ucWord = UndercoverGame.wordPairs.firstWhere(
+          (p) => p[0] == civWord)[1];
+      await pumpGame(tester, const UndercoverGame(seed: 11));
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, names);
+      for (var deal = 0; deal < names.length; deal++) {
+        await tapText(tester, 'شوف كلمتك يا ${names[deal]}');
+        // A word (or the Mr. White no-word notice) is visible only now.
+        if (deal + 1 < names.length) {
+          await tapText(tester, 'اللاعب اللي بعده');
+          // Concealed again for the next player.
+          expect(find.text(civWord), findsNothing);
+          expect(find.text(ucWord), findsNothing);
+          expect(find.text('🤫'), findsWidgets);
+        }
+      }
+      await flushFontCallbacks(tester);
+    });
+  });
+
   group('proverb: steal mechanic and full match', () {
     testWidgets('wrong pick steals turn, correct scores, winner, replay',
         (tester) async {

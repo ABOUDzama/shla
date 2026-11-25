@@ -857,7 +857,10 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 40),
+                            // Clearance for the floating emoji picker
+                            // (bottom: 20, ~64px tall) so it never overlaps
+                            // the last content when fully scrolled.
+                            const SizedBox(height: 110),
                           ],
                         ),
                       ),

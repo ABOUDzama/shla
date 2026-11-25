@@ -488,13 +488,26 @@ void main() {
     useFakeSocket();
     await pumpSmall(
       tester,
-      const RoomScreen(roomCode: 'ABC123', isHost: true, playerName: 'أحمد'),
+      const RoomScreen(roomCode: '12345', isHost: true, playerName: 'أحمد'),
     );
     await flushFontCallbacks(tester);
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'room');
     expectNoOverflow(tester);
+
+    // Regression: the last content must scroll fully clear of the floating
+    // emoji picker (bottom: 20). Scroll the room list to its end first.
+    final listView = find.byType(Scrollable).first;
+    await tester.drag(listView, const Offset(0, -600));
+    await fixedPumps(tester);
+    await tester.drag(listView, const Offset(0, -600));
+    await fixedPumps(tester);
+    final fabRect = tester.getRect(find.text('⚡').last);
+    final lastText = tester.getRect(find.text('🎮 ستظهر الألعاب بعد انضمام لاعب آخر'));
+    expect(lastText.bottom, lessThan(fabRect.top),
+        reason: 'room bottom text hidden behind emoji picker: '
+            'last=$lastText fab=$fabRect');
   });
 
   testWidgets('small screen: undercover deal card', (tester) async {

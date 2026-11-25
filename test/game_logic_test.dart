@@ -168,6 +168,21 @@ void main() {
           winnerSide: 'mrwhite', mrWhiteCracker: 'd');
       expect(crack, {'d': 6});
     });
+    test('normalizeGuess: conservative Arabic normalization', () {
+      expect(UndercoverGame.normalizeGuess('مدرسة'), 'مدرسه');
+      expect(UndercoverGame.normalizeGuess('مدرسه'), 'مدرسه');
+      expect(UndercoverGame.normalizeGuess('  قهوة  '), 'قهوه');
+      expect(UndercoverGame.normalizeGuess('أحمد'), 'احمد');
+      expect(UndercoverGame.normalizeGuess('إبراهيم'), 'ابراهيم');
+      expect(UndercoverGame.normalizeGuess('على'), 'علي');
+      expect(UndercoverGame.normalizeGuess('كـشـري'), 'كشري');
+      expect(UndercoverGame.normalizeGuess('مُدَرِّسَة'), 'مدرّسه'.replaceAll('ّ',''));
+      // Wrong guess stays wrong.
+      expect(
+          UndercoverGame.normalizeGuess('شاي') ==
+              UndercoverGame.normalizeGuess('قهوة'),
+          isFalse);
+    });
     test('wordPairs: 18 pairs, distinct words within and across pairs', () {
       expect(UndercoverGame.wordPairs.length, 18);
       final all = UndercoverGame.wordPairs.expand((p) => p).toList();

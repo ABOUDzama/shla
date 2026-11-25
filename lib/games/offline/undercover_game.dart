@@ -51,6 +51,24 @@ class UndercoverGame extends StatefulWidget {
     ['فيسبوك', 'انستجرام'],
   ];
 
+  /// Conservative Arabic normalization for Mr. White's free-text guess:
+  /// trim + collapse whitespace, alef/hamza variants -> bare alef,
+  /// alef maqsura -> yaa, taa marbuta -> haa, strip tatweel and harakat.
+  static String normalizeGuess(String input) {
+    var t = input.trim();
+    t = t.replaceAll(RegExp(r'\s+'), ' ');
+    t = t
+        .replaceAll('أ', 'ا')
+        .replaceAll('إ', 'ا')
+        .replaceAll('آ', 'ا')
+        .replaceAll('ٱ', 'ا');
+    t = t.replaceAll('ى', 'ي');
+    t = t.replaceAll('ة', 'ه');
+    t = t.replaceAll('ـ', ''); // tatweel
+    t = t.replaceAll(RegExp(r'[\u064B-\u0652]'), ''); // harakat
+    return t;
+  }
+
   /// Role list for [playerCount] players, shuffled with [rng].
   /// Official setup guidance: at least 1 Undercover or 1 Mr. White; we scale
   /// infiltrators with group size.
@@ -144,7 +162,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
 
   String? _oustedName;
   bool _mrWhiteGuessing = false;
-  List<String> _guessOptions = [];
+  final TextEditingController _guessController = TextEditingController();
   String? _winnerSide;
   String? _mrWhiteCracker;
 
@@ -208,19 +226,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
       _ousted.add(ousted);
       _oustedName = ousted;
       _mrWhiteGuessing = _roles[ousted] == UndercoverGame.mrWhite;
-      if (_mrWhiteGuessing) {
-        // Mr. White's crack attempt: pick from 4 candidates (both pair words
-        // plus 2 distractors from other pairs), deterministic via seed.
-        final distractors = <String>[];
-        for (var i = 0; i < UndercoverGame.wordPairs.length; i++) {
-          for (final w in UndercoverGame.wordPairs[i]) {
-            if (w != _civWord && w != _ucWord) distractors.add(w);
-          }
-        }
-        distractors.shuffle(_rng);
-        _guessOptions = [_civWord!, _ucWord!, ...distractors.take(2)]
-          ..shuffle(_rng);
-      } else {
+      if (!_mrWhiteGuessing) {
         _winnerSide = UndercoverGame.winner(_roles, _ousted);
         if (_winnerSide != null) _applyWin();
       }
@@ -229,7 +235,8 @@ class _UndercoverGameState extends State<UndercoverGame> {
 
   void _mrWhiteGuess(String word) {
     setState(() {
-      if (word == _civWord) {
+      if (UndercoverGame.normalizeGuess(word) ==
+          UndercoverGame.normalizeGuess(_civWord!)) {
         _winnerSide = 'mrwhite';
         _mrWhiteCracker = _oustedName;
         _applyWin();
@@ -273,6 +280,12 @@ class _UndercoverGameState extends State<UndercoverGame> {
   }
 
   @override
+  void dispose() {
+    _guessController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (_showIntro) {
       return OfflineGameScaffold(
@@ -283,7 +296,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
           title: '🥷 أندر كافر',
           icon: '🥷',
           description:
-              'المدنيين معاهم كلمة سر واحدة، الأندر كافر معاه كلمة شبهها، ومستر وايت ممعاهوش حاجة! اوصفوا كلمتكم من غير ما تحرقوها، وصوّتوا تطردوا المتسللين. المدنيين يكسبوا لو طردوهم كلهم.',
+              'المدنيين معاهم كلمة سر واحدة، الأندر كافر معاه كلمة شبهها، ومستر وايت ممعاهوش حاجة! اوصفوا كلمتكم من غير ما تحرقوها، وصوّتوا تطردوا المتسللين. المدنيين يكسبوا لو طردوهم كلهم. على قواعد اللعبة الأصلية، بس التصويت عندنا سري بالتناوب على الموبايل والتعادل بيتحسم عشوائيًا.',
           onStart: () => setState(() => _showIntro = false),
         ),
       );
@@ -569,19 +582,38 @@ class _UndercoverGameState extends State<UndercoverGame> {
             ),
             const SizedBox(height: 8),
             Text(
-              'لو خمّن كلمة المدنيين يكسب فورًا.. اختار:',
+              'لو خمّن كلمة المدنيين يكسب فورًا.. اكتب تخمينك:',
               textAlign: TextAlign.center,
               style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
             ),
             const SizedBox(height: 24),
-            for (final option in _guessOptions) ...[
-              FunkyButton(
-                label: option,
-                accent: FunkyColors.amber,
-                onPressed: () => _mrWhiteGuess(option),
+            TextField(
+              controller: _guessController,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
-              const SizedBox(height: 12),
-            ],
+              decoration: InputDecoration(
+                hintText: 'كلمة المدنيين...',
+                hintStyle: GoogleFonts.cairo(color: Colors.white38),
+                filled: true,
+                fillColor: FunkyColors.card,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              onSubmitted: _mrWhiteGuess,
+            ),
+            const SizedBox(height: 16),
+            FunkyButton(
+              label: 'خمّن!',
+              accent: FunkyColors.amber,
+              icon: Icons.check_rounded,
+              onPressed: () => _mrWhiteGuess(_guessController.text),
+            ),
           ],
         ),
       ),
