@@ -241,7 +241,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
   }
 
   Color _teamColor(String team) =>
-      team == 'red' ? const Color(0xFFE0483E) : const Color(0xFF3E7BFA);
+      team == 'red' ? const Color(0xFFC63730) : const Color(0xFF2B5CD6);
 
   Widget _buildGate() {
     return Column(
@@ -281,7 +281,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: flatCairo(
-                        fontSize: 13, color: Colors.white60),
+                        fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                   ),
                 ],
               ),
@@ -303,7 +303,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
           style: flatCairo(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Colors.white70,
+            color: FlatColors.ink.withValues(alpha: 0.75),
           ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
         ),
         const SizedBox(height: 10),
@@ -331,7 +331,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
         Text(
           'يا $_spyName، اكتب تلميح من كلمة واحدة وعدد الكلمات:',
           textAlign: TextAlign.center,
-          style: flatCairo(fontSize: 14, color: Colors.white70),
+          style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.75)),
         ),
         const SizedBox(height: 14),
         TextField(
@@ -341,11 +341,11 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
               fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           decoration: InputDecoration(
             hintText: 'التلميح..',
-            hintStyle: flatCairo(color: Colors.white38, fontSize: 15),
+            hintStyle: flatCairo(color: FlatColors.ink.withValues(alpha: 0.5), fontSize: 15),
             errorText: _clueError,
             errorStyle: flatCairo(fontSize: 13),
             filled: true,
-            fillColor: Colors.white.withValues(alpha: 0.08),
+            fillColor: Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide.none,
@@ -367,7 +367,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
                     decoration: BoxDecoration(
                       color: _clueCount == n
                           ? _teamColor(_turn)
-                          : Colors.white.withValues(alpha: 0.10),
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
@@ -376,7 +376,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
                         style: flatCairo(
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: _clueCount == n ? Colors.white : FlatColors.ink,
                         ),
                       ),
                     ),
@@ -456,7 +456,11 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
                   style: flatCairo(
                     fontSize: 10.5,
                     fontWeight: FontWeight.bold,
-                    color: reveal(i) ? Colors.white : Colors.black87,
+                    color: reveal(i)
+                        ? (_key[i] == 'neutral'
+                            ? FlatColors.ink
+                            : Colors.white)
+                        : FlatColors.ink,
                   ),
                 ),
               ),
@@ -492,7 +496,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
               winners.join('، '),
               textAlign: TextAlign.center,
               style:
-                  flatCairo(fontSize: 16, color: Colors.white70),
+                  flatCairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)),
             ),
             const SizedBox(height: 24),
             FunkyButton(

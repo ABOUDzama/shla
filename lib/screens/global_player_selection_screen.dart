@@ -7,6 +7,7 @@ import '../widgets/avatar_picker_sheet.dart';
 import '../services/settings_service.dart';
 import '../services/score_service.dart';
 import '../theme/funky_theme.dart';
+import '../theme/flat_theme.dart';
 
 class GlobalPlayerSelectionScreen extends StatefulWidget {
   final int minPlayers;
@@ -107,7 +108,7 @@ class _GlobalPlayerSelectionScreenState
                 'الحد الأقصى ${widget.maxPlayers} لاعبين',
                 style: GoogleFonts.cairo(),
               ),
-              backgroundColor: Colors.red,
+              backgroundColor: FlatColors.mafia,
             ),
           );
         }
@@ -132,7 +133,7 @@ class _GlobalPlayerSelectionScreenState
             'تحتاج على الأقل ${widget.minPlayers} لاعبين للبدء',
             style: GoogleFonts.cairo(),
           ),
-          backgroundColor: Colors.orange,
+          backgroundColor: FlatColors.day,
         ),
       );
     }
@@ -144,8 +145,9 @@ class _GlobalPlayerSelectionScreenState
     final canStart = _selectedPlayerNames.length >= widget.minPlayers;
 
     return Scaffold(
-      body: FunkyBackground(
-        accent: FunkyColors.cyan,
+      backgroundColor: FlatColors.bg,
+      body: Container(
+        color: FlatColors.bg,
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -163,15 +165,15 @@ class _GlobalPlayerSelectionScreenState
                         height: 42,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: FunkyColors.card,
+                          color: Colors.white,
                           border: Border.all(
-                            color: FunkyColors.cyan.withValues(alpha: 0.5),
-                            width: 1.3,
+                            color: FlatColors.border,
+                            width: 2,
                           ),
                         ),
                         child: const Icon(
                           Icons.arrow_back_ios_new,
-                          color: Colors.white,
+                          color: FlatColors.ink,
                           size: 18,
                         ),
                       ),
@@ -183,13 +185,7 @@ class _GlobalPlayerSelectionScreenState
                         style: GoogleFonts.cairo(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              color: FunkyColors.cyan.withValues(alpha: 0.7),
-                              blurRadius: 14,
-                            ),
-                          ],
+                          color: FlatColors.ink,
                         ).copyWith(
                             fontFamilyFallback: const ['Noto Color Emoji']),
                       ),
@@ -223,7 +219,7 @@ class _GlobalPlayerSelectionScreenState
                     style: GoogleFonts.cairo(
                       fontSize: 28,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: FlatColors.ink,
                     ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
                   ),
                 ),
@@ -232,13 +228,13 @@ class _GlobalPlayerSelectionScreenState
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 5),
-                    decoration: FunkyDecor.pill(FunkyColors.violet),
+                    decoration: FlatDecor.tag(),
                     child: Text(
                       'العدد المسموح: ${widget.minPlayers} - ${widget.maxPlayers ?? "مفتوح"}',
                       style: GoogleFonts.cairo(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: FlatColors.ink,
                       ),
                     ),
                   ),
@@ -248,8 +244,7 @@ class _GlobalPlayerSelectionScreenState
                 // Add-player card
                 Container(
                   padding: const EdgeInsets.all(12),
-                  decoration:
-                      FunkyDecor.glowCard(FunkyColors.cyan, radius: 22),
+                  decoration: FlatDecor.card(radius: 22),
                   child: Row(
                     children: [
                       GestureDetector(
@@ -259,10 +254,10 @@ class _GlobalPlayerSelectionScreenState
                           height: 52,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: FunkyColors.bgDeep.withValues(alpha: 0.6),
+                            color: Colors.white,
                             border: Border.all(
-                              color: FunkyColors.cyan.withValues(alpha: 0.6),
-                              width: 1.4,
+                              color: FlatColors.border,
+                              width: 2,
                             ),
                           ),
                           child: AvatarService.providerFor(
@@ -274,7 +269,7 @@ class _GlobalPlayerSelectionScreenState
                                           _tempAvatarBase64)!,
                                       fit: BoxFit.cover))
                               : const Icon(Icons.camera_alt_outlined,
-                                  color: Colors.white70, size: 22),
+                                  color: FlatColors.ink, size: 22),
                         ),
                       ),
                       const SizedBox(width: 14),
@@ -282,11 +277,11 @@ class _GlobalPlayerSelectionScreenState
                         child: TextField(
                           controller: _playerCtrl,
                           style: GoogleFonts.cairo(
-                              color: Colors.white, fontSize: 16),
+                              color: FlatColors.ink, fontSize: 16),
                           decoration: InputDecoration(
                             hintText: 'اسم لاعب جديد',
                             hintStyle:
-                                GoogleFonts.cairo(color: Colors.white38),
+                                GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.5)),
                             border: InputBorder.none,
                             isDense: true,
                           ),
@@ -300,18 +295,14 @@ class _GlobalPlayerSelectionScreenState
                           height: 44,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            gradient:
-                                FunkyDecor.accentGradient(FunkyColors.magenta),
-                            boxShadow: [
-                              BoxShadow(
-                                color: FunkyColors.magenta
-                                    .withValues(alpha: 0.5),
-                                blurRadius: 10,
-                              ),
-                            ],
+                            color: FlatColors.tilePastels[0],
+                            border: Border.all(
+                              color: FlatColors.ink.withValues(alpha: 0.2),
+                              width: 2,
+                            ),
                           ),
                           child: const Icon(Icons.add_rounded,
-                              color: Colors.white, size: 26),
+                              color: FlatColors.ink, size: 26),
                         ),
                       ),
                     ],
@@ -328,7 +319,7 @@ class _GlobalPlayerSelectionScreenState
                             'لا يوجد لاعبين مسجلين حالياً\nقم بإضافة أصدقائك للبدء',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.cairo(
-                                fontSize: 15, color: Colors.white38),
+                                fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.5)),
                           ).animate().fadeIn(),
                         )
                       : ListView.builder(
@@ -346,33 +337,14 @@ class _GlobalPlayerSelectionScreenState
                             return Container(
                               margin: const EdgeInsets.only(bottom: 12),
                               decoration: BoxDecoration(
-                                color: FunkyColors.card,
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(18),
-                                gradient: isSelected
-                                    ? LinearGradient(
-                                        begin: Alignment.centerRight,
-                                        end: Alignment.centerLeft,
-                                        colors: [
-                                          accent.withValues(alpha: 0.35),
-                                          FunkyColors.card,
-                                        ],
-                                      )
-                                    : null,
                                 border: Border.all(
                                   color: isSelected
-                                      ? accent
-                                      : Colors.white.withAlpha(14),
-                                  width: isSelected ? 1.8 : 1,
+                                      ? FlatColors.ink.withValues(alpha: 0.5)
+                                      : FlatColors.border,
+                                  width: 2,
                                 ),
-                                boxShadow: isSelected
-                                    ? [
-                                        BoxShadow(
-                                          color:
-                                              accent.withValues(alpha: 0.35),
-                                          blurRadius: 12,
-                                        ),
-                                      ]
-                                    : null,
                               ),
                               child: Material(
                                 type: MaterialType.transparency,
@@ -386,11 +358,11 @@ class _GlobalPlayerSelectionScreenState
                                     height: 46,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: FunkyColors.cardLight,
+                                      color: FlatColors.tilePastels[index % FlatColors.tilePastels.length],
                                       border: Border.all(
-                                        color: accent.withValues(
-                                            alpha: isSelected ? 0.95 : 0.4),
-                                        width: 1.6,
+                                        color: FlatColors.ink.withValues(
+                                            alpha: isSelected ? 0.5 : 0.2),
+                                        width: 2,
                                       ),
                                     ),
                                     child: AvatarService.providerFor(
@@ -408,7 +380,7 @@ class _GlobalPlayerSelectionScreenState
                                                   ? name[0]
                                                   : '?',
                                               style: GoogleFonts.cairo(
-                                                color: Colors.white,
+                                                color: FlatColors.ink,
                                                 fontWeight: FontWeight.w900,
                                                 fontSize: 17,
                                               ),
@@ -421,20 +393,18 @@ class _GlobalPlayerSelectionScreenState
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.cairo(
                                       fontSize: 17,
-                                      color: isSelected
-                                          ? Colors.white
-                                          : Colors.white70,
+                                      color: FlatColors.ink,
                                       fontWeight: isSelected
                                           ? FontWeight.bold
                                           : FontWeight.normal,
                                     ),
                                   ),
                                   trailing: isSelected
-                                      ? Icon(Icons.check_circle,
-                                          color: accent, size: 24)
+                                      ? const Icon(Icons.check_circle,
+                                          color: FlatColors.mintDark, size: 24)
                                       : IconButton(
                                           icon: const Icon(Icons.close,
-                                              color: Colors.white24,
+                                              color: FlatColors.ink,
                                               size: 18),
                                           onPressed: () =>
                                               _removePlayer(player),
