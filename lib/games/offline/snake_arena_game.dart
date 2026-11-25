@@ -76,7 +76,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Colors.white,
-            ),
+            ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
           const SizedBox(height: 20),
           for (final n in [2, 3, 4])
@@ -91,7 +91,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
                     style: GoogleFonts.cairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                    ),
+                    ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
                   ),
                 ),
               ),
@@ -116,7 +116,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
           fontWeight: FontWeight.w800,
           color: _match.alive[i] ? Colors.white : Colors.white38,
           decoration: _match.alive[i] ? null : TextDecoration.lineThrough,
-        ),
+        ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
       ),
     );
   }
@@ -139,7 +139,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
               fontSize: 15,
               fontWeight: FontWeight.w800,
               color: Colors.black87,
-            ),
+            ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
         ),
       ),
@@ -171,14 +171,14 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
               fontSize: 22,
               fontWeight: FontWeight.w800,
               color: Colors.white,
-            ),
+            ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
         const SizedBox(height: 16),
         FilledButton(
           onPressed: () => setState(() => _phase = _SnakePhase.pickPlayers),
           child: Text(
             'العبوا تاني 🐍',
-            style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.w800),
+            style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.w800).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
         ),
       ],
