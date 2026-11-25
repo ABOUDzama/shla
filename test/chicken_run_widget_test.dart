@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/games/offline/chicken_run_game.dart';
 import 'package:shella/games/offline/chicken_run_logic.dart';
+import 'package:shella/services/results_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -115,6 +116,17 @@ void main() {
     expect(match.winner, 1);
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.textContaining('لاعب 2'), findsWidgets);
+    final recorded = await tester.runAsync(() async {
+      await Future.delayed(const Duration(milliseconds: 150));
+      return ResultsService.instance.load();
+    });
+    expect(recorded!.length, 1);
+    expect(recorded.first.game, 'جري الفراخ');
+    expect(recorded.first.winner, 'لاعب 2');
+    // persistence: a fresh read from storage still has the same single row
+    final again = await tester.runAsync(() => ResultsService.instance.load());
+    expect(again!.map((r) => r.winner), ['لاعب 2']);
+    await tester.pump(const Duration(seconds: 2));
     await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/chicken_run_win.png'));
     await settle(tester);
   });
@@ -134,6 +146,8 @@ void main() {
     expect(match.winner, isNull);
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.textContaining('تعادل'), findsOneWidget);
+    final rec = await tester.runAsync(() => ResultsService.instance.load());
+    expect(rec, isEmpty, reason: 'a draw records no winner');
     await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/chicken_run_draw.png'));
     await settle(tester);
   });
@@ -174,6 +188,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
     expect(find.textContaining('وقعت بعد'), findsOneWidget);
+    final rec = await tester.runAsync(() => ResultsService.instance.load());
+    expect(rec, isEmpty, reason: 'practice records no winner');
     await tester.pump(const Duration(milliseconds: 600));
     await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/chicken_run_over.png'));
     await settle(tester);

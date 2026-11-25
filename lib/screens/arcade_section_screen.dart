@@ -49,6 +49,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'سباق الدوس': 'assets/covers/tap_race.png',
     'كورة اللمسة': 'assets/covers/touch_ball.png',
     'اضرب الخلد': 'assets/covers/whack_mole.png',
+    'جري الفراخ': 'assets/covers/chicken_run.png',
   };
 
   static const Map<String, String> _emoji = {
