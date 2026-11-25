@@ -9,7 +9,9 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import 'snake_arena_logic.dart';
 
-/// حية الشلة: 2-4 snakes on one phone, one turn button per player.
+/// حية الشلة: 1-4 players (+ optional bots), each steers a snake with one
+/// turn button placed on their own side of the phone (top buttons rotated
+/// to face the players sitting opposite).
 class SnakeArenaGame extends StatefulWidget {
   const SnakeArenaGame({super.key, this.randomSeed});
 
@@ -20,13 +22,20 @@ class SnakeArenaGame extends StatefulWidget {
   State<SnakeArenaGame> createState() => _SnakeArenaGameState();
 }
 
-enum _SnakePhase { pickPlayers, playing, over }
+enum _SnakePhase { pickPlayers, pickBots, playing, over }
 
 class _SnakeArenaGameState extends State<SnakeArenaGame> {
+  static const _emojiFallback = ['Noto Color Emoji'];
+
   bool _showIntro = true;
   _SnakePhase _phase = _SnakePhase.pickPlayers;
   late SnakeArenaMatch _match;
   Timer? _ticker;
+  int _humans = 2;
+  bool _practice = false;
+
+  @visibleForTesting
+  SnakeArenaMatch get debugMatch => _match;
 
   static const List<Color> _colors = [
     Color(0xFFFF8A5C),
@@ -41,15 +50,20 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
     super.dispose();
   }
 
-  void _startMatch(int players) {
+  void _startMatch(int humans, bool withBots) {
     _ticker?.cancel();
+    _humans = humans;
+    _practice = humans == 1 && !withBots;
+    final seats = _practice ? 1 : (withBots ? 4 : humans);
+    final m = SnakeArenaMatch(
+      playerCount: seats,
+      random: widget.randomSeed != null ? Random(widget.randomSeed!) : null,
+    );
+    for (var i = humans; i < seats && withBots; i++) {
+      m.botSeats.add(i);
+    }
     setState(() {
-      _match = SnakeArenaMatch(
-        playerCount: players,
-        random: widget.randomSeed != null
-            ? Random(widget.randomSeed!)
-            : null,
-      );
+      _match = m;
       _phase = _SnakePhase.playing;
     });
     _ticker = Timer.periodic(const Duration(milliseconds: 220), (_) {
@@ -64,43 +78,58 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
     });
   }
 
-  Widget _buildPicker() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+  TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>
+      flatCairo(fontSize: size, fontWeight: w, color: color ?? FlatColors.ink)
+          .copyWith(fontFamilyFallback: _emojiFallback);
+
+  Widget _bigChoice(String label, VoidCallback onTap) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: SizedBox(
+          width: 220,
+          child: FilledButton(onPressed: onTap, child: Text(label, style: _t(18, color: Colors.white))),
+        ),
+      );
+
+  Widget _buildPicker() => Center(
+        child: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text('كام لاعب؟', style: _t(26)),
+            const SizedBox(height: 20),
+            _bigChoice('لاعب واحد', () {
+              _humans = 1;
+              setState(() => _phase = _SnakePhase.pickBots);
+            }),
+            for (final n in [2, 3, 4])
+              _bigChoice('$n لاعبين', () {
+                _humans = n;
+                if (n == 4) {
+                  _startMatch(4, false);
+                } else {
+                  setState(() => _phase = _SnakePhase.pickBots);
+                }
+              }),
+          ]),
+        ),
+      );
+
+  Widget _buildBots() => Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('نضيف بوتات؟', style: _t(26)),
+          const SizedBox(height: 8),
           Text(
-            'كام لاعب؟',
-            style: flatCairo(
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+            _humans == 1
+                ? 'من غير بوتات هتلعب لوحدك وتشوف هتجمع كام تفاحة'
+                : 'البوتات بتكمّل لحد ٤ لاعبين',
+            style: _t(14, w: FontWeight.w600),
           ),
           const SizedBox(height: 20),
-          for (final n in [2, 3, 4])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: SizedBox(
-                width: 200,
-                child: FilledButton(
-                  onPressed: () => _startMatch(n),
-                  child: Text(
-                    '$n لاعبين',
-                    style: flatCairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+          _bigChoice('اه 🤖', () => _startMatch(_humans, true)),
+          _bigChoice('لا', () => _startMatch(_humans, false)),
+        ]),
+      );
 
   Widget _scorePill(int i) {
+    final isBot = _match.botSeats.contains(i);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
@@ -109,13 +138,13 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
         border: Border.all(color: _match.alive[i] ? _colors[i] : FlatColors.border),
       ),
       child: Text(
-        'لاعب ${i + 1}: ${_match.score[i]}',
+        '${isBot ? 'بوت' : 'لاعب'} ${i + 1}: ${_match.score[i]}',
         style: flatCairo(
           fontSize: 13,
           fontWeight: FontWeight.w800,
           color: _match.alive[i] ? FlatColors.ink : FlatColors.ink.withValues(alpha: 0.5),
           decoration: _match.alive[i] ? null : TextDecoration.lineThrough,
-        ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+        ).copyWith(fontFamilyFallback: _emojiFallback),
       ),
     );
   }
@@ -126,6 +155,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: FilledButton(
+          key: Key('snake_turn_$i'),
           style: FilledButton.styleFrom(
             backgroundColor: _colors[i],
             disabledBackgroundColor: _colors[i].withValues(alpha: 0.15),
@@ -138,7 +168,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
               fontSize: 15,
               fontWeight: FontWeight.w800,
               color: Colors.black87,
-            ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+            ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
         ),
       ),
@@ -158,27 +188,24 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
 
   Widget _buildOver() {
     final w = _match.winner;
+    Widget head;
+    if (_practice) {
+      head = Text('جبت ${_match.score[0]} تفاحة 🍎', style: _t(22));
+    } else if (w != null && w >= 0 && _match.botSeats.contains(w)) {
+      head = Text('البوتات كسبوا 🤖', style: _t(22));
+    } else if (w != null && w >= 0) {
+      head = VictoryFriends(gameTitle: 'حية الشلة', winnerName: 'لاعب ${w + 1}');
+    } else {
+      head = Text('تعادل! الكل وقع في بعض 😅', style: _t(20));
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (w != null && w >= 0)
-          VictoryFriends(gameTitle: 'حية الشلة', winnerName: 'لاعب ${w + 1}')
-        else
-          Text(
-            'تعادل! الكل وقع في بعض 😅',
-            style: flatCairo(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
-          ),
+        head,
         const SizedBox(height: 16),
         FilledButton(
           onPressed: () => setState(() => _phase = _SnakePhase.pickPlayers),
-          child: Text(
-            'العبوا تاني 🐍',
-            style: flatCairo(fontSize: 18, fontWeight: FontWeight.w800).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
-          ),
+          child: Text('العبوا تاني 🐍', style: _t(18, color: Colors.white)),
         ),
       ],
     );
@@ -190,45 +217,71 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
       return GameIntroWidget(
         title: 'حية الشلة',
         description:
-            '٢-٤ لاعبين على نفس الموبايل. كل واحد ليه زرار واحد بيلفّ بيه حيته. كل التفاح عشان تكبر، ومتخبطش في الحيطة ولا في حد! آخر حية واقفة تكسب 🐍',
+            '١-٤ لاعبين على نفس الموبايل، وتقدر تضيف بوتات. كل واحد ليه زرار على جنبه بيلفّ بيه حيته. كل التفاح عشان تكبر، ومتخبطش في الحيطة ولا في حد! آخر حية واقفة تكسب 🐍',
         icon: '🐍',
         onStart: () => setState(() => _showIntro = false),
       );
     }
-    final players = _phase == _SnakePhase.pickPlayers ? 0 : _match.playerCount;
+    if (_phase == _SnakePhase.pickPlayers || _phase == _SnakePhase.pickBots) {
+      return OfflineGameScaffold(
+        title: 'حية الشلة',
+        backgroundColor: FlatColors.bg,
+        body: SafeArea(
+          child: _phase == _SnakePhase.pickPlayers ? _buildPicker() : _buildBots(),
+        ),
+      );
+    }
+    final players = _match.playerCount;
+    // Human seats get turn buttons; bots steer themselves. The first half
+    // of human seats sits at the bottom, the rest at the top (rotated to
+    // face the players opposite).
+    final bottomSeats = <int>[];
+    final topSeats = <int>[];
+    final humanSeats = [for (var i = 0; i < _humans; i++) i];
+    final split = (humanSeats.length / 2).ceil();
+    bottomSeats.addAll(humanSeats.take(split));
+    topSeats.addAll(humanSeats.skip(split));
     return OfflineGameScaffold(
       title: 'حية الشلة',
       backgroundColor: FlatColors.bg,
       body: SafeArea(
-        child: _phase == _SnakePhase.pickPlayers
-            ? _buildPicker()
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 6,
-                      alignment: WrapAlignment.center,
-                      children: [for (var i = 0; i < players; i++) _scorePill(i)],
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: _phase == _SnakePhase.over
-                          ? Center(child: _buildOver())
-                          : _buildArena(),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
-                    child: Row(
-                      children: [for (var i = 0; i < players; i++) _turnButton(i)],
-                    ),
-                  ),
-                ],
+        child: Column(
+          children: [
+            if (topSeats.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                child: Transform.rotate(
+                  angle: pi,
+                  child: Row(children: [
+                    // keep left/right seat order natural after rotation
+                    for (var i = topSeats.length - 1; i >= 0; i--)
+                      _turnButton(topSeats[i]),
+                  ]),
+                ),
               ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                alignment: WrapAlignment.center,
+                children: [for (var i = 0; i < players; i++) _scorePill(i)],
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: _phase == _SnakePhase.over
+                    ? Center(child: _buildOver())
+                    : _buildArena(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
+              child: Row(children: [for (final i in bottomSeats) _turnButton(i)]),
+            ),
+          ],
+        ),
       ),
     );
   }

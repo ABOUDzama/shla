@@ -81,3 +81,9 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - KNOWN: 7 other goldens in test/arcade_play_proof_test.dart (sumo, touch-ball, snake, tank, tug, snow) fail pixel diffs in this env (not touched by me; need regenerate after viewing, or are due to their own pending reworks).
 - Whack: still owed an explicit tap test on the rotated top grid hole.
 - Remaining old-11: snake_arena, tug_of_war, snow_brawl, sumo, touch_ball, tank_battle (bots yes/no + banner/emoji cleanup), friend-name crown site.
+
+## Batch 15 (01:55 EET, Nov 26) snake_arena rework (successor agent, Flutter 3.50.1 exact env match)
+- حية الشلة: picker 1-4 -> bots yes/no (4 humans skips); 1P+لا = practice (no winner, shows تفاحة count, no record). Bots fill to 4; logic-level steering (survive, then seek food, one cw turn/tick).
+- Controls: turn buttons split per side - bottom half of human seats at bottom, rest at top rotated 180 deg (face-to-face); keys snake_turn_N. Bot pills labeled بوت.
+- debugMatch getter; over screen: practice count / البوتات كسبوا / VictoryFriends / draw.
+- Tests: logic 5 pass; widget rewritten 6 pass (picker incl. solo, 2p+لا, 4p direct, bots steer, practice, turn stability). proof golden regenerated AND pixel-viewed (rotated top buttons, 4 pills, corner spawns). small_screen snake passes.

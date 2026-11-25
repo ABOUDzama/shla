@@ -15,7 +15,7 @@ class SnakeArenaMatch {
     this.width = 16,
     this.height = 24,
     Random? random,
-  })  : assert(playerCount >= 2 && playerCount <= 4),
+  })  : assert(playerCount >= 1 && playerCount <= 4),
         _random = random ?? Random() {
     _spawnSnakes();
     _spawnFood();
@@ -44,10 +44,17 @@ class SnakeArenaMatch {
   /// Queued turns applied on the next tick (one per player).
   final List<bool> _turnQueued = [];
 
+  /// Seats steered by the built-in bot each tick.
+  final Set<int> botSeats = {};
+
   Cell? food;
   int tickCount = 0;
   int? winner;
-  bool get isOver => winner != null || alive.where((a) => a).length <= 1;
+  bool get isOver {
+    if (winner != null) return true;
+    if (playerCount == 1) return !alive[0]; // solo practice ends on death
+    return alive.where((a) => a).length <= 1;
+  }
   int get aliveCount => alive.where((a) => a).length;
 
   void _spawnSnakes() {
@@ -80,6 +87,47 @@ class SnakeArenaMatch {
     food = free.isEmpty ? null : free[_random.nextInt(free.length)];
   }
 
+  /// Bot steering: survive first (turn when straight ahead kills), then
+  /// drift toward the food when both options are safe. One clockwise turn
+  /// per tick, same control a human has.
+  void _steerBot(int p) {
+    bool deadAhead(int dir) {
+      final d = dirs[dir];
+      final h = snakes[p].first;
+      final nx = h.x + d.x, ny = h.y + d.y;
+      if (nx < 0 || ny < 0 || nx >= width || ny >= height) return true;
+      for (var q = 0; q < playerCount; q++) {
+        if (!alive[q]) continue;
+        final body = snakes[q];
+        // skip the tail tip: a non-eating snake vacates it this tick
+        for (var i = 0; i < body.length - 1; i++) {
+          if (body[i].x == nx && body[i].y == ny) return true;
+        }
+      }
+      return false;
+    }
+
+    int foodDist(int dir) {
+      final d = dirs[dir];
+      final h = snakes[p].first;
+      final f = food;
+      if (f == null) return 0;
+      return (h.x + d.x - f.x).abs() + (h.y + d.y - f.y).abs();
+    }
+
+    final straight = facing[p];
+    final turned = (straight + 1) % 4;
+    final straightDead = deadAhead(straight);
+    final turnDead = deadAhead(turned);
+    if (straightDead) {
+      if (!turnDead) _turnQueued[p] = true;
+      return; // both fatal: accept fate, go straight
+    }
+    if (!turnDead && food != null && foodDist(turned) < foodDist(straight)) {
+      _turnQueued[p] = true;
+    }
+  }
+
   /// Queue a 90-degree clockwise turn for [player]. Ignored when dead/over.
   void turn(int player) {
     if (isOver || !alive[player]) return;
@@ -90,6 +138,9 @@ class SnakeArenaMatch {
   void tick() {
     if (isOver) return;
     tickCount++;
+    for (final p in botSeats) {
+      if (p < playerCount && alive[p]) _steerBot(p);
+    }
     final newHeads = <Cell>[];
     for (var p = 0; p < playerCount; p++) {
       if (!alive[p]) {
@@ -149,6 +200,7 @@ class SnakeArenaMatch {
         snakes[p].removeLast();
       }
     }
+    if (playerCount == 1) return; // practice: no winner bookkeeping
     final left = aliveCount;
     if (left == 1) {
       winner = alive.indexOf(true);

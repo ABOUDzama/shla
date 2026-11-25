@@ -63,9 +63,10 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });
 
-  testWidgets('snake arena: intro starts to player picker', (tester) async {
+  testWidgets('snake arena: intro starts to player picker incl. solo', (tester) async {
     await boot(tester);
     expect(find.text('كام لاعب؟'), findsOneWidget);
+    expect(find.text('لاعب واحد'), findsOneWidget);
     expect(find.text('2 لاعبين'), findsOneWidget);
     expect(find.text('3 لاعبين'), findsOneWidget);
     expect(find.text('4 لاعبين'), findsOneWidget);
@@ -73,10 +74,13 @@ void main() {
     await settleDown(tester);
   });
 
-  testWidgets('snake arena: 2p start shows two turn buttons and scores',
+  testWidgets('snake arena: 2p without bots shows two turn buttons and scores',
       (tester) async {
     await boot(tester);
     await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    expect(find.text('نضيف بوتات؟'), findsOneWidget);
+    await tester.tap(find.text('لا'));
     await tester.pump();
     expect(find.text('لاعب 1 لفّ 🐍'), findsOneWidget);
     expect(find.text('لاعب 2 لفّ 🐍'), findsOneWidget);
@@ -86,13 +90,52 @@ void main() {
     await settleDown(tester);
   });
 
-  testWidgets('snake arena: 4p start shows four turn buttons', (tester) async {
+  testWidgets('snake arena: 4p start shows four turn buttons, no bots question',
+      (tester) async {
     await boot(tester);
     await tester.tap(find.text('4 لاعبين'));
     await tester.pump();
+    expect(find.text('نضيف بوتات؟'), findsNothing);
     for (var i = 1; i <= 4; i++) {
       expect(find.text('لاعب $i لفّ 🐍'), findsOneWidget);
     }
+    await flushFontCallbacks(tester);
+    await settleDown(tester);
+  });
+
+  testWidgets('snake arena: bots fill to 4 and steer on their own',
+      (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('اه 🤖'));
+    await tester.pump();
+    final state = tester.state(find.byType(SnakeArenaGame)) as dynamic;
+    final m = state.debugMatch;
+    expect(m.playerCount, 4);
+    expect(m.botSeats, {2, 3});
+    final botHeads = [m.snakes[2].first, m.snakes[3].first];
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 250));
+    }
+    // bots moved from spawn without any human taps
+    expect(m.snakes[2].first != botHeads[0] || m.snakes[3].first != botHeads[1],
+        isTrue);
+    await flushFontCallbacks(tester);
+    await settleDown(tester);
+  });
+
+  testWidgets('snake arena: solo practice has one button and no bots',
+      (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('لاعب واحد'));
+    await tester.pump();
+    await tester.tap(find.text('لا'));
+    await tester.pump();
+    final state = tester.state(find.byType(SnakeArenaGame)) as dynamic;
+    expect(state.debugMatch.playerCount, 1);
+    expect(find.text('لاعب 1 لفّ 🐍'), findsOneWidget);
+    expect(find.text('لاعب 2 لفّ 🐍'), findsNothing);
     await flushFontCallbacks(tester);
     await settleDown(tester);
   });
@@ -101,6 +144,8 @@ void main() {
       (tester) async {
     await boot(tester);
     await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('لا'));
     await tester.pump();
     await tester.tap(find.text('لاعب 1 لفّ 🐍'));
     for (var i = 0; i < 6; i++) {

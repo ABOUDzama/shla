@@ -11,3 +11,4 @@ android/key.properties
 *.keystore
 *.jks
 .vault/
+test/failures/
