@@ -221,7 +221,8 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(milliseconds: 1));
   });
-  testWidgets('١٢٣٤ tab: section shows arcade games with working count filter', (tester) async {
+  testWidgets('١٢٣٤ tab: card grid lobby, game-first flow into count picker',
+      (tester) async {
     tester.view.physicalSize = const Size(412, 900);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
@@ -236,8 +237,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(find.text('ألعاب ١٢٣٤'), findsOneWidget);
+    // no global count filter chips: count is picked inside each game
+    expect(find.text('الكل'), findsNothing);
     for (final title in [
       'أسرع رد فعل',
+      'حية الشلة',
+      'دبابات الشلة',
+      'شد الحبل',
       'سومو الشلة',
       'اقطفها',
       'سباق الدوس',
@@ -245,18 +251,18 @@ void main() {
     ]) {
       expect(find.text(title), findsOneWidget, reason: title);
     }
+    // sumo is 2-player only: single '٢ بس' chip
+    expect(find.text('٢ بس'), findsOneWidget);
 
-    // ٣-player filter hides the 2-player-only sumo, keeps the rest
-    await tester.tap(find.text('٣'));
-    await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('سومو الشلة'), findsNothing);
-    expect(find.text('أسرع رد فعل'), findsOneWidget);
-    expect(find.text('اقطفها'), findsOneWidget);
-
-    // back to الكل shows all five again
-    await tester.tap(find.text('الكل'));
-    await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('سومو الشلة'), findsOneWidget);
+    // game-first: tapping a card opens the game, its own picker asks count
+    await tester.tap(find.text('شد الحبل'));
+    for (var i = 0; i < 3; i++) {
+      await tester.pump(const Duration(milliseconds: 500));
+    }
+    await tester.tap(find.textContaining('ابدأ اللعبة'));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('كام لاعب؟'), findsOneWidget);
+    expect(find.text('4 لاعبين'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(milliseconds: 1));

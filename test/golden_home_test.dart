@@ -37,11 +37,31 @@ void main() {
     await emojiLoader.load();
   });
 
+
+/// Builds throwaway texts in every Cairo weight so google_fonts finishes its
+/// async family registration BEFORE the game tree exists (same pattern as
+/// the other golden/widget tests).
+Future<void> warmGoogleFonts(WidgetTester tester) async {
+  await tester.pumpWidget(Directionality(
+    textDirection: TextDirection.ltr,
+    child: Column(children: [
+      for (final w in [
+        FontWeight.w400, FontWeight.w500, FontWeight.w600,
+        FontWeight.w700, FontWeight.w800, FontWeight.w900,
+      ])
+        Text('warm', style: GoogleFonts.cairo(fontWeight: w)),
+    ]),
+  ));
+  await tester.runAsync(() => Future.delayed(const Duration(seconds: 1)));
+  await tester.pump();
+}
+
   testWidgets('home screen renders improved game grid', (tester) async {
     tester.view.physicalSize = const Size(412, 900);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
+    await warmGoogleFonts(tester);
     await tester.pumpWidget(
       MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -113,6 +133,7 @@ void main() {
     tester.view.physicalSize = const Size(412, 900);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
+    await warmGoogleFonts(tester);
     await tester.pumpWidget(
       MaterialApp(
         debugShowCheckedModeBanner: false,
