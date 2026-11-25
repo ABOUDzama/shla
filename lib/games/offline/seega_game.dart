@@ -257,8 +257,8 @@ class _SeegaGameState extends State<SeegaGame> {
                       color: winner != null
                           ? FlatColors.mintDark
                           : (currentPlayer == 1
-                                ? FlatColors.mafia
-                                : FlatColors.detective),
+                                ? FlatColors.playerRed
+                                : FlatColors.playerBlue),
                     ),
                   ),
                 )
@@ -293,6 +293,7 @@ class _SeegaGameState extends State<SeegaGame> {
                       final value = board[index];
                       final isSelected = selectedIndex == index;
                       return GestureDetector(
+                        key: ValueKey('seega_cell_${index}'),
                         onTap: () => _handleTap(index),
                         child: AnimatedContainer(
                           duration: 250.ms,

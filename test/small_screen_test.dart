@@ -19,6 +19,7 @@ import 'package:shella/games/offline/who_am_i_game.dart';
 import 'package:shella/games/offline/seega_game.dart';
 import 'package:shella/games/offline/gobblet_game.dart';
 import 'package:shella/games/offline/multi_touch_screen.dart';
+import 'package:shella/games/offline/reaction_game.dart';
 import 'package:shella/screens/settings_screen.dart';
 import 'package:shella/screens/profile_screen.dart';
 import 'package:shella/games/offline/password_game.dart';
@@ -454,6 +455,12 @@ void main() {
     await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
+    // real turns: place red and blue stones on the board
+    for (final cell in [0, 1, 3, 4]) {
+      await tester.tap(find.byKey(ValueKey('seega_cell_$cell')), warnIfMissed: false);
+      await fixedPumps(tester, 2);
+    }
+    await capture360(tester, 'seega_mid');
     await capture360(tester, 'seega');
     expectNoOverflow(tester);
   });
@@ -465,6 +472,11 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'gobblet');
+    await tester.tap(find.byKey(const ValueKey('gobblet_inv_1_2')), warnIfMissed: false);
+    await fixedPumps(tester, 2);
+    await tester.tap(find.byKey(const ValueKey('gobblet_cell_1_1')), warnIfMissed: false);
+    await fixedPumps(tester, 2);
+    await capture360(tester, 'gobblet_mid');
     expectNoOverflow(tester);
   });
 
@@ -474,7 +486,29 @@ void main() {
     await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
+    // two simultaneous touches held down: live circles visible
+    final g1 = await tester.startGesture(const Offset(140, 420));
+    final g2 = await tester.startGesture(const Offset(260, 480));
+    await fixedPumps(tester, 2);
+    await capture360(tester, 'multi_touch_live');
+    await g1.up();
+    await g2.up();
+    await fixedPumps(tester, 2);
     await capture360(tester, 'multi_touch');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: reaction arena', (tester) async {
+    await pumpSmall(tester, const ReactionGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'reaction_picker');
+    await tapIf(tester, find.text('2'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'reaction_arena');
     expectNoOverflow(tester);
   });
 

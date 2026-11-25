@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
@@ -144,13 +143,11 @@ class _ReactionGameState extends State<ReactionGame> {
     final color = green
         ? FunkyColors.lime
         : waiting
-            ? FunkyColors.card
+            ? FlatColors.tileWhite
             : _zoneColors[player];
-    // dark text only on bright lime (green state or lime zone); the
-    // waiting card is dark purple, where dark text was illegible
-    final onZone = green || (!waiting && color == FunkyColors.lime)
-        ? FunkyColors.bgDeep
-        : Colors.white;
+    // max-contrast text on whatever the zone fill is (ink wins on every
+    // flat pastel; white would fail on lime/cyan)
+    final onZone = FlatDecor.textOn(color);
     final label = 'لاعب ${player + 1}';
     final score = _match.scores[player];
     final content = Center(
@@ -169,7 +166,7 @@ class _ReactionGameState extends State<ReactionGame> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.25),
+              color: Colors.white.withValues(alpha: 0.55),
               borderRadius: BorderRadius.circular(999),
             ),
             child: Text(
@@ -178,7 +175,7 @@ class _ReactionGameState extends State<ReactionGame> {
               style: flatCairo(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: onZone,
+                color: FlatColors.ink,
               ),
             ),
           ),
@@ -232,18 +229,14 @@ class _ReactionGameState extends State<ReactionGame> {
           width: double.infinity,
           margin: const EdgeInsets.fromLTRB(12, 4, 12, 12),
           padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: FunkyColors.card,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: FunkyColors.amber, width: 1.6),
-          ),
+          decoration: FlatDecor.card(radius: 18),
           child: Text(
             _banner,
             textAlign: TextAlign.center,
             style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: FunkyColors.amber,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
         ),
@@ -272,13 +265,13 @@ class _ReactionGameState extends State<ReactionGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w900,
-              color: Colors.white,
+              color: FlatColors.ink,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'الكل على نفس الموبايل، وأول واحد يوصل ٥ نقط يكسب',
-            style: flatCairo(fontSize: 15, color: Colors.white70),
+            style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.7)),
           ),
           const SizedBox(height: 24),
           Row(
@@ -290,7 +283,7 @@ class _ReactionGameState extends State<ReactionGame> {
                   child: FilledButton(
                     style: FilledButton.styleFrom(
                       backgroundColor: _zoneColors[n - 2],
-                      foregroundColor: FunkyColors.bgDeep,
+                      foregroundColor: FlatDecor.textOn(_zoneColors[n - 2]),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 26, vertical: 16),
                     ),
@@ -324,7 +317,7 @@ class _ReactionGameState extends State<ReactionGame> {
     }
     final scaffold = OfflineGameScaffold(
       title: 'أسرع رد فعل',
-      backgroundColor: FunkyColors.amber,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: _phase == _Phase.pickPlayers ? _buildPicker() : _buildArena(),
       ),

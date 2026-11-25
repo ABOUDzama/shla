@@ -30,6 +30,12 @@ class FlatColors {
   /// the pastel mint itself is only 2.1:1).
   static const Color mintDark = Color(0xFF17795A);
 
+  /// Text-safe player red/blue for labels on white/cream (5.3:1 / 5.8:1);
+  /// the mafia/detective fills are only ~3:1, fine for fills and borders,
+  /// not for normal-size text.
+  static const Color playerRed = Color(0xFFC63730);
+  static const Color playerBlue = Color(0xFF2B5CD6);
+
   // Role/phase solids.
   static const Color mafia = Color(0xFFFF5A5A);
   static const Color doctor = Color(0xFF35C99E);

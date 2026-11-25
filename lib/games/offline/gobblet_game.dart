@@ -410,6 +410,7 @@ class _GobbletGameState extends State<GobbletGame> {
     final isSelected = _selectedRow == row && _selectedCol == col;
 
     return GestureDetector(
+      key: ValueKey('gobblet_cell_${row}_$col'),
       onTap: () => _handleTap(row, col),
       child: Container(
         margin: const EdgeInsets.all(4),
@@ -440,8 +441,8 @@ class _GobbletGameState extends State<GobbletGame> {
         _currentPlayer == player && !_isGameOver && isOnlineMyTurn;
     final color = FlatColors.tileWhite;
     final borderColor = player == 1
-        ? FlatColors.mafia
-        : FlatColors.detective;
+        ? FlatColors.playerRed
+        : FlatColors.playerBlue;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -467,7 +468,7 @@ class _GobbletGameState extends State<GobbletGame> {
             style: flatCairo(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: player == 1 ? FlatColors.mafia : FlatColors.detective,
+              color: player == 1 ? FlatColors.playerRed : FlatColors.playerBlue,
             ),
           ),
           const SizedBox(height: 8),
@@ -481,6 +482,7 @@ class _GobbletGameState extends State<GobbletGame> {
                   _currentPlayer == player;
 
               return GestureDetector(
+                key: ValueKey('gobblet_inv_${player}_$sizeIndex'),
                 onTap: isCurrent ? () => _selectFromInventory(sizeIndex) : null,
                 child: Opacity(
                   opacity: count > 0 ? 1.0 : 0.3,
