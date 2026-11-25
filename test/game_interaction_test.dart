@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:shella/services/settings_service.dart';
 import 'package:shella/games/offline/memory_game.dart';
 import 'package:shella/games/offline/password_game.dart';
 import 'package:shella/games/offline/spy_game.dart';
+import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/most_likely_game.dart';
 import 'package:shella/games/offline/taboo_game.dart';
 import 'package:shella/games/offline/emoji_guess_game.dart';
@@ -504,6 +506,46 @@ void main() {
       final winner = find.textContaining('الفايز:').evaluate().isNotEmpty;
       final tie = find.textContaining('تعادل:').evaluate().isNotEmpty;
       expect(winner || tie, isTrue, reason: 'no final score screen');
+      await tapText(tester, 'العب تاني');
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+      await flushFontCallbacks(tester);
+    });
+  });
+
+  group('proverb: steal mechanic and full match', () {
+    testWidgets('wrong pick steals turn, correct scores, winner, replay',
+        (tester) async {
+      final order = List.generate(ProverbGame.proverbs.length, (i) => i)
+        ..shuffle(Random(13));
+      await pumpGame(tester, const ProverbGame());
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester);
+
+      // Round 1 (proverb order[0]): أحمد picks a WRONG option, منى steals.
+      final correct1 = ProverbGame.proverbs[order[0]].end;
+      final options1 =
+          ProverbGame.buildOptions(ProverbGame.proverbs, order[0], 5);
+      final wrong1 = options1.firstWhere((o) => o != correct1);
+      expect(find.text('دور: أحمد'), findsOneWidget);
+      await tapText(tester, wrong1);
+      expect(find.textContaining('غلط!'), findsOneWidget);
+      expect(find.text('دور: منى'), findsOneWidget);
+      await tapText(tester, correct1);
+      expect(find.textContaining('الإجابة:'), findsOneWidget);
+      await tapText(tester, 'المثل اللي بعده');
+
+      // Round 2 (proverb order[1]): منى picks correctly on first try.
+      final correct2 = ProverbGame.proverbs[order[1]].end;
+      expect(find.text('دور: منى'), findsOneWidget);
+      await tapText(tester, correct2);
+      await tapText(tester, 'النتيجة النهائية');
+
+      // منى 2 (steal + own round), أحمد 0.
+      expect(find.text('الفايز: منى'), findsOneWidget);
+      expect(find.text('منى: 2'), findsOneWidget);
+      expect(find.text('أحمد: 0'), findsOneWidget);
+
       await tapText(tester, 'العب تاني');
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
       await flushFontCallbacks(tester);

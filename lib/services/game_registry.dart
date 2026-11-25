@@ -29,6 +29,7 @@ import '../games/offline/memory_game.dart';
 import '../games/offline/emoji_guess_game.dart';
 import '../games/offline/password_game.dart';
 import '../games/offline/spy_game.dart';
+import '../games/offline/proverb_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -193,6 +194,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'أكمل المثل',
+      description: 'كمّل المثل الشعبي صح قبل ما حد يسرقها منك!',
+      icon: Icons.menu_book_rounded,
+      color: FunkyColors.pink,
+      screen: ProverbGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'الجاسوس',

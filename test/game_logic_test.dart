@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shella/games/offline/ranking_challenge_game.dart';
 import 'package:shella/games/offline/bus_complete_game.dart';
+import 'package:shella/games/offline/proverb_game.dart';
 
 void main() {
   group('RankingChallengeGame.scoreGuess', () {
@@ -94,6 +95,28 @@ void main() {
       });
       expect(scores['علي'], 0);
       expect(scores['منى'], 10);
+    });
+  });
+
+  group('ProverbGame.buildOptions', () {
+    test('4 options: correct ending plus 3 unique others', () {
+      for (var i = 0; i < ProverbGame.proverbs.length; i++) {
+        final options = ProverbGame.buildOptions(ProverbGame.proverbs, i, 42);
+        expect(options.length, 4);
+        expect(options, contains(ProverbGame.proverbs[i].end));
+        expect(options.toSet().length, 4, reason: 'duplicate options at $i');
+      }
+    });
+    test('deterministic for the same seed', () {
+      final a = ProverbGame.buildOptions(ProverbGame.proverbs, 3, 7);
+      final b = ProverbGame.buildOptions(ProverbGame.proverbs, 3, 7);
+      expect(a, b);
+    });
+    test('proverb data: unique starts and endings', () {
+      final starts = ProverbGame.proverbs.map((p) => p.start).toList();
+      final ends = ProverbGame.proverbs.map((p) => p.end).toList();
+      expect(starts.toSet().length, starts.length);
+      expect(ends.toSet().length, ends.length);
     });
   });
 }
