@@ -12,6 +12,7 @@ import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 // ─── Drawing model ───────────────────────────────
 class DrawPoint {
@@ -395,7 +396,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                 const SizedBox(height: 12),
                 Text(
                   'ارسم وخمّن!',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -405,7 +406,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                 Text(
                   'واحد يرسم والباقي يخمّن!\nمين أسرع واحد هيعرف الكلمة؟ 🎨',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+                  style: flatCairo(fontSize: 15, color: Colors.white70),
                 ),
                 const SizedBox(height: 50),
                 ElevatedButton.icon(
@@ -437,7 +438,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       icon: const Icon(Icons.people_alt, size: 28),
                       label: Text(
                         'اختار شلتك وابدأ!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                         ),
@@ -512,14 +513,14 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     children: [
                       Text(
                         '🎨 $_drawerName يرسم',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         'الكلمة: ${_currentWord!['word']} (الرسام بس)',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           color: Colors.amberAccent,
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
@@ -535,7 +536,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Text(
                   'الفئة: ${_currentWord!['category']}',
-                  style: GoogleFonts.cairo(color: Colors.white70, fontSize: 13),
+                  style: flatCairo(color: Colors.white70, fontSize: 13),
                 ),
               ),
 
@@ -667,7 +668,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                   icon: const Icon(Icons.send_rounded, size: 22),
                   label: Text(
                     'خلصت الرسم! دي التلفون للمخمن 📱',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontWeight: FontWeight.w900,
                       fontSize: 15,
                     ),
@@ -720,7 +721,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                   const SizedBox(width: 8),
                   Text(
                     'دور المخمّن: $_guesserName',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                       color: Colors.black87,
@@ -759,13 +760,13 @@ class _PictionaryGameState extends State<PictionaryGame> {
                 controller: _guessCtrl,
                 autofocus: false,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
                 decoration: InputDecoration(
                   hintText: 'اكتب تخمينك هنا...',
-                  hintStyle: GoogleFonts.cairo(color: Colors.grey),
+                  hintStyle: flatCairo(color: Colors.grey),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -788,7 +789,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                 icon: const Icon(Icons.check_circle, size: 24),
                 label: Text(
                   'تأكيد الإجابة ✅',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                   ),
@@ -834,7 +835,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     const SizedBox(height: 16),
                     Text(
                       'دي للراسم ($drawerName)',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 20,
                         color: Colors.white70,
                         fontWeight: FontWeight.bold,
@@ -843,7 +844,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     const SizedBox(height: 12),
                     Text(
                       'الفئة: ${_currentWord!['category']}',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 14,
                         color: Colors.white54,
                       ),
@@ -851,7 +852,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     const SizedBox(height: 8),
                     Text(
                       'الكلمة الصحيحة:',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 15,
                         color: Colors.white60,
                       ),
@@ -869,7 +870,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       ),
                       child: Text(
                         _currentWord!['word']!,
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
                           color: Colors.amberAccent,
@@ -879,7 +880,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     const SizedBox(height: 8),
                     Text(
                       'إجابة $_guesserName:',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 15,
                         color: Colors.white60,
                       ),
@@ -897,7 +898,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       ),
                       child: Text(
                         _guessText,
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -907,7 +908,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     const SizedBox(height: 24),
                     Text(
                       'هل إجابته صح؟',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
@@ -923,7 +924,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                             label: Text(
                               'صح ✅\n+1 نقطة',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontWeight: FontWeight.w900,
                                 fontSize: 16,
                               ),
@@ -946,7 +947,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                             label: Text(
                               'غلط ❌\nلا نقطة',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontWeight: FontWeight.w900,
                                 fontSize: 16,
                               ),
@@ -972,7 +973,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     const SizedBox(height: 20),
                     Text(
                       isCorrect ? 'صح! 🏆 نقطة لـ $_guesserName!' : 'مش صح 😅',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 30,
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
@@ -981,7 +982,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     const SizedBox(height: 12),
                     Text(
                       'الكلمة: ${_currentWord!['word']}',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 20,
                         color: Colors.white70,
                       ),
@@ -1004,14 +1005,14 @@ class _PictionaryGameState extends State<PictionaryGame> {
                                   children: [
                                     Text(
                                       p['name'],
-                                      style: GoogleFonts.cairo(
+                                      style: flatCairo(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     Text(
                                       '${p['score']} نقطة',
-                                      style: GoogleFonts.cairo(
+                                      style: flatCairo(
                                         color: Colors.white70,
                                         fontSize: 12,
                                       ),
@@ -1029,7 +1030,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       icon: const Icon(Icons.play_arrow, size: 24),
                       label: Text(
                         'دور جديد 🎨',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
                         ),
@@ -1062,7 +1063,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
       body: Center(
         child: ElevatedButton(
           onPressed: _pickWord,
-          child: Text('ابدأ', style: GoogleFonts.cairo()),
+          child: Text('ابدأ', style: flatCairo()),
         ),
       ),
     );

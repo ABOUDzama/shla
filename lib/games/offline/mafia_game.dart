@@ -360,7 +360,7 @@ class _MafiaGameState extends State<MafiaGame> {
           child: Text(
             label,
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 17,
               fontWeight: FontWeight.w900,
               color: FlatDecor.textOn(color),
@@ -390,7 +390,7 @@ class _MafiaGameState extends State<MafiaGame> {
                   const Spacer(),
                   Text(
                     'مافيا',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
                       color: _flatInk,
@@ -414,7 +414,7 @@ class _MafiaGameState extends State<MafiaGame> {
                   ),
                   child: Text(
                     'الدور ${_dealIndex + 1} من ${_names.length} 🤫',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: _flatInk,
@@ -437,7 +437,7 @@ class _MafiaGameState extends State<MafiaGame> {
                   child: Center(
                     child: Text(
                       name.characters.first,
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
                         color: _flatInk,
@@ -452,7 +452,7 @@ class _MafiaGameState extends State<MafiaGame> {
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
                   color: _flatInk,
@@ -487,7 +487,7 @@ class _MafiaGameState extends State<MafiaGame> {
                               Text(
                                 roleTitle,
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 38,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.white,
@@ -500,7 +500,7 @@ class _MafiaGameState extends State<MafiaGame> {
                               Text(
                                 'افتكر دورك كويس.. ومتوريهوش لحد!',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                     fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.75)),
                               ),
                             ],
@@ -529,7 +529,7 @@ class _MafiaGameState extends State<MafiaGame> {
                                   'بس $name اللي يشوف! 🤫',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                           fontSize: 13, color: _flatInk)
                                       .copyWith(
                                           fontFamilyFallback: const [
@@ -602,7 +602,7 @@ class _MafiaGameState extends State<MafiaGame> {
           Text(
             'الليل $_dayNumber 🌙',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
+            style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
                 .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
           const SizedBox(height: 20),
@@ -630,7 +630,7 @@ class _MafiaGameState extends State<MafiaGame> {
                       'بس $player اللي يشوف!',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                           fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                     ),
                   ],
@@ -649,7 +649,7 @@ class _MafiaGameState extends State<MafiaGame> {
           Text(
             'الليل $_dayNumber 🌙',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
+            style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
                 .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
           const SizedBox(height: 20),
@@ -660,7 +660,7 @@ class _MafiaGameState extends State<MafiaGame> {
                 child: Text(
                   _investigateResult!,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 34,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -695,14 +695,14 @@ class _MafiaGameState extends State<MafiaGame> {
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
+          style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
               .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
         ),
         const SizedBox(height: 8),
         Text(
           prompt,
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: FlatColors.ink,
@@ -745,7 +745,7 @@ class _MafiaGameState extends State<MafiaGame> {
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
                         color: FlatColors.ink,
@@ -771,7 +771,7 @@ class _MafiaGameState extends State<MafiaGame> {
           Text(
             'الصبح $_dayNumber ☀',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
+            style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
                 .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
           const SizedBox(height: 20),
@@ -788,7 +788,7 @@ class _MafiaGameState extends State<MafiaGame> {
                             ? 'المافيا حاولت تاخد ${_nightVictim!} بس الدكتور أنقذه! 🩺'
                             : 'المافيا أخدت ${_nightVictim!} 💀',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
                       color: FlatColors.ink,
@@ -803,7 +803,7 @@ class _MafiaGameState extends State<MafiaGame> {
           Text(
             'اتناقشوا.. وبعدين صوّتوا تشيلوا أكتر واحد مشكوك فيه',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.75)),
+            style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.75)),
           ),
           const SizedBox(height: 12),
           FunkyButton(
@@ -833,14 +833,14 @@ class _MafiaGameState extends State<MafiaGame> {
         Text(
           'التصويت ⚖️',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
+          style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
               .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
         ),
         const SizedBox(height: 4),
         Text(
           'يا $voter، مين أكتر واحد مشكوك فيه؟',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: FlatColors.ink,
@@ -865,7 +865,7 @@ class _MafiaGameState extends State<MafiaGame> {
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
                       color: FlatColors.ink,
@@ -897,7 +897,7 @@ class _MafiaGameState extends State<MafiaGame> {
             Text(
               'المجموعة قررت! ⚖️',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75))
+              style: flatCairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75))
                   .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 12),
@@ -906,7 +906,7 @@ class _MafiaGameState extends State<MafiaGame> {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 34,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -916,7 +916,7 @@ class _MafiaGameState extends State<MafiaGame> {
             Text(
               'كان ${_roleLabel(role)}',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: FlatColors.ink,
@@ -953,7 +953,7 @@ class _MafiaGameState extends State<MafiaGame> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -966,7 +966,7 @@ class _MafiaGameState extends State<MafiaGame> {
                 child: Text(
                   '$n (${_roleLabel(_roles[n]!)}): ${_scores[n]}',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 16,
                     color: FlatColors.ink.withValues(alpha: 0.75),
                   ).copyWith(

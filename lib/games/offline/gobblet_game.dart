@@ -5,6 +5,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../services/score_service.dart';
 import '../../services/socket_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class Piece {
   final int player; // 1 for Red, 2 for Blue
@@ -266,12 +267,12 @@ class _GobbletGameState extends State<GobbletGame> {
           winnerPlayer != null
               ? '🎉 مبروك اللاعب ${winnerPlayer == 1 ? "الأحمر" : "الأزرق"} فاز!'
               : 'تعادل!',
-          style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+          style: flatCairo(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         content: Text(
           'تحب تلعب دور تاني؟',
-          style: GoogleFonts.cairo(),
+          style: flatCairo(),
           textAlign: TextAlign.center,
         ),
         actionsAlignment: MainAxisAlignment.center,
@@ -292,7 +293,7 @@ class _GobbletGameState extends State<GobbletGame> {
             ),
             child: Text(
               'العب تاني',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+              style: flatCairo(fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -490,7 +491,7 @@ class _GobbletGameState extends State<GobbletGame> {
                 : player == 1
                 ? 'اللاعب الأحمر'
                 : 'اللاعب الأزرق',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: player == 1 ? Colors.red.shade800 : Colors.blue.shade800,
@@ -519,7 +520,7 @@ class _GobbletGameState extends State<GobbletGame> {
                       const SizedBox(height: 4),
                       Text(
                         'x$count',
-                        style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                        style: flatCairo(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

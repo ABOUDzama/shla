@@ -7,6 +7,7 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// Pure round/match logic for the reaction game, kept separate from the
 /// widget so it can be unit-tested without pumping timers.
@@ -158,7 +159,7 @@ class _ReactionGameState extends State<ReactionGame> {
         children: [
           Text(
             label,
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 22,
               fontWeight: FontWeight.w800,
               color: onZone,
@@ -174,7 +175,7 @@ class _ReactionGameState extends State<ReactionGame> {
             child: Text(
               '$score / ${_match.targetScore}',
               textDirection: TextDirection.ltr,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: onZone,
@@ -239,7 +240,7 @@ class _ReactionGameState extends State<ReactionGame> {
           child: Text(
             _banner,
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,
               color: FunkyColors.amber,
@@ -253,7 +254,7 @@ class _ReactionGameState extends State<ReactionGame> {
               onPressed: () => setState(() => _phase = _Phase.pickPlayers),
               child: Text(
                 'العب تاني',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.w800),
+                style: flatCairo(fontWeight: FontWeight.w800),
               ),
             ),
           ),
@@ -268,7 +269,7 @@ class _ReactionGameState extends State<ReactionGame> {
         children: [
           Text(
             'كام لاعب؟',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w900,
               color: Colors.white,
@@ -277,7 +278,7 @@ class _ReactionGameState extends State<ReactionGame> {
           const SizedBox(height: 8),
           Text(
             'الكل على نفس الموبايل، وأول واحد يوصل ٥ نقط يكسب',
-            style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+            style: flatCairo(fontSize: 15, color: Colors.white70),
           ),
           const SizedBox(height: 24),
           Row(
@@ -296,7 +297,7 @@ class _ReactionGameState extends State<ReactionGame> {
                     onPressed: () => _startMatch(n),
                     child: Text(
                       '$n',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
                       ),

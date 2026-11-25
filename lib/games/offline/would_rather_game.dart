@@ -166,7 +166,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
             children: [
               Text(
                 'لو خيروك..',
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 18,
                   color: FlatColors.ink.withValues(alpha: 0.75),
                 ),
@@ -177,7 +177,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 child: Text(
                   'ولا',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 20,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -235,7 +235,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
                       'بس $voter اللي يشوف اختياره!',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                           fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                     ),
                   ],
@@ -256,7 +256,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: FlatColors.ink,
@@ -299,7 +299,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
                         ? 'الأغلبية مع الاختيار الأول 🔥'
                         : 'الأغلبية مع الاختيار التاني 🔥',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
                   color: FlatColors.ink,
@@ -336,7 +336,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
             Text(
               'خلصت الأسئلة! 🎉',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -347,7 +347,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
               'عرفتوا بعض أكتر شوية؟ 😄',
               textAlign: TextAlign.center,
               style:
-                  GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75))
+                  flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75))
                       .copyWith(
                           fontFamilyFallback: const ['Noto Color Emoji']),
             ),
@@ -381,7 +381,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
     return Text(
       'السؤال ${_round + 1}',
       textAlign: TextAlign.center,
-      style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
+      style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
     );
   }
 
@@ -393,7 +393,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: GoogleFonts.cairo(
+        style: flatCairo(
           fontSize: 22,
           fontWeight: FontWeight.w900,
           color: FlatDecor.textOn(_flatOptionColor(accent)),
@@ -412,7 +412,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
         child: Text(
           text,
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: FlatDecor.textOn(_flatOptionColor(accent)),
@@ -432,7 +432,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
           Text(
             option,
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 18,
               fontWeight: FontWeight.w900,
               color: _flatOptionTextColor(accent),
@@ -442,7 +442,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
           Text(
             team.isEmpty ? 'محدش اختارها 😶' : team.join('، '),
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 15,
               color: FlatColors.ink.withValues(alpha: 0.75),
             ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
@@ -450,7 +450,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
           const SizedBox(height: 4),
           Text(
             '${team.length} صوت',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 13,
               fontWeight: FontWeight.bold,
               color: FlatColors.ink.withValues(alpha: 0.7),

@@ -77,7 +77,7 @@ class OfflineGameScaffold extends StatelessWidget {
                       child: Text(
                         title,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontWeight: FontWeight.w900,
                           fontSize: 20,
                           color: FlatColors.ink,

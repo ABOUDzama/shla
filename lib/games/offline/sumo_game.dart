@@ -7,6 +7,7 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// Pure logic for Shla Sumo (سومو الشلة), kept separate from the widget so
 /// it can be unit-tested without pumping frames.
@@ -144,7 +145,7 @@ class _SumoGameState extends State<SumoGame> {
         children: [
           Text(
             'لاعب ${player + 1}',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 22,
               fontWeight: FontWeight.w900,
               color: Colors.white,
@@ -152,7 +153,7 @@ class _SumoGameState extends State<SumoGame> {
           ),
           Text(
             _phase == _SumoPhase.fighting ? 'دووووس!' : 'استنى البداية',
-            style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+            style: flatCairo(fontSize: 15, color: Colors.white70),
           ),
         ],
       ),
@@ -197,7 +198,7 @@ class _SumoGameState extends State<SumoGame> {
                         ? 'لاعب ${_match.winner! + 1} كسب! 🏆'
                         : 'تعادل! جولـة تانية')
                     : '⏱ $_timeLeft',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w900,
               color: FunkyColors.amber,
@@ -299,7 +300,7 @@ class _SumoGameState extends State<SumoGame> {
                   onPressed: _startMatch,
                   child: Text(
                     'العب تاني',
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.w800),
+                    style: flatCairo(fontWeight: FontWeight.w800),
                   ),
                 ),
               ),

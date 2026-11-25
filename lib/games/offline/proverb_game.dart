@@ -163,7 +163,7 @@ class _ProverbGameState extends State<ProverbGame> {
                       ? 'الفايز: ${winners.first['name']}'
                       : 'تعادل: ${winners.map((w) => w['name']).join(' و ')}',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -175,7 +175,7 @@ class _ProverbGameState extends State<ProverbGame> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       '${p['name']}: ${p['score']}',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                           fontSize: 18, color: FlatColors.ink.withValues(alpha: 0.75)),
                     ),
                   ),
@@ -214,7 +214,7 @@ class _ProverbGameState extends State<ProverbGame> {
             Text(
               'الجولة ${_roundsPlayed + 1} من $_totalRounds',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
+              style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
             ),
             const SizedBox(height: 8),
             Text(
@@ -222,7 +222,7 @@ class _ProverbGameState extends State<ProverbGame> {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 20,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -235,7 +235,7 @@ class _ProverbGameState extends State<ProverbGame> {
               child: Text(
                 proverb.start,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
                   color: FlatColors.ink,
@@ -248,7 +248,7 @@ class _ProverbGameState extends State<ProverbGame> {
                 child: Text(
                   'غلط! $_lastPick مش هي.. الفرصة لـ ${_players[_turn]['name']}',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: FlatColors.mafia,
@@ -261,7 +261,7 @@ class _ProverbGameState extends State<ProverbGame> {
                 child: Text(
                   'الإجابة: ${proverb.end}',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: FlatColors.mintDark,

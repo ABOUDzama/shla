@@ -7,6 +7,7 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// Pure logic for سباق الدوس (Shla-original same-phone tap race).
 ///
@@ -205,7 +206,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
         children: [
           Text(
             'كام لاعب؟',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -221,7 +222,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
                   onPressed: () => _startMatch(n),
                   child: Text(
                     '$n لاعبين',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                     ),
@@ -246,7 +247,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
         children: [
           Text(
             'لاعب ${player + 1}',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -254,7 +255,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
           ),
           Text(
             '$taps',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 34,
               fontWeight: FontWeight.w900,
               color: Colors.white,
@@ -269,7 +270,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
             child: Text(
               '$score / ${_match.roundsToWin}',
               textDirection: TextDirection.ltr,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -353,7 +354,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
                       child: Text(
                         _banner,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
@@ -380,7 +381,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
                               ? 'ماتش جديد'
                               : 'الجولة الجاية',
                           style:
-                              GoogleFonts.cairo(fontWeight: FontWeight.w800),
+                              flatCairo(fontWeight: FontWeight.w800),
                         ),
                       ),
                     ),

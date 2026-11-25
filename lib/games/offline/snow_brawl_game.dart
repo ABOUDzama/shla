@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
@@ -89,7 +90,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
         children: [
           Text(
             'كام لاعب؟',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -105,7 +106,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
                   onPressed: () => _startMatch(n),
                   child: Text(
                     '$n لاعبين',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                     ).copyWith(fontFamilyFallback: _emojiFallback),
@@ -198,7 +199,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
               const SizedBox(height: 4),
               Text(
                 'لاعب ${i + 1}: ${_match.hp[i]}',
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
                   color: _match.alive(i) ? Colors.white : Colors.white38,
@@ -224,7 +225,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
           onPressed: active ? () => _throw(i) : null,
           child: Text(
             'لاعب ${i + 1} ❄',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 15,
               fontWeight: FontWeight.w800,
               color: Colors.black87,
@@ -245,7 +246,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
           onPressed: () => setState(() => _phase = _SnowPhase.pickPlayers),
           child: Text(
             'العبوا تاني ❄',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 18,
               fontWeight: FontWeight.w800,
             ).copyWith(fontFamilyFallback: _emojiFallback),
@@ -289,7 +290,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
                     child: Text(
                       _banner,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,

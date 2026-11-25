@@ -37,3 +37,8 @@ HEAD: local commits only, NEVER push (standing rule).
 - truth_or_lie tofu fix: statement/feedback/explanation/button labels now GoogleFonts.cairo (harness has no Arabic in default font; device consistency too)
 - word_chain setup title white->ink fix after pixel inspection
 - Remaining 22: word_story, first_letter, odd_one_out, tick_tock_boom, ranking_challenge, code_names, pictionary, seega, gobblet, multi_touch, reverse_quiz, who_am_i accents; arcade: reaction, tap_race, tug_of_war, sumo, snake_arena, whack_mole, coin_grab, catch, touch_ball, snow_brawl; verify tank_battle
+
+## Batch 4 corrections (parent feedback 22:58)
+- Count fix: 21/45, not 23. Ledger: 15 reported at 22:31 + opposite_day/truth_or_lie (converted pre-compaction, first captures this batch) + 4 newly converted (truth_or_dare, five_seconds, charades, word_chain) = 21. would_rather/never_have_i were already inside the 15 with captures from the earlier newcaptures batch.
+- Removed duplicate per-game home IconButtons in all 6 batch-4 games; shared OfflineGameScaffold home covers exit.
+- Tofu root cause: google_fonts 6.3.3 cairo() has no fontFamilyFallback param; scaffold title had it via raw TextStyle. Added flatCairo() wrapper in flat_theme.dart (Cairo + kEmojiFontFallback) and swept all GoogleFonts.cairo call sites in offline games + widgets (49 files). Chip emoji now render in goldens (verified pixels).

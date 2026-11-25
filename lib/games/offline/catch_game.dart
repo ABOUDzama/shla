@@ -7,6 +7,7 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// Pure logic for اقطفها (Grab the Fish-style timing game), kept separate
 /// from the widget so it can be unit-tested without pumping frames.
@@ -202,7 +203,7 @@ class _CatchGameState extends State<CatchGame>
               ),
               child: Text(
                 'لاعب ${p + 1}: ${_match.scores[p]}',
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: FunkyColors.bgDeep,
@@ -232,7 +233,7 @@ class _CatchGameState extends State<CatchGame>
                   onPressed: () => _onTapZone(p),
                   child: Text(
                     'لاعب ${p + 1}',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 16,
                       fontWeight: FontWeight.w900,
                     ),
@@ -252,7 +253,7 @@ class _CatchGameState extends State<CatchGame>
         children: [
           Text(
             'كام لاعب؟',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w900,
               color: Colors.white,
@@ -261,7 +262,7 @@ class _CatchGameState extends State<CatchGame>
           const SizedBox(height: 8),
           Text(
             'السمكة بتلف، دوس لما تدخل في لونك. أول ٥ نقط تكسب',
-            style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+            style: flatCairo(fontSize: 15, color: Colors.white70),
           ),
           const SizedBox(height: 24),
           Row(
@@ -280,7 +281,7 @@ class _CatchGameState extends State<CatchGame>
                     onPressed: () => _startMatch(n),
                     child: Text(
                       '$n',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
                       ),
@@ -320,7 +321,7 @@ class _CatchGameState extends State<CatchGame>
                   Expanded(child: _buildRing()),
                   Text(
                     _banner,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
@@ -339,7 +340,7 @@ class _CatchGameState extends State<CatchGame>
                         child: Text(
                           'ماتش جديد',
                           style:
-                              GoogleFonts.cairo(fontWeight: FontWeight.w800),
+                              flatCairo(fontWeight: FontWeight.w800),
                         ),
                       ),
                     )

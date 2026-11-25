@@ -159,7 +159,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                       ? 'الفايز: ${winners.first['name']}'
                       : 'تعادل: ${winners.map((w) => w['name']).join(' و ')}',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -171,7 +171,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       '${p['name']}: ${p['score']}',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                           fontSize: 18, color: FlatColors.ink.withValues(alpha: 0.75)),
                     ),
                   ),
@@ -209,7 +209,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
               Text(
                 'الجولة ${_roundsPlayed + 1} من $_totalRounds',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
+                style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
               ),
               const SizedBox(height: 8),
               Text(
@@ -217,7 +217,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
                   color: FlatColors.ink,
@@ -237,7 +237,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                                 Text(
                                   _current.question,
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontSize: 22,
                                     fontWeight: FontWeight.w900,
                                     color: FlatColors.ink,
@@ -256,7 +256,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                                 const SizedBox(height: 4),
                                 Text(
                                   'إجابتك سرية.. محدش يبص!',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                       fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                                 ),
                               ],
@@ -283,7 +283,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                                 'بس ${answerer['name']} اللي يشوف!',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                     fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                               ),
                             ],
@@ -315,7 +315,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                   Text(
                     _current.question,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                       color: FlatColors.ink,
@@ -325,7 +325,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                   Text(
                     'الإجابة: $_chosenAnswer',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
                       color: FlatColors.mintDark,
@@ -338,7 +338,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
             Text(
               'مين اللي جاوب كده؟ 👀',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -389,7 +389,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
               Text(
                 identified ? 'عرفتوه! 🎯' : 'ضحك عليكم! 😎',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 26,
                   fontWeight: FontWeight.w900,
                   color: FlatColors.ink,
@@ -402,7 +402,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                     : 'اللي جاوب كان $answererName مش $accusedName!',
                 textAlign: TextAlign.center,
                 style:
-                    GoogleFonts.cairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)),
+                    flatCairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)),
               ),
               const SizedBox(height: 20),
               FunkyButton(

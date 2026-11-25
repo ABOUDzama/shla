@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
@@ -115,7 +116,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
           onPressed: onTap,
           child: Text(
             label,
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 18,
               fontWeight: FontWeight.w800,
             ).copyWith(fontFamilyFallback: _emojiFallback),
@@ -132,7 +133,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
         children: [
           Text(
             'كام لاعب؟',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -164,7 +165,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
         children: [
           Text(
             'نضيف بوتات؟',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -173,7 +174,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
           const SizedBox(height: 8),
           Text(
             'البوتات بتكمل الأربع لاعبين',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 14,
               color: Colors.white70,
             ).copyWith(fontFamilyFallback: _emojiFallback),
@@ -221,7 +222,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
           child: Text(
             'لاعب ${i + 1}',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 13,
               height: 1.25,
               fontWeight: FontWeight.w800,
@@ -245,7 +246,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
         if (practice)
           Text(
             'انتهت جولة التدريب 👏',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -259,7 +260,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
         else
           Text(
             'مفيش ناجي! الكل اتدمر 💥',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -272,7 +273,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
               : setState(() => _phase = _TankPhase.pickPlayers),
           child: Text(
             practice ? 'تدريب تاني 🎯' : 'العبوا تاني 🎯',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 18,
               fontWeight: FontWeight.w800,
             ).copyWith(fontFamilyFallback: _emojiFallback),
@@ -282,7 +283,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
           onPressed: () => setState(() => _phase = _TankPhase.pickPlayers),
           child: Text(
             'رجوع',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: Colors.white70,
@@ -307,7 +308,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
         children: [
           Text(
             'تدريب · باقي ${_match.remainingSeconds} ث',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: Colors.white,
@@ -321,7 +322,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
             },
             child: Text(
               'إنهاء',
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
                 color: FunkyColors.coral,

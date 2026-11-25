@@ -4,6 +4,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// قصة كلمة بكلمة (one-word story): the classic gathering game where the
 /// group builds a story one word per turn. Grounded in the no-equipment
@@ -129,7 +130,7 @@ class _WordStoryGameState extends State<WordStoryGame> {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
                 color: Colors.white70,
@@ -145,7 +146,7 @@ class _WordStoryGameState extends State<WordStoryGame> {
                 child: SingleChildScrollView(
                   child: Text(
                     '$_opener ${_words.join(' ')}',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
@@ -159,7 +160,7 @@ class _WordStoryGameState extends State<WordStoryGame> {
             TextField(
               controller: _controller,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -167,9 +168,9 @@ class _WordStoryGameState extends State<WordStoryGame> {
               decoration: InputDecoration(
                 hintText: 'اكتب كلمة واحدة بس..',
                 hintStyle:
-                    GoogleFonts.cairo(color: Colors.white38, fontSize: 15),
+                    flatCairo(color: Colors.white38, fontSize: 15),
                 errorText: _entryError,
-                errorStyle: GoogleFonts.cairo(fontSize: 13),
+                errorStyle: flatCairo(fontSize: 13),
                 filled: true,
                 fillColor: Colors.white.withValues(alpha: 0.08),
                 border: OutlineInputBorder(
@@ -206,7 +207,7 @@ class _WordStoryGameState extends State<WordStoryGame> {
             Text(
               'قصتكم جاهزة! 🎉',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,
@@ -222,7 +223,7 @@ class _WordStoryGameState extends State<WordStoryGame> {
                 child: SingleChildScrollView(
                   child: Text(
                     story,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,

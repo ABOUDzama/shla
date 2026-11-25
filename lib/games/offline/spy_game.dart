@@ -143,7 +143,7 @@ class _SpyGameState extends State<SpyGame> {
                       ? 'الفايز: ${winners.first['name']}'
                       : 'تعادل: ${winners.map((w) => w['name']).join(' و ')}',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -155,7 +155,7 @@ class _SpyGameState extends State<SpyGame> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       '${p['name']}: ${p['score']}',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                           fontSize: 18, color: FlatColors.ink.withValues(alpha: 0.75)),
                     ),
                   ),
@@ -194,7 +194,7 @@ class _SpyGameState extends State<SpyGame> {
               Text(
                 'الجولة ${_roundsPlayed + 1} من $_totalRounds',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.75)),
+                style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.75)),
               ),
               const SizedBox(height: 8),
               Text(
@@ -202,7 +202,7 @@ class _SpyGameState extends State<SpyGame> {
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
                   color: FlatColors.ink,
@@ -225,7 +225,7 @@ class _SpyGameState extends State<SpyGame> {
                               Text(
                                 isSpy ? 'أنت الجاسوس!' : _location!,
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 34,
                                   fontWeight: FontWeight.w900,
                                   color: isSpy
@@ -239,7 +239,7 @@ class _SpyGameState extends State<SpyGame> {
                                     ? 'خمّن المكان من أسئلة الشلة من غير ما حد يشك فيك'
                                     : 'احفظ المكان كويس.. وفيه جاسوس بينكم ميعرفوش',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                     fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
                               ),
                             ],
@@ -265,7 +265,7 @@ class _SpyGameState extends State<SpyGame> {
                                 'بس ${player['name']} اللي يشوف!',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                     fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                               ),
                             ],
@@ -309,7 +309,7 @@ class _SpyGameState extends State<SpyGame> {
             Text(
               'سألوا بعض عن المكان.. ولما تتفقوا، صوّتوا على الجاسوس!',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
+              style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -356,7 +356,7 @@ class _SpyGameState extends State<SpyGame> {
               Text(
                 caught ? 'اتمسك! 🎯' : 'هرب منكم! 🏃',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 26,
                   fontWeight: FontWeight.w900,
                   color: FlatColors.ink,
@@ -368,7 +368,7 @@ class _SpyGameState extends State<SpyGame> {
                     ? '$accusedName كان الجاسوس فعلاً! المكان كان: $_location'
                     : 'الجاسوس الحقيقي هو $spyName.. والمكان كان: $_location',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                     fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)),
               ),
               const SizedBox(height: 20),

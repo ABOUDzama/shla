@@ -7,6 +7,7 @@ import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../../data/ranking_challenge_data.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// تحدي الترتيب: a secret ranking appears shuffled, every player arranges it
 /// privately, then scores are given by closeness to the correct order.
@@ -160,7 +161,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
           Text(
             'مين أدق واحد في الشلة؟\nرتّب العناصر صح واكسب!',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(color: Colors.white70, fontSize: 16, height: 1.6),
+            style: flatCairo(color: Colors.white70, fontSize: 16, height: 1.6),
           ),
           const SizedBox(height: 24),
           Row(
@@ -169,10 +170,10 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                 child: TextField(
                   controller: _nameCtrl,
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.cairo(color: Colors.white),
+                  style: flatCairo(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'اسم اللاعب',
-                    hintStyle: GoogleFonts.cairo(color: Colors.white38),
+                    hintStyle: flatCairo(color: Colors.white38),
                     filled: true,
                     fillColor: Colors.white.withValues(alpha: 0.08),
                     border: OutlineInputBorder(
@@ -198,7 +199,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
             children: [
               for (int i = 0; i < _players.length; i++)
                 Chip(
-                  label: Text('${_players[i]} ${i == 0 ? "👑" : ""}', style: GoogleFonts.cairo(color: Colors.white)),
+                  label: Text('${_players[i]} ${i == 0 ? "👑" : ""}', style: flatCairo(color: Colors.white)),
                   backgroundColor: Colors.white.withValues(alpha: 0.12),
                   deleteIcon: const Icon(Icons.close, size: 18, color: Colors.white54),
                   onDeleted: () => setState(() {
@@ -209,7 +210,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
             ],
           ),
           const SizedBox(height: 24),
-          Text('عدد الجولات', style: GoogleFonts.cairo(color: Colors.white70, fontSize: 15)),
+          Text('عدد الجولات', style: flatCairo(color: Colors.white70, fontSize: 15)),
           const SizedBox(height: 8),
           SegmentedButton<int>(
             segments: const [
@@ -228,7 +229,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
               icon: const Icon(Icons.play_arrow_rounded, size: 28),
               label: Text(
                 _players.length < 2 ? 'ضيف ${_players.isEmpty ? "لاعبين" : "لاعب"} كمان' : 'يلا بينا! 🚀',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 17),
+                style: flatCairo(fontWeight: FontWeight.bold, fontSize: 17),
               ),
             ),
           ),
@@ -245,17 +246,17 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('الجولة $_round / $_totalRounds',
-                style: GoogleFonts.cairo(color: Colors.white54, fontSize: 15)),
+                style: flatCairo(color: Colors.white54, fontSize: 15)),
             const SizedBox(height: 16),
             Text('📱', style: const TextStyle(fontSize: 64)),
             const SizedBox(height: 12),
             Text(
               'عدّي الموبايل لـ',
-              style: GoogleFonts.cairo(color: Colors.white70, fontSize: 18),
+              style: flatCairo(color: Colors.white70, fontSize: 18),
             ),
             Text(
               _players[_currentPlayer],
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 color: FunkyColors.coral,
                 fontSize: 34,
                 fontWeight: FontWeight.w900,
@@ -264,7 +265,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
             const SizedBox(height: 8),
             Text(
               'باقي الشلة يبصوا في التانية 😄',
-              style: GoogleFonts.cairo(color: Colors.white38, fontSize: 14),
+              style: flatCairo(color: Colors.white38, fontSize: 14),
             ),
             const SizedBox(height: 28),
             ElevatedButton(
@@ -273,7 +274,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                 setState(() => _phase = _Phase.guessing);
               },
               child: Text('أنا ${_players[_currentPlayer]}، ابدأ',
-                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                  style: flatCairo(fontWeight: FontWeight.bold)),
             ),
           ],
         ).animate().fadeIn().scale(begin: const Offset(0.9, 0.9)),
@@ -299,7 +300,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
               Expanded(
                 child: Text(
                   _deck['topic'],
-                  style: GoogleFonts.cairo(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                  style: flatCairo(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -307,7 +308,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
         ),
         Text(
           'اسحب ورتّب من الأول للأخير',
-          style: GoogleFonts.cairo(color: Colors.white54, fontSize: 13),
+          style: flatCairo(color: Colors.white54, fontSize: 13),
         ),
         Expanded(
           child: ReorderableListView.builder(
@@ -332,9 +333,9 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                 child: ListTile(
                   leading: CircleAvatar(
                     backgroundColor: FunkyColors.coral,
-                    child: Text('${i + 1}', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
+                    child: Text('${i + 1}', style: flatCairo(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
-                  title: Text(_currentGuess[i], style: GoogleFonts.cairo(color: Colors.white, fontSize: 16)),
+                  title: Text(_currentGuess[i], style: flatCairo(color: Colors.white, fontSize: 16)),
                   trailing: const Icon(Icons.drag_indicator, color: Colors.white38),
                 ),
               );
@@ -348,7 +349,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
             child: ElevatedButton.icon(
               onPressed: _confirmGuess,
               icon: const Icon(Icons.check),
-              label: Text('ثبت الترتيب ✅', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16)),
+              label: Text('ثبت الترتيب ✅', style: flatCairo(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
           ),
         ),
@@ -370,7 +371,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
       child: Column(
         children: [
           Text('الترتيب الصح ✅',
-              style: GoogleFonts.cairo(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
+              style: flatCairo(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(14),
@@ -389,9 +390,9 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                         SizedBox(
                           width: 26,
                           child: Text('${i + 1}',
-                              style: GoogleFonts.cairo(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
+                              style: flatCairo(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
                         ),
-                        Expanded(child: Text(truth[i], style: GoogleFonts.cairo(color: Colors.white, fontSize: 15))),
+                        Expanded(child: Text(truth[i], style: flatCairo(color: Colors.white, fontSize: 15))),
                       ],
                     ),
                   ),
@@ -400,7 +401,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
           ),
           const SizedBox(height: 20),
           Text('نتايج الجولة',
-              style: GoogleFonts.cairo(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.bold)),
+              style: flatCairo(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           for (final p in sorted)
             _scoreTile(
@@ -419,7 +420,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
               icon: Icon(_round >= _totalRounds ? Icons.emoji_events : Icons.skip_next),
               label: Text(
                 _round >= _totalRounds ? 'النتيجة النهائية 🏆' : 'الجولة الجاية ▶️',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16),
+                style: flatCairo(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           ),
@@ -449,12 +450,12 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
           Row(
             children: [
               Expanded(
-                child: Text(name, style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                child: Text(name, style: flatCairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
               ),
               Text('+$roundScore',
-                  style: GoogleFonts.cairo(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 16)),
+                  style: flatCairo(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(width: 10),
-              Text('المجموع: $total', style: GoogleFonts.cairo(color: Colors.white54, fontSize: 13)),
+              Text('المجموع: $total', style: flatCairo(color: Colors.white54, fontSize: 13)),
             ],
           ),
           const SizedBox(height: 6),
@@ -473,7 +474,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                   ),
                   child: Text(
                     '${i + 1}. ${guess[i]}',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       color: truth[i] == guess[i] ? Colors.greenAccent : Colors.red.shade200,
                       fontSize: 12,
                     ),
@@ -503,7 +504,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
             Text(
               'أدق واحد في الشلة: ${sorted.first}!',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(color: Colors.amber, fontSize: 22, fontWeight: FontWeight.w900),
+              style: flatCairo(color: Colors.amber, fontSize: 22, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 24),
             for (int i = 0; i < sorted.length; i++)
@@ -521,10 +522,10 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(sorted[i],
-                          style: GoogleFonts.cairo(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
+                          style: flatCairo(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
                     ),
                     Text('${_totalScores[sorted[i]]} نقطة',
-                        style: GoogleFonts.cairo(color: Colors.white70, fontSize: 15)),
+                        style: flatCairo(color: Colors.white70, fontSize: 15)),
                   ],
                 ),
               ).animate().fadeIn(delay: (i * 120).ms).slideX(begin: 0.2),
@@ -535,7 +536,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                   child: ElevatedButton.icon(
                     onPressed: _startGame,
                     icon: const Icon(Icons.replay),
-                    label: Text('العبوا تاني 🔁', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                    label: Text('العبوا تاني 🔁', style: flatCairo(fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -543,7 +544,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                   child: OutlinedButton.icon(
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.home_outlined, color: Colors.white70),
-                    label: Text('الرئيسية', style: GoogleFonts.cairo(color: Colors.white70)),
+                    label: Text('الرئيسية', style: flatCairo(color: Colors.white70)),
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.white24),
                       padding: const EdgeInsets.symmetric(vertical: 14),

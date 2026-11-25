@@ -500,7 +500,7 @@ class _CharadesGameState extends State<CharadesGame> {
                 const SizedBox(height: 12),
                 Text(
                   'تمثيل صامت!',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -510,13 +510,13 @@ class _CharadesGameState extends State<CharadesGame> {
                 Text(
                   'مثّل الكلمة من غير ما تتكلم!\nفريقك يخمّن في 60 ثانية 🤫',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
+                  style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
                 const SizedBox(height: 20),
                 // Category
                 Text(
                   'اختار الفئة:',
-                  style: GoogleFonts.cairo(color: FlatColors.ink),
+                  style: flatCairo(color: FlatColors.ink),
                 ),
                 const SizedBox(height: 10),
                 Wrap(
@@ -555,7 +555,7 @@ class _CharadesGameState extends State<CharadesGame> {
                         ),
                         child: Text(
                           cat,
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: FlatColors.ink,
                             fontWeight: selected
                                 ? FontWeight.bold
@@ -610,7 +610,7 @@ class _CharadesGameState extends State<CharadesGame> {
                       icon: const Icon(Icons.people_alt, size: 28),
                       label: Text(
                         'اختار شلتك وابدأ!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                         ),
@@ -649,19 +649,6 @@ class _CharadesGameState extends State<CharadesGame> {
       title: '🎭 تمثيل صامت',
       backgroundColor: FunkyColors.violet,
       showAi: false,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home, color: FlatColors.ink),
-          onPressed: () {
-            _timer?.cancel();
-            setState(() {
-              _started = false;
-              _active = false;
-              _players.clear();
-            });
-          },
-        ),
-      ],
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -677,7 +664,7 @@ class _CharadesGameState extends State<CharadesGame> {
                       children: [
                         Text(
                           _playerName(e.value),
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: active
                                 ? FlatColors.ink
                                 : FlatColors.ink.withValues(alpha: 0.7),
@@ -688,7 +675,7 @@ class _CharadesGameState extends State<CharadesGame> {
                         ),
                         Text(
                           '${_playerScore(e.value)} ✅',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: FlatColors.ink.withValues(alpha: 0.7),
                             fontSize: 12,
                           ),
@@ -707,7 +694,7 @@ class _CharadesGameState extends State<CharadesGame> {
                       if (_players.isNotEmpty)
                         Text(
                           'دور: ${_playerName(_players[_currentPlayer])}',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             fontSize: 22,
                             color: FlatColors.ink,
                             fontWeight: FontWeight.bold,
@@ -722,7 +709,7 @@ class _CharadesGameState extends State<CharadesGame> {
                               'الفئات: ${_selectedCategories.join(', ')}',
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 13,
                                 color: FlatColors.ink,
                                 fontWeight: FontWeight.bold,
@@ -735,7 +722,7 @@ class _CharadesGameState extends State<CharadesGame> {
                       Text(
                         'الممثل يرى الكلمة — الفريق يخمّن!\nعندك 60 ثانية 🤫',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           color: FlatColors.ink.withValues(alpha: 0.75),
                           fontSize: 14,
                         ),
@@ -748,7 +735,7 @@ class _CharadesGameState extends State<CharadesGame> {
                         icon: const Icon(Icons.play_arrow, size: 30),
                         label: Text(
                           'ابدأ الجولة!',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             fontSize: 20,
                             fontWeight: FontWeight.w900,
                           ),
@@ -790,7 +777,7 @@ class _CharadesGameState extends State<CharadesGame> {
                       const SizedBox(width: 8),
                       Text(
                         '$_secondsLeft ثانية',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
                           color: _timerColor(),
@@ -806,7 +793,7 @@ class _CharadesGameState extends State<CharadesGame> {
                     Chip(
                       label: Text(
                         '✅ $_correct',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -817,7 +804,7 @@ class _CharadesGameState extends State<CharadesGame> {
                     Chip(
                       label: Text(
                         '⏭️ $_skip',
-                        style: GoogleFonts.cairo(color: FlatColors.ink),
+                        style: flatCairo(color: FlatColors.ink),
                       ),
                       backgroundColor: FlatColors.tilePastels[4],
                     ),
@@ -846,7 +833,7 @@ class _CharadesGameState extends State<CharadesGame> {
                                     ? _shuffledWords[_wordIndex %
                                           _shuffledWords.length]
                                     : '',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 38,
                                   fontWeight: FontWeight.w900,
                                   color: FlatColors.ink,
@@ -874,7 +861,7 @@ class _CharadesGameState extends State<CharadesGame> {
                           child: Center(
                             child: Text(
                               '⏭️ تجاوز',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
                                 color: FlatColors.ink,
@@ -897,7 +884,7 @@ class _CharadesGameState extends State<CharadesGame> {
                           child: Center(
                             child: Text(
                               '✅ خمّنها!',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
                                 color: Colors.white,
@@ -918,7 +905,7 @@ class _CharadesGameState extends State<CharadesGame> {
                     children: [
                       Text(
                         '⏰ انتهى الوقت!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 28,
                           color: FlatColors.ink,
                           fontWeight: FontWeight.w900,
@@ -936,7 +923,7 @@ class _CharadesGameState extends State<CharadesGame> {
                                 Text('✅', style: const TextStyle(fontSize: 36)),
                                 Text(
                                   '$_correct',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontSize: 40,
                                     fontWeight: FontWeight.w900,
                                     color: FlatColors.mintDark,
@@ -944,7 +931,7 @@ class _CharadesGameState extends State<CharadesGame> {
                                 ),
                                 Text(
                                   'خمّن صح',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     color: FlatColors.ink.withValues(alpha: 0.7),
                                   ),
                                 ),
@@ -958,7 +945,7 @@ class _CharadesGameState extends State<CharadesGame> {
                                 ),
                                 Text(
                                   '$_skip',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontSize: 40,
                                     fontWeight: FontWeight.w900,
                                     color: FlatColors.day,
@@ -966,7 +953,7 @@ class _CharadesGameState extends State<CharadesGame> {
                                 ),
                                 Text(
                                   'تجاوز',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     color: FlatColors.ink.withValues(alpha: 0.7),
                                   ),
                                 ),
@@ -982,7 +969,7 @@ class _CharadesGameState extends State<CharadesGame> {
                           icon: const Icon(Icons.arrow_forward),
                           label: Text(
                             'دور ${_playerName(_players[(_currentPlayer + 1) % _players.length])}',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -1005,7 +992,7 @@ class _CharadesGameState extends State<CharadesGame> {
                           icon: const Icon(Icons.play_arrow),
                           label: Text(
                             'العب تاني',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),

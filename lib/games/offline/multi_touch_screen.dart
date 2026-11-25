@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class MultiTouchScreen extends StatefulWidget {
   const MultiTouchScreen({super.key});
@@ -207,7 +208,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                                       ),
                                       Text(
                                         'أنت!',
-                                        style: GoogleFonts.cairo(
+                                        style: flatCairo(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w900,
                                           color: Colors.white,
@@ -248,7 +249,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                             child: Text(
                               'كل واحد يحط صباعه\nعلى الشاشة\nوالاختيار هيبدأ لوحده! 🎲',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -277,7 +278,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                           ),
                           child: Text(
                             'محتاج على الأقل شخصين! 👆👆',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -302,7 +303,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                               scale: scale,
                               child: Text(
                                 '$_countdown',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 120,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.white,
@@ -318,7 +319,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                           ),
                           Text(
                             'جاري الاختيار...',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               color: Colors.white70,
                               fontSize: 18,
                             ),
@@ -338,7 +339,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                           icon: const Icon(Icons.play_arrow, size: 24),
                           label: Text(
                             'العب تاني 🎲',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontSize: 20,
                               fontWeight: FontWeight.w900,
                             ),

@@ -479,7 +479,7 @@ class _WordChainGameState extends State<WordChainGame> {
                 const SizedBox(height: 12),
                 Text(
                   'سلسلة الكلمات',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -489,13 +489,13 @@ class _WordChainGameState extends State<WordChainGame> {
                 Text(
                   'اشرح الكلمة لزميلك بدون ما تقول الكلمة نفسها!\nأكتر كلمة في الدقيقة = الفايز!',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
+                  style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
                 const SizedBox(height: 24),
                 // Category Picker
                 Text(
                   'اختار الفئة:',
-                  style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 16),
+                  style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 16),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -534,7 +534,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         ),
                         child: Text(
                           cat,
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: selected ? FlatColors.ink : FlatColors.ink.withValues(alpha: 0.75),
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -580,7 +580,7 @@ class _WordChainGameState extends State<WordChainGame> {
                       icon: const Icon(Icons.people_alt, size: 28),
                       label: Text(
                         'اختار شلتك وابدأ!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                         ),
@@ -621,19 +621,6 @@ class _WordChainGameState extends State<WordChainGame> {
       backgroundColor: FunkyColors.lime,
       showAi: false,
       onAiRefresh: _generateAiContent,
-      actions: [
-        IconButton(
-          icon: Icon(Icons.home, color: FlatColors.ink.withValues(alpha: 0.75)),
-          onPressed: () {
-            _timer?.cancel();
-            setState(() {
-              _setupDone = false;
-              _roundOver = false;
-              _gameActive = false;
-            });
-          },
-        ),
-      ],
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -649,7 +636,7 @@ class _WordChainGameState extends State<WordChainGame> {
                       children: [
                         Text(
                           p['name'],
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: active ? FlatColors.ink : FlatColors.ink.withValues(alpha: 0.7),
                             fontWeight: active
                                 ? FontWeight.w900
@@ -658,7 +645,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         ),
                         Text(
                           '${p['score']} نقطة',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: FlatColors.ink.withValues(alpha: 0.7),
                             fontSize: 12,
                           ),
@@ -677,7 +664,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         _players.isNotEmpty
                             ? 'دور: ${_players[_currentPlayerTurn]['name']}'
                             : 'اضغط ابدأ!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 24,
                           color: FlatColors.ink,
                           fontWeight: FontWeight.bold,
@@ -692,7 +679,7 @@ class _WordChainGameState extends State<WordChainGame> {
                               'الفئات: ${_selectedCategories.join(', ')}',
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 14,
                                 color: FlatColors.mintDark,
                                 fontWeight: FontWeight.bold,
@@ -704,7 +691,7 @@ class _WordChainGameState extends State<WordChainGame> {
                       const SizedBox(height: 8),
                       Text(
                         'عندك 60 ثانية تعرّف كلمات!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 14,
                           color: FlatColors.ink.withValues(alpha: 0.7),
                         ),
@@ -717,7 +704,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         icon: const Icon(Icons.play_arrow, size: 32),
                         label: Text(
                           'ابدأ الجولة!',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
                           ),
@@ -758,7 +745,7 @@ class _WordChainGameState extends State<WordChainGame> {
                       const SizedBox(width: 8),
                       Text(
                         '$_secondsLeft ثانية',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                           color: _timerColor(),
@@ -774,7 +761,7 @@ class _WordChainGameState extends State<WordChainGame> {
                     Chip(
                       label: Text(
                         '✅ $_successCount',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -785,7 +772,7 @@ class _WordChainGameState extends State<WordChainGame> {
                     Chip(
                       label: Text(
                         '⏭️ $_skipCount',
-                        style: GoogleFonts.cairo(color: FlatColors.ink),
+                        style: flatCairo(color: FlatColors.ink),
                       ),
                       backgroundColor: FlatColors.tilePastels[4],
                     ),
@@ -814,7 +801,7 @@ class _WordChainGameState extends State<WordChainGame> {
                                     ? _shuffledWords[_currentWordIndex %
                                           _shuffledWords.length]
                                     : '...',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 40,
                                   fontWeight: FontWeight.w900,
                                   color: FlatColors.mintDark,
@@ -842,7 +829,7 @@ class _WordChainGameState extends State<WordChainGame> {
                           child: Center(
                             child: Text(
                               '⏭️ تجاوز',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w900,
                                 color: FlatColors.ink,
@@ -865,7 +852,7 @@ class _WordChainGameState extends State<WordChainGame> {
                           child: Center(
                             child: Text(
                               '✅ صح',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w900,
                                 color: Colors.white,
@@ -885,7 +872,7 @@ class _WordChainGameState extends State<WordChainGame> {
                     children: [
                       Text(
                         '⏰ انتهى الوقت!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 28,
                           color: FlatColors.ink,
                           fontWeight: FontWeight.w900,
@@ -902,7 +889,7 @@ class _WordChainGameState extends State<WordChainGame> {
                           children: [
                             Text(
                               'النتيجة',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 color: FlatColors.ink.withValues(alpha: 0.75),
                                 fontSize: 16,
                               ),
@@ -919,7 +906,7 @@ class _WordChainGameState extends State<WordChainGame> {
                                     ),
                                     Text(
                                       '$_successCount',
-                                      style: GoogleFonts.cairo(
+                                      style: flatCairo(
                                         fontSize: 36,
                                         fontWeight: FontWeight.w900,
                                         color: FlatColors.mintDark,
@@ -927,7 +914,7 @@ class _WordChainGameState extends State<WordChainGame> {
                                     ),
                                     Text(
                                       'عرّفها',
-                                      style: GoogleFonts.cairo(
+                                      style: flatCairo(
                                         color: FlatColors.ink.withValues(alpha: 0.7),
                                       ),
                                     ),
@@ -941,7 +928,7 @@ class _WordChainGameState extends State<WordChainGame> {
                                     ),
                                     Text(
                                       '$_skipCount',
-                                      style: GoogleFonts.cairo(
+                                      style: flatCairo(
                                         fontSize: 36,
                                         fontWeight: FontWeight.w900,
                                         color: const Color(0xFF8A5A00),
@@ -949,7 +936,7 @@ class _WordChainGameState extends State<WordChainGame> {
                                     ),
                                     Text(
                                       'تجاوز',
-                                      style: GoogleFonts.cairo(
+                                      style: flatCairo(
                                         color: FlatColors.ink.withValues(alpha: 0.7),
                                       ),
                                     ),
@@ -965,7 +952,7 @@ class _WordChainGameState extends State<WordChainGame> {
                       if (_answeredWords.isNotEmpty) ...[
                         Text(
                           'الكلمات:',
-                          style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75)),
+                          style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75)),
                         ),
                         const SizedBox(height: 8),
                         SizedBox(
@@ -976,7 +963,7 @@ class _WordChainGameState extends State<WordChainGame> {
                                 .map(
                                   (w) => Text(
                                     w,
-                                    style: GoogleFonts.cairo(
+                                    style: flatCairo(
                                       color: FlatColors.ink,
                                       fontSize: 14,
                                     ),
@@ -993,7 +980,7 @@ class _WordChainGameState extends State<WordChainGame> {
                           icon: const Icon(Icons.arrow_forward),
                           label: Text(
                             'دور ${_players[(_currentPlayerTurn + 1) % _players.length]['name']}',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -1016,7 +1003,7 @@ class _WordChainGameState extends State<WordChainGame> {
                           icon: const Icon(Icons.play_arrow),
                           label: Text(
                             'العب تاني',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),

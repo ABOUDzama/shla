@@ -6,6 +6,7 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// Pure logic for كورة اللمسة (Shla-original same-phone moving target).
 ///
@@ -234,7 +235,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
         children: [
           Text(
             'كام لاعب؟',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -250,7 +251,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                   onPressed: () => _startMatch(n),
                   child: Text(
                     '$n لاعبين',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                     ),
@@ -275,7 +276,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
             child: Center(
               child: Text(
                 '${p + 1}',
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 40,
                   fontWeight: FontWeight.w900,
                   color: _zoneColors[p].withValues(alpha: 0.6),
@@ -337,7 +338,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                             ),
                             child: Text(
                               '${i + 1}: ${_match.scores[i]}',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w800,
                                 color: Colors.white,
@@ -381,7 +382,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                                       child: Center(
                                         child: Text(
                                           '${(_match.owner ?? 0) + 1}',
-                                          style: GoogleFonts.cairo(
+                                          style: flatCairo(
                                             fontSize: 30,
                                             fontWeight: FontWeight.w900,
                                             color: Colors.white,
@@ -409,7 +410,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                     child: Text(
                       _banner,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                         color: FunkyColors.amber,
@@ -425,7 +426,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                         child: Text(
                           'ماتش جديد',
                           style:
-                              GoogleFonts.cairo(fontWeight: FontWeight.w800),
+                              flatCairo(fontWeight: FontWeight.w800),
                         ),
                       ),
                     ),

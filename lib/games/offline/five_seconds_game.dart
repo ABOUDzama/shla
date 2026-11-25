@@ -224,12 +224,6 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
       title: '⏱️ تحدي الـ ٥ ثواني',
       backgroundColor: FunkyColors.pink,
       showAi: false,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home, color: FlatColors.ink),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ],
       body: SafeArea(
           child: Column(
             children: [
@@ -296,7 +290,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
           child: Center(
             child: Text(
               '$timeLeft',
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 60,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -336,7 +330,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
             const SizedBox(height: 20),
             Text(
               'استعد...',
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
                 color: FlatColors.ink,
@@ -345,14 +339,14 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
             const SizedBox(height: 10),
             Text(
               'اضغط ابدأ لإظهار السؤال',
-              style: GoogleFonts.cairo(color: Colors.grey[600]),
+              style: flatCairo(color: Colors.grey[600]),
             ),
           ] else ...[
             Text(currentQuestion['icon'], style: const TextStyle(fontSize: 70)),
             const SizedBox(height: 20),
             Text(
               currentQuestion['question'],
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -366,7 +360,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
               ),
               Text(
                 'إجابات مقترحة:',
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,
                 ),
@@ -400,7 +394,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
               padding: const EdgeInsets.all(4),
               child: Text(
                 a,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   color: Colors.pink[800],
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
@@ -428,7 +422,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
         ),
         child: Text(
           'ابدأ التحدي 🔥',
-          style: GoogleFonts.cairo(fontSize: 24, fontWeight: FontWeight.w900),
+          style: flatCairo(fontSize: 24, fontWeight: FontWeight.w900),
         ),
       ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 2.seconds);
     }
@@ -454,7 +448,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
             icon: const Icon(Icons.check_circle_outline, size: 32),
             label: Text(
               'جاوبت صح! ✅',
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
               ),
@@ -484,7 +478,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
               icon: const Icon(Icons.bolt_rounded, size: 30),
               label: Text(
                 'التحدي التالي ➡️',
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
                 ),

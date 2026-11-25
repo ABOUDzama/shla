@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/funky_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../theme/flat_theme.dart';
 
 /// Full-screen win/lose celebration overlay shown over online games.
 class GameResultOverlay extends StatelessWidget {
@@ -45,7 +46,7 @@ class GameResultOverlay extends StatelessWidget {
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 34,
                       fontWeight: FontWeight.w900,
                       color: accent,
@@ -56,7 +57,7 @@ class GameResultOverlay extends StatelessWidget {
                   Text(
                     subtitle,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 17,
                       color: Colors.white70,
                       height: 1.5,
@@ -68,7 +69,7 @@ class GameResultOverlay extends StatelessWidget {
                     icon: const Icon(Icons.check_circle_outline),
                     label: Text(
                       'تمام',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
                       ),

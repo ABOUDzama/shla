@@ -225,7 +225,7 @@ class _TabooGameState extends State<TabooGame> {
                   children: [
                     Text(
                       card.word,
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 34,
                         fontWeight: FontWeight.w900,
                         color: FlatColors.ink,

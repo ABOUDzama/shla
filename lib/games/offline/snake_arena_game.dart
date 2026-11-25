@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
@@ -72,7 +73,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
         children: [
           Text(
             'كام لاعب؟',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -88,7 +89,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
                   onPressed: () => _startMatch(n),
                   child: Text(
                     '$n لاعبين',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                     ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
@@ -111,7 +112,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
       ),
       child: Text(
         'لاعب ${i + 1}: ${_match.score[i]}',
-        style: GoogleFonts.cairo(
+        style: flatCairo(
           fontSize: 13,
           fontWeight: FontWeight.w800,
           color: _match.alive[i] ? Colors.white : Colors.white38,
@@ -135,7 +136,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
           onPressed: active ? () => _match.turn(i) : null,
           child: Text(
             'لاعب ${i + 1} لفّ 🐍',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 15,
               fontWeight: FontWeight.w800,
               color: Colors.black87,
@@ -167,7 +168,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
         else
           Text(
             'تعادل! الكل وقع في بعض 😅',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 22,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -178,7 +179,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
           onPressed: () => setState(() => _phase = _SnakePhase.pickPlayers),
           child: Text(
             'العبوا تاني 🐍',
-            style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.w800).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+            style: flatCairo(fontSize: 18, fontWeight: FontWeight.w800).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
         ),
       ],

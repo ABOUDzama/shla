@@ -556,7 +556,7 @@ class _OppositeDayState extends State<OppositeDay> {
                 const SizedBox(height: 12),
                 Text(
                   'عكس العكاس',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -566,7 +566,7 @@ class _OppositeDayState extends State<OppositeDay> {
                 Text(
                   'المطلوب تجاوب إجابة غلط تماماً وبسرعة في 5 ثواني!\nالسرعة هي كل حاجة ⚡',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
+                  style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
                 const SizedBox(height: 50),
                 ElevatedButton.icon(
@@ -603,7 +603,7 @@ class _OppositeDayState extends State<OppositeDay> {
                       icon: const Icon(Icons.people_alt, size: 28),
                       label: Text(
                         'اختار شلتك وابدأ!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                         ),
@@ -640,15 +640,7 @@ class _OppositeDayState extends State<OppositeDay> {
       backgroundColor: FunkyColors.lime,
       showAi: false,
       onAiRefresh: _generateAiContent,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home),
-          onPressed: () => setState(() {
-            _timer?.cancel();
-            _setupDone = false;
-          }),
-        ),
-      ],
+
       body: SafeArea(
         child: Column(
           children: [
@@ -683,7 +675,7 @@ class _OppositeDayState extends State<OppositeDay> {
                       children: [
                         Text(
                           p['name'],
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: FlatColors.ink,
                             fontWeight: isActive
                                 ? FontWeight.w900
@@ -692,7 +684,7 @@ class _OppositeDayState extends State<OppositeDay> {
                         ),
                         Text(
                           '${p['score']} ن',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: FlatColors.ink.withValues(alpha: 0.7),
                             fontSize: 12,
                           ),
@@ -716,7 +708,7 @@ class _OppositeDayState extends State<OppositeDay> {
                         if (!_gameActive && !_roundOver) ...[
                           Text(
                             'دور: ${_players[_currentPlayerTurn]['name']}',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontSize: 28,
                               fontWeight: FontWeight.w900,
                               color: FlatColors.ink,
@@ -739,7 +731,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                 ),
                                 child: Text(
                                   'يلا جاهز؟ 🏁',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -782,7 +774,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                 Text(
                                   currentQuestion['question'] ?? '',
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontSize: 24,
                                     color: FlatColors.ink,
                                     fontWeight: FontWeight.w900,
@@ -827,7 +819,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                     child: Center(
                                       child: Text(
                                         '$_secondsLeft',
-                                        style: GoogleFonts.cairo(
+                                        style: flatCairo(
                                           fontSize: 50,
                                           fontWeight: FontWeight.w900,
                                           color: _secondsLeft <= 1
@@ -848,7 +840,7 @@ class _OppositeDayState extends State<OppositeDay> {
                           const SizedBox(height: 40),
                           Text(
                             'أجب العكس! 🤯',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: FlatColors.ink,
@@ -864,7 +856,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                 icon: const Icon(Icons.check_circle, size: 28),
                                 label: Text(
                                   'صح✅',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -887,7 +879,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                 icon: const Icon(Icons.cancel, size: 28),
                                 label: Text(
                                   'غلط❌',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -915,7 +907,7 @@ class _OppositeDayState extends State<OppositeDay> {
                           const SizedBox(height: 20),
                           Text(
                             'الممنوع كان:',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontSize: 18,
                               color: FlatColors.ink.withValues(alpha: 0.75),
                             ),
@@ -945,7 +937,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                         ),
                                         child: Text(
                                           word.toString(),
-                                          style: GoogleFonts.cairo(
+                                          style: flatCairo(
                                             fontSize: 20,
                                             color: FlatColors.mafia,
                                             fontWeight: FontWeight.w900,
@@ -971,7 +963,7 @@ class _OppositeDayState extends State<OppositeDay> {
                             ),
                             child: Text(
                               'الدور اللي بعده 🔜',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                               ),

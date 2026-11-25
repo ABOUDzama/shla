@@ -175,7 +175,7 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
                     if (_revealed)
                       Text(
                         card.answer,
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 28,
                           fontWeight: FontWeight.w900,
                           color: FlatColors.mintDark,

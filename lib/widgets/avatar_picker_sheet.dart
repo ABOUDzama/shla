@@ -99,7 +99,7 @@ class _AvatarPickerSheet extends StatelessWidget {
                     icon: const Icon(Icons.photo_library_outlined,
                         color: FlatColors.ink),
                     label: Text('المعرض',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                             color: FlatColors.ink,
                             fontWeight: FontWeight.w700)),
                   ),
@@ -111,7 +111,7 @@ class _AvatarPickerSheet extends StatelessWidget {
                     icon: const Icon(Icons.camera_alt_outlined,
                         color: FlatColors.ink),
                     label: Text('الكاميرا',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                             color: FlatColors.ink,
                             fontWeight: FontWeight.w700)),
                   ),

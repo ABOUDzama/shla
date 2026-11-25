@@ -281,7 +281,7 @@ class _QuizGameState extends State<QuizGame> {
                 const SizedBox(height: 40),
                 Text(
                   'تحدي الأسئلة الكبرى',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 34,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -326,7 +326,7 @@ class _QuizGameState extends State<QuizGame> {
                         ),
                         child: Text(
                           cat,
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: isSelected
                                 ? FlatColors.tilePastels[1]
                                 : FlatColors.ink,
@@ -360,7 +360,7 @@ class _QuizGameState extends State<QuizGame> {
                             ),
                             child: Text(
                               'اختار الشلة وابدأ >',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -402,7 +402,7 @@ class _QuizGameState extends State<QuizGame> {
               // Progress Section
               Text(
                 'سؤال ${currentQuestionIndex + 1} من ${gameQuestions.length}',
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   color: FlatColors.ink.withValues(alpha: 0.65),
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -437,7 +437,7 @@ class _QuizGameState extends State<QuizGame> {
                       Text(
                         currentQuestion['question'] ?? '',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                           color: FlatColors.ink,
@@ -448,7 +448,7 @@ class _QuizGameState extends State<QuizGame> {
                       if (!showAnswer)
                         Text(
                               'انقر لرؤية الإجابة 💡',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 15,
                                 color: FlatColors.ink.withValues(alpha: 0.75),
                                 fontWeight: FontWeight.bold,
@@ -474,7 +474,7 @@ class _QuizGameState extends State<QuizGame> {
                             children: [
                               Text(
                                 'الإجابة الصحيحة:',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 14,
                                   color: FlatColors.mintDark,
                                   fontWeight: FontWeight.bold,
@@ -484,7 +484,7 @@ class _QuizGameState extends State<QuizGame> {
                               Text(
                                 currentQuestion['answer'] ?? '',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w900,
                                   color: FlatColors.ink,
@@ -517,7 +517,7 @@ class _QuizGameState extends State<QuizGame> {
                           const SizedBox(width: 8),
                           Text(
                             'لوحة النقاط',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               color: FlatColors.ink,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -526,7 +526,7 @@ class _QuizGameState extends State<QuizGame> {
                           const Spacer(),
                           Text(
                             'لاعبين ${_players.length}',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               color: FlatColors.ink.withValues(alpha: 0.75),
                               fontSize: 12,
                             ),
@@ -546,7 +546,7 @@ class _QuizGameState extends State<QuizGame> {
                               Expanded(
                                 child: Text(
                                   pName,
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     color: FlatColors.ink,
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -557,7 +557,7 @@ class _QuizGameState extends State<QuizGame> {
                               ),
                               Text(
                                 '$score',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   color: FlatColors.ink,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900,
@@ -625,7 +625,7 @@ class _QuizGameState extends State<QuizGame> {
                           children: [
                             Text(
                               'السؤال التالي',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),

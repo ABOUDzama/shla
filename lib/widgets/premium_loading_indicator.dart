@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../theme/flat_theme.dart';
 
 class PremiumLoadingIndicator extends StatelessWidget {
   final String message;
@@ -21,7 +22,7 @@ class PremiumLoadingIndicator extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             message,
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               color: color.withValues(alpha: 0.7),
               fontSize: 16,
               fontWeight: FontWeight.bold,

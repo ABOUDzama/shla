@@ -233,12 +233,6 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
       title: '🤔 حقيقة أو هبد',
       backgroundColor: FunkyColors.cyan,
       showAi: false,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home, color: FlatColors.ink),
-          onPressed: () => setState(() => _showIntro = true),
-        ),
-      ],
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -270,7 +264,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                 child: Text(
                   _displayedText,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: FlatColors.ink,
@@ -343,7 +337,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                                     : (currentFact['isTrue']
                                           ? 'غلط.. دي حقيقة!'
                                           : 'غلط.. ده هبد!'),
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: _isCorrect!
@@ -357,7 +351,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                           Text(
                             currentFact['explanation'],
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontSize: 18,
                               color: FlatColors.ink,
                               height: 1.5,
@@ -428,7 +422,7 @@ class _ActionButton extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
 

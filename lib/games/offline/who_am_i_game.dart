@@ -11,6 +11,7 @@ import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class WhoAmIGame extends StatefulWidget {
   const WhoAmIGame({super.key});
@@ -239,7 +240,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                 const SizedBox(height: 16),
                 Text(
                   'لعبة مين أنا؟',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -249,7 +250,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                 Text(
                   'الشاشة تظهر شخصية معينة\nوالمطلوب تخمينها من التلميحات!',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 16, color: Colors.white70),
+                  style: flatCairo(fontSize: 16, color: Colors.white70),
                 ),
                 const SizedBox(height: 50),
                 ElevatedButton.icon(
@@ -280,7 +281,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                       icon: const Icon(Icons.people_alt, size: 28),
                       label: Text(
                         'اختار شلتك وابدأ!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                         ),
@@ -378,7 +379,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                         children: [
                           Text(
                             p['name'],
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               color: isActive
                                   ? Colors.amberAccent
                                   : Colors.white60,
@@ -395,7 +396,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                               const SizedBox(width: 2),
                               Text(
                                 '${p['score']}',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   color: isActive
                                       ? Colors.white
                                       : Colors.white54,
@@ -408,7 +409,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                           if (isActive)
                             Text(
                               'دوره الحين',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 10,
                                 color: Colors.amberAccent,
                               ),
@@ -430,7 +431,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                       if (_players.isNotEmpty)
                         Text(
                           'دور: ${_players[_currentPlayerTurn]['name']}',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             fontSize: 18,
                             color: Colors.amberAccent,
                             fontWeight: FontWeight.bold,
@@ -464,7 +465,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                             if (_answered)
                               Text(
                                 card['name'],
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 32,
                                   fontWeight: FontWeight.w900,
                                   color: FunkyColors.violet,
@@ -475,7 +476,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                             else
                               Text(
                                 '???',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 48,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.grey.shade300,
@@ -503,7 +504,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                             Expanded(
                                               child: Text(
                                                 hints[i],
-                                                style: GoogleFonts.cairo(
+                                                style: flatCairo(
                                                   fontSize: 18,
                                                   color: i < _hintsRevealed
                                                       ? Colors.black87
@@ -522,7 +523,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                             if (_hintsRevealed == 0 && !_showAllHints)
                               Text(
                                 'اضغط "تلميح" لتبدأ!',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 16,
                                   color: Colors.grey,
                                 ),
@@ -544,7 +545,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                   ),
                                   child: Text(
                                     'تلميح $_hintsRevealed من ${hints.length} • النقاط المتاحة: $_currentPoints ⭐',
-                                    style: GoogleFonts.cairo(
+                                    style: flatCairo(
                                       fontSize: 13,
                                       color: Colors.amber.shade800,
                                       fontWeight: FontWeight.bold,
@@ -567,7 +568,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                 icon: const Icon(Icons.lightbulb_outline),
                                 label: Text(
                                   'تلميح 💡',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -590,7 +591,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                 icon: const Icon(Icons.visibility),
                                 label: Text(
                                   'اكشف الجواب',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -612,7 +613,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                         if (_players.isNotEmpty) ...[
                           Text(
                             'هل عرف ${_players[_currentPlayerTurn]['name']}؟',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontSize: 18,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -630,7 +631,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                   icon: const Icon(Icons.check_circle),
                                   label: Text(
                                     'عرفها ✅\n+${(4 - _hintsRevealed.clamp(0, 3))} نقط',
-                                    style: GoogleFonts.cairo(
+                                    style: flatCairo(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 13,
                                     ),
@@ -657,7 +658,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                   icon: const Icon(Icons.cancel),
                                   label: Text(
                                     'ما عرفش ❌',
-                                    style: GoogleFonts.cairo(
+                                    style: flatCairo(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -681,7 +682,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                             icon: const Icon(Icons.arrow_forward_rounded),
                             label: Text(
                               'شخصية تانية 🔄',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),

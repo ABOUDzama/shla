@@ -4,6 +4,7 @@ import '../services/socket_service.dart';
 import 'package:intl/intl.dart' as intl;
 import 'dart:convert';
 import 'dart:async';
+import '../theme/flat_theme.dart';
 
 class ChatWidget extends StatefulWidget {
   final String roomCode;
@@ -126,7 +127,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                   children: [
                     Text(
                       'غرفة الدردشة',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
@@ -160,7 +161,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                           SocketService().isConnected
                               ? 'متصل'
                               : 'فارغ من الاتصال',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             fontSize: 10,
                             color: Colors.white60,
                             fontWeight: FontWeight.bold,
@@ -222,7 +223,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                           Text(
                             'المكان فاضي يا وحش!\nابدأ المحادثة ووريهم مين القائد 🚀',
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               color: Colors.white38,
                               fontSize: 16,
                               height: 1.5,
@@ -293,7 +294,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                       style: const TextStyle(color: Colors.white, fontSize: 16),
                       decoration: InputDecoration(
                         hintText: 'اكتب حاجة عظمة...',
-                        hintStyle: GoogleFonts.cairo(
+                        hintStyle: flatCairo(
                           color: Colors.white24,
                           fontSize: 15,
                         ),
@@ -393,7 +394,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                   ),
                   child: Text(
                     isMe ? 'أنت' : senderName,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 13,
                       fontWeight: FontWeight.w900,
                       color: isMe ? Colors.blueAccent : Colors.orangeAccent,
@@ -439,7 +440,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                     children: [
                       Text(
                         msg['message'] ?? '',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -480,7 +481,7 @@ class _ChatWidgetState extends State<ChatWidget> {
         ),
         child: Text(
           msg['message'] ?? '',
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 11,
             color: Colors.white60,
             fontWeight: FontWeight.bold,
@@ -585,7 +586,7 @@ class _ChatWidgetState extends State<ChatWidget> {
       child: Center(
         child: Text(
           firstChar,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.bold,

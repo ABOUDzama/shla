@@ -5,6 +5,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// الشيفرة: a two-team word-association grid game in the Codenames genre.
 /// Mechanics verified against the publisher rulebook (Czech Games Edition):
@@ -249,7 +250,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
         Text(
           'الدور على الفريق ${_turn == 'red' ? 'الأحمر' : 'الأزرق'}',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 16,
             fontWeight: FontWeight.w900,
             color: _teamColor(_turn),
@@ -279,7 +280,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
                     'بس $_spyName اللي يشوف الخريطة!',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                         fontSize: 13, color: Colors.white60),
                   ),
                 ],
@@ -299,7 +300,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
         Text(
           'الخريطة السرية - $_spyName بس! 🤫',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 14,
             fontWeight: FontWeight.bold,
             color: Colors.white70,
@@ -330,19 +331,19 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
         Text(
           'يا $_spyName، اكتب تلميح من كلمة واحدة وعدد الكلمات:',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(fontSize: 14, color: Colors.white70),
+          style: flatCairo(fontSize: 14, color: Colors.white70),
         ),
         const SizedBox(height: 14),
         TextField(
           controller: _clueController,
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
               fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
           decoration: InputDecoration(
             hintText: 'التلميح..',
-            hintStyle: GoogleFonts.cairo(color: Colors.white38, fontSize: 15),
+            hintStyle: flatCairo(color: Colors.white38, fontSize: 15),
             errorText: _clueError,
-            errorStyle: GoogleFonts.cairo(fontSize: 13),
+            errorStyle: flatCairo(fontSize: 13),
             filled: true,
             fillColor: Colors.white.withValues(alpha: 0.08),
             border: OutlineInputBorder(
@@ -372,7 +373,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
                     child: Center(
                       child: Text(
                         '$n',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
                           color: Colors.white,
@@ -402,7 +403,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
         Text(
           'التلميح: $_clue ($_clueCount) - فاضل $_guessesLeft تخمينة',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 15,
             fontWeight: FontWeight.w900,
             color: _teamColor(_turn),
@@ -452,7 +453,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 10.5,
                     fontWeight: FontWeight.bold,
                     color: reveal(i) ? Colors.white : Colors.black87,
@@ -480,7 +481,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
             Text(
               'الفريق ${_winner == 'red' ? 'الأحمر' : 'الأزرق'} كسب! 🎉',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
                 color: _teamColor(_winner!),
@@ -491,7 +492,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
               winners.join('، '),
               textAlign: TextAlign.center,
               style:
-                  GoogleFonts.cairo(fontSize: 16, color: Colors.white70),
+                  flatCairo(fontSize: 16, color: Colors.white70),
             ),
             const SizedBox(height: 24),
             FunkyButton(

@@ -527,7 +527,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                 const SizedBox(height: 12),
                 Text(
                   'حقيقة أم جرأة!',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -537,7 +537,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                 Text(
                   'اختار حقيقة لو عايز تجاوب بصراحة،\nأو جرأة لو قلبك جامد! 🔥',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
+                  style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
                 const SizedBox(height: 50),
                 ElevatedButton.icon(
@@ -568,7 +568,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                       icon: const Icon(Icons.people_alt, size: 30),
                       label: Text(
                         'اختار شلتك وابدأ!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                         ),
@@ -604,17 +604,6 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
       title: '🎲 صراحة ولا جرأة',
       backgroundColor: FunkyColors.violet,
       showAi: false,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home, color: FlatColors.ink),
-          onPressed: () => setState(() {
-            _started = false;
-            _typeChosen = false;
-            _currentCard = null;
-            _players.clear();
-          }),
-        ),
-      ],
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -625,7 +614,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                 if (_players.isNotEmpty)
                   Text(
                     'دور: ${_players[_currentPlayer % _players.length]}',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 20,
                       color: FlatColors.ink,
                       fontWeight: FontWeight.w900,
@@ -635,7 +624,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                 if (!_typeChosen) ...[
                   Text(
                     'اختار:',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 24,
                       color: FlatColors.ink,
                     ),
@@ -659,7 +648,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                                 const SizedBox(height: 8),
                                 Text(
                                   'حقيقة',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontSize: 26,
                                     fontWeight: FontWeight.w900,
                                     color: FlatDecor.textOn(FlatColors.tilePastels[1]),
@@ -687,7 +676,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                                 const SizedBox(height: 8),
                                 Text(
                                   'جرأة',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontSize: 26,
                                     fontWeight: FontWeight.w900,
                                     color: FlatDecor.textOn(FlatColors.tilePastels[3]),
@@ -710,7 +699,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                       children: [
                         Text(
                           _isTruth ? '💬 حقيقة' : '🔥 جرأة',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             fontSize: 18,
                             color: FlatColors.ink.withValues(alpha: 0.75),
                             fontWeight: FontWeight.bold,
@@ -719,7 +708,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                         const SizedBox(height: 20),
                         Text(
                           _currentCard ?? '',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             fontSize: 22,
                             color: FlatColors.ink,
                             fontWeight: FontWeight.bold,
@@ -743,7 +732,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                           icon: const Icon(Icons.play_arrow),
                           label: Text(
                             'غيّر',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -768,7 +757,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                           ),
                           label: Text(
                             'الدور الجاي',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontWeight: FontWeight.w900,
                               fontSize: 17,
                             ),

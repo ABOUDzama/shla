@@ -10,6 +10,7 @@ import '../../services/ai_service.dart';
 import '../../services/settings_service.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class ReverseQuiz extends StatefulWidget {
   const ReverseQuiz({super.key});
@@ -646,7 +647,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                 const SizedBox(height: 12),
                 Text(
                   'الأسئلة المعكوسة',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -656,7 +657,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                 Text(
                   'اللعبة محتاجة تركيز وسرعة بديهة!\nالتايمر 15 ثانية! خمن السؤال أو خد تلميح ⏳',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+                  style: flatCairo(fontSize: 15, color: Colors.white70),
                 ),
                 const SizedBox(height: 50),
                 ElevatedButton.icon(
@@ -693,7 +694,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                       icon: const Icon(Icons.people_alt, size: 28),
                       label: Text(
                         'اختار اللعيبة وابدأ!',
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                         ),
@@ -790,7 +791,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                       children: [
                         Text(
                           p['name'],
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: isActive
                                 ? FunkyColors.card
                                 : Colors.white70,
@@ -801,7 +802,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                         ),
                         Text(
                           '${p['score']} ن',
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             color: isActive
                                 ? FunkyColors.card.withValues(alpha: 0.7)
                                 : Colors.white38,
@@ -827,7 +828,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                         if (!_gameActive && !_roundOver) ...[
                           Text(
                             'دور: ${_players[_currentPlayerTurn]['name']}',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontSize: 28,
                               fontWeight: FontWeight.w900,
                               color: Colors.yellowAccent,
@@ -850,7 +851,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                 ),
                                 child: Text(
                                   'يلا جاهز؟ 🏁',
-                                  style: GoogleFonts.cairo(
+                                  style: flatCairo(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -882,7 +883,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                 ),
                                 Text(
                                       '$_secondsLeft',
-                                      style: GoogleFonts.cairo(
+                                      style: flatCairo(
                                         fontSize: 40,
                                         fontWeight: FontWeight.w900,
                                         color: _secondsLeft <= 5
@@ -924,7 +925,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                 _hintUsed
                                     ? hintText
                                     : 'تلميح (أول كلمتين من السؤال)',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -948,7 +949,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                               icon: const Icon(Icons.flip_camera_android),
                               label: Text(
                                 'قلب الكارت (إظهار السؤال)',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -977,7 +978,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                   ),
                                   label: Text(
                                     'صح (+${_hintUsed ? 1 : 2})',
-                                    style: GoogleFonts.cairo(
+                                    style: flatCairo(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -1000,7 +1001,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                   icon: const Icon(Icons.cancel, size: 28),
                                   label: Text(
                                     'غلط❌',
-                                    style: GoogleFonts.cairo(
+                                    style: flatCairo(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -1048,7 +1049,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                               ),
                               child: Text(
                                 'الدور اللي بعده 🔜',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1094,7 +1095,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
               const SizedBox(width: 8),
               Text(
                 'الإجابة هي:',
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.cyan.shade800,
@@ -1105,7 +1106,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
           const SizedBox(height: 20),
           Text(
             question['answer'] ?? '',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               color: Colors.black87,
               fontWeight: FontWeight.w900,
@@ -1147,7 +1148,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
               const SizedBox(width: 8),
               Text(
                 'السؤال كان:',
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white70,
@@ -1158,7 +1159,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
           const SizedBox(height: 20),
           Text(
             question['question'] ?? '',
-            style: GoogleFonts.cairo(
+            style: flatCairo(
               fontSize: 26,
               color: Colors.yellowAccent,
               fontWeight: FontWeight.w900,

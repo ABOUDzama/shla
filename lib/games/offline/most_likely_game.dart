@@ -151,7 +151,7 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
                     Text(
                       prompt,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
                         color: FlatColors.ink,

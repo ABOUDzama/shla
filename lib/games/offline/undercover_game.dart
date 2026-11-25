@@ -341,7 +341,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
         Text(
           'توزيع الأدوار 🤫',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: FlatColors.ink,
@@ -363,7 +363,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                             textAlign: TextAlign.center,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontSize: 18,
                               color: FlatColors.ink.withValues(alpha: 0.75),
                             ),
@@ -373,7 +373,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                             Text(
                               'مفيش كلمة ليك 😶\nإنت مستر وايت.. اتفرج وخمّن!',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w900,
                                 color: FlatColors.ink,
@@ -385,7 +385,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                                   ? _civWord!
                                   : _ucWord!,
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 40,
                                 fontWeight: FontWeight.w900,
                                 color: FlatColors.ink,
@@ -414,7 +414,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                           'بس $name اللي يشوف!',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                               fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                         ),
                       ],
@@ -456,7 +456,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
         Text(
           'التصويت ⚖️',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 14,
             color: FlatColors.ink.withValues(alpha: 0.7),
           ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
@@ -465,7 +465,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
         Text(
           'يا $voter، مين أكتر واحد مشكوك فيه؟',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: FlatColors.ink,
@@ -489,7 +489,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
                       color: FlatColors.ink,
@@ -519,7 +519,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
             Text(
               'اتصوّت عليه! ⚖️',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+              style: flatCairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 12),
             Text(
@@ -527,7 +527,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 34,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -537,7 +537,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
             Text(
               'كان ${_roleTextWithRole(role)}',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: FlatColors.ink,
@@ -574,7 +574,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
             Text(
               'مستر وايت انكشف! 👤',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -584,20 +584,20 @@ class _UndercoverGameState extends State<UndercoverGame> {
             Text(
               'لو خمّن كلمة المدنيين يكسب فورًا.. اكتب تخمينك:',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
+              style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
             ),
             const SizedBox(height: 24),
             TextField(
               controller: _guessController,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: FlatColors.ink,
               ),
               decoration: InputDecoration(
                 hintText: 'كلمة المدنيين...',
-                hintStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.7)),
+                hintStyle: flatCairo(color: FlatColors.ink.withValues(alpha: 0.7)),
                 filled: true,
                 fillColor: FlatColors.bg,
                 border: OutlineInputBorder(
@@ -640,7 +640,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -650,7 +650,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
             Text(
               'كلمة المدنيين كانت: $_civWord',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
+              style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
             ),
             const SizedBox(height: 20),
             for (final n in sorted)
@@ -659,7 +659,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                 child: Text(
                   '$n (${_roleText(_roles[n]!)}): ${_scores[n]}',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                       fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
               ),

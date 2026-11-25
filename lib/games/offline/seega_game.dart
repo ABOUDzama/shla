@@ -6,6 +6,7 @@ import '../../services/score_service.dart';
 import '../../services/socket_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class SeegaGame extends StatefulWidget {
   final bool online;
@@ -223,7 +224,7 @@ class _SeegaGameState extends State<SeegaGame> {
                 children: [
                   Text(
                     isPlacementPhase ? 'مرحلة التوزيع' : 'مرحلة التحريك',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
@@ -234,7 +235,7 @@ class _SeegaGameState extends State<SeegaGame> {
                         ? 'حط حصواتك الـ 3 في الأماكن الفاضية'
                         : 'حرك حصواتك جنب بعض عشان تكسب',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 14,
                       color: Colors.white70,
                       fontWeight: FontWeight.bold,
@@ -263,7 +264,7 @@ class _SeegaGameState extends State<SeegaGame> {
                               ? 'دور حجر الألماس'
                               : 'دور ${widget.opponentName ?? 'المنافس'}')
                         : 'دور الحجر: ${currentPlayer == 1 ? 'الأحمر' : 'الأزرق'}',
-                    style: GoogleFonts.cairo(
+                    style: flatCairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                       color: winner != null
@@ -405,7 +406,7 @@ class _SeegaGameState extends State<SeegaGame> {
                 ),
                 child: Text(
                   'إعادة التحدي',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     color: Colors.amberAccent,

@@ -98,3 +98,49 @@ class FlatDecor {
       GoogleFonts.cairo(fontSize: size, color: color)
           .copyWith(fontFamilyFallback: const ['Noto Color Emoji']);
 }
+
+/// Emoji fallback for GoogleFonts.cairo text with inline emoji (matches
+/// OfflineGameScaffold title; keeps harness goldens truthful).
+const List<String> kEmojiFontFallback = ['Noto Color Emoji'];
+
+/// Cairo text style with the emoji fallback baked in, so inline emoji render
+/// in tests and on devices without per-call boilerplate.
+TextStyle flatCairo({
+  TextStyle? textStyle,
+  Color? color,
+  Color? backgroundColor,
+  double? fontSize,
+  FontWeight? fontWeight,
+  FontStyle? fontStyle,
+  double? letterSpacing,
+  double? wordSpacing,
+  TextBaseline? textBaseline,
+  double? height,
+  Locale? locale,
+  PaintingStyle? paintStyle,
+  List<Shadow>? shadows,
+  List<FontFeature>? fontFeatures,
+  TextDecoration? decoration,
+  Color? decorationColor,
+  TextDecorationStyle? decorationStyle,
+  double? decorationThickness,
+}) =>
+    GoogleFonts.cairo(
+      textStyle: textStyle,
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+    ).copyWith(fontFamilyFallback: kEmojiFontFallback);

@@ -283,7 +283,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
                                       ? null
                                       : Text(
                                           value,
-                                          style: GoogleFonts.cairo(
+                                          style: flatCairo(
                                             fontSize: 64,
                                             fontWeight: FontWeight.w900,
                                             height: 1,

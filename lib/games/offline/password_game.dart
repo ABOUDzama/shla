@@ -142,7 +142,7 @@ class _PasswordGameState extends State<PasswordGame> {
                       ? 'الفايز: ${winners.first['name']}'
                       : 'تعادل: ${winners.map((w) => w['name']).join(' و ')}',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
                     color: FlatColors.ink,
@@ -154,7 +154,7 @@ class _PasswordGameState extends State<PasswordGame> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       '${p['name']}: ${p['score']}',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                           fontSize: 18, color: FlatColors.ink.withValues(alpha: 0.75)),
                     ),
                   ),
@@ -190,7 +190,7 @@ class _PasswordGameState extends State<PasswordGame> {
             Text(
               'الجولة ${_roundsPlayed + 1} من $_totalRounds',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
+              style: flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
             ),
             const SizedBox(height: 8),
             Text(
@@ -198,7 +198,7 @@ class _PasswordGameState extends State<PasswordGame> {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 20,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -215,7 +215,7 @@ class _PasswordGameState extends State<PasswordGame> {
                               setState(() => _wordRevealed = false),
                           child: Text(
                             _word!,
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontSize: 44,
                               fontWeight: FontWeight.w900,
                               color: FlatColors.ink,
@@ -245,7 +245,7 @@ class _PasswordGameState extends State<PasswordGame> {
                               'بس ${clueGiver['name']} اللي يشوفها!',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                   fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                             ),
                           ],
@@ -291,7 +291,7 @@ class _PasswordGameState extends State<PasswordGame> {
               Text(
                 'مين اللي خمن صح؟',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
                   color: FlatColors.ink,

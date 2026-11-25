@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../services/avatar_service.dart';
 import '../services/voice_chat_service.dart';
 import '../theme/funky_theme.dart';
+import '../theme/flat_theme.dart';
 
 /// Circular player avatar: base64 photo when available, otherwise a colored
 /// initial derived deterministically from the name. Optional host crown and
@@ -72,7 +73,7 @@ class PlayerAvatar extends StatelessWidget {
       child: provider == null
           ? Text(
               initial,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 color: Colors.white,
                 fontWeight: FontWeight.w900,
                 fontSize: size * 0.42,

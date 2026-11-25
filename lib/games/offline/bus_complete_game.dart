@@ -245,7 +245,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
           Text(
             'حرف واحد.. وكل واحد يملى الفئات قبل الوقت!\nالإجابة المختلفة عن الكل بـ 10 نقط، والمكررة بـ 5.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 14, height: 1.6),
+            style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 14, height: 1.6),
           ),
           const SizedBox(height: 20),
           Row(
@@ -254,10 +254,10 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                 child: TextField(
                   controller: _nameCtrl,
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.cairo(color: FlatColors.ink),
+                  style: flatCairo(color: FlatColors.ink),
                   decoration: InputDecoration(
                     hintText: 'اسم اللاعب',
-                    hintStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.7)),
+                    hintStyle: flatCairo(color: FlatColors.ink.withValues(alpha: 0.7)),
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
@@ -283,7 +283,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
             children: [
               for (int i = 0; i < _players.length; i++)
                 Chip(
-                  label: Text(_players[i], style: GoogleFonts.cairo(color: FlatColors.ink)),
+                  label: Text(_players[i], style: flatCairo(color: FlatColors.ink)),
                   backgroundColor: Colors.orange.withValues(alpha: 0.25),
                   deleteIcon: Icon(Icons.close, size: 18, color: FlatColors.ink.withValues(alpha: 0.55)),
                   onDeleted: () => setState(() {
@@ -295,7 +295,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
           ),
           const SizedBox(height: 20),
           Text('الفئات (اختار 4 على الأقل)',
-              style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15, fontWeight: FontWeight.bold)),
+              style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -303,7 +303,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
             children: [
               for (final c in BusCompleteGame.allCategories)
                 FilterChip(
-                  label: Text(c, style: GoogleFonts.cairo(fontSize: 13)),
+                  label: Text(c, style: flatCairo(fontSize: 13)),
                   selected: _categories.contains(c),
                   onSelected: (v) => setState(() {
                     if (v) {
@@ -321,7 +321,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
             ],
           ),
           const SizedBox(height: 20),
-          Text('عدد الجولات', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15, fontWeight: FontWeight.bold)),
+          Text('عدد الجولات', style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           SegmentedButton<int>(
             segments: const [
@@ -338,7 +338,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
             icon: const Icon(Icons.play_arrow_rounded, size: 28),
             label: Text(
               _players.length < 2 ? 'ضيف لاعبين على الأقل' : 'اركبوا الأتوبيس! 🚌',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 17),
+              style: flatCairo(fontWeight: FontWeight.bold, fontSize: 17),
             ),
           ),
         ],
@@ -354,9 +354,9 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('الجولة $_round / $_totalRounds',
-                style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15)),
+                style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15)),
             const SizedBox(height: 20),
-            Text('حرف الجولة:', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 18)),
+            Text('حرف الجولة:', style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 18)),
             const SizedBox(height: 8),
             Container(
               width: 110,
@@ -368,13 +368,13 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
               ),
               alignment: Alignment.center,
               child: Text(_letter,
-                  style: GoogleFonts.cairo(fontSize: 56, fontWeight: FontWeight.w900, color: Colors.orangeAccent)),
+                  style: flatCairo(fontSize: 56, fontWeight: FontWeight.w900, color: Colors.orangeAccent)),
             ).animate().scale(begin: const Offset(0.5, 0.5)).fadeIn(),
             const SizedBox(height: 20),
-            Text('عدّي الموبايل لـ', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 17)),
+            Text('عدّي الموبايل لـ', style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 17)),
             Text(
               _players[_currentPlayer],
-              style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 32, fontWeight: FontWeight.w900),
+              style: flatCairo(color: FlatColors.ink, fontSize: 32, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -383,7 +383,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                 _startTurn();
               },
               child: Text('أنا ${_players[_currentPlayer]}، يلا! ⏱️',
-                  style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                  style: flatCairo(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -402,12 +402,12 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
               CircleAvatar(
                 backgroundColor: Colors.orange,
                 radius: 26,
-                child: Text(_letter, style: GoogleFonts.cairo(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900)),
+                child: Text(_letter, style: flatCairo(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900)),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(_players[_currentPlayer],
-                    style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 18, fontWeight: FontWeight.bold)),
+                    style: flatCairo(color: FlatColors.ink, fontSize: 18, fontWeight: FontWeight.bold)),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -418,7 +418,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                 ),
                 child: Text(
                   '$_timeLeft',
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     color: urgent ? Colors.redAccent : FlatColors.ink,
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
@@ -444,11 +444,11 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                   child: TextField(
                     controller: _fieldCtrls[c],
                     textAlign: TextAlign.right,
-                    style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 17),
+                    style: flatCairo(color: FlatColors.ink, fontSize: 17),
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: c,
-                      labelStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75)),
+                      labelStyle: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75)),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -472,7 +472,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
             child: ElevatedButton.icon(
               onPressed: () => _finishTurn(),
               icon: const Icon(Icons.check_circle),
-              label: Text('خلصت! ✅', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 17).copyWith(fontFamilyFallback: FunkyText.emojiFallback)),
+              label: Text('خلصت! ✅', style: flatCairo(fontWeight: FontWeight.bold, fontSize: 17).copyWith(fontFamilyFallback: FunkyText.emojiFallback)),
             ),
           ),
         ),
@@ -490,7 +490,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
       child: Column(
         children: [
           Text('جولة حرف "$_letter"',
-              style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 20, fontWeight: FontWeight.w900)),
+              style: flatCairo(color: FlatColors.ink, fontSize: 20, fontWeight: FontWeight.w900)),
           const SizedBox(height: 12),
           for (final cat in cats)
             _categoryResult(cat, roundScores.keys.toList()),
@@ -509,11 +509,11 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Text(p, style: GoogleFonts.cairo(color: FlatColors.ink, fontWeight: FontWeight.bold, fontSize: 16)),
+                          child: Text(p, style: flatCairo(color: FlatColors.ink, fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
-                        Text('+${roundScores[p]}', style: GoogleFonts.cairo(color: FlatColors.mintDark, fontWeight: FontWeight.bold)),
+                        Text('+${roundScores[p]}', style: flatCairo(color: FlatColors.mintDark, fontWeight: FontWeight.bold)),
                         const SizedBox(width: 12),
-                        Text('المجموع: ${_totalScores[p]}', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.7), fontSize: 13)),
+                        Text('المجموع: ${_totalScores[p]}', style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.7), fontSize: 13)),
                       ],
                     ),
                   ),
@@ -528,7 +528,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
               icon: Icon(_round >= _totalRounds ? Icons.emoji_events : Icons.skip_next),
               label: Text(
                 _round >= _totalRounds ? 'النتيجة النهائية 🏆' : 'الجولة الجاية ▶️',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16),
+                style: flatCairo(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           ),
@@ -559,7 +559,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(cat, style: GoogleFonts.cairo(color: FlatColors.ink, fontWeight: FontWeight.bold, fontSize: 15)),
+          Text(cat, style: flatCairo(color: FlatColors.ink, fontWeight: FontWeight.bold, fontSize: 15)),
           const SizedBox(height: 6),
           for (final p in players)
             Builder(builder: (_) {
@@ -574,12 +574,12 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                   children: [
                     SizedBox(
                       width: 90,
-                      child: Text(p, style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 13), overflow: TextOverflow.ellipsis),
+                      child: Text(p, style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 13), overflow: TextOverflow.ellipsis),
                     ),
                     Expanded(
                       child: Text(
                         raw.isEmpty ? '—' : raw,
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           color: valid ? FlatColors.ink : FlatColors.mafia,
                           fontSize: 14,
                           decoration: valid ? null : TextDecoration.lineThrough,
@@ -588,7 +588,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                     ),
                     Text(
                       '+$pts',
-                      style: GoogleFonts.cairo(
+                      style: flatCairo(
                         color: pts == 10 ? FlatColors.mintDark : (pts == 5 ? const Color(0xFF8A5A00) : FlatColors.ink.withValues(alpha: 0.7)),
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
@@ -617,7 +617,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
             const SizedBox(height: 12),
             Text(
               'الكابتن: ${sorted.first}! 🏆',
-              style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 24, fontWeight: FontWeight.w900),
+              style: flatCairo(color: FlatColors.ink, fontSize: 24, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 24),
             for (int i = 0; i < sorted.length; i++)
@@ -635,9 +635,9 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(sorted[i],
-                          style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 17, fontWeight: FontWeight.bold)),
+                          style: flatCairo(color: FlatColors.ink, fontSize: 17, fontWeight: FontWeight.bold)),
                     ),
-                    Text('${_totalScores[sorted[i]]} نقطة', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75))),
+                    Text('${_totalScores[sorted[i]]} نقطة', style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75))),
                   ],
                 ),
               ).animate().fadeIn(delay: (i * 120).ms).slideX(begin: 0.2),
@@ -648,7 +648,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                   child: ElevatedButton.icon(
                     onPressed: _startGame,
                     icon: const Icon(Icons.replay),
-                    label: Text('جولة تانية 🔁', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                    label: Text('جولة تانية 🔁', style: flatCairo(fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -656,7 +656,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                   child: OutlinedButton.icon(
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.home_outlined, color: Colors.white70),
-                    label: Text('الرئيسية', style: GoogleFonts.cairo(color: Colors.white70)),
+                    label: Text('الرئيسية', style: flatCairo(color: Colors.white70)),
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.white24),
                       padding: const EdgeInsets.symmetric(vertical: 14),

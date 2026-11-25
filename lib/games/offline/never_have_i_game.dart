@@ -128,7 +128,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style:
-                  GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
+                  flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
             ),
             const SizedBox(height: 16),
             Container(
@@ -137,7 +137,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
               child: Text(
                 NeverHaveIGame.statements[statement],
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: flatCairo(
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
                   color: FlatColors.ink,
@@ -149,7 +149,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
               'مين عملها؟ دوس على اسمه لكل اعتراف:',
               textAlign: TextAlign.center,
               style:
-                  GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.75))
+                  flatCairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.75))
                       .copyWith(
                           fontFamilyFallback: const ['Noto Color Emoji']),
             ),
@@ -175,7 +175,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
                               n,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w900,
                                 color: FlatColors.ink,
@@ -184,7 +184,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
                           ),
                           Text(
                             '${_confessions[n]} اعتراف',
-                            style: GoogleFonts.cairo(
+                            style: flatCairo(
                               fontSize: 13,
                               color: FlatColors.ink.withValues(alpha: 0.75),
                             ),
@@ -224,7 +224,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
             Text(
               'نتيجة الاعترافات! 🎉',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
@@ -237,7 +237,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
                 child: Text(
                   '$n: ${_confessions[n]} اعتراف',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: flatCairo(
                     fontSize: 17,
                     color: FlatColors.ink.withValues(alpha: 0.75),
                   ),

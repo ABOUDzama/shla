@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../theme/flat_theme.dart';
 
 /// Light victory celebration: the Shla friends cheer the match winner.
 /// Shown only on match-over screens — never during gameplay.
@@ -45,7 +46,7 @@ class VictoryFriends extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           '$winnerName كسب! 🎉',
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: Colors.white,

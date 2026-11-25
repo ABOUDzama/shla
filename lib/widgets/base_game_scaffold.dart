@@ -13,6 +13,7 @@ import 'package:shella/services/audio_service.dart';
 import 'package:shella/services/haptic_service.dart';
 import 'package:shella/widgets/game_result_overlay.dart';
 import 'package:shella/theme/funky_theme.dart';
+import '../theme/flat_theme.dart';
 
 class BaseGameScaffold extends StatefulWidget {
   final String title;
@@ -261,7 +262,7 @@ class _BaseGameScaffoldState extends State<BaseGameScaffold> {
           widget.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.cairo(
+          style: flatCairo(
             fontWeight: FontWeight.bold,
             fontSize: 16,
             color: Colors.white,
@@ -462,7 +463,7 @@ class _BaseGameScaffoldState extends State<BaseGameScaffold> {
                                   children: [
                                     Text(
                                       name,
-                                      style: GoogleFonts.cairo(
+                                      style: flatCairo(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w900,
                                         color: Colors.white,
@@ -473,7 +474,7 @@ class _BaseGameScaffoldState extends State<BaseGameScaffold> {
                                     ),
                                     Text(
                                       text,
-                                      style: GoogleFonts.cairo(
+                                      style: flatCairo(
                                         fontSize: 14,
                                         color: Colors.white.withOpacity(0.9),
                                         height: 1.1,
