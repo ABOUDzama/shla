@@ -89,6 +89,32 @@ void main() {
       }
     });
 
+    test('bots steer and fire on their own; match resolves', () {
+      final m = TankBattleMatch(
+          playerCount: 4, humanCount: 1, random: Random(17));
+      var botFired = false;
+      for (var t = 0; t < 900 && !m.isOver; t++) {
+        m.tick();
+        if (m.shells.any((s) => s.owner >= 1)) botFired = true;
+      }
+      expect(botFired, isTrue);
+      expect(m.isOver, isTrue);
+      expect(m.aliveCount, lessThan(4));
+    });
+
+    test('bots deterministic with the same seed', () {
+      final a = TankBattleMatch(playerCount: 4, humanCount: 0, random: Random(3));
+      final b = TankBattleMatch(playerCount: 4, humanCount: 0, random: Random(3));
+      for (var t = 0; t < 300; t++) {
+        a.tick();
+        b.tick();
+      }
+      expect(a.xs, b.xs);
+      expect(a.ys, b.ys);
+      expect(a.shells.length, b.shells.length);
+      expect(a.alive, b.alive);
+    });
+
     test('deterministic with the same seed', () {
       final a = TankBattleMatch(playerCount: 4, random: Random(42));
       final b = TankBattleMatch(playerCount: 4, random: Random(42));

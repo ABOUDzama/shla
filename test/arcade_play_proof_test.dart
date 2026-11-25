@@ -180,15 +180,15 @@ void main() {
     await tester.pump();
     // players 1+3 hold to steer then release to fire; 2+4 quick-tap to fire
     final g1 = await tester.startGesture(
-        tester.getCenter(find.text('لاعب 1 🎯')));
+        tester.getCenter(find.text('لاعب 1')));
     final g3 = await tester.startGesture(
-        tester.getCenter(find.text('لاعب 3 🎯')));
+        tester.getCenter(find.text('لاعب 3')));
     await tester.pump(const Duration(milliseconds: 500));
     await g1.up();
     await g3.up();
-    await tester.tap(find.text('لاعب 2 🎯'));
+    await tester.tap(find.text('لاعب 2'));
     await tester.pump(const Duration(milliseconds: 100));
-    await tester.tap(find.text('لاعب 4 🎯'));
+    await tester.tap(find.text('لاعب 4'));
     await tester.pump(const Duration(milliseconds: 100));
     for (var i = 0; i < 8; i++) {
       await tester.pump(const Duration(milliseconds: 250));

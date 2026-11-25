@@ -46,8 +46,10 @@ class TankShell2 {
 class TankBattleMatch {
   TankBattleMatch({
     required this.playerCount,
+    int? humanCount,
     Random? random,
-  })  : assert(playerCount >= 2 && playerCount <= 4),
+  })  : assert(playerCount >= 1 && playerCount <= 4),
+        humanCount = humanCount ?? playerCount,
         _random = random ?? Random() {
     arena = TankArena.maps[_random.nextInt(TankArena.maps.length)];
     for (var p = 0; p < playerCount; p++) {
@@ -62,6 +64,10 @@ class TankBattleMatch {
   }
 
   final int playerCount;
+
+  /// Players [0, humanCount) are human; the rest are bots steered by
+  /// [tick] itself (deterministic under the same seed).
+  final int humanCount;
   final Random _random;
   late final TankArena arena;
 
@@ -105,15 +111,17 @@ class TankBattleMatch {
   final List<double> headings = [];
   final List<TankShell2> shells = [];
 
-  /// Ticks since [player]'s tank was destroyed (for explosion animation);
-  /// null while alive.
-  final List<int?> destroyedAt = [];
+  /// Tick at which each tank was destroyed (for explosion animation).
+  final Map<int, int> deathTick = {};
 
   int tickCount = 0;
   int? winner;
 
   int get aliveCount => alive.where((a) => a).length;
-  bool get isOver => winner != null || aliveCount <= 1 || tickCount >= maxTicks;
+  bool get isOver =>
+      winner != null ||
+      (aliveCount <= 1 && tickCount > 30) ||
+      tickCount >= maxTicks;
 
   bool _inObstacle(double x, double y, double pad) {
     for (final o in arena.obstacles) {
@@ -150,7 +158,7 @@ class TankBattleMatch {
 
   void _destroy(int p) {
     alive[p] = false;
-    destroyedAt.add(tickCount);
+    deathTick[p] = tickCount;
     // remove that player's shell so a re-round stays clean
     shells.removeWhere((s) => !alive[s.owner] && s.owner == p && false);
     if (aliveCount == 1) {
@@ -158,9 +166,48 @@ class TankBattleMatch {
     }
   }
 
+  /// Very simple bot brain: steer toward the nearest living opponent,
+  /// fire when roughly aimed. Steering is clockwise-only (one button),
+  /// so bots hold until the target is within the aim cone. Deterministic
+  /// jitter keeps matches varied under a fixed seed.
+  void _botThink(int p) {
+    var best = -1;
+    var bestD = double.infinity;
+    for (var q = 0; q < playerCount; q++) {
+      if (q == p || !alive[q]) continue;
+      final d = pow(xs[q] - xs[p], 2) + pow(ys[q] - ys[p], 2).toDouble();
+      if (d < bestD) {
+        bestD = d.toDouble();
+        best = q;
+      }
+    }
+    if (best < 0) {
+      holding[p] = false;
+      return;
+    }
+    final desired = atan2(ys[best] - ys[p], xs[best] - xs[p]);
+    var diff = (desired - headings[p]) % (2 * pi);
+    if (diff > pi) diff -= 2 * pi;
+    if (diff < -pi) diff += 2 * pi;
+    if (_random.nextDouble() < 0.02) {
+      holding[p] = !holding[p];
+      return;
+    }
+    if (diff > 0.15 || diff < -0.5) {
+      holding[p] = true;
+    } else {
+      holding[p] = false;
+      if (!shells.any((s) => s.owner == p)) holdRelease(p);
+    }
+  }
+
   void tick() {
     if (isOver) return;
     tickCount++;
+
+    for (var p = humanCount; p < playerCount; p++) {
+      if (alive[p]) _botThink(p);
+    }
 
     // tanks: steer while held, always drive forward, slide on obstacles
     for (var p = 0; p < playerCount; p++) {

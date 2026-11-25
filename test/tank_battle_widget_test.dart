@@ -44,48 +44,67 @@ Future<void> boot(WidgetTester tester, {int seed = 11}) async {
   await flushFontCallbacks(tester);
 }
 
+dynamic stateOf(WidgetTester tester) =>
+    tester.state(find.byType(TankBattleGame)) as dynamic;
+
 void main() {
-  testWidgets('intro explains hold-to-steer release-to-fire', (tester) async {
+  testWidgets('intro explains hold-to-steer release-to-fire and bots',
+      (tester) async {
     await boot(tester);
     expect(find.textContaining('دوس مطوّل'), findsWidgets);
-    expect(find.textContaining('سيب الزرار'), findsWidgets);
+    expect(find.textContaining('بوتات'), findsWidgets);
     await tester.tap(find.textContaining('ابدأ اللعبة'));
     await tester.pump();
     expect(find.text('كام لاعب؟'), findsOneWidget);
+    expect(find.text('لاعب واحد'), findsOneWidget);
+    expect(find.text('4 لاعبين'), findsOneWidget);
     await settleDown(tester);
   });
 
-  testWidgets('hold button steers and release fires a shell', (tester) async {
-    await boot(tester);
-    await tester.tap(find.textContaining('ابدأ اللعبة'));
-    await tester.pump();
-    await tester.tap(find.text('2 لاعبين'));
-    await tester.pump();
-    expect(find.text('لاعب 1 🎯'), findsOneWidget);
-    expect(find.text('لاعب 2 🎯'), findsOneWidget);
-
-    final center = tester.getCenter(find.text('لاعب 1 🎯'));
-    final gesture = await tester.startGesture(center);
-    await tester.pump(const Duration(milliseconds: 300));
-    await gesture.up();
-    await tester.pump();
-    expect(find.text('لاعب 1 ضرب! 💥'), findsOneWidget);
-    await settleDown(tester);
-  });
-
-  testWidgets('elimination ends round and replay returns to picker',
+  testWidgets('under 4 humans asks about bots; bots fill to 4 without pads',
       (tester) async {
     await boot(tester);
     await tester.tap(find.textContaining('ابدأ اللعبة'));
     await tester.pump();
     await tester.tap(find.text('2 لاعبين'));
     await tester.pump();
-    (tester.state(find.byType(TankBattleGame)) as dynamic).debugForceWin(0);
+    expect(find.text('نضيف بوتات؟'), findsOneWidget);
+    await tester.tap(find.text('اه 🤖'));
     await tester.pump();
-    expect(find.text('العبوا تاني 🎯'), findsOneWidget);
-    await tester.tap(find.text('العبوا تاني 🎯'));
+    final m = stateOf(tester).debugMatch;
+    expect(m.playerCount, 4);
+    expect(m.humanCount, 2);
+    // only human pads exist
+    expect(find.text('لاعب 1'), findsOneWidget);
+    expect(find.text('لاعب 2'), findsOneWidget);
+    expect(find.text('لاعب 3'), findsNothing);
+    // bots actually play: advance and expect a bot shell or a kill
+    await tester.pump(const Duration(seconds: 3));
+    final botFired =
+        (m.shells as List).any((s) => (s as dynamic).owner >= 2);
+    expect(botFired || m.aliveCount < 4, isTrue);
+    await settleDown(tester);
+  });
+
+  testWidgets('hold pad steers and release fires a shell', (tester) async {
+    await boot(tester);
+    await tester.tap(find.textContaining('ابدأ اللعبة'));
     await tester.pump();
-    expect(find.text('كام لاعب؟'), findsOneWidget);
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('لا'));
+    await tester.pump();
+    final m = stateOf(tester).debugMatch;
+    expect(m.playerCount, 2);
+    final center = tester.getCenter(find.text('لاعب 1'));
+    final h0 = m.headings[0];
+    final gesture = await tester.startGesture(center);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(m.headings[0], greaterThan(h0));
+    await gesture.up();
+    await tester.pump();
+    expect(m.shells.length, 1);
+    expect(m.shells.first.owner, 0);
     await settleDown(tester);
   });
 
@@ -95,30 +114,25 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('3 لاعبين'));
     await tester.pump();
-    // play a little: player 1 fires
-    final g = await tester.startGesture(
-        tester.getCenter(find.text('لاعب 1 🎯')));
-    await tester.pump(const Duration(milliseconds: 200));
-    await g.up();
-    await tester.pump(const Duration(milliseconds: 200));
-    (tester.state(find.byType(TankBattleGame)) as dynamic).debugForceWin(2);
+    await tester.tap(find.text('لا'));
     await tester.pump();
-    // rematch
+    stateOf(tester).debugForceWin(2);
+    await tester.pump();
+    expect(find.text('العبوا تاني 🎯'), findsOneWidget);
     await tester.tap(find.text('العبوا تاني 🎯'));
     await tester.pump();
     expect(find.text('كام لاعب؟'), findsOneWidget);
     await tester.tap(find.text('2 لاعبين'));
     await tester.pump();
-    final m = ((tester.state(find.byType(TankBattleGame)) as dynamic)
-        .debugMatch) as dynamic;
+    await tester.tap(find.text('لا'));
+    await tester.pump();
+    final m = stateOf(tester).debugMatch;
     expect(m.playerCount, 2);
     expect(m.aliveCount, 2);
     expect(m.shells, isEmpty);
-    expect(m.destroyedAt, isEmpty);
+    expect(m.deathTick, isEmpty);
     expect(m.winner, isNull);
     expect(m.tickCount, 0);
-    // banner reset to the how-to hint
-    expect(find.textContaining('دوس مطوّل'), findsWidgets);
     await settleDown(tester);
   });
 }

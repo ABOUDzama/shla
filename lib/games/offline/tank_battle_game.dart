@@ -11,7 +11,8 @@ import '../../widgets/victory_friends.dart';
 import 'tank_battle_logic.dart';
 
 /// دبابات الشلة: reference-faithful one-button tanks.
-/// Hold your button to steer, release to fire. One hit kills.
+/// Hold your corner pad to steer, release to fire. One hit destroys.
+/// 1-4 humans, optional bot fill to 4.
 class TankBattleGame extends StatefulWidget {
   const TankBattleGame({super.key, this.randomSeed});
 
@@ -22,7 +23,7 @@ class TankBattleGame extends StatefulWidget {
   State<TankBattleGame> createState() => _TankBattleGameState();
 }
 
-enum _TankPhase { pickPlayers, playing, over }
+enum _TankPhase { pickPlayers, pickBots, playing, over }
 
 class _TankBattleGameState extends State<TankBattleGame> {
   static const _emojiFallback = ['Noto Color Emoji'];
@@ -31,7 +32,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
   _TankPhase _phase = _TankPhase.pickPlayers;
   late TankBattleMatch _match;
   Timer? _ticker;
-  String _banner = '';
+  int _humans = 2;
 
   static const List<Color> _colors = [
     FunkyColors.coral,
@@ -46,14 +47,15 @@ class _TankBattleGameState extends State<TankBattleGame> {
     super.dispose();
   }
 
-  void _startMatch(int players) {
+  void _startMatch(int humans, bool withBots) {
     _ticker?.cancel();
     setState(() {
+      _humans = humans;
       _match = TankBattleMatch(
-        playerCount: players,
+        playerCount: withBots ? 4 : humans,
+        humanCount: humans,
         random: widget.randomSeed != null ? Random(widget.randomSeed!) : null,
       );
-      _banner = 'دوس مطوّل عشان تلفّ.. وسيب عشان تضرب! 🎯';
       _phase = _TankPhase.playing;
     });
     _ticker = Timer.periodic(const Duration(milliseconds: 60), (_) {
@@ -75,16 +77,14 @@ class _TankBattleGameState extends State<TankBattleGame> {
 
   void _holdEnd(int i) {
     if (_phase != _TankPhase.playing) return;
-    final fired = _match.holdRelease(i);
     setState(() {
-      _banner = fired ? 'لاعب ${i + 1} ضرب! 💥' : _banner;
+      _match.holdRelease(i);
       if (_match.isOver) {
         _ticker?.cancel();
         _phase = _TankPhase.over;
       }
     });
   }
-
 
   /// Test hook: current match (read-only) for state assertions.
   @visibleForTesting
@@ -98,12 +98,31 @@ class _TankBattleGameState extends State<TankBattleGame> {
       for (var p = 0; p < _match.playerCount; p++) {
         if (p != winner && _match.alive[p]) {
           _match.alive[p] = false;
-          _match.destroyedAt.add(_match.tickCount);
+          _match.deathTick[p] = _match.tickCount;
         }
       }
       _match.winner = winner;
       _phase = _TankPhase.over;
     });
+  }
+
+  Widget _bigChoice(String label, VoidCallback onTap) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: SizedBox(
+        width: 220,
+        child: FilledButton(
+          onPressed: onTap,
+          child: Text(
+            label,
+            style: GoogleFonts.cairo(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ).copyWith(fontFamilyFallback: _emojiFallback),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildPicker() {
@@ -120,116 +139,101 @@ class _TankBattleGameState extends State<TankBattleGame> {
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
           const SizedBox(height: 20),
+          _bigChoice('لاعب واحد', () {
+            _humans = 1;
+            setState(() => _phase = _TankPhase.pickBots);
+          }),
           for (final n in [2, 3, 4])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: SizedBox(
-                width: 200,
-                child: FilledButton(
-                  onPressed: () => _startMatch(n),
-                  child: Text(
-                    '$n لاعبين',
-                    style: GoogleFonts.cairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ).copyWith(fontFamilyFallback: _emojiFallback),
-                  ),
-                ),
-              ),
-            ),
+            _bigChoice('$n لاعبين', () {
+              _humans = n;
+              if (n == 4) {
+                _startMatch(4, false);
+              } else {
+                setState(() => _phase = _TankPhase.pickBots);
+              }
+            }),
         ],
       ),
     );
   }
 
-  Widget _statusChip(int i) {
-    final aliveNow = _match.alive[i];
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 42,
-          height: 42,
-          decoration: BoxDecoration(
-            color: aliveNow
-                ? _colors[i].withValues(alpha: 0.35)
-                : Colors.white10,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: aliveNow ? _colors[i] : Colors.white24,
-              width: 2,
-            ),
+  Widget _buildBotsPrompt() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'نضيف بوتات؟',
+            style: GoogleFonts.cairo(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+            ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
-          child: Center(
-            child: Text(
-              aliveNow ? '🛡' : '💥',
-              style: const TextStyle(fontSize: 18)
-                  .copyWith(fontFamilyFallback: _emojiFallback),
-            ),
+          const SizedBox(height: 8),
+          Text(
+            'البوتات بتكمل الأربع لاعبين',
+            style: GoogleFonts.cairo(
+              fontSize: 14,
+              color: Colors.white70,
+            ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          'لاعب ${i + 1}',
-          style: GoogleFonts.cairo(
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            color: aliveNow ? Colors.white : Colors.white38,
-          ).copyWith(fontFamilyFallback: _emojiFallback),
-        ),
-      ],
+          const SizedBox(height: 20),
+          _bigChoice('اه 🤖', () => _startMatch(_humans, true)),
+          _bigChoice('لا', () => _startMatch(_humans, false)),
+        ],
+      ),
     );
   }
 
-  /// Circular corner pad: hold to steer, release to fire. Top-corner pads
-  /// are rotated 180 degrees so they face the player across the phone.
+  /// Circular corner pad: hold to steer, release to fire.
   Widget _cornerPad(int i) {
     final active = _phase == _TankPhase.playing && _match.alive[i];
     final held = active && _match.holding[i];
     return GestureDetector(
-        onTapDown: active ? (_) => _holdStart(i) : null,
-        onTapUp: active ? (_) => _holdEnd(i) : null,
-        onTapCancel: active ? () => _holdEnd(i) : null,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          width: 86,
-          height: 86,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: !active
-                ? _colors[i].withValues(alpha: 0.18)
-                : held
-                    ? Colors.white
-                    : _colors[i],
-            border: Border.all(
-              color: held ? _colors[i] : Colors.white.withValues(alpha: 0.35),
-              width: held ? 4 : 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: _colors[i].withValues(alpha: active ? 0.5 : 0.15),
-                blurRadius: held ? 18 : 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
+      onTapDown: active ? (_) => _holdStart(i) : null,
+      onTapUp: active ? (_) => _holdEnd(i) : null,
+      onTapCancel: active ? () => _holdEnd(i) : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 120),
+        width: 84,
+        height: 84,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: !active
+              ? _colors[i].withValues(alpha: 0.18)
+              : held
+                  ? Colors.white
+                  : _colors[i],
+          border: Border.all(
+            color: held ? _colors[i] : Colors.white.withValues(alpha: 0.35),
+            width: held ? 4 : 2,
           ),
-          child: Center(
-            child: Text(
-              'لاعب ${i + 1} 🎯',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
-                fontSize: 12,
-                height: 1.25,
-                fontWeight: FontWeight.w800,
-                color: held
-                    ? _colors[i]
-                    : active
-                        ? Colors.black87
-                        : Colors.white38,
-              ).copyWith(fontFamilyFallback: _emojiFallback),
+          boxShadow: [
+            BoxShadow(
+              color: _colors[i].withValues(alpha: active ? 0.5 : 0.15),
+              blurRadius: held ? 18 : 8,
+              offset: const Offset(0, 4),
             ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            'لاعب ${i + 1}',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              height: 1.25,
+              fontWeight: FontWeight.w800,
+              color: held
+                  ? _colors[i]
+                  : active
+                      ? Colors.black87
+                      : Colors.white38,
+            ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
         ),
+      ),
     );
   }
 
@@ -238,7 +242,10 @@ class _TankBattleGameState extends State<TankBattleGame> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (_match.winner != null)
-          VictoryFriends(winnerName: 'لاعب ${_match.winner! + 1}')
+          VictoryFriends(
+              winnerName: _match.winner! < _humans
+                  ? 'لاعب ${_match.winner! + 1}'
+                  : 'بوت ${_match.winner! + 1}')
         else
           Text(
             'مفيش ناجي! الكل اتدمر 💥',
@@ -269,77 +276,51 @@ class _TankBattleGameState extends State<TankBattleGame> {
       return GameIntroWidget(
         title: 'دبابات الشلة',
         description:
-            '٢-٤ دبابات في ساحة واحدة. دبابتك ماشية لوحدها: دوس مطوّل على زرارك عشان تلفّ بيها، وسيب الزرار عشان تضرب قذيفة. القذيفة بترتد من الحيطان، وضربة واحدة تدمّر أي دبابة.. حتى دبابتك! آخر دبابة عايشة تكسب 🎯',
+            'من ١ لـ٤ لاعبين في ساحة واحدة، وتقدر تكمل ببوتات. دبابتك ماشية لوحدها: دوس مطوّل على الزرار بتاعك في ركنك عشان تلفّ بيها، وسيبه عشان تضرب قذيفة. القذيفة بترتد من الحيطان، وضربة واحدة تدمّر أي دبابة.. حتى دبابتك! آخر دبابة عايشة تكسب 🎯',
         icon: '💥',
         onStart: () => setState(() => _showIntro = false),
       );
     }
-    final players = _phase == _TankPhase.pickPlayers ? 0 : _match.playerCount;
+    final humans = (_phase == _TankPhase.playing || _phase == _TankPhase.over)
+        ? _match.humanCount
+        : 0;
     return OfflineGameScaffold(
       title: 'دبابات الشلة',
       backgroundColor: FunkyColors.bgDeep,
       body: SafeArea(
-        child: _phase == _TankPhase.pickPlayers
-            ? _buildPicker()
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        for (var i = 0; i < players; i++) _statusChip(i)
-                      ],
+        child: switch (_phase) {
+          _TankPhase.pickPlayers => _buildPicker(),
+          _TankPhase.pickBots => _buildBotsPrompt(),
+          _TankPhase.over => Center(child: _buildOver()),
+          _TankPhase.playing => LayoutBuilder(
+              builder: (context, constraints) {
+                final side = min(constraints.maxWidth - 12,
+                        constraints.maxHeight - 12)
+                    .clamp(0.0, 520.0);
+                return Stack(
+                  children: [
+                    Center(
+                      child: SizedBox(
+                        width: side,
+                        height: side,
+                        child: CustomPaint(
+                          painter: _TankPainter(_match, _colors),
+                        ),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    child: Text(
-                      _banner,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ).copyWith(fontFamilyFallback: _emojiFallback),
-                    ),
-                  ),
-                  Expanded(
-                    child: _phase == _TankPhase.over
-                        ? Center(child: _buildOver())
-                        : LayoutBuilder(
-                            builder: (context, constraints) {
-                              final side =
-                                  min(constraints.maxWidth - 16, 420.0);
-                              return Stack(
-                                children: [
-                                  Center(
-                                    child: SizedBox(
-                                      width: side,
-                                      height: side,
-                                      child: CustomPaint(
-                                        painter:
-                                            _TankPainter(_match, _colors),
-                                      ),
-                                    ),
-                                  ),
-                                  for (var i = 0; i < players; i++)
-                                    Positioned(
-                                      left: _match.xs[i] < 0.5 ? 6 : null,
-                                      right: _match.xs[i] < 0.5 ? null : 6,
-                                      top: _match.ys[i] < 0.5 ? 6 : null,
-                                      bottom: _match.ys[i] < 0.5 ? null : 6,
-                                      child: _cornerPad(i),
-                                    ),
-                                ],
-                              );
-                            },
-                          ),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-              ),
+                    for (var i = 0; i < humans; i++)
+                      Positioned(
+                        left: _match.xs[i] < 0.5 ? 8 : null,
+                        right: _match.xs[i] < 0.5 ? null : 8,
+                        top: _match.ys[i] < 0.5 ? 8 : null,
+                        bottom: _match.ys[i] < 0.5 ? null : 8,
+                        child: _cornerPad(i),
+                      ),
+                  ],
+                );
+              },
+            ),
+        },
       ),
     );
   }
@@ -355,50 +336,79 @@ class _TankPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     Offset at(double x, double y) => Offset(x * w, y * w);
+    final rr = RRect.fromRectAndRadius(
+        Offset.zero & size, Radius.circular(w * 0.04));
 
-    // field
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(16)),
-      Paint()..color = const Color(0xFF16301E),
-    );
-    // grid dots
-    final dot = Paint()..color = Colors.white.withValues(alpha: 0.06);
-    for (var gy = 0.08; gy < 1; gy += 0.08) {
-      for (var gx = 0.08; gx < 1; gx += 0.08) {
+    // sand field
+    canvas.drawRRect(rr, Paint()..color = const Color(0xFFE9C97F));
+    // sand speckles
+    final dot = Paint()..color = const Color(0x33A67C3D);
+    for (var gy = 0.05; gy < 1; gy += 0.05) {
+      for (var gx = ((gy * 100).round() % 2 == 0) ? 0.05 : 0.075;
+          gx < 1;
+          gx += 0.1) {
         canvas.drawCircle(at(gx, gy), w * 0.004, dot);
       }
     }
-    // walls border
+    // wooden border
     canvas.drawRRect(
-      RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(16)),
+      rr,
       Paint()
-        ..color = const Color(0xFF3E5A44)
+        ..color = const Color(0xFF8A5A33)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = w * 0.012,
+        ..strokeWidth = w * 0.018,
     );
 
-    // obstacles: sand-colored blocks with darker rim
+    // brick obstacles
     for (final o in match.arena.obstacles) {
-      final rect = Rect.fromLTWH(
-          o.x * w, o.y * w, o.w * w, o.h * w);
+      final rect = Rect.fromLTWH(o.x * w, o.y * w, o.w * w, o.h * w);
+      final orr = RRect.fromRectAndRadius(rect, Radius.circular(w * 0.012));
+      canvas.drawRRect(orr, Paint()..color = const Color(0xFFB4553C));
+      // brick lines
+      final brick = Paint()
+        ..color = const Color(0xFF8F3E2A)
+        ..strokeWidth = w * 0.004;
+      final midY = rect.center.dy;
+      canvas.drawLine(
+          Offset(rect.left + 4, midY), Offset(rect.right - 4, midY), brick);
+      final midX = rect.center.dx;
+      canvas.drawLine(Offset(midX, rect.top + 4),
+          Offset(midX, rect.center.dy - 2), brick);
+      canvas.drawLine(Offset(midX, rect.center.dy + 2),
+          Offset(midX, rect.bottom - 4), brick);
+      // top highlight
       canvas.drawRRect(
-        RRect.fromRectAndRadius(rect, Radius.circular(w * 0.015)),
-        Paint()..color = const Color(0xFF8A6B3D),
-      );
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(rect.deflate(w * 0.008), Radius.circular(w * 0.01)),
-        Paint()..color = const Color(0xFFA8844E),
+        RRect.fromRectAndRadius(
+            Rect.fromLTWH(rect.left, rect.top, rect.width, rect.height * 0.22),
+            Radius.circular(w * 0.012)),
+        Paint()..color = const Color(0xFFD4765C),
       );
     }
 
-    // tanks (destroyed: scorch mark)
+    // tanks (destroyed: explosion flash then scorch mark)
     for (var p = 0; p < match.playerCount; p++) {
       final c = at(match.xs[p], match.ys[p]);
       final r = TankBattleMatch.tankRadius * w;
       final col = colors[p];
       if (!match.alive[p]) {
-        canvas.drawCircle(c, r * 0.9,
-            Paint()..color = Colors.black.withValues(alpha: 0.55));
+        final sinceDeath =
+            match.tickCount - (match.deathTick[p] ?? -999);
+        if (sinceDeath >= 0 && sinceDeath < 10) {
+          final t = sinceDeath / 10.0;
+          canvas.drawCircle(
+              c,
+              r * (1.2 + t * 2.2),
+              Paint()
+                ..color = const Color(0xFFFFC233)
+                    .withValues(alpha: (1 - t) * 0.8));
+          canvas.drawCircle(
+              c,
+              r * (0.8 + t * 1.4),
+              Paint()
+                ..color = Colors.white.withValues(alpha: (1 - t) * 0.9));
+        }
+        canvas.drawCircle(
+            c, r * 0.9, Paint()..color = Colors.black.withValues(alpha: 0.55));
         canvas.drawCircle(
             c,
             r * 0.9,
@@ -413,6 +423,7 @@ class _TankPainter extends CustomPainter {
       canvas.save();
       canvas.translate(c.dx, c.dy);
       canvas.rotate(match.headings[p]);
+      // tracks
       for (final ty in [-r * 0.62, r * 0.32]) {
         canvas.drawRRect(
           RRect.fromRectAndRadius(
@@ -421,7 +432,13 @@ class _TankPainter extends CustomPainter {
           ),
           Paint()..color = dark,
         );
+        // track wheels
+        for (var wx = -r * 0.85; wx <= r * 0.45; wx += r * 0.44) {
+          canvas.drawCircle(Offset(wx, ty + r * 0.15), r * 0.09,
+              Paint()..color = Colors.black.withValues(alpha: 0.5));
+        }
       }
+      // hull
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(-r * 0.95, -r * 0.45, r * 1.5, r * 0.9),
@@ -436,6 +453,7 @@ class _TankPainter extends CustomPainter {
         ),
         Paint()..color = light.withValues(alpha: 0.5),
       );
+      // turret + star decal
       canvas.drawCircle(Offset(-r * 0.1, 0), r * 0.42, Paint()..color = col);
       canvas.drawCircle(
           Offset(-r * 0.1, 0),
@@ -444,6 +462,9 @@ class _TankPainter extends CustomPainter {
             ..color = dark
             ..style = PaintingStyle.stroke
             ..strokeWidth = r * 0.08);
+      _star(canvas, Offset(-r * 0.1, 0), r * 0.2,
+          Paint()..color = Colors.white.withValues(alpha: 0.85));
+      // barrel + muzzle
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(r * 0.15, -r * 0.11, r * 1.05, r * 0.22),
@@ -451,15 +472,23 @@ class _TankPainter extends CustomPainter {
         ),
         Paint()..color = dark,
       );
-      canvas.drawCircle(Offset(r * 1.2, 0), r * 0.14, Paint()..color = dark);
+      canvas.drawCircle(Offset(r * 1.2, 0), r * 0.16, Paint()..color = dark);
+      canvas.drawCircle(Offset(r * 1.2, 0), r * 0.08, Paint()..color = col);
+      // antenna
+      canvas.drawLine(Offset(-r * 0.7, -r * 0.3), Offset(-r * 1.1, -r * 1.0),
+          Paint()
+            ..color = dark
+            ..strokeWidth = r * 0.05);
+      canvas.drawCircle(Offset(-r * 1.1, -r * 1.0), r * 0.08,
+          Paint()..color = const Color(0xFFFFC233));
       canvas.restore();
-      // holding ring: shows this player is steering
+      // holding ring: this player is steering
       if (match.holding[p]) {
         canvas.drawCircle(
             c,
-            r * 1.5,
+            r * 1.55,
             Paint()
-              ..color = Colors.white.withValues(alpha: 0.5)
+              ..color = Colors.white.withValues(alpha: 0.55)
               ..style = PaintingStyle.stroke
               ..strokeWidth = 2.5);
       }
@@ -480,6 +509,21 @@ class _TankPainter extends CustomPainter {
       canvas.drawCircle(
           pos, w * 0.007, Paint()..color = const Color(0xFFFFF3C0));
     }
+  }
+
+  void _star(Canvas canvas, Offset c, double r, Paint paint) {
+    final path = Path();
+    for (var i = 0; i < 5; i++) {
+      final a = -pi / 2 + i * 4 * pi / 5;
+      final pt = Offset(c.dx + cos(a) * r, c.dy + sin(a) * r);
+      if (i == 0) {
+        path.moveTo(pt.dx, pt.dy);
+      } else {
+        path.lineTo(pt.dx, pt.dy);
+      }
+    }
+    path.close();
+    canvas.drawPath(path, paint);
   }
 
   @override

@@ -123,7 +123,7 @@ void main() {
       for (var p = 1; p <= 4; p++) {
         final startAt = (p - 1) * 3;
         if (phase == startAt && !held.containsKey(p)) {
-          final finder = find.text('لاعب $p 🎯');
+          final finder = find.text('لاعب $p');
           if (finder.evaluate().isNotEmpty) {
             held[p] = await tester.startGesture(tester.getCenter(finder));
           }
