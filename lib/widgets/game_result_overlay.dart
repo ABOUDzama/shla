@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/funky_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -19,7 +20,7 @@ class GameResultOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = isWin ? const Color(0xFFFBBF24) : const Color(0xFF94A3B8);
+    final accent = isWin ? FunkyColors.amber : FunkyColors.sky;
     return Positioned.fill(
       child: Material(
         color: Colors.black.withValues(alpha: 0.75),
@@ -74,7 +75,7 @@ class GameResultOverlay extends StatelessWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
-                          isWin ? const Color(0xFF6366F1) : const Color(0xFF334155),
+                          isWin ? FunkyColors.magenta : FunkyColors.cardLight,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 40,

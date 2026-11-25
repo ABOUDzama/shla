@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/funky_theme.dart';
 import 'dart:ui';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,9 +28,25 @@ class GameIntroWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              icon,
-              style: const TextStyle(fontSize: 100),
+            Container(
+              padding: const EdgeInsets.all(28),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: FunkyDecor.accentGradient(
+                    backgroundColor ?? FunkyColors.magenta),
+                boxShadow: [
+                  BoxShadow(
+                    color: (backgroundColor ?? FunkyColors.magenta)
+                        .withValues(alpha: 0.55),
+                    blurRadius: 40,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Text(
+                icon,
+                style: const TextStyle(fontSize: 72),
+              ),
             ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
             const SizedBox(height: 20),
             ClipRRect(
@@ -39,17 +56,9 @@ class GameIntroWidget extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.white24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
+                  decoration: FunkyDecor.glowCard(
+                    backgroundColor ?? FunkyColors.magenta,
+                    radius: 30,
                   ),
                   child: Column(
                     children: [
@@ -78,29 +87,12 @@ class GameIntroWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
-            ElevatedButton.icon(
+            FunkyButton(
+                  label: 'ابدأ اللعبة 🚀',
                   onPressed: onStart,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amberAccent,
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 50,
-                      vertical: 20,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 10,
-                    shadowColor: Colors.amberAccent.withValues(alpha: 0.5),
-                  ),
-                  icon: const Icon(Icons.play_arrow_rounded, size: 32),
-                  label: Text(
-                    'ابدأ اللعبة 🚀',
-                    style: GoogleFonts.cairo(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
+                  accent: backgroundColor ?? FunkyColors.magenta,
+                  icon: Icons.play_arrow_rounded,
+                  fontSize: 24,
                 )
                 .animate(onPlay: (c) => c.repeat(reverse: true))
                 .scale(
