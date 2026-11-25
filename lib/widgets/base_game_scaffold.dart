@@ -466,7 +466,7 @@ class _BaseGameScaffoldState extends State<BaseGameScaffold> {
                                         fontSize: 13,
                                         fontWeight: FontWeight.w900,
                                         color: Colors.white,
-                                        letterSpacing: 0.2,
+
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,

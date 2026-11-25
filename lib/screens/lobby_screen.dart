@@ -321,7 +321,7 @@ class _LobbyScreenState extends State<LobbyScreen>
                           fontSize: 26,
                           fontWeight: FontWeight.w900,
                           color: Colors.white,
-                          letterSpacing: 0.5,
+
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
@@ -513,7 +513,7 @@ class _LobbyScreenState extends State<LobbyScreen>
         style: GoogleFonts.cairo(
           color: Colors.white,
           fontSize: fontSize ?? 16,
-          letterSpacing: letterSpacing,
+
         ),
         decoration: InputDecoration(
           labelText: label,

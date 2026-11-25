@@ -253,7 +253,7 @@ class _TickTockBoomOnlineState extends State<TickTockBoomOnline>
             fontSize: 38,
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            letterSpacing: 1.2,
+
           ),
         ),
         const SizedBox(height: 10),

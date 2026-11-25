@@ -223,7 +223,7 @@ class _TruthOrDareGameOnlineState extends State<TruthOrDareGameOnline>
             fontSize: 40,
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            letterSpacing: 1.2,
+
           ),
         ),
         const SizedBox(height: 10),
@@ -460,7 +460,7 @@ class _TruthOrDareGameOnlineState extends State<TruthOrDareGameOnline>
               fontSize: 16,
               color: color,
               fontWeight: FontWeight.bold,
-              letterSpacing: 2,
+
             ),
           ),
           const SizedBox(height: 30),

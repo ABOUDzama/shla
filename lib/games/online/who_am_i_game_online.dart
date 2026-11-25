@@ -310,7 +310,7 @@ class _WhoAmIGameOnlineState extends State<WhoAmIGameOnline> {
               fontSize: 36,
               fontWeight: FontWeight.bold,
               color: Colors.white,
-              letterSpacing: 1.2,
+
             ),
           ),
           const SizedBox(height: 10),

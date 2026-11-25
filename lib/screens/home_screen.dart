@@ -120,7 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.w900,
                                 fontSize: 32,
-                                letterSpacing: 2.0,
                               ),
                             ),
                             background: ClipRRect(

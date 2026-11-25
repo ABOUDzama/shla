@@ -127,7 +127,7 @@ class _MyAppState extends State<MyApp> {
             fontSize: 26,
             fontWeight: FontWeight.w900,
             color: Colors.white,
-            letterSpacing: 1.2,
+
           ),
           iconTheme: const IconThemeData(color: Colors.white),
         ),

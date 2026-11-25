@@ -196,7 +196,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
                     color: Colors.white.withValues(alpha: 0.95),
-                    letterSpacing: 1.2,
+
                   ),
                 ),
               ),

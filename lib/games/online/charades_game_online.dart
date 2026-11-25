@@ -287,7 +287,7 @@ class _CharadesGameOnlineState extends State<CharadesGameOnline> {
                 color: Colors.white54,
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 1.1,
+
               ),
             ),
           ),

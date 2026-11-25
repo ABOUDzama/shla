@@ -221,7 +221,7 @@ class _GlobalPlayerSelectionScreenState
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
-                  letterSpacing: -0.5,
+
                 ),
               ),
               const SizedBox(height: 8),

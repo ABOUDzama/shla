@@ -436,7 +436,7 @@ class _ActionButton extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 1.1,
+
               ),
             ),
           ],

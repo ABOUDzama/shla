@@ -54,7 +54,7 @@ class OfflineGameScaffold extends StatelessWidget {
           style: GoogleFonts.cairo(
             fontWeight: FontWeight.w900,
             fontSize: 18, // Reduced from 22
-            letterSpacing: 0.5,
+
             color: Colors.white,
           ),
           maxLines: 1,

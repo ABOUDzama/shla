@@ -285,7 +285,7 @@ class _WordChainGameOnlineState extends State<WordChainGameOnline>
             fontSize: 38,
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            letterSpacing: 1.2,
+
           ),
         ),
         const SizedBox(height: 10),
@@ -478,7 +478,7 @@ class _WordChainGameOnlineState extends State<WordChainGameOnline>
                   style: GoogleFonts.cairo(
                     color: Colors.white38,
                     fontSize: 13,
-                    letterSpacing: 1.1,
+
                   ),
                 ),
                 const SizedBox(height: 12),

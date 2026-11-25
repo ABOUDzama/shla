@@ -246,7 +246,7 @@ class _OppositeDayOnlineState extends State<OppositeDayOnline>
             fontSize: 40,
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            letterSpacing: 1.2,
+
           ),
         ),
         const SizedBox(height: 10),

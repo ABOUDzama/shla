@@ -49,7 +49,7 @@ class GameResultOverlay extends StatelessWidget {
                       fontSize: 34,
                       fontWeight: FontWeight.w900,
                       color: accent,
-                      letterSpacing: 0.5,
+
                     ),
                   ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.3),
                   const SizedBox(height: 12),

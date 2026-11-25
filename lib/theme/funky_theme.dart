@@ -61,7 +61,6 @@ class FunkyText {
         fontSize: size,
         fontWeight: FontWeight.w900,
         color: color,
-        letterSpacing: 0.5,
         height: 1.2,
       );
 

@@ -130,7 +130,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
-                        letterSpacing: 0.5,
+
                       ),
                     ),
                     Row(
