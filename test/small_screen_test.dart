@@ -20,6 +20,7 @@ import 'package:shella/games/offline/seega_game.dart';
 import 'package:shella/games/offline/gobblet_game.dart';
 import 'package:shella/games/offline/multi_touch_screen.dart';
 import 'package:shella/games/offline/reaction_game.dart';
+import 'package:shella/widgets/victory_friends.dart';
 import 'package:shella/games/offline/balance_game.dart';
 import 'package:shella/games/offline/tap_race_game.dart';
 import 'package:shella/games/offline/tug_of_war_game.dart';
@@ -727,6 +728,21 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'balance_menu');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: victory friends', (tester) async {
+    await pumpSmall(
+        tester, const Scaffold(body: Center(child: VictoryFriends(winnerName: 'لاعب 2'))));
+    await tester.runAsync(() async {
+      for (final a in ['blue', 'purple', 'yellow', 'hijab']) {
+        await precacheImage(AssetImage('assets/avatars/card_$a.png'),
+            tester.element(find.byType(Scaffold)));
+      }
+    });
+    await fixedPumps(tester, 3);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'victory_friends');
     expectNoOverflow(tester);
   });
 

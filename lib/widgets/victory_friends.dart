@@ -12,9 +12,10 @@ class VictoryFriends extends StatelessWidget {
   const VictoryFriends({super.key, required this.winnerName});
 
   static const _friends = [
-    'assets/avatars_2d/friend1.png',
-    'assets/avatars_2d/friend2.png',
-    'assets/avatars_2d/friend3.png',
+    'assets/avatars/card_blue.png',
+    'assets/avatars/card_purple.png',
+    'assets/avatars/card_yellow.png',
+    'assets/avatars/card_hijab.png',
   ];
 
   @override
@@ -31,7 +32,16 @@ class VictoryFriends extends StatelessWidget {
               for (var i = 0; i < _friends.length; i++)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: Image.asset(_friends[i], height: 104)
+                  child: Container(
+                    width: 84,
+                    height: 84,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: FlatColors.ink, width: 2.5),
+                      image: DecorationImage(
+                          image: AssetImage(_friends[i]), fit: BoxFit.cover),
+                    ),
+                  )
                       .animate(onPlay: (c) => c.repeat(reverse: true))
                       .moveY(
                         begin: 0,
@@ -49,7 +59,7 @@ class VictoryFriends extends StatelessWidget {
           style: flatCairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
-            color: Colors.white,
+            color: FlatColors.ink,
           ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
         ).animate().scale(
             begin: const Offset(0.8, 0.8),

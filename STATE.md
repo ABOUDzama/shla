@@ -53,3 +53,5 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - Arcade flat conversion: tap_race, tug_of_war, sumo, snake_arena, whack_mole, coin_grab, catch, touch_ball, snow_brawl (cream bg, white bordered arenas, ink text). 44/45 interiors incl. tank_battle (already flat, captured). balance_game still to verify.
 - Art: user-approved 8 card-character cast (user 00:11:56 approval of group8): 8 avatars in picker (assets/avatars/card_*.png), group hero on home (assets/avatars_2d/group.jpg). Old new-cast on branch art-preview (parked, unused).
 - Suites: small_screen 53/53 (run in parts), game_interaction 28/28, golden_interiors 8/8, shellty + avatar picker golden pass.
+
+- Batch 12 (00:25): balance_game flat -> 45/45 interiors converted (balance play/lost states not captured). VictoryFriends + GlobalPlayerSelection now use card-character circular avatars (builtInAvatars only appended: saved asset: ids unchanged). Winner text color fixed (was white on cream). small_screen 55 tests green (run in parts), game_interaction not rerun after this commit.

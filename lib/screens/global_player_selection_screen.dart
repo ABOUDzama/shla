@@ -202,13 +202,24 @@ class _GlobalPlayerSelectionScreenState
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       for (final f in [
-                        'assets/avatars_2d/friend2.png',
-                        'assets/avatars_2d/friend1.png',
-                        'assets/avatars_2d/friend3.png',
+                        'assets/avatars/card_purple.png',
+                        'assets/avatars/card_blue.png',
+                        'assets/avatars/card_yellow.png',
+                        'assets/avatars/card_green.png',
                       ])
-                        Align(
-                          widthFactor: 0.62,
-                          child: Image.asset(f, height: 70),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 3),
+                          child: Container(
+                            width: 62,
+                            height: 62,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(color: FlatColors.ink, width: 2.5),
+                              image: DecorationImage(
+                                  image: AssetImage(f), fit: BoxFit.cover),
+                            ),
+                          ),
                         ),
                     ],
                   ),
