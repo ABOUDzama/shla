@@ -28,6 +28,7 @@ import 'package:shella/games/offline/truth_or_dare_game.dart';
 import 'package:shella/games/offline/five_seconds_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
+import 'package:shella/games/offline/first_letter_game.dart';
 import 'package:shella/games/offline/would_rather_game.dart';
 import 'package:shella/games/offline/never_have_i_game.dart';
 import 'package:shella/games/offline/undercover_game.dart';
@@ -291,6 +292,24 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'word_chain');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: first letter gameplay', (tester) async {
+    await pumpSmall(tester, const FirstLetterGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('اختار شلتك وابدأ!'));
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('أحمد'));
+    await tapIf(tester, find.text('منى'));
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'first_letter');
     expectNoOverflow(tester);
   });
 

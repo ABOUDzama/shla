@@ -538,7 +538,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('تم توليد تصنيفات جديدة بالذكاء الاصطناعي! ✨'),
-              backgroundColor: Colors.green,
+              backgroundColor: FlatColors.mintDark,
             ),
           );
         }
@@ -548,7 +548,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('فشل توليد محتوى AI: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: FlatColors.mafia,
           ),
         );
       }
@@ -662,14 +662,14 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                   style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'المطلوب تقول كلمة بتبدأ بالحرف اللي هيظهر في 5 ثواني!\nالسرعة هي كل حاجة ⚡',
                   textAlign: TextAlign.center,
-                  style: flatCairo(fontSize: 15, color: Colors.white70),
+                  style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
                 const SizedBox(height: 50),
                 ElevatedButton.icon(
@@ -709,7 +709,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: FunkyColors.orange,
+                        foregroundColor: FlatColors.ink,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 20,
@@ -735,18 +735,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
     return OfflineGameScaffold(
       title: '🔤 أول حرف',
       backgroundColor: FunkyColors.orange,
-        onAiRefresh: _generateAiContent,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.home, color: Colors.white70),
-            onPressed: () {
-              setState(() {
-                _setupDone = false;
-                _players.clear();
-              });
-            },
-          ),
-        ],body: SafeArea(
+        onAiRefresh: _generateAiContent,body: SafeArea(
         child: Column(
           children: [
             // Scoreboard (Premium)
@@ -768,12 +757,12 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: isActive ? Colors.white : Colors.white10,
+                      color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.55),
                       borderRadius: BorderRadius.circular(25),
                       boxShadow: isActive
                           ? [
                               BoxShadow(
-                                color: Colors.white.withValues(alpha: 0.3),
+                                color: FlatColors.ink.withValues(alpha: 0.2),
                                 blurRadius: 15,
                               ),
                             ]
@@ -785,9 +774,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                         Text(
                           p['name'],
                           style: flatCairo(
-                            color: isActive
-                                ? FunkyColors.orange
-                                : Colors.white70,
+                            color: FlatColors.ink,
                             fontWeight: isActive
                                 ? FontWeight.w900
                                 : FontWeight.bold,
@@ -797,8 +784,8 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                           '${p['score']} ن',
                           style: flatCairo(
                             color: isActive
-                                ? FunkyColors.orange.withValues(alpha: 0.7)
-                                : Colors.white38,
+                                ? FlatColors.ink.withValues(alpha: 0.7)
+                                : FlatColors.ink.withValues(alpha: 0.5),
                             fontSize: 12,
                           ),
                         ),
@@ -823,7 +810,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                             style: flatCairo(
                               fontSize: 28,
                               fontWeight: FontWeight.w900,
-                              color: Colors.yellowAccent,
+                              color: FlatColors.ink,
                             ),
                           ).animate().fadeIn().scale(),
                           const SizedBox(height: 30),
@@ -831,7 +818,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                                 onPressed: generateNew,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  foregroundColor: FunkyColors.orange,
+                                  foregroundColor: FlatColors.ink,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 50,
                                     vertical: 20,
@@ -862,15 +849,15 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                               vertical: 12,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.black26,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white24),
+                              border: Border.all(color: FlatColors.ink.withValues(alpha: 0.15)),
                             ),
                             child: Text(
                               currentCategory ?? '',
                               style: flatCairo(
                                 fontSize: 26,
-                                color: Colors.white,
+                                color: FlatColors.ink,
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
@@ -889,9 +876,9 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                                   value: _secondsLeft / 5,
                                   strokeWidth: 15,
                                   color: _secondsLeft <= 1
-                                      ? Colors.yellow
-                                      : Colors.white,
-                                  backgroundColor: Colors.white12,
+                                      ? FlatColors.mafia
+                                      : FlatColors.ink,
+                                  backgroundColor: FlatColors.ink.withValues(alpha: 0.15),
                                 ),
                               ),
                               Container(
@@ -914,7 +901,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                                         style: flatCairo(
                                           fontSize: 110,
                                           fontWeight: FontWeight.w900,
-                                          color: FunkyColors.orange,
+                                          color: FlatColors.ink,
                                         ),
                                       ),
                                     ),
@@ -934,7 +921,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                             style: flatCairo(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: FlatColors.ink,
                             ),
                           ),
 
@@ -977,8 +964,8 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black26,
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: FlatColors.ink,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 30,
                                     vertical: 18,
@@ -1001,7 +988,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                             'ممكن كنت تقول:',
                             style: flatCairo(
                               fontSize: 18,
-                              color: Colors.white70,
+                              color: FlatColors.ink.withValues(alpha: 0.75),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -1017,7 +1004,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                               style: flatCairo(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.yellowAccent,
+                                color: FlatColors.ink,
                               ),
                             ),
                           ),
@@ -1026,7 +1013,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                             onPressed: _nextPlayer,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: FunkyColors.orange,
+                              foregroundColor: FlatColors.ink,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 50,
                                 vertical: 20,

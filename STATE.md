@@ -42,3 +42,4 @@ HEAD: local commits only, NEVER push (standing rule).
 - Count fix: 21/45, not 23. Ledger: 15 reported at 22:31 + opposite_day/truth_or_lie (converted pre-compaction, first captures this batch) + 4 newly converted (truth_or_dare, five_seconds, charades, word_chain) = 21. would_rather/never_have_i were already inside the 15 with captures from the earlier newcaptures batch.
 - Removed duplicate per-game home IconButtons in all 6 batch-4 games; shared OfflineGameScaffold home covers exit.
 - Tofu root cause: google_fonts 6.3.3 cairo() has no fontFamilyFallback param; scaffold title had it via raw TextStyle. Added flatCairo() wrapper in flat_theme.dart (Cairo + kEmojiFontFallback) and swept all GoogleFonts.cairo call sites in offline games + widgets (49 files). Chip emoji now render in goldens (verified pixels).
+- first_letter converted (batch 5 start): ink on orange hue, white cards, removed duplicate home, success/fail to mintDark/mafia. Capture pixel-viewed.
