@@ -62,11 +62,11 @@ void main() {
   });
 
   group('Registry', () {
-    test('has 39 games and 15 new-badge games', () {
-      expect(GameRegistry.games.length, 39);
+    test('has 43 games and 19 new-badge games', () {
+      expect(GameRegistry.games.length, 43);
       final newOnes =
           GameRegistry.games.where((g) => g.badge == 'جديد').toList();
-      expect(newOnes.length, 15);
+      expect(newOnes.length, 19);
       expect(
           newOnes.map((g) => g.title),
           containsAll(<String>[
@@ -85,6 +85,10 @@ void main() {
             'أنا عمري ما',
             'كلمة بكلمة',
             'الشيفرة',
+            'حية الشلة',
+            'دبابات الشلة',
+            'شد الحبل',
+            'معركة التلج',
           ]));
     });
     test('game titles are unique', () {

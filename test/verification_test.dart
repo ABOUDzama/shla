@@ -244,11 +244,18 @@ void main() {
       'حية الشلة',
       'دبابات الشلة',
       'شد الحبل',
+      'معركة التلج',
       'سومو الشلة',
       'اقطفها',
       'سباق الدوس',
       'كورة اللمسة',
     ]) {
+      await tester.scrollUntilVisible(
+        find.text(title),
+        250,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pump(const Duration(milliseconds: 200));
       expect(find.text(title), findsOneWidget, reason: title);
     }
     // sumo is 2-player only: single '٢ بس' chip

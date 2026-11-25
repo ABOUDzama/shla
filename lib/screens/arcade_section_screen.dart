@@ -23,6 +23,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'حية الشلة': [2, 3, 4],
     'دبابات الشلة': [2, 3, 4],
     'شد الحبل': [2, 3, 4],
+    'معركة التلج': [2, 3, 4],
     'سومو الشلة': [2],
     'اقطفها': [2, 3, 4],
     'سباق الدوس': [2, 3, 4],
@@ -34,6 +35,11 @@ class ArcadeSectionScreen extends StatefulWidget {
   /// lands (tagged 'غلاف مؤقت').
   static const Map<String, String> covers = {
     'حية الشلة': 'assets/covers/snake_arena.png',
+    'أسرع رد فعل': 'assets/covers/reaction.png',
+    'شد الحبل': 'assets/covers/tug_of_war.png',
+    'دبابات الشلة': 'assets/covers/tank_battle.png',
+    'اقطفها': 'assets/covers/catch.png',
+    'سومو الشلة': 'assets/covers/sumo.png',
   };
 
   static const Map<String, String> _emoji = {
@@ -41,6 +47,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'حية الشلة': '🐍',
     'دبابات الشلة': '💥',
     'شد الحبل': '💪',
+    'معركة التلج': '❄',
     'سومو الشلة': '🤼',
     'اقطفها': '🐟',
     'سباق الدوس': '👟',
