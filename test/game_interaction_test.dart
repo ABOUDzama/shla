@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/services/settings_service.dart';
 import 'package:shella/games/offline/memory_game.dart';
 import 'package:shella/games/offline/password_game.dart';
+import 'package:shella/games/offline/spy_game.dart';
 import 'package:shella/games/offline/most_likely_game.dart';
 import 'package:shella/games/offline/taboo_game.dart';
 import 'package:shella/games/offline/emoji_guess_game.dart';
@@ -467,6 +468,42 @@ void main() {
       expect(find.text('منى: 2'), findsOneWidget);
       expect(find.text('أحمد: 1'), findsOneWidget);
 
+      await tapText(tester, 'العب تاني');
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+      await flushFontCallbacks(tester);
+    });
+  });
+
+  group('spy: full 3-round match', () {
+    testWidgets('deal pass-around, vote, reveal, rounds end, replay',
+        (tester) async {
+      await pumpGame(tester, const SpyGame());
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, ['أحمد', 'منى', 'كريم']);
+
+      for (var round = 1; round <= 3; round++) {
+        expect(find.text('الجولة $round من 3'), findsOneWidget);
+        // Deal: each of the 3 players peeks and passes.
+        for (var deal = 0; deal < 3; deal++) {
+          await tapText(tester, 'شوف كارتك');
+          await tapText(
+              tester, deal == 2 ? 'ابدأوا الأسئلة' : 'خبّي وادّي للي بعده');
+        }
+        // Vote: accuse أحمد; either reveal text ends the round.
+        await tapText(tester, 'أحمد');
+        final caught = find.text('اتمسك! 🎯').evaluate().isNotEmpty;
+        final escaped = find.text('هرب منكم! 🏃').evaluate().isNotEmpty;
+        expect(caught || escaped, isTrue,
+            reason: 'no reveal after voting');
+        await tapText(tester,
+            round < 3 ? 'الجولة اللي بعدها' : 'النتيجة النهائية');
+      }
+
+      // Final screen: someone won or it is a tie; replay returns to intro.
+      final winner = find.textContaining('الفايز:').evaluate().isNotEmpty;
+      final tie = find.textContaining('تعادل:').evaluate().isNotEmpty;
+      expect(winner || tie, isTrue, reason: 'no final score screen');
       await tapText(tester, 'العب تاني');
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
       await flushFontCallbacks(tester);

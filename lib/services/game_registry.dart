@@ -28,6 +28,7 @@ import '../games/offline/taboo_game.dart';
 import '../games/offline/memory_game.dart';
 import '../games/offline/emoji_guess_game.dart';
 import '../games/offline/password_game.dart';
+import '../games/offline/spy_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -192,6 +193,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'الجاسوس',
+      description: 'واحد فيكم ميعرفش المكان.. اكشفوه قبل ما يعرفه!',
+      icon: Icons.person_search_rounded,
+      color: FunkyColors.violet,
+      screen: SpyGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'كلمة السر',

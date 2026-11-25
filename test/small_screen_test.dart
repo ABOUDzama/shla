@@ -19,6 +19,7 @@ import 'package:shella/games/offline/who_am_i_game.dart';
 import 'package:shella/screens/settings_screen.dart';
 import 'package:shella/screens/profile_screen.dart';
 import 'package:shella/games/offline/password_game.dart';
+import 'package:shella/games/offline/spy_game.dart';
 
 /// Small-screen (360x640) overflow sweep: drives each interior into gameplay
 /// and fails on any unconsumed exception (RenderFlex overflow, layout asserts).
@@ -390,6 +391,23 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'password');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: spy deal phase', (tester) async {
+    await pumpSmall(tester, const SpyGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('أحمد'));
+    await tapIf(tester, find.text('منى'));
+    await tapIf(tester, find.text('كريم'));
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'spy');
     expectNoOverflow(tester);
   });
 }
