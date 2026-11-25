@@ -37,6 +37,7 @@ import '../games/offline/code_names_game.dart';
 import '../games/offline/never_have_i_game.dart';
 import '../games/offline/proverb_game.dart';
 import '../games/offline/reaction_game.dart';
+import '../games/offline/sumo_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
 
@@ -296,6 +297,14 @@ class GameRegistry {
       icon: Icons.bolt,
       color: FunkyColors.lime,
       screen: ReactionGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'سومو الشلة',
+      description: 'دوس بسرعة وادفع خصمك برا الحلبة قبل ما الوقت يخلص!',
+      icon: Icons.sports_kabaddi,
+      color: FunkyColors.coral,
+      screen: SumoGame(),
       badge: 'جديد',
     ),
   ];

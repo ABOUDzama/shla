@@ -1,3 +1,12 @@
+import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:math';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../../widgets/offline_game_scaffold.dart';
+import '../../widgets/game_intro_widget.dart';
+import '../../theme/funky_theme.dart';
+
 /// Pure logic for Shla Sumo (سومو الشلة), kept separate from the widget so
 /// it can be unit-tested without pumping frames.
 ///
@@ -48,5 +57,248 @@ class SumoMatch {
     } else if (taps[0] != taps[1]) {
       winner = taps[0] > taps[1] ? 0 : 1;
     }
+  }
+}
+
+enum _SumoPhase { countdown, fighting, over }
+
+class SumoGame extends StatefulWidget {
+  const SumoGame({super.key});
+
+  @override
+  State<SumoGame> createState() => _SumoGameState();
+}
+
+class _SumoGameState extends State<SumoGame> {
+  bool _showIntro = true;
+  late SumoMatch _match;
+  _SumoPhase _phase = _SumoPhase.countdown;
+  int _countdown = 3;
+  int _timeLeft = 30;
+  Timer? _timer;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startMatch() {
+    _timer?.cancel();
+    setState(() {
+      _match = SumoMatch();
+      _phase = _SumoPhase.countdown;
+      _countdown = 3;
+      _timeLeft = _match.roundSeconds;
+    });
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
+      setState(() {
+        if (_phase == _SumoPhase.countdown) {
+          if (_countdown <= 1) {
+            _phase = _SumoPhase.fighting;
+          } else {
+            _countdown--;
+          }
+        } else if (_phase == _SumoPhase.fighting) {
+          _timeLeft--;
+          if (_timeLeft <= 0) {
+            _match.timeUp();
+            _phase = _SumoPhase.over;
+            t.cancel();
+          }
+        }
+      });
+      if (_match.isOver && _phase != _SumoPhase.over) {
+        setState(() => _phase = _SumoPhase.over);
+        t.cancel();
+      }
+    });
+  }
+
+  void _onTapZone(int player) {
+    if (_phase != _SumoPhase.fighting) return;
+    setState(() {
+      _match.tap(player);
+      if (_match.isOver) {
+        _phase = _SumoPhase.over;
+        _timer?.cancel();
+      }
+    });
+  }
+
+  Widget _buildZone(int player) {
+    final isTop = player == 1;
+    final color = player == 0 ? FunkyColors.coral : FunkyColors.sky;
+    final content = Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'لاعب ${player + 1}',
+            style: GoogleFonts.cairo(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            _phase == _SumoPhase.fighting ? 'دووووس!' : 'استنى البداية',
+            style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+          ),
+        ],
+      ),
+    );
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _onTapZone(player),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.75),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: color, width: 2),
+          ),
+          child: isTop
+              ? Transform.rotate(angle: pi, child: content)
+              : content,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRing() {
+    // position: -1 (player 0 edge) .. +1 (player 1 edge)
+    final pos = _match.position;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: FunkyColors.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: FunkyColors.amber, width: 1.6),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            _phase == _SumoPhase.countdown
+                ? '$_countdown'
+                : _phase == _SumoPhase.over
+                    ? (_match.winner != null
+                        ? 'لاعب ${_match.winner! + 1} كسب! 🏆'
+                        : 'تعادل! جولـة تانية')
+                    : '⏱ $_timeLeft',
+            style: GoogleFonts.cairo(
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+              color: FunkyColors.amber,
+            ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+          ),
+          const SizedBox(height: 10),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final w = constraints.maxWidth - 56;
+              final dx = (pos + 1) / 2 * w;
+              return SizedBox(
+                height: 56,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 27,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 2,
+                        color: Colors.white24,
+                      ),
+                    ),
+                    Positioned(
+                      top: 20,
+                      left: 0,
+                      child: Container(
+                        width: 12,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: FunkyColors.coral,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 20,
+                      right: 0,
+                      child: Container(
+                        width: 12,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: FunkyColors.sky,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 80),
+                      top: 0,
+                      left: dx,
+                      child: const Text(
+                        '🤼',
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontFamily: 'Noto Color Emoji',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showIntro) {
+      return GameIntroWidget(
+        title: 'سومو الشلة',
+        description:
+            'لاعبان على نفس الموبايل! دوس بأقصى سرعة على ناحيتك عشان تدفع خصمك برا الحلبة. عندك ٣٠ ثانية، واللي دافع الكورة أكتر لناحية التاني هو الفائز 🤼',
+        icon: '🤼',
+        onStart: () {
+          setState(() => _showIntro = false);
+          _startMatch();
+        },
+      );
+    }
+    return OfflineGameScaffold(
+      title: 'سومو الشلة',
+      backgroundColor: FunkyColors.coral,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildZone(1),
+            _buildRing(),
+            _buildZone(0),
+            if (_phase == _SumoPhase.over)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: FilledButton(
+                  onPressed: _startMatch,
+                  child: Text(
+                    'العب تاني',
+                    style: GoogleFonts.cairo(fontWeight: FontWeight.w800),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    ).animate().fadeIn(duration: 300.ms);
   }
 }
