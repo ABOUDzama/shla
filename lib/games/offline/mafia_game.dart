@@ -505,17 +505,36 @@ class _MafiaGameState extends State<MafiaGame> {
                             ],
                           )
                         : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text('🤫',
-                                  style: TextStyle(fontSize: 64)),
-                              const SizedBox(height: 10),
-                              Text(
-                                'بس $name اللي يشوف!',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.cairo(
-                                    fontSize: 13, color: _flatInk),
+                              // Original illustrated scene (generated for
+                              // Shla): the game's visual identity, WePlay-style
+                              // richness instead of a bare emoji.
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(18),
+                                    child: Image.asset(
+                                      'assets/tiles/mafia.png',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 14),
+                                child: Text(
+                                  'بس $name اللي يشوف! 🤫',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.cairo(
+                                          fontSize: 13, color: _flatInk)
+                                      .copyWith(
+                                          fontFamilyFallback: const [
+                                            'Noto Color Emoji'
+                                          ]),
+                                ),
                               ),
                             ],
                           ),

@@ -553,6 +553,7 @@ void main() {
     tester.takeException(); // known harness-only debugSize assert
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
+    await capture360(tester, 'mafia_hidden');
     await tapIf(tester, find.text('شوف دورك يا أحمد'));
     await fixedPumps(tester);
     await flushFontCallbacks(tester);

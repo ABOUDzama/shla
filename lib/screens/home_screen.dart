@@ -60,6 +60,18 @@ class _HomeScreenState extends State<HomeScreen> {
     'الجاسوس': '🕵',
     'كلمة السر': '🔑',
     'إيموجي إيه؟': '🧩',
+    'لو خيروك': '🤔',
+    'أنا عمري ما': '✋',
+  };
+
+  /// Original illustrated artwork per game: generated in-house for Shla
+  /// (WePlay-inspired richness, original characters and scenes). A tile with
+  /// art renders the illustration; the rest keep the emoji tile until their
+  /// artwork is generated.
+  static const Map<String, String> _gameArt = {
+    'مافيا': 'assets/tiles/mafia.png',
+    'لو خيروك': 'assets/tiles/would_rather.png',
+    'أنا عمري ما': 'assets/tiles/never_have_i.png',
   };
 
   void _handleNavigation(Widget screen) async {
@@ -119,6 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 _FlatGameTile(
                                   game: games[i],
                                   emoji: _gameEmoji[games[i].title] ?? '🎮',
+                                  art: _gameArt[games[i].title],
                                   color: FlatColors.tilePastels[
                                       i % FlatColors.tilePastels.length],
                                   onTap: () =>
@@ -317,18 +330,70 @@ class _FlatRoundButton extends StatelessWidget {
 class _FlatGameTile extends StatelessWidget {
   final GameModel game;
   final String emoji;
+  final String? art;
   final Color color;
   final VoidCallback onTap;
 
   const _FlatGameTile({
     required this.game,
     required this.emoji,
+    required this.art,
     required this.color,
     required this.onTap,
   });
 
+  Widget _illustratedTile() {
+    return Container(
+      decoration: FlatDecor.tile(color),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(art!, fit: BoxFit.cover),
+          ),
+          Positioned(
+            left: 8,
+            right: 8,
+            bottom: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                game.title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: FlatDecor.title(size: 14),
+              ),
+            ),
+          ),
+          if (game.badge != null)
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                decoration: FlatDecor.tag(),
+                child: Text(game.badge!, style: FlatDecor.body(size: 11)),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (art != null) {
+      return GestureDetector(onTap: onTap, child: _illustratedTile())
+          .animate()
+          .fadeIn(duration: 300.ms)
+          .scale(begin: const Offset(0.96, 0.96), duration: 300.ms);
+    }
     return GestureDetector(
       onTap: onTap,
       child: Container(

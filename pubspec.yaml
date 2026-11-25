@@ -60,5 +60,6 @@ flutter:
   assets:
     - assets/icon.png
     - assets/games/
+    - assets/tiles/
     - assets/sounds/
     - google_fonts/

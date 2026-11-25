@@ -31,6 +31,8 @@ import '../games/offline/password_game.dart';
 import '../games/offline/spy_game.dart';
 import '../games/offline/undercover_game.dart';
 import '../games/offline/mafia_game.dart';
+import '../games/offline/would_rather_game.dart';
+import '../games/offline/never_have_i_game.dart';
 import '../games/offline/proverb_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
@@ -228,6 +230,22 @@ class GameRegistry {
       icon: Icons.nightlight_round,
       color: FunkyColors.pink,
       screen: MafiaGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'لو خيروك',
+      description: 'اختيارين صعبين.. صوّت في السر وشوف مين مع مين!',
+      icon: Icons.compare_arrows_rounded,
+      color: FunkyColors.amber,
+      screen: WouldRatherGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'أنا عمري ما',
+      description: 'لعبة الاعترافات: اقرا الجملة ومين عملها يعترف!',
+      icon: Icons.front_hand_rounded,
+      color: FunkyColors.pink,
+      screen: NeverHaveIGame(),
       badge: 'جديد',
     ),
     GameModel(

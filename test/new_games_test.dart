@@ -62,11 +62,11 @@ void main() {
   });
 
   group('Registry', () {
-    test('has 30 games and 6 new-badge games', () {
-      expect(GameRegistry.games.length, 30);
+    test('has 32 games and 8 new-badge games', () {
+      expect(GameRegistry.games.length, 32);
       final newOnes =
           GameRegistry.games.where((g) => g.badge == 'جديد').toList();
-      expect(newOnes.length, 6);
+      expect(newOnes.length, 8);
       expect(
           newOnes.map((g) => g.title),
           containsAll(<String>[
@@ -76,6 +76,8 @@ void main() {
             'مين قالها؟',
             'أندر كافر',
             'مافيا',
+            'لو خيروك',
+            'أنا عمري ما',
           ]));
     });
     test('game titles are unique', () {

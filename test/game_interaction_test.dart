@@ -824,7 +824,7 @@ void main() {
           expect(find.text('دكتور 🩺'), findsNothing);
           expect(find.text('محقق 🕵'), findsNothing);
           expect(find.text('من المدنيين 🧑'), findsNothing);
-          expect(find.text('🤫'), findsWidgets);
+          expect(find.textContaining('اللي يشوف'), findsWidgets);
         }
       }
       await flushFontCallbacks(tester);
