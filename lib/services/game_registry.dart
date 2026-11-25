@@ -40,6 +40,7 @@ import '../games/offline/reaction_game.dart';
 import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
+import '../games/offline/touch_ball_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
 
@@ -323,6 +324,14 @@ class GameRegistry {
       icon: Icons.directions_run,
       color: FunkyColors.orange,
       screen: TapRaceGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'كورة اللمسة',
+      description: 'الم صاحب الكورة بس قبل ما تطير.. غلطة بتخصم',
+      icon: Icons.sports_soccer,
+      color: FunkyColors.violet,
+      screen: TouchBallGame(),
       badge: 'جديد',
     ),
   ];
