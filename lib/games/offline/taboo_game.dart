@@ -92,6 +92,11 @@ class _TabooGameState extends State<TabooGame> {
       _turnsPlayed++;
       _describerTurn = (_describerTurn + 1) % _players.length;
     });
+    // Restart the clock for the next describer; without this every turn
+    // after the first ran with a dead timer stuck at 0.
+    if (_turnsPlayed < _totalTurns) {
+      _startTimer();
+    }
   }
 
   @override

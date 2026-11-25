@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,6 +21,8 @@ import 'package:shella/games/offline/who_am_i_game.dart';
 /// and fails on any unconsumed exception (RenderFlex overflow, layout asserts).
 /// One debug-only TextPainter debugSize assert during the selection->gameplay
 /// swap is a known harness artifact and is consumed where it occurs.
+final boundaryKey = GlobalKey();
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -82,7 +86,7 @@ void main() {
         theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
         home: Directionality(
           textDirection: TextDirection.rtl,
-          child: game,
+          child: RepaintBoundary(key: boundaryKey, child: game),
         ),
       ),
     );
@@ -121,6 +125,27 @@ void main() {
     tester.takeException(); // known harness-only debugSize assert
   }
 
+  /// Rasterizes the current 360x640 screen to test/goldens/small360_<name>.png
+  /// so reports carry pixel proof, not only zero-overflow assertions.
+  Future<void> capture360(WidgetTester tester, String name) async {
+    await tester.runAsync(() => Future.delayed(const Duration(milliseconds: 400)));
+    await fixedPumps(tester, 2);
+    final scaffoldFind = find.byType(Scaffold);
+    if (scaffoldFind.evaluate().isNotEmpty) {
+      ScaffoldMessenger.of(tester.element(scaffoldFind.first))
+          .hideCurrentSnackBar();
+      await fixedPumps(tester, 1);
+    }
+    final boundary = boundaryKey.currentContext!.findRenderObject()!
+        as RenderRepaintBoundary;
+    final image = await tester.runAsync(() => boundary.toImage(pixelRatio: 2.0));
+    final byteData = await tester
+        .runAsync(() => image!.toByteData(format: ui.ImageByteFormat.png));
+    final bytes = byteData!.buffer.asUint8List();
+    File('test/goldens/small360_$name.png').writeAsBytesSync(bytes);
+    expect(bytes.length, greaterThan(8000));
+  }
+
   /// Drains pending exceptions; fails only on real layout overflows.
   /// The RelayoutWhenSystemFontsChange transient callback from FontLoader is
   /// a known flutter_test artifact and is ignored.
@@ -141,6 +166,7 @@ void main() {
     await intoGameplay(tester);
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
+    await capture360(tester, 'most_likely');
     expectNoOverflow(tester);
   });
 
@@ -150,6 +176,7 @@ void main() {
     await intoGameplay(tester);
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
+    await capture360(tester, 'taboo');
     expectNoOverflow(tester);
   });
 
@@ -159,6 +186,7 @@ void main() {
     await intoGameplay(tester);
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
+    await capture360(tester, 'memory');
     expectNoOverflow(tester);
   });
 
@@ -168,6 +196,7 @@ void main() {
     await intoGameplay(tester);
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
+    await capture360(tester, 'emoji_guess');
     expectNoOverflow(tester);
   });
 
@@ -184,6 +213,7 @@ void main() {
     tester.takeException();
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
+    await capture360(tester, 'quiz');
     expectNoOverflow(tester);
   });
 
@@ -198,6 +228,7 @@ void main() {
       await fixedPumps(tester, 2);
     }
     await flushFontCallbacks(tester);
+    await capture360(tester, 'xo');
     expectNoOverflow(tester);
   });
 
@@ -218,6 +249,7 @@ void main() {
     tester.takeException();
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
+    await capture360(tester, 'bus_complete');
     expectNoOverflow(tester);
   });
 
@@ -226,6 +258,7 @@ void main() {
     await flushFontCallbacks(tester);
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
+    await capture360(tester, 'who_am_i_lobby');
     expectNoOverflow(tester);
   });
 }
