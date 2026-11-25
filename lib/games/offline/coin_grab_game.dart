@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
@@ -34,10 +32,10 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
   String _banner = '';
 
   static const List<Color> _colors = [
-    FunkyColors.coral,
-    FunkyColors.cyan,
-    FunkyColors.lime,
-    FunkyColors.pink,
+    Color(0xFFFF8A5C),
+    Color(0xFF4D8DFF),
+    Color(0xFF35C99E),
+    Color(0xFFFF6FA5),
   ];
 
   @override
@@ -92,7 +90,7 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
           const SizedBox(height: 20),
@@ -136,7 +134,7 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
               style: flatCairo(
                 fontSize: 17,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: FlatColors.ink,
               ).copyWith(fontFamilyFallback: _emojiFallback),
             ),
           ),
@@ -147,7 +145,7 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
           style: flatCairo(
             fontSize: 12,
             fontWeight: FontWeight.w800,
-            color: Colors.white,
+            color: FlatColors.ink,
           ).copyWith(fontFamilyFallback: _emojiFallback),
         ),
       ],
@@ -192,7 +190,7 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
             style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
         const SizedBox(height: 16),
@@ -224,7 +222,7 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
     final players = _phase == _CoinPhase.pickPlayers ? 0 : _match.playerCount;
     return OfflineGameScaffold(
       title: 'لمّ الفلوس',
-      backgroundColor: FunkyColors.bgDeep,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: _phase == _CoinPhase.pickPlayers
             ? _buildPicker()
@@ -248,7 +246,7 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
                       style: flatCairo(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                        color: FlatColors.ink,
                       ).copyWith(fontFamilyFallback: _emojiFallback),
                     ),
                   ),
@@ -295,11 +293,18 @@ class _CoinArenaPainter extends CustomPainter {
     Offset at(double x, double y) => Offset(x * w, y * w);
 
     final bg = Paint()
-      ..color = const Color(0xFF14102E)
+      ..color = FlatColors.tileWhite
       ..style = PaintingStyle.fill;
     canvas.drawRRect(
       RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(20)),
       bg,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(20)),
+      Paint()
+        ..color = FlatColors.border
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
     );
 
     // coins
@@ -335,7 +340,7 @@ class _CoinArenaPainter extends CustomPainter {
           ..strokeCap = StrokeCap.round,
       );
       canvas.drawCircle(base, 10, Paint()..color = col);
-      canvas.drawCircle(tip, 9, Paint()..color = Colors.white);
+      canvas.drawCircle(tip, 9, Paint()..color = FlatColors.ink);
       canvas.drawCircle(tip, 6, Paint()..color = col);
     }
   }

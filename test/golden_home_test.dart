@@ -83,6 +83,10 @@ Future<void> warmGoogleFonts(WidgetTester tester) async {
         const AssetImage('assets/icon.png'),
         tester.element(find.byType(HomeScreen)),
       );
+      await precacheImage(
+        const AssetImage('assets/avatars_2d/group.jpg'),
+        tester.element(find.byType(HomeScreen)),
+      );
     });
     await tester.pump();
     await expectLater(

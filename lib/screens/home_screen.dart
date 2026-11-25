@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -250,28 +249,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Approved 2D character use: light welcome strip on the home feed.
   Widget _buildWelcomeFriends() {
-    const friends = [
-      'assets/avatars_2d/friend2.png',
-      'assets/avatars_2d/friend1.png',
-      'assets/avatars_2d/friend3.png',
-    ];
-    return SizedBox(
-      height: 64,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              for (var i = 0; i < friends.length; i++)
-                Align(
-                  widthFactor: 0.62,
-                  child: Image.asset(friends[i], height: 62),
-                ),
-            ],
-          ),
-        ],
+    // Group scene of the 8 Shla characters, contained so no face is cropped.
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: AspectRatio(
+        aspectRatio: 4 / 3,
+        child: Image.asset('assets/avatars_2d/group.jpg', fit: BoxFit.contain),
       ),
     );
   }

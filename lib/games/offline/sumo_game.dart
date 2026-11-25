@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
@@ -138,7 +137,7 @@ class _SumoGameState extends State<SumoGame> {
 
   Widget _buildZone(int player) {
     final isTop = player == 1;
-    final color = player == 0 ? FunkyColors.coral : FunkyColors.sky;
+    final color = player == 0 ? const Color(0xFFFF8A5C) : const Color(0xFF4D8DFF);
     final content = Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -148,12 +147,12 @@ class _SumoGameState extends State<SumoGame> {
             style: flatCairo(
               fontSize: 22,
               fontWeight: FontWeight.w900,
-              color: Colors.white,
+              color: FlatColors.ink,
             ),
           ),
           Text(
             _phase == _SumoPhase.fighting ? 'دووووس!' : 'استنى البداية',
-            style: flatCairo(fontSize: 15, color: Colors.white70),
+            style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
           ),
         ],
       ),
@@ -164,9 +163,9 @@ class _SumoGameState extends State<SumoGame> {
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.75),
+            color: color,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: color, width: 2),
+            border: Border.all(color: FlatColors.ink, width: 2),
           ),
           child: isTop
               ? Transform.rotate(angle: pi, child: content)
@@ -183,9 +182,9 @@ class _SumoGameState extends State<SumoGame> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: FunkyColors.card,
+        color: FlatColors.tileWhite,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: FunkyColors.amber, width: 1.6),
+        border: Border.all(color: FlatColors.border, width: 2),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -201,7 +200,7 @@ class _SumoGameState extends State<SumoGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w900,
-              color: FunkyColors.amber,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
           const SizedBox(height: 10),
@@ -219,7 +218,7 @@ class _SumoGameState extends State<SumoGame> {
                       right: 0,
                       child: Container(
                         height: 2,
-                        color: Colors.white24,
+                        color: FlatColors.border,
                       ),
                     ),
                     Positioned(
@@ -229,7 +228,7 @@ class _SumoGameState extends State<SumoGame> {
                         width: 12,
                         height: 16,
                         decoration: BoxDecoration(
-                          color: FunkyColors.coral,
+                          color: const Color(0xFFFF8A5C),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -241,7 +240,7 @@ class _SumoGameState extends State<SumoGame> {
                         width: 12,
                         height: 16,
                         decoration: BoxDecoration(
-                          color: FunkyColors.sky,
+                          color: const Color(0xFF4D8DFF),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -284,7 +283,7 @@ class _SumoGameState extends State<SumoGame> {
     }
     final scaffold = OfflineGameScaffold(
       title: 'سومو الشلة',
-      backgroundColor: FunkyColors.coral,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: Column(
           children: [

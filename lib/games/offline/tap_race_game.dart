@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
-import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
 
 /// Pure logic for سباق الدوس (Shla-original same-phone tap race).
@@ -129,10 +127,10 @@ class _TapRaceGameState extends State<TapRaceGame> {
   int? _lastWinner;
 
   static const List<Color> _laneColors = [
-    FunkyColors.coral,
-    FunkyColors.cyan,
-    FunkyColors.lime,
-    FunkyColors.pink,
+    Color(0xFFFF8A5C),
+    Color(0xFF4D8DFF),
+    Color(0xFF35C99E),
+    Color(0xFFFF6FA5),
   ];
 
   @override
@@ -209,7 +207,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ),
           ),
           const SizedBox(height: 20),
@@ -241,6 +239,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
     final sprinting = _phase == _RacePhase.sprint;
     final taps = _match.taps[player];
     final score = _match.scores[player];
+    final onLane = FlatDecor.textOn(_laneColors[player]);
     final content = Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -250,7 +249,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
             style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: onLane,
             ),
           ),
           Text(
@@ -258,13 +257,13 @@ class _TapRaceGameState extends State<TapRaceGame> {
             style: flatCairo(
               fontSize: 34,
               fontWeight: FontWeight.w900,
-              color: Colors.white,
+              color: onLane,
             ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.25),
+              color: Colors.white.withValues(alpha: 0.55),
               borderRadius: BorderRadius.circular(999),
             ),
             child: Text(
@@ -273,7 +272,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
               style: flatCairo(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: FlatColors.ink,
               ),
             ),
           ),
@@ -290,9 +289,9 @@ class _TapRaceGameState extends State<TapRaceGame> {
           duration: const Duration(milliseconds: 100),
           margin: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: _laneColors[player].withValues(alpha: sprinting ? 0.9 : 0.55),
+            color: sprinting ? _laneColors[player] : Color.alphaBlend(_laneColors[player].withValues(alpha: 0.55), Colors.white),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: _laneColors[player], width: 2),
+            border: Border.all(color: FlatColors.ink, width: 2),
           ),
           child: isTop ? Transform.rotate(angle: pi, child: content) : content,
         ),
@@ -330,7 +329,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
     }
     return OfflineGameScaffold(
       title: 'سباق الدوس',
-      backgroundColor: FunkyColors.orange,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: _phase == _RacePhase.pickPlayers
             ? _buildPicker()
@@ -345,19 +344,14 @@ class _TapRaceGameState extends State<TapRaceGame> {
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: FunkyColors.card,
-                        borderRadius: BorderRadius.circular(16),
-                        border:
-                            Border.all(color: FunkyColors.amber, width: 1.6),
-                      ),
+                      decoration: FlatDecor.card(radius: 16),
                       child: Text(
                         _banner,
                         textAlign: TextAlign.center,
                         style: flatCairo(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: FlatColors.ink,
                         ).copyWith(
                             fontFamilyFallback: const ['Noto Color Emoji']),
                       ),

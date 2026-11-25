@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
@@ -31,10 +29,10 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
   Timer? _ticker;
 
   static const List<Color> _colors = [
-    FunkyColors.coral,
-    FunkyColors.cyan,
-    FunkyColors.lime,
-    FunkyColors.pink,
+    Color(0xFFFF8A5C),
+    Color(0xFF4D8DFF),
+    Color(0xFF35C99E),
+    Color(0xFFFF6FA5),
   ];
 
   @override
@@ -76,7 +74,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
           const SizedBox(height: 20),
@@ -108,14 +106,14 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
       decoration: BoxDecoration(
         color: _colors[i].withValues(alpha: _match.alive[i] ? 0.3 : 0.08),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: _match.alive[i] ? _colors[i] : Colors.white24),
+        border: Border.all(color: _match.alive[i] ? _colors[i] : FlatColors.border),
       ),
       child: Text(
         'لاعب ${i + 1}: ${_match.score[i]}',
         style: flatCairo(
           fontSize: 13,
           fontWeight: FontWeight.w800,
-          color: _match.alive[i] ? Colors.white : Colors.white38,
+          color: _match.alive[i] ? FlatColors.ink : FlatColors.ink.withValues(alpha: 0.5),
           decoration: _match.alive[i] ? null : TextDecoration.lineThrough,
         ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
       ),
@@ -171,7 +169,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
             style: flatCairo(
               fontSize: 22,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
         const SizedBox(height: 16),
@@ -200,7 +198,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
     final players = _phase == _SnakePhase.pickPlayers ? 0 : _match.playerCount;
     return OfflineGameScaffold(
       title: 'حية الشلة',
-      backgroundColor: FunkyColors.bgDeep,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: _phase == _SnakePhase.pickPlayers
             ? _buildPicker()
@@ -250,7 +248,7 @@ class _SnakePainter extends CustomPainter {
     final ox = (size.width - cell * match.width) / 2;
     final oy = (size.height - cell * match.height) / 2;
 
-    final bg = Paint()..color = const Color(0xFF0D1030);
+    final bg = Paint()..color = FlatColors.tileWhite;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(ox, oy, cell * match.width, cell * match.height),
@@ -258,13 +256,23 @@ class _SnakePainter extends CustomPainter {
       ),
       bg,
     );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(ox, oy, cell * match.width, cell * match.height),
+        const Radius.circular(12),
+      ),
+      Paint()
+        ..color = FlatColors.border
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
 
     Rect rect(Cell c) => Rect.fromLTWH(
         ox + c.x * cell + 1, oy + c.y * cell + 1, cell - 2, cell - 2);
 
     final food = match.food;
     if (food != null) {
-      final p = Paint()..color = FunkyColors.amber;
+      final p = Paint()..color = const Color(0xFFFF4D4D);
       canvas.drawCircle(rect(food).center, cell * 0.32, p);
     }
 

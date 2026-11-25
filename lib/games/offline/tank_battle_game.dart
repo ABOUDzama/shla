@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
@@ -36,10 +35,10 @@ class _TankBattleGameState extends State<TankBattleGame> {
   int _humans = 2;
 
   static const List<Color> _colors = [
-    FunkyColors.coral,
-    FunkyColors.cyan,
-    FunkyColors.lime,
-    FunkyColors.pink,
+    Color(0xFFFF8A5C),
+    Color(0xFF4D8DFF),
+    Color(0xFF35C99E),
+    Color(0xFFFF6FA5),
   ];
 
   @override
@@ -136,7 +135,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
           const SizedBox(height: 20),
@@ -168,7 +167,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
           const SizedBox(height: 8),
@@ -176,7 +175,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
             'البوتات بتكمل الأربع لاعبين',
             style: flatCairo(
               fontSize: 14,
-              color: Colors.white70,
+              color: FlatColors.ink.withValues(alpha: 0.75),
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
           const SizedBox(height: 20),
@@ -230,7 +229,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
                   ? _colors[i]
                   : active
                       ? Colors.black87
-                      : Colors.white38,
+                      : FlatColors.ink.withValues(alpha: 0.5),
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
         ),
@@ -249,7 +248,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
             style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           )
         else if (_match.winner != null)
@@ -263,7 +262,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
             style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
         const SizedBox(height: 16),
@@ -286,7 +285,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
             style: flatCairo(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: Colors.white70,
+              color: FlatColors.ink.withValues(alpha: 0.75),
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
         ),
@@ -301,7 +300,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
       decoration: BoxDecoration(
         color: Colors.black54,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white24),
+        border: Border.all(color: FlatColors.border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -311,7 +310,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
             style: flatCairo(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
           const SizedBox(width: 8),
@@ -350,7 +349,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
         : 0;
     return OfflineGameScaffold(
       title: 'دبابات الشلة',
-      backgroundColor: FunkyColors.bgDeep,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: switch (_phase) {
           _TankPhase.pickPlayers => _buildPicker(),

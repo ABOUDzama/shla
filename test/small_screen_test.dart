@@ -20,6 +20,16 @@ import 'package:shella/games/offline/seega_game.dart';
 import 'package:shella/games/offline/gobblet_game.dart';
 import 'package:shella/games/offline/multi_touch_screen.dart';
 import 'package:shella/games/offline/reaction_game.dart';
+import 'package:shella/games/offline/tap_race_game.dart';
+import 'package:shella/games/offline/tug_of_war_game.dart';
+import 'package:shella/games/offline/sumo_game.dart';
+import 'package:shella/games/offline/snake_arena_game.dart';
+import 'package:shella/games/offline/whack_mole_game.dart';
+import 'package:shella/games/offline/coin_grab_game.dart';
+import 'package:shella/games/offline/catch_game.dart';
+import 'package:shella/games/offline/touch_ball_game.dart';
+import 'package:shella/games/offline/snow_brawl_game.dart';
+import 'package:shella/games/offline/tank_battle_game.dart';
 import 'package:shella/screens/settings_screen.dart';
 import 'package:shella/screens/profile_screen.dart';
 import 'package:shella/games/offline/password_game.dart';
@@ -515,6 +525,196 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'reaction_arena');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade tap_race', (tester) async {
+    await pumpSmall(tester, const TapRaceGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_tap_race_a');
+    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_tap_race_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade tug_of_war', (tester) async {
+    await pumpSmall(tester, const TugOfWarGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_tug_of_war_a');
+    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_tug_of_war_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade sumo', (tester) async {
+    await pumpSmall(tester, const SumoGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_sumo_a');
+    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_sumo_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade snake_arena', (tester) async {
+    await pumpSmall(tester, const SnakeArenaGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_snake_arena_a');
+    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_snake_arena_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade whack_mole', (tester) async {
+    await pumpSmall(tester, const WhackMoleGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_whack_mole_a');
+    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_whack_mole_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade coin_grab', (tester) async {
+    await pumpSmall(tester, const CoinGrabGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_coin_grab_a');
+    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_coin_grab_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade catch', (tester) async {
+    await pumpSmall(tester, const CatchGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_catch_a');
+    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_catch_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade touch_ball', (tester) async {
+    await pumpSmall(tester, const TouchBallGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_touch_ball_a');
+    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_touch_ball_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade snow_brawl', (tester) async {
+    await pumpSmall(tester, const SnowBrawlGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_snow_brawl_a');
+    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_snow_brawl_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade tank_battle', (tester) async {
+    await pumpSmall(tester, const TankBattleGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_tank_battle_a');
+    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_tank_battle_b');
     expectNoOverflow(tester);
   });
 

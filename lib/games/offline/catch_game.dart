@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
-import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
 
 /// Pure logic for اقطفها (Grab the Fish-style timing game), kept separate
@@ -101,10 +99,10 @@ class _CatchGameState extends State<CatchGame>
   String _banner = '';
 
   static const List<Color> _zoneColors = [
-    FunkyColors.coral,
-    FunkyColors.sky,
-    FunkyColors.lime,
-    FunkyColors.pink,
+    Color(0xFFFF8A5C),
+    Color(0xFF4D8DFF),
+    Color(0xFF35C99E),
+    Color(0xFFFF6FA5),
   ];
 
   @override
@@ -206,7 +204,7 @@ class _CatchGameState extends State<CatchGame>
                 style: flatCairo(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
-                  color: FunkyColors.bgDeep,
+                  color: FlatColors.ink,
                 ),
               ),
             ),
@@ -227,7 +225,7 @@ class _CatchGameState extends State<CatchGame>
                 child: FilledButton(
                   style: FilledButton.styleFrom(
                     backgroundColor: _zoneColors[p],
-                    foregroundColor: FunkyColors.bgDeep,
+                    foregroundColor: FlatColors.ink,
                     padding: const EdgeInsets.symmetric(vertical: 20),
                   ),
                   onPressed: () => _onTapZone(p),
@@ -256,13 +254,13 @@ class _CatchGameState extends State<CatchGame>
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w900,
-              color: Colors.white,
+              color: FlatColors.ink,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'السمكة بتلف، دوس لما تدخل في لونك. أول ٥ نقط تكسب',
-            style: flatCairo(fontSize: 15, color: Colors.white70),
+            style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
           ),
           const SizedBox(height: 24),
           Row(
@@ -274,7 +272,7 @@ class _CatchGameState extends State<CatchGame>
                   child: FilledButton(
                     style: FilledButton.styleFrom(
                       backgroundColor: _zoneColors[n - 2],
-                      foregroundColor: FunkyColors.bgDeep,
+                      foregroundColor: FlatColors.ink,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 26, vertical: 16),
                     ),
@@ -308,7 +306,7 @@ class _CatchGameState extends State<CatchGame>
     }
     final scaffold = OfflineGameScaffold(
       title: 'اقطفها',
-      backgroundColor: FunkyColors.sky,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: _phase == _CatchPhase.picking
             ? _buildPicker()
@@ -324,7 +322,7 @@ class _CatchGameState extends State<CatchGame>
                     style: flatCairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: FlatColors.ink,
                     ).copyWith(
                         fontFamilyFallback: const ['Noto Color Emoji']),
                   ),
@@ -389,7 +387,7 @@ class _RingPainter extends CustomPainter {
     }
 
     // Center hole to make it a ring of arcs.
-    paint.color = const Color(0xFF1A1140);
+    paint.color = FlatColors.bg;
     canvas.drawCircle(center, radius * 0.55, paint);
 
     // Marker fish on the ring.

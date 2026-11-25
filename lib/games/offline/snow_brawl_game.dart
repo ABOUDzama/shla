@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
@@ -34,10 +32,10 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
   String _banner = '';
 
   static const List<Color> _colors = [
-    FunkyColors.coral,
-    FunkyColors.cyan,
-    FunkyColors.lime,
-    FunkyColors.pink,
+    Color(0xFFFF8A5C),
+    Color(0xFF4D8DFF),
+    Color(0xFF35C99E),
+    Color(0xFFFF6FA5),
   ];
 
   @override
@@ -93,7 +91,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
           const SizedBox(height: 20),
@@ -131,7 +129,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white10,
+                    color: FlatColors.border,
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
@@ -143,7 +141,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
                 bottom: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: FunkyColors.cyan.withValues(alpha: 0.55),
+                    color: FlatColors.tilePastels[1],
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
@@ -155,7 +153,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
                 child: Container(
                   width: 8,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: FlatColors.ink,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -181,10 +179,10 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
                 decoration: BoxDecoration(
                   color: _match.alive(i)
                       ? _colors[i].withValues(alpha: 0.35)
-                      : Colors.white10,
+                      : FlatColors.border,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: _match.alive(i) ? _colors[i] : Colors.white24,
+                    color: _match.alive(i) ? _colors[i] : FlatColors.border,
                     width: 2,
                   ),
                 ),
@@ -202,7 +200,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
                 style: flatCairo(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
-                  color: _match.alive(i) ? Colors.white : Colors.white38,
+                  color: _match.alive(i) ? FlatColors.ink : FlatColors.ink.withValues(alpha: 0.5),
                 ).copyWith(fontFamilyFallback: _emojiFallback),
               ),
             ],
@@ -270,7 +268,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
     final players = _phase == _SnowPhase.pickPlayers ? 0 : _match.playerCount;
     return OfflineGameScaffold(
       title: 'معركة التلج',
-      backgroundColor: FunkyColors.bgDeep,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: _phase == _SnowPhase.pickPlayers
             ? _buildPicker()
@@ -293,7 +291,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
                       style: flatCairo(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                        color: FlatColors.ink,
                       ).copyWith(fontFamilyFallback: _emojiFallback),
                     ),
                   ),
@@ -344,7 +342,7 @@ class _SnowFieldPainter extends CustomPainter {
   ];
 
   void _fort(Canvas canvas, Offset c, double s, Color col, bool alive) {
-    final body = alive ? col : const Color(0xFF3A3550);
+    final body = alive ? col : const Color(0xFFB9B3C9);
     final dark = Color.lerp(body, Colors.black, 0.35)!;
     final w = s * 0.9;
     // main tower
@@ -389,7 +387,7 @@ class _SnowFieldPainter extends CustomPainter {
     // sky
     canvas.drawRRect(
       RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(20)),
-      Paint()..color = const Color(0xFF101C38),
+      Paint()..color = const Color(0xFFCFE6FF),
     );
     // snow ground
     final ground = Path()
@@ -399,17 +397,17 @@ class _SnowFieldPainter extends CustomPainter {
       ..lineTo(w, w)
       ..lineTo(0, w)
       ..close();
-    canvas.drawPath(ground, Paint()..color = const Color(0xFFDDE8F4));
+    canvas.drawPath(ground, Paint()..color = FlatColors.tileWhite);
     canvas.drawPath(
       ground,
       Paint()
-        ..color = Colors.white.withValues(alpha: 0.35)
+        ..color = FlatColors.border
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
 
     // falling flakes (position varies with tick for motion)
-    final flake = Paint()..color = Colors.white.withValues(alpha: 0.5);
+    final flake = Paint()..color = const Color(0xFF9FB8D8);
     for (var i = 0; i < 22; i++) {
       final fx = ((i * 0.173 + 0.05) % 1.0) * w;
       final fy = (((i * 0.311 + match.tickCount * 0.004) % 1.0)) * w * 0.58;
@@ -442,7 +440,7 @@ class _SnowFieldPainter extends CustomPainter {
           ..strokeWidth = 2.5,
       );
       // snowball riding the arc at the power-meter phase
-      final ball = Paint()..color = Colors.white;
+      final ball = Paint()..color = FlatColors.ink;
       final bx = from.dx + (to.dx - from.dx) * match.phase;
       final t2 = match.phase;
       final by = (1 - t2) * (1 - t2) * from.dy +

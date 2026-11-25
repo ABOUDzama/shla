@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
@@ -34,10 +33,10 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
   String _banner = '';
 
   static const List<Color> _colors = [
-    FunkyColors.coral,
-    FunkyColors.cyan,
-    FunkyColors.lime,
-    FunkyColors.pink,
+    Color(0xFFFF8A5C),
+    Color(0xFF4D8DFF),
+    Color(0xFF35C99E),
+    Color(0xFFFF6FA5),
   ];
 
   @override
@@ -95,7 +94,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
           const SizedBox(height: 20),
@@ -134,8 +133,9 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white10,
+                    color: FlatColors.tileWhite,
                     borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: FlatColors.border, width: 2),
                   ),
                 ),
               ),
@@ -146,7 +146,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
                 bottom: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: FunkyColors.amber.withValues(alpha: 0.35),
+                    color: FlatColors.tilePastels[4],
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
@@ -158,7 +158,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
                 bottom: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: FunkyColors.lime.withValues(alpha: 0.8),
+                    color: FlatColors.tilePastels[2],
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
@@ -170,7 +170,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
                 child: Container(
                   width: 8,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: FlatColors.ink,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -250,7 +250,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
     final players = _phase == _TugPhase.pickPlayers ? 0 : _match.playerCount;
     return OfflineGameScaffold(
       title: 'شد الحبل',
-      backgroundColor: FunkyColors.bgDeep,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: _phase == _TugPhase.pickPlayers
             ? _buildPicker()
@@ -269,7 +269,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
                       style: flatCairo(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                        color: FlatColors.ink,
                       ).copyWith(fontFamilyFallback: _emojiFallback),
                     ),
                   ),
@@ -309,11 +309,19 @@ class _TugPainter extends CustomPainter {
     final oy = (size.height - side) / 2;
     final center = Offset(ox + side / 2, oy + side / 2);
 
-    final bg = Paint()..color = const Color(0xFF0D1030);
+    final bg = Paint()..color = FlatColors.tileWhite;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
           Rect.fromLTWH(ox, oy, side, side), const Radius.circular(12)),
       bg,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+          Rect.fromLTWH(ox, oy, side, side), const Radius.circular(12)),
+      Paint()
+        ..color = FlatColors.border
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
     );
 
     // home ring at the center
@@ -321,7 +329,7 @@ class _TugPainter extends CustomPainter {
         center,
         side * 0.06,
         Paint()
-          ..color = Colors.white.withValues(alpha: 0.12)
+          ..color = FlatColors.ink.withValues(alpha: 0.2)
           ..style = PaintingStyle.stroke
           ..strokeWidth = side * 0.008);
 
@@ -396,12 +404,12 @@ class _TugPainter extends CustomPainter {
     }
 
     // knot
-    canvas.drawCircle(knot, side * 0.038, Paint()..color = FunkyColors.amber);
+    canvas.drawCircle(knot, side * 0.038, Paint()..color = FlatColors.tilePastels[4]);
     canvas.drawCircle(
         knot,
         side * 0.038,
         Paint()
-          ..color = FunkyColors.magenta
+          ..color = FlatColors.ink
           ..style = PaintingStyle.stroke
           ..strokeWidth = side * 0.008);
     canvas.drawCircle(

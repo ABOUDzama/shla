@@ -47,3 +47,9 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - first_letter converted (batch 5 start): ink on orange hue, white cards, removed duplicate home, success/fail to mintDark/mafia. Capture pixel-viewed.
 - batch5: word_story, ranking_challenge, odd_one_out, tick_tock_boom converted. odd_one_out + tick_tock_boom needed TextStyle->flatCairo (harness tofu). tick_tock explosion phase keeps white on black (intentional dark phase). Elevation/shadow sweep validated by suites; tank control glow restored.
 - batch6: reverse_quiz converted; ranking_challenge SegmentedButton labels got flatCairo (digit tofu); ROOT CAUSE of heavy button outlines: flutter_test renders elevation as crisp black shadow-approximation; swept elevation:0 into 41 ElevatedButton.styleFrom blocks app-wide (incl. theme in main.dart). Verified flat in captures.
+
+
+## Batch 11 (00:20)
+- Arcade flat conversion: tap_race, tug_of_war, sumo, snake_arena, whack_mole, coin_grab, catch, touch_ball, snow_brawl (cream bg, white bordered arenas, ink text). 44/45 interiors incl. tank_battle (already flat, captured). balance_game still to verify.
+- Art: user-approved 8 card-character cast (user 00:11:56 approval of group8): 8 avatars in picker (assets/avatars/card_*.png), group hero on home (assets/avatars_2d/group.jpg). Old new-cast on branch art-preview (parked, unused).
+- Suites: small_screen 53/53 (run in parts), game_interaction 28/28, golden_interiors 8/8, shellty + avatar picker golden pass.

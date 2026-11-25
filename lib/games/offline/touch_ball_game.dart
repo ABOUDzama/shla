@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
@@ -115,10 +114,10 @@ class _TouchBallGameState extends State<TouchBallGame> {
   String _banner = '';
 
   static const List<Color> _zoneColors = [
-    FunkyColors.coral,
-    FunkyColors.cyan,
-    FunkyColors.lime,
-    FunkyColors.pink,
+    Color(0xFFFF8A5C),
+    Color(0xFF4D8DFF),
+    Color(0xFF35C99E),
+    Color(0xFFFF6FA5),
   ];
 
   @override
@@ -238,7 +237,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ),
           ),
           const SizedBox(height: 20),
@@ -279,7 +278,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                 style: flatCairo(
                   fontSize: 40,
                   fontWeight: FontWeight.w900,
-                  color: _zoneColors[p].withValues(alpha: 0.6),
+                  color: FlatColors.ink,
                 ),
               ),
             ),
@@ -313,7 +312,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
     }
     return OfflineGameScaffold(
       title: 'كورة اللمسة',
-      backgroundColor: FunkyColors.violet,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: _phase == _BallPhase.pickPlayers
             ? _buildPicker()
@@ -341,7 +340,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                               style: flatCairo(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w800,
-                                color: Colors.white,
+                                color: FlatColors.ink,
                               ),
                             ),
                           ),
@@ -372,7 +371,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                                         color:
                                             _zoneColors[_match.owner ?? 0],
                                         border: Border.all(
-                                            color: Colors.white, width: 3),
+                                            color: FlatColors.ink, width: 3),
                                         
                                       ),
                                       child: Center(
@@ -381,7 +380,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                                           style: flatCairo(
                                             fontSize: 30,
                                             fontWeight: FontWeight.w900,
-                                            color: Colors.white,
+                                            color: FlatColors.ink,
                                           ),
                                         ),
                                       ),
@@ -399,9 +398,9 @@ class _TouchBallGameState extends State<TouchBallGame> {
                     margin: const EdgeInsets.fromLTRB(12, 4, 12, 12),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
-                      color: FunkyColors.card,
+                      color: FlatColors.tileWhite,
                       borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: FunkyColors.amber, width: 1.6),
+                      border: Border.all(color: FlatColors.border, width: 2),
                     ),
                     child: Text(
                       _banner,
@@ -409,7 +408,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                       style: flatCairo(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: FunkyColors.amber,
+                        color: FlatColors.ink,
                       ).copyWith(
                           fontFamilyFallback: const ['Noto Color Emoji']),
                     ),

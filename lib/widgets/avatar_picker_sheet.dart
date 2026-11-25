@@ -11,6 +11,7 @@ import '../theme/flat_theme.dart';
 Future<String?> showAvatarPickerSheet(BuildContext context) {
   return showModalBottomSheet<String>(
     context: context,
+    isScrollControlled: true,
     backgroundColor: FlatColors.bg,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -48,77 +49,98 @@ class _AvatarPickerSheet extends StatelessWidget {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: FlatColors.border,
-                  borderRadius: BorderRadius.circular(2),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: FlatColors.border,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 14),
-            Text('اختار صورة', style: FlatDecor.title(size: 18),
-                textAlign: TextAlign.center),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                for (var i = 0; i < AvatarService.builtInAvatars.length; i++)
-                  GestureDetector(
-                    key: Key('builtin_avatar_$i'),
-                    onTap: () => Navigator.pop(
+              const SizedBox(height: 14),
+              Text(
+                'اختار صورة',
+                style: FlatDecor.title(size: 18),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  for (var i = 0; i < AvatarService.builtInAvatars.length; i++)
+                    GestureDetector(
+                      key: Key('builtin_avatar_$i'),
+                      onTap: () => Navigator.pop(
                         context,
-                        '${AvatarService.assetPrefix}${AvatarService.builtInAvatars[i]}'),
-                    child: Container(
-                      width: 76,
-                      height: 76,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border:
-                            Border.all(color: FlatColors.border, width: 3),
-                        image: DecorationImage(
+                        '${AvatarService.assetPrefix}${AvatarService.builtInAvatars[i]}',
+                      ),
+                      child: Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: FlatColors.border,
+                            width: 3,
+                          ),
+                          image: DecorationImage(
                             image: AssetImage(AvatarService.builtInAvatars[i]),
-                            fit: BoxFit.cover),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _pickPhoto(context, ImageSource.gallery),
+                      icon: const Icon(
+                        Icons.photo_library_outlined,
+                        color: FlatColors.ink,
+                      ),
+                      label: Text(
+                        'المعرض',
+                        style: flatCairo(
+                          color: FlatColors.ink,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _pickPhoto(context, ImageSource.gallery),
-                    icon: const Icon(Icons.photo_library_outlined,
-                        color: FlatColors.ink),
-                    label: Text('المعرض',
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _pickPhoto(context, ImageSource.camera),
+                      icon: const Icon(
+                        Icons.camera_alt_outlined,
+                        color: FlatColors.ink,
+                      ),
+                      label: Text(
+                        'الكاميرا',
                         style: flatCairo(
-                            color: FlatColors.ink,
-                            fontWeight: FontWeight.w700)),
+                          color: FlatColors.ink,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _pickPhoto(context, ImageSource.camera),
-                    icon: const Icon(Icons.camera_alt_outlined,
-                        color: FlatColors.ink),
-                    label: Text('الكاميرا',
-                        style: flatCairo(
-                            color: FlatColors.ink,
-                            fontWeight: FontWeight.w700)),
-                  ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

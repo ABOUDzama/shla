@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
@@ -34,10 +33,10 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
   String _banner = '';
 
   static const List<Color> _colors = [
-    FunkyColors.coral,
-    FunkyColors.cyan,
-    FunkyColors.lime,
-    FunkyColors.pink,
+    Color(0xFFFF8A5C),
+    Color(0xFF4D8DFF),
+    Color(0xFF35C99E),
+    Color(0xFFFF6FA5),
   ];
 
   @override
@@ -92,7 +91,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
             style: flatCairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
           const SizedBox(height: 20),
@@ -127,7 +126,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
           style: flatCairo(
             fontSize: 14,
             fontWeight: FontWeight.w800,
-            color: _colors[p],
+            color: FlatColors.ink,
           ).copyWith(fontFamilyFallback: _emojiFallback),
         ),
         const SizedBox(height: 4),
@@ -168,8 +167,8 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
           child: LinearProgressIndicator(
             value: 1 - (_match.tickCount / _match.roundTicks).clamp(0.0, 1.0),
-            backgroundColor: Colors.white10,
-            color: FunkyColors.amber,
+            backgroundColor: FlatColors.border,
+            color: FlatColors.tilePastels[3],
             minHeight: 8,
             borderRadius: BorderRadius.circular(999),
           ),
@@ -182,7 +181,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
             style: flatCairo(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
         ),
@@ -224,7 +223,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
             style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
         const SizedBox(height: 12),
@@ -265,7 +264,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
     }
     return OfflineGameScaffold(
       title: 'اضرب الخلد',
-      backgroundColor: FunkyColors.bgDeep,
+      backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: _phase == _MolePhase.pickPlayers
             ? _buildPicker()
@@ -300,7 +299,7 @@ class _MoleGridPainter extends CustomPainter {
       // hole
       canvas.drawOval(
         Rect.fromCenter(center: center, width: r * 2.1, height: r * 1.1),
-        Paint()..color = const Color(0xFF0D0A22),
+        Paint()..color = const Color(0xFF5A4030),
       );
       if (match.isUp(player, h)) {
         // mole: head + ears + eyes + nose

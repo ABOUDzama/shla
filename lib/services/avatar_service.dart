@@ -10,6 +10,14 @@ class AvatarService {
     'assets/avatars/avatar_girl.png',
     'assets/avatars/avatar_boy_green.png',
     'assets/avatars/avatar_boy_blue.png',
+    'assets/avatars/card_blue.png',
+    'assets/avatars/card_purple.png',
+    'assets/avatars/card_green.png',
+    'assets/avatars/card_hijab.png',
+    'assets/avatars/card_headband.png',
+    'assets/avatars/card_glasses.png',
+    'assets/avatars/card_red.png',
+    'assets/avatars/card_yellow.png',
   ];
 
   static const String assetPrefix = 'asset:';
