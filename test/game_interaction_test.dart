@@ -19,6 +19,8 @@ import 'package:shella/games/offline/most_likely_game.dart';
 import 'package:shella/games/offline/taboo_game.dart';
 import 'package:shella/games/offline/emoji_guess_game.dart';
 import 'package:shella/games/offline/who_am_i_game.dart';
+import 'package:shella/games/offline/would_rather_game.dart';
+import 'package:shella/games/offline/never_have_i_game.dart';
 
 /// Interaction/state-transition tests: play each of the 4 new games through
 /// real taps and assert real state changes (round counters, turn rotation,
@@ -896,6 +898,172 @@ void main() {
       await tapText(tester, 'العب تاني');
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
       await flushFontCallbacks(tester);
+    });
+  });
+  group('would rather: vote concealment, tally, rounds, end, replay, back',
+      () {
+    /// Mirrors the game's seeded question order for deterministic picks.
+    List<int> seededOrder(int seed) =>
+        List.generate(WouldRatherGame.questions.length, (i) => i)
+          ..shuffle(Random(seed));
+
+    testWidgets(
+        'per-player gate hides options between voters, reveal tally correct',
+        (tester) async {
+      const names = ['أحمد', 'منى', 'كريم'];
+      await pumpGame(tester, const WouldRatherGame(seed: 9));
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, names);
+
+      final q = WouldRatherGame.questions[seededOrder(9)[0]];
+      expect(find.text('السؤال 1'), findsOneWidget);
+      expect(find.text(q.a), findsOneWidget);
+      expect(find.text(q.b), findsOneWidget);
+
+      await tapText(tester, 'ابدأ التصويت ⚖️');
+      // Gate for أحمد: options concealed before he opens his gate.
+      expect(find.text(q.a), findsNothing);
+      expect(find.text(q.b), findsNothing);
+      await tapText(tester, 'صوّت يا أحمد');
+      expect(find.text(q.a), findsOneWidget);
+      await tapText(tester, q.a); // أحمد -> A
+      // Concealed again for منى.
+      expect(find.text(q.a), findsNothing);
+      expect(find.text(q.b), findsNothing);
+      await tapText(tester, 'صوّت يا منى');
+      await tapText(tester, q.b); // منى -> B
+      await tapText(tester, 'صوّت يا كريم');
+      await tapText(tester, q.a); // كريم -> A
+
+      // Reveal: exact tallies and team membership.
+      expect(find.text('2 صوت'), findsOneWidget);
+      expect(find.text('1 صوت'), findsOneWidget);
+      expect(find.text('أحمد، كريم'), findsOneWidget);
+      expect(find.text('الأغلبية مع الاختيار الأول 🔥'), findsOneWidget);
+
+      await tapText(tester, 'السؤال اللي بعده ⏭');
+      expect(find.text('السؤال 2'), findsOneWidget);
+      // New round resets: question visible again, no stale reveal.
+      expect(find.text('أحمد، كريم'), findsNothing);
+    });
+
+    testWidgets('full session ends after names*3 rounds, replay resets',
+        (tester) async {
+      const names = ['أحمد', 'منى'];
+      await pumpGame(tester, const WouldRatherGame(seed: 9));
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, names);
+
+      for (var round = 1; round <= 6; round++) {
+        expect(find.text('السؤال $round'), findsOneWidget);
+        await tapText(tester, 'ابدأ التصويت ⚖️');
+        for (final name in names) {
+          await tapText(tester, 'صوّت يا $name');
+          // Vote for whichever option is on top (A) every time.
+          final q = WouldRatherGame
+              .questions[seededOrder(9)[round - 1]];
+          await tapText(tester, q.a);
+        }
+        await tapText(tester, 'السؤال اللي بعده ⏭');
+      }
+      expect(find.text('خلصت الأسئلة! 🎉'), findsOneWidget);
+      await tapText(tester, 'العب تاني');
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+    });
+
+    testWidgets('back navigation from game pops to caller', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme:
+              ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+          home: Builder(
+            builder: (ctx) => Scaffold(
+              body: Center(
+                child: TextButton(
+                  onPressed: () => Navigator.of(ctx).push(
+                    MaterialPageRoute(
+                      builder: (_) => const Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: WouldRatherGame(seed: 9),
+                      ),
+                    ),
+                  ),
+                  child: const Text('OPEN'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await fixedPumps(tester);
+      await tapText(tester, 'OPEN');
+      await flushFontCallbacks(tester);
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+      final back = find.byType(BackButton);
+      expect(back, findsOneWidget);
+      await tester.tap(back, warnIfMissed: false);
+      await fixedPumps(tester, 8);
+      expect(find.byType(WouldRatherGame), findsNothing);
+      expect(find.text('OPEN'), findsOneWidget);
+    });
+  });
+
+  group('never have i: confession tally, reader rotation, end, replay',
+      () {
+    List<int> seededOrder(int seed) =>
+        List.generate(NeverHaveIGame.statements.length, (i) => i)
+          ..shuffle(Random(seed));
+
+    testWidgets(
+        'taps increment exact confession counts, reader rotates, end sorted, replay',
+        (tester) async {
+      const names = ['أحمد', 'منى', 'كريم'];
+      await pumpGame(tester, const NeverHaveIGame(seed: 13));
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, names);
+
+      // First statement matches the seeded order; reader is أحمد.
+      final first = NeverHaveIGame.statements[seededOrder(13)[0]];
+      expect(find.text(first), findsOneWidget);
+      expect(find.textContaining('القارئ: أحمد'), findsOneWidget);
+      expect(find.text('0 اعتراف'), findsNWidgets(3));
+
+      // أحمد confesses once, منى twice this turn.
+      await tapText(tester, 'أحمد');
+      expect(find.text('1 اعتراف'), findsOneWidget);
+      await tapText(tester, 'منى');
+      await tapText(tester, 'منى');
+      expect(find.text('2 اعتراف'), findsOneWidget);
+      expect(find.text('0 اعتراف'), findsOneWidget); // كريم untouched
+
+      await tapText(tester, 'الجملة اللي بعدها ⏭');
+      expect(find.textContaining('القارئ: منى'), findsOneWidget);
+      // Statement advanced, no repeat of the first one.
+      expect(find.text(first), findsNothing);
+
+      // Play out the remaining 8 turns (9 total = 3 players x 3).
+      for (var turn = 2; turn <= 9; turn++) {
+        expect(find.textContaining('الجملة $turn'), findsOneWidget);
+        if (turn < 9) await tapText(tester, 'الجملة اللي بعدها ⏭');
+      }
+      // Last "next" tap ends the session.
+      await tapText(tester, 'الجملة اللي بعدها ⏭');
+      expect(find.text('نتيجة الاعترافات! 🎉'), findsOneWidget);
+      expect(find.text('منى: 2 اعتراف'), findsOneWidget);
+      expect(find.text('أحمد: 1 اعتراف'), findsOneWidget);
+      expect(find.text('كريم: 0 اعتراف'), findsOneWidget);
+      // Sorted: منى (2) listed above أحمد (1) above كريم (0).
+      final topMona = tester.getTopLeft(find.text('منى: 2 اعتراف')).dy;
+      final topAhmed = tester.getTopLeft(find.text('أحمد: 1 اعتراف')).dy;
+      final topKarim = tester.getTopLeft(find.text('كريم: 0 اعتراف')).dy;
+      expect(topMona < topAhmed && topAhmed < topKarim, isTrue);
+
+      await tapText(tester, 'العب تاني');
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
     });
   });
 }

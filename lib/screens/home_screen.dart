@@ -361,26 +361,35 @@ class _FlatGameTile extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(
-                game.title,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: FlatDecor.title(size: 14),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      game.title,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: FlatDecor.title(size: 14),
+                    ),
+                  ),
+                  // Badge lives inside the title pill: the artwork's safe
+                  // zone (faces, focal crop) is never covered.
+                  if (game.badge != null) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: FlatDecor.tag(),
+                      child:
+                          Text(game.badge!, style: FlatDecor.body(size: 10)),
+                    ),
+                  ],
+                ],
               ),
             ),
           ),
-          if (game.badge != null)
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                decoration: FlatDecor.tag(),
-                child: Text(game.badge!, style: FlatDecor.body(size: 11)),
-              ),
-            ),
         ],
       ),
     );

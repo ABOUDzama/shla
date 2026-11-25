@@ -5,6 +5,8 @@ import 'package:shella/games/offline/bus_complete_game.dart';
 import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/undercover_game.dart';
 import 'package:shella/games/offline/mafia_game.dart';
+import 'package:shella/games/offline/would_rather_game.dart';
+import 'package:shella/games/offline/never_have_i_game.dart';
 
 void main() {
   group('RankingChallengeGame.scoreGuess', () {
@@ -235,6 +237,57 @@ void main() {
       final villageWin =
           MafiaGame.scoreWin({}, roles, winnerSide: 'village');
       expect(villageWin, {'b': 3, 'c': 3});
+    });
+  });
+  group('WouldRatherGame content and tally', () {
+    test('questions: 24 pairs, non-empty, a != b, all unique', () {
+      expect(WouldRatherGame.questions.length, 24);
+      final seen = <String>{};
+      for (final q in WouldRatherGame.questions) {
+        expect(q.a.trim().isNotEmpty, isTrue);
+        expect(q.b.trim().isNotEmpty, isTrue);
+        expect(q.a, isNot(q.b));
+        expect(seen.add('${q.a}|${q.b}'), isTrue);
+      }
+    });
+    test('tally: splits voters by pick, preserves names', () {
+      final (a, b) = WouldRatherGame.tally({'x': 0, 'y': 1, 'z': 0});
+      expect(a, ['x', 'z']);
+      expect(b, ['y']);
+      final (a2, b2) = WouldRatherGame.tally({});
+      expect(a2, isEmpty);
+      expect(b2, isEmpty);
+    });
+  });
+
+  group('NeverHaveIGame content and order', () {
+    test('statements: 24, non-empty, unique, family-friendly (no drinking/adult refs)',
+        () {
+      expect(NeverHaveIGame.statements.length, 24);
+      final seen = <String>{};
+      for (final st in NeverHaveIGame.statements) {
+        expect(st.trim().isNotEmpty, isTrue);
+        expect(seen.add(st), isTrue);
+        expect(st.startsWith('أنا عمري ما'), isTrue);
+        // Content guard: keep the game gathering/family-safe. Whole-word
+        // match so 'كبيرة' doesn't trip the 'بيرة' check.
+        for (final banned in ['خمر', 'شراب', 'سكر', 'بيرة', 'كحول']) {
+          final re = RegExp(
+              '(^|[^\\u0621-\\u064A])\$banned([^\\u0621-\\u064A]|\$)');
+          expect(re.hasMatch(st), isFalse, reason: st);
+        }
+      }
+    });
+    test('shuffledOrder: permutation, no repeats, deterministic per seed', () {
+      final o1 = NeverHaveIGame.shuffledOrder(Random(1));
+      final o2 = NeverHaveIGame.shuffledOrder(Random(1));
+      final o3 = NeverHaveIGame.shuffledOrder(Random(2));
+      expect(o1.length, NeverHaveIGame.statements.length);
+      expect(o1.toSet().length, o1.length); // no repeats
+      expect(List.from(o1)..sort(),
+          List.generate(NeverHaveIGame.statements.length, (i) => i));
+      expect(o1, o2); // same seed, same order
+      expect(o1, isNot(o3));
     });
   });
 }
