@@ -10,6 +10,8 @@ import 'package:shella/services/settings_service.dart';
 import 'package:shella/games/offline/memory_game.dart';
 import 'package:shella/games/offline/password_game.dart';
 import 'package:shella/games/offline/spy_game.dart';
+import 'package:shella/games/offline/undercover_game.dart';
+import 'package:shella/theme/funky_theme.dart';
 import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/who_said_game.dart';
 import 'package:shella/games/offline/most_likely_game.dart';
@@ -520,6 +522,58 @@ void main() {
       final winner = find.textContaining('الفايز:').evaluate().isNotEmpty;
       final tie = find.textContaining('تعادل:').evaluate().isNotEmpty;
       expect(winner || tie, isTrue, reason: 'no final score screen');
+      await tapText(tester, 'العب تاني');
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+      await flushFontCallbacks(tester);
+    });
+  });
+
+  group('undercover: full match', () {
+    testWidgets('deal, vote rounds, oustings, win screen, replay',
+        (tester) async {
+      await pumpGame(tester, const UndercoverGame(seed: 11));
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, ['أحمد', 'منى', 'كريم', 'سارة']);
+
+      // Deal: 4 players peek their private card and pass.
+      const names = ['أحمد', 'منى', 'كريم', 'سارة'];
+      for (var deal = 0; deal < 4; deal++) {
+        await tapText(tester, 'شوف كلمتك يا ${names[deal]}');
+        await tapText(
+            tester, deal == 3 ? 'ابدأ الوصف' : 'اللاعب اللي بعده');
+      }
+
+      // Vote rounds until a win screen: each voter taps the first candidate;
+      // handle ousted reveal and the Mr. White crack attempt on the way.
+      var guard = 0;
+      while (find.text('العب تاني').evaluate().isEmpty && guard < 12) {
+        guard++;
+        if (find.text('مستر وايت انكشف! 👤').evaluate().isNotEmpty) {
+          await tester.tap(find.byType(FunkyButton).first);
+          await tester.pump(const Duration(milliseconds: 120));
+          await flushFontCallbacks(tester);
+        } else if (find.text('كمّلوا').evaluate().isNotEmpty) {
+          await tapText(tester, 'كمّلوا');
+        } else {
+          final listView = find.byType(ListView);
+          expect(listView, findsOneWidget,
+              reason: 'expected a voting ballot');
+          await tester.tap(find
+              .descendant(of: listView, matching: find.byType(Text))
+              .first);
+          await tester.pump(const Duration(milliseconds: 120));
+          await flushFontCallbacks(tester);
+        }
+      }
+
+      // Win screen with one of the three official outcomes, then replay.
+      final civWin = find.text('المدنيون كسبوا! 🎉').evaluate().isNotEmpty;
+      final infilWin = find.text('المتسللون كسبوا! 🥷').evaluate().isNotEmpty;
+      final whiteWin =
+          find.text('مستر وايت خمّن الكلمة! 👤').evaluate().isNotEmpty;
+      expect(civWin || infilWin || whiteWin, isTrue,
+          reason: 'no win screen after $guard vote rounds');
       await tapText(tester, 'العب تاني');
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
       await flushFontCallbacks(tester);

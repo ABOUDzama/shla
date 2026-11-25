@@ -22,6 +22,7 @@ import 'package:shella/games/offline/password_game.dart';
 import 'package:shella/games/offline/spy_game.dart';
 import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/who_said_game.dart';
+import 'package:shella/games/offline/undercover_game.dart';
 import 'package:shella/screens/scoreboard_screen.dart';
 import 'package:shella/services/score_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as sio;
@@ -493,6 +494,26 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'room');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: undercover deal card', (tester) async {
+    await pumpSmall(tester, const UndercoverGame(seed: 11));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    for (final name in ['أحمد', 'منى', 'كريم', 'سارة']) {
+      await tapIf(tester, find.text(name));
+    }
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException(); // known harness-only debugSize assert
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('شوف كلمتك يا أحمد'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'undercover');
     expectNoOverflow(tester);
   });
 

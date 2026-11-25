@@ -1,7 +1,9 @@
+import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shella/games/offline/ranking_challenge_game.dart';
 import 'package:shella/games/offline/bus_complete_game.dart';
 import 'package:shella/games/offline/proverb_game.dart';
+import 'package:shella/games/offline/undercover_game.dart';
 
 void main() {
   group('RankingChallengeGame.scoreGuess', () {
@@ -117,6 +119,62 @@ void main() {
       final ends = ProverbGame.proverbs.map((p) => p.end).toList();
       expect(starts.toSet().length, starts.length);
       expect(ends.toSet().length, ends.length);
+    });
+  });
+
+  group('UndercoverGame rules (grounded in official Undercover rules)', () {
+    test('rolesFor: 4-5 players get exactly 1 undercover, no mr white', () {
+      for (final n in [4, 5]) {
+        final roles = UndercoverGame.rolesFor(n, Random(7));
+        expect(roles.length, n);
+        expect(roles.where((r) => r == UndercoverGame.undercover).length, 1);
+        expect(roles.where((r) => r == UndercoverGame.mrWhite).length, 0);
+      }
+    });
+    test('rolesFor: 6-8 players get 1 undercover + 1 mr white; 9+ get 2+1', () {
+      for (final n in [6, 7, 8]) {
+        final roles = UndercoverGame.rolesFor(n, Random(7));
+        expect(roles.where((r) => r == UndercoverGame.undercover).length, 1);
+        expect(roles.where((r) => r == UndercoverGame.mrWhite).length, 1);
+      }
+      final roles9 = UndercoverGame.rolesFor(9, Random(7));
+      expect(roles9.where((r) => r == UndercoverGame.undercover).length, 2);
+      expect(roles9.where((r) => r == UndercoverGame.mrWhite).length, 1);
+    });
+    test('winner: civilians win when all infiltrators ousted', () {
+      final roles = {'a': 'civilian', 'b': 'civilian', 'c': 'undercover'};
+      expect(UndercoverGame.winner(roles, {'c'}), 'civilians');
+      // Ousting a civilian leaves 1 civilian vs 1 undercover: infiltrators win.
+      expect(UndercoverGame.winner(roles, {'a'}), 'infiltrators');
+    });
+    test('winner: infiltrators win when only 1 civilian remains', () {
+      final roles = {
+        'a': 'civilian', 'b': 'civilian', 'c': 'civilian',
+        'd': 'undercover', 'e': 'mrwhite',
+      };
+      expect(UndercoverGame.winner(roles, {'a', 'b'}), 'infiltrators');
+    });
+    test('scoreWin: civilians +2, undercover +10, mr white +6, crack +6', () {
+      final roles = {
+        'a': 'civilian', 'b': 'civilian',
+        'c': 'undercover', 'd': 'mrwhite',
+      };
+      final civ = UndercoverGame.scoreWin({}, roles, winnerSide: 'civilians');
+      expect(civ, {'a': 2, 'b': 2});
+      final infil =
+          UndercoverGame.scoreWin({}, roles, winnerSide: 'infiltrators');
+      expect(infil, {'c': 10, 'd': 6});
+      final crack = UndercoverGame.scoreWin({}, roles,
+          winnerSide: 'mrwhite', mrWhiteCracker: 'd');
+      expect(crack, {'d': 6});
+    });
+    test('wordPairs: 18 pairs, distinct words within and across pairs', () {
+      expect(UndercoverGame.wordPairs.length, 18);
+      final all = UndercoverGame.wordPairs.expand((p) => p).toList();
+      expect(all.toSet().length, all.length);
+      for (final p in UndercoverGame.wordPairs) {
+        expect(p[0] == p[1], isFalse);
+      }
     });
   });
 }

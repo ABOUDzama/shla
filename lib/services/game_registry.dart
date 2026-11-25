@@ -29,6 +29,7 @@ import '../games/offline/memory_game.dart';
 import '../games/offline/emoji_guess_game.dart';
 import '../games/offline/password_game.dart';
 import '../games/offline/spy_game.dart';
+import '../games/offline/undercover_game.dart';
 import '../games/offline/proverb_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
@@ -210,6 +211,14 @@ class GameRegistry {
       icon: Icons.menu_book_rounded,
       color: FunkyColors.pink,
       screen: ProverbGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'أندر كافر',
+      description: 'المدنيين معاهم كلمة والمتسللين شبهها.. اوصف واكشفهم!',
+      icon: Icons.groups_rounded,
+      color: FunkyColors.violet,
+      screen: UndercoverGame(),
       badge: 'جديد',
     ),
     GameModel(
