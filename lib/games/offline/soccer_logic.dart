@@ -104,6 +104,9 @@ class SoccerMatch {
   /// Marks players at [botIndexes] as bot-controlled (rebuilt on kickoff).
   final Set<int> botIndexes = {};
 
+  /// Players that never move (practice mode opponent): still block the ball.
+  final Set<int> frozenIndexes = {};
+
   /// Advances the match by [dt] seconds. [turn] maps a player index to
   /// -1 (turn left), 0 (straight) or 1 (turn right).
   void step(double dt, Map<int, int> turn) {
@@ -121,6 +124,7 @@ class SoccerMatch {
 
     for (var i = 0; i < players.length; i++) {
       final p = players[i];
+      if (frozenIndexes.contains(i)) continue;
       final t = botIndexes.contains(i) ? _botTurn(p) : (turn[i] ?? 0);
       p.heading += t * turnRate * dt;
       p.x += cos(p.heading) * speed * dt;

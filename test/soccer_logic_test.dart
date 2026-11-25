@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shella/games/offline/soccer_logic.dart';
 
 void main() {
+  soccerBotProof();
   test('kickoff: ball at center, teams on own halves, 0-0', () {
     final m = SoccerMatch(teamSizes: [2, 2], random: Random(1));
     expect(m.players.length, 4);
@@ -108,5 +109,29 @@ void main() {
     m.ballY = 1.0;
     m.step(0.2, {});
     expect(p.heading, greaterThan(0));
+  });
+}
+
+// Added: all-bot play proof (no kick button; running into the ball scores).
+void soccerBotProof() {
+  test('bots-only 2v2 matches produce goals and finish', () {
+    var total = 0, finished = 0, withGoal = 0;
+    for (var seed = 0; seed < 30; seed++) {
+      final m = SoccerMatch(teamSizes: const [2, 2], random: Random(seed));
+      m.botIndexes.addAll({0, 1, 2, 3});
+      var t = 0.0;
+      while (!m.over && t < 200) {
+        m.step(0.033, const {});
+        t += 0.033;
+      }
+      if (m.over) finished++;
+      final g = m.scores[0] + m.scores[1];
+      total += g;
+      if (g > 0) withGoal++;
+    }
+    // ignore: avoid_print
+    print('SOCCER_PROOF finished=$finished/30 matchesWithGoal=$withGoal/30 totalGoals=$total');
+    expect(finished, 30);
+    expect(withGoal, greaterThan(10));
   });
 }

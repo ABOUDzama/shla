@@ -47,6 +47,7 @@ import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
 import '../games/offline/touch_ball_game.dart';
+import '../games/offline/soccer_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
 
@@ -396,6 +397,15 @@ class GameRegistry {
       icon: Icons.sports_soccer,
       color: FunkyColors.violet,
       screen: TouchBallGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'كورة الشلة',
+      description: 'كورة ٢ ضد ٢ بموبايل واحد.. لفّ واخبط الكورة في الجون',
+      icon: Icons.sports_soccer,
+      color: FunkyColors.lime,
+      screen: SoccerGame(),
       badge: 'جديد',
       arcade1234: true,
     ),
