@@ -21,6 +21,10 @@ import '../games/online/pictionary_game_online.dart';
 import '../games/online/charades_game_online.dart';
 import '../games/online/truth_or_lie_game_online.dart';
 import '../games/online/bus_complete_game_online.dart';
+import '../games/online/most_likely_game_online.dart';
+import '../games/online/taboo_game_online.dart';
+import '../games/online/memory_game_online.dart';
+import '../games/online/emoji_guess_game_online.dart';
 import '../games/online/ranking_challenge_game_online.dart';
 import '../services/socket_service.dart' as ss;
 import '../services/haptic_service.dart';
@@ -408,6 +412,38 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
           break;
         case 'bus_complete':
           gameScreen = BusCompleteGameOnline(
+            isHost: widget.isHost,
+            roomCode: widget.roomCode,
+            playerName: widget.playerName,
+            roomPlayers: _players,
+          );
+          break;
+        case 'most_likely':
+          gameScreen = MostLikelyGameOnline(
+            isHost: widget.isHost,
+            roomCode: widget.roomCode,
+            playerName: widget.playerName,
+            roomPlayers: _players,
+          );
+          break;
+        case 'taboo':
+          gameScreen = TabooGameOnline(
+            isHost: widget.isHost,
+            roomCode: widget.roomCode,
+            playerName: widget.playerName,
+            roomPlayers: _players,
+          );
+          break;
+        case 'memory_match':
+          gameScreen = MemoryGameOnline(
+            isHost: widget.isHost,
+            roomCode: widget.roomCode,
+            playerName: widget.playerName,
+            roomPlayers: _players,
+          );
+          break;
+        case 'emoji_guess':
+          gameScreen = EmojiGuessGameOnline(
             isHost: widget.isHost,
             roomCode: widget.roomCode,
             playerName: widget.playerName,
@@ -856,6 +892,38 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                     color: FunkyColors.amber,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('bus_complete')
+                                        : null,
+                                  ),
+                                  _GameCard(
+                                    title: 'مين فينا؟ جديد',
+                                    emoji: '🫵',
+                                    color: FunkyColors.lime,
+                                    onTap: (isReady && widget.isHost)
+                                        ? () => _selectGame('most_likely')
+                                        : null,
+                                  ),
+                                  _GameCard(
+                                    title: 'كلمات ممنوعة جديد',
+                                    emoji: '🙊',
+                                    color: FunkyColors.coral,
+                                    onTap: (isReady && widget.isHost)
+                                        ? () => _selectGame('taboo')
+                                        : null,
+                                  ),
+                                  _GameCard(
+                                    title: 'ذاكرة الشلة جديد',
+                                    emoji: '🧠',
+                                    color: FunkyColors.sky,
+                                    onTap: (isReady && widget.isHost)
+                                        ? () => _selectGame('memory_match')
+                                        : null,
+                                  ),
+                                  _GameCard(
+                                    title: 'إيموجي إيه؟ جديد',
+                                    emoji: '🧩',
+                                    color: FunkyColors.amber,
+                                    onTap: (isReady && widget.isHost)
+                                        ? () => _selectGame('emoji_guess')
                                         : null,
                                   ),
                                 ],

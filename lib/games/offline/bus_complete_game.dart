@@ -31,6 +31,7 @@ class BusCompleteGame extends StatefulWidget {
     w = w.replaceAll(RegExp(r'[أإآ]'), 'ا');
     w = w.replaceAll('ة', 'ه');
     w = w.replaceAll('ى', 'ي');
+    w = w.replaceAll(RegExp(r'\s+'), ' ').trim();
     return w;
   }
 

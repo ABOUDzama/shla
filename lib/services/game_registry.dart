@@ -158,7 +158,6 @@ class GameRegistry {
       screen: TruthOrLieGame(),
     ),
     GameModel(
-      badge: 'جديد',
       title: 'تحدي الترتيب',
       description: 'اكتب موضوع والـ AI يرتبهم سريًا، خمّن ترتيبهم!',
       icon: Icons.leaderboard_rounded,
@@ -166,7 +165,6 @@ class GameRegistry {
       screen: RankingChallengeGame(),
     ),
     GameModel(
-      badge: 'جديد',
       title: 'أتوبيس كومبليت',
       description: 'لعبة الأتوبيس الشهيرة: ولد، بنت، جماد...',
       icon: Icons.directions_bus_rounded,
