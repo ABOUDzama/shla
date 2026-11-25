@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/services/settings_service.dart';
+import 'package:shella/games/offline/memory_game.dart';
 import 'package:shella/games/offline/most_likely_game.dart';
 import 'package:shella/games/offline/taboo_game.dart';
 import 'package:shella/games/offline/emoji_guess_game.dart';
@@ -26,6 +27,9 @@ void main() {
       {'name': 'أحمد', 'avatar': ''},
       {'name': 'منى', 'avatar': ''},
       {'name': 'كريم', 'avatar': ''},
+      {'name': 'سارة', 'avatar': ''},
+      {'name': 'عمر', 'avatar': ''},
+      {'name': 'ليلى', 'avatar': ''},
     ]);
     for (final name in [
       'Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold', 'Black'
@@ -256,6 +260,97 @@ void main() {
       expect(find.text('أحسن واصف: منى'), findsOneWidget);
       expect(find.text('منى — 2 نقطة'), findsOneWidget);
       expect(find.text('أحمد — 1 نقطة'), findsOneWidget);
+      await flushFontCallbacks(tester);
+    });
+  });
+
+  group('memory: board scales with squad size', () {
+    List<String> debugBoardOf(WidgetTester tester) =>
+        (tester.state(find.byType(MemoryGame)) as dynamic).debugBoard
+            as List<String>;
+    List<bool> debugRevealedOf(WidgetTester tester) =>
+        (tester.state(find.byType(MemoryGame)) as dynamic).debugRevealed
+            as List<bool>;
+
+    Future<void> intoMemory(WidgetTester tester, List<String> names) async {
+      // Tall surface so GridView builds every card (lazy builder).
+      tester.view.physicalSize = const Size(900, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await pumpGame(tester, const MemoryGame());
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, names);
+    }
+
+    testWidgets('solo: 16 cards, match scores, mismatch flips back',
+        (tester) async {
+      await intoMemory(tester, ['أحمد']);
+      expect(debugBoardOf(tester).length, 16);
+
+      final cells = find.descendant(
+          of: find.byType(GridView), matching: find.byType(GestureDetector));
+      expect(cells, findsNWidgets(16));
+
+      // Find a matching pair from game state and flip it: score +1.
+      final board = List<String>.from(debugBoardOf(tester));
+      final first = 0;
+      final second = board.indexOf(board[first], 1);
+      expect(second, greaterThan(0), reason: 'no pair for first card');
+      await tester.tap(cells.at(first), warnIfMissed: false);
+      await fixedPumps(tester, 2);
+      await tester.tap(cells.at(second), warnIfMissed: false);
+      await fixedPumps(tester, 2);
+      expect(find.textContaining('أحمد: 1'), findsOneWidget);
+
+      // Flip two non-matching cards: they flip back after the timer.
+      final remaining = <int>[
+        for (var i = 0; i < board.length; i++)
+          if (i != first && i != second) i
+      ];
+      final a = remaining.first;
+      final b = remaining.firstWhere((i) => board[i] != board[a]);
+      await tester.tap(cells.at(a), warnIfMissed: false);
+      await fixedPumps(tester, 2);
+      await tester.tap(cells.at(b), warnIfMissed: false);
+      await fixedPumps(tester, 2);
+      expect(debugRevealedOf(tester)[a], isTrue);
+      await tester.pump(const Duration(seconds: 1));
+      await fixedPumps(tester, 2);
+      expect(debugRevealedOf(tester)[a], isFalse);
+      expect(debugRevealedOf(tester)[b], isFalse);
+      await flushFontCallbacks(tester);
+    });
+
+    testWidgets('three players: 24 cards (4x6)', (tester) async {
+      await intoMemory(tester, ['أحمد', 'منى', 'كريم']);
+      expect(debugBoardOf(tester).length, 24);
+      final cells = find.descendant(
+          of: find.byType(GridView), matching: find.byType(GestureDetector));
+      expect(cells, findsNWidgets(24));
+
+      // Mismatch passes the turn to the next player.
+      final board = List<String>.from(debugBoardOf(tester));
+      final a = 0;
+      final b = board.indexWhere((e) => e != board[a], 1);
+      final cells2 = find.descendant(
+          of: find.byType(GridView), matching: find.byType(GestureDetector));
+      await tester.tap(cells2.at(a), warnIfMissed: false);
+      await fixedPumps(tester, 2);
+      await tester.tap(cells2.at(b), warnIfMissed: false);
+      await tester.pump(const Duration(seconds: 1));
+      await fixedPumps(tester, 2);
+      expect(find.text('دور: منى'), findsOneWidget);
+      await flushFontCallbacks(tester);
+    });
+
+    testWidgets('six players: 30 cards (5x6)', (tester) async {
+      await intoMemory(
+          tester, ['أحمد', 'منى', 'كريم', 'سارة', 'عمر', 'ليلى']);
+      expect(debugBoardOf(tester).length, 30);
+      final cells = find.descendant(
+          of: find.byType(GridView), matching: find.byType(GestureDetector));
+      expect(cells, findsNWidgets(30));
       await flushFontCallbacks(tester);
     });
   });

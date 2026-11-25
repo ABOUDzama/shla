@@ -34,6 +34,9 @@ void main() {
       {'name': 'أحمد', 'avatar': ''},
       {'name': 'منى', 'avatar': ''},
       {'name': 'كريم', 'avatar': ''},
+      {'name': 'سارة', 'avatar': ''},
+      {'name': 'عمر', 'avatar': ''},
+      {'name': 'ليلى', 'avatar': ''},
     ]);
     for (final name in [
       'Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold', 'Black'
@@ -250,6 +253,22 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'bus_complete');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: memory 6 players (30-card board)',
+      (tester) async {
+    await pumpSmall(tester, const MemoryGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    for (final name in ['أحمد', 'منى', 'كريم', 'سارة', 'عمر', 'ليلى']) {
+      await tapIf(tester, find.text(name));
+    }
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'memory_6p');
     expectNoOverflow(tester);
   });
 

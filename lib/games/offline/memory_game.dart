@@ -20,6 +20,7 @@ class _MemoryGameState extends State<MemoryGame> {
   static const List<String> _emojiPool = [
     '🍕', '🚀', '🎸', '🐱', '🌈', '⚽', '🎁', '🍉',
     '🐸', '👑', '🎯', '🚗', '🍩', '🦁', '🎨', '⭐',
+    '🦄', '🍔', '🎲', '🐢',
   ];
 
   bool _showIntro = true;
@@ -33,10 +34,27 @@ class _MemoryGameState extends State<MemoryGame> {
   bool _busy = false;
   Timer? _flipBackTimer;
 
-  static const int pairCount = 8; // 4x4 board
+  /// Board grows with the squad: 1-2 players 4x4 (8 pairs), 3-4 players
+  /// 4x6 (12 pairs), 5-6 players 5x6 (15 pairs), 7+ players 6x6 (18 pairs).
+  static int _pairCountFor(int playerCount) {
+    if (playerCount <= 2) return 8;
+    if (playerCount <= 4) return 12;
+    if (playerCount <= 6) return 15;
+    return 18;
+  }
+
+  int get _pairCount => _pairCountFor(_players.length);
+
+  @visibleForTesting
+  List<String> get debugBoard => _board;
+  @visibleForTesting
+  List<bool> get debugRevealed => _revealed;
+
+  int get _columns => _pairCount <= 12 ? 4 : (_pairCount <= 15 ? 5 : 6);
 
   void _start(List<String> names) {
-    final emojis = ([..._emojiPool]..shuffle()).take(pairCount).toList();
+    final emojis =
+        ([..._emojiPool]..shuffle()).take(_pairCountFor(names.length)).toList();
     final cards = [...emojis, ...emojis]..shuffle();
     setState(() {
       _players = names.map((n) => {'name': n, 'score': 0}).toList();
@@ -102,7 +120,7 @@ class _MemoryGameState extends State<MemoryGame> {
           title: '🧠 ذاكرة الشلة',
           icon: '🃏',
           description:
-              'افتح كارتين... لو شبه بعض يبقوا ليك وتلعب تاني! اللي يجمع أزواج أكتر يكسب. ذاكرتك قد التحدي؟',
+              'افتح كارتين... لو شبه بعض يبقوا ليك وتلعب تاني! اللي يجمع أزواج أكتر يكسب. والبورد بتكبر كل ما الشلة تكبر! ذاكرتك قد التحدي؟',
           onStart: () => setState(() => _showIntro = false),
         ),
       );
@@ -213,42 +231,64 @@ class _MemoryGameState extends State<MemoryGame> {
               ),
               const SizedBox(height: 12),
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 4,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: List.generate(_board.length, (i) {
-                    final shown = _revealed[i] || _matched[i];
-                    return GestureDetector(
-                      onTap: () => _flip(i),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
-                        decoration: shown
-                            ? FunkyDecor.glowCard(
-                                _matched[i] ? FunkyColors.mint : currentAccent,
-                                radius: 14,
-                              )
-                            : BoxDecoration(
-                                color: FunkyColors.cardLight,
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                  color: FunkyColors.violet.withOpacity(0.5),
-                                  width: 1.2,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final cols = _columns;
+                    final rows = (_board.length + cols - 1) ~/ cols;
+                    final spacing = cols >= 6 ? 6.0 : 8.0;
+                    final cellW =
+                        (constraints.maxWidth - (cols - 1) * spacing) / cols;
+                    final cellH =
+                        (constraints.maxHeight - (rows - 1) * spacing) / rows;
+                    // Squash cells vertically when the board is taller than
+                    // the available area so every row stays reachable.
+                    final ratio = (cellW / cellH).clamp(0.5, 1.0);
+                    final emojiSize = (cellH * 0.55).clamp(14.0, 34.0);
+                    return GridView.count(
+                      crossAxisCount: cols,
+                      childAspectRatio: ratio,
+                      mainAxisSpacing: spacing,
+                      crossAxisSpacing: spacing,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: List.generate(_board.length, (i) {
+                        final shown = _revealed[i] || _matched[i];
+                        return GestureDetector(
+                          onTap: () => _flip(i),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            decoration: shown
+                                ? FunkyDecor.glowCard(
+                                    _matched[i]
+                                        ? FunkyColors.mint
+                                        : currentAccent,
+                                    radius: 14,
+                                  )
+                                : BoxDecoration(
+                                    color: FunkyColors.cardLight,
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                      color:
+                                          FunkyColors.violet.withOpacity(0.5),
+                                      width: 1.2,
+                                    ),
+                                  ),
+                            child: Center(
+                              child: Text(
+                                shown ? _board[i] : '❓',
+                                style: TextStyle(
+                                  fontSize:
+                                      shown ? emojiSize : emojiSize * 0.65,
                                 ),
                               ),
-                        child: Center(
-                          child: Text(
-                            shown ? _board[i] : '❓',
-                            style: TextStyle(fontSize: shown ? 34 : 22),
-                          ),
-                        ),
-                      ).animate(key: ValueKey('$i-$shown')).scale(
-                            begin: const Offset(0.85, 0.85),
-                            duration: 200.ms,
-                          ),
+                            ),
+                          ).animate(key: ValueKey('$i-$shown')).scale(
+                                begin: const Offset(0.85, 0.85),
+                                duration: 200.ms,
+                              ),
+                        );
+                      }),
                     );
-                  }),
+                  },
                 ),
               ),
             ],
