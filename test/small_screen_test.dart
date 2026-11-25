@@ -462,4 +462,5 @@ void main() {
     await capture360(tester, 'scoreboard');
     expectNoOverflow(tester);
   });
+
 }

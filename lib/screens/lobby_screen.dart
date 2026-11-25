@@ -295,197 +295,239 @@ class _LobbyScreenState extends State<LobbyScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E1A),
-      body: SafeArea(
-        child: FadeTransition(
-          opacity: _fadeAnim,
-          child: Column(
-            children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: Row(
-                  children: [
-                    if (widget.showBackButton)
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          color: Colors.white,
-                        ),
-                      ),
-                    Expanded(
-                      child: Text(
-                        'اللعب أونلاين 🎮',
-                        style: GoogleFonts.cairo(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.2),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
+      body: FunkyBackground(
+        accent: FunkyColors.magenta,
+        child: SafeArea(
+          child: FadeTransition(
+            opacity: _fadeAnim,
+            child: Column(
+              children: [
+                const SizedBox(height: 14),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
                     children: [
-                      const SizedBox(height: 20),
-                      // Profile Summary Card
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(13),
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.white12),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    FunkyColors.magenta,
-                                    FunkyColors.violet,
-                                  ],
-                                ),
-                              ),
-                              child: SettingsService.userAvatar != null
-                                  ? ClipOval(
-                                      child: Image.memory(
-                                        base64Decode(
-                                          SettingsService.userAvatar!,
-                                        ),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                  : const Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                      size: 30,
-                                    ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    SettingsService.userName.isNotEmpty
-                                        ? SettingsService.userName
-                                        : 'لاعب مجهول',
-                                    style: GoogleFonts.cairo(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    'الملف الشخصي مفعل ',
-                                    style: GoogleFonts.cairo(
-                                      color: const Color(0xFF22C55E),
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
+                      if (widget.showBackButton)
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            width: 42,
+                            height: 42,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: FunkyColors.card,
+                              border: Border.all(
+                                color:
+                                    FunkyColors.magenta.withValues(alpha: 0.5),
+                                width: 1.3,
                               ),
                             ),
-                            IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const ProfileScreen(),
-                                  ),
-                                ).then((_) => setState(() {}));
-                              },
-                              icon: const Icon(
-                                Icons.edit,
-                                color: Colors.indigoAccent,
-                              ),
-                              tooltip: 'تعديل الملف الشخصي',
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-
-                      if (_lastRoomCode != null) ...[
-                        _buildRejoinCard(),
-                        const SizedBox(height: 24),
-                      ],
-
-                      // Create room button
-                      _buildButton(
-                        label: 'إنشاء غرفة جديدة',
-                        icon: Icons.add_circle_outline_rounded,
-                        gradient: const LinearGradient(
-                          colors: [FunkyColors.magenta, FunkyColors.violet],
-                        ),
-                        onTap: _isLoading ? null : _createRoom,
-                      ),
-                      const SizedBox(height: 32),
-
-                      Row(
-                        children: [
-                          const Expanded(child: Divider(color: Colors.white12)),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(
-                              'أو انضم لغرفة موجودة',
-                              style: GoogleFonts.cairo(
-                                color: Colors.white38,
-                                fontSize: 14,
-                              ),
+                            child: const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                              size: 18,
                             ),
                           ),
-                          const Expanded(child: Divider(color: Colors.white12)),
-                        ],
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // Room code field
-                      _buildTextField(
-                        controller: _roomCodeController,
-                        label: 'كود الغرفة (5 أرقام)',
-                        icon: Icons.numbers_rounded,
-                        keyboardType: TextInputType.number,
-                        letterSpacing: 8,
-                        fontSize: 22,
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Join room button
-                      _buildButton(
-                        label: 'انضمام الآن',
-                        icon: Icons.login_rounded,
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF0F9B8E), Color(0xFF14B8A6)],
                         ),
-                        onTap: _isLoading ? null : _joinRoom,
+                      Expanded(
+                        child: Text(
+                          'اللعب أونلاين 🎮',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.cairo(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                color: FunkyColors.magenta
+                                    .withValues(alpha: 0.7),
+                                blurRadius: 14,
+                              ),
+                            ],
+                          ).copyWith(
+                              fontFamilyFallback: const ['Noto Color Emoji']),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ).animate().fadeIn(duration: 400.ms),
                       ),
-
-                      if (_isLoading)
-                        const Padding(
-                          padding: EdgeInsets.only(top: 32),
-                          child: CircularProgressIndicator(
-                            color: FunkyColors.magenta,
-                          ),
-                        ),
+                      const SizedBox(width: 42),
                     ],
                   ),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 16),
+                        // Profile summary card
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration:
+                              FunkyDecor.glowCard(FunkyColors.cyan, radius: 22),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: FunkyDecor.accentGradient(
+                                      FunkyColors.magenta),
+                                ),
+                                child: SettingsService.userAvatar != null
+                                    ? ClipOval(
+                                        child: Image.memory(
+                                          base64Decode(
+                                            SettingsService.userAvatar!,
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : const Icon(
+                                        Icons.person,
+                                        color: Colors.white,
+                                        size: 28,
+                                      ),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      SettingsService.userName.isNotEmpty
+                                          ? SettingsService.userName
+                                          : 'لاعب مجهول',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.cairo(
+                                        color: Colors.white,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      'الملف الشخصي مفعل ',
+                                      style: GoogleFonts.cairo(
+                                        color: FunkyColors.mint,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ProfileScreen(),
+                                    ),
+                                  ).then((_) => setState(() {}));
+                                },
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: FunkyColors.bgDeep
+                                        .withValues(alpha: 0.6),
+                                    border: Border.all(
+                                      color: FunkyColors.cyan
+                                          .withValues(alpha: 0.6),
+                                      width: 1.3,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.edit_rounded,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+
+                        if (_lastRoomCode != null) ...[
+                          _buildRejoinCard(),
+                          const SizedBox(height: 24),
+                        ],
+
+                        Opacity(
+                          opacity: _isLoading ? 0.5 : 1,
+                          child: FunkyButton(
+                            label: 'إنشاء غرفة جديدة',
+                            accent: FunkyColors.magenta,
+                            icon: Icons.add_circle_outline_rounded,
+                            fontSize: 18,
+                            onPressed:
+                                _isLoading ? () {} : _createRoom,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+
+                        Row(
+                          children: [
+                            const Expanded(
+                                child: Divider(color: Colors.white12)),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12),
+                              child: Text(
+                                'أو انضم لغرفة موجودة',
+                                style: GoogleFonts.cairo(
+                                  color: Colors.white38,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            const Expanded(
+                                child: Divider(color: Colors.white12)),
+                          ],
+                        ),
+
+                        const SizedBox(height: 28),
+
+                        _buildTextField(
+                          controller: _roomCodeController,
+                          label: 'كود الغرفة (5 أرقام)',
+                          icon: Icons.numbers_rounded,
+                          keyboardType: TextInputType.number,
+                          letterSpacing: 8,
+                          fontSize: 22,
+                        ),
+                        const SizedBox(height: 20),
+
+                        Opacity(
+                          opacity: _isLoading ? 0.5 : 1,
+                          child: FunkyButton(
+                            label: 'انضمام الآن',
+                            accent: FunkyColors.mint,
+                            icon: Icons.login_rounded,
+                            fontSize: 18,
+                            onPressed: _isLoading ? () {} : _joinRoom,
+                          ),
+                        ),
+
+                        if (_isLoading)
+                          const Padding(
+                            padding: EdgeInsets.only(top: 28),
+                            child: CircularProgressIndicator(
+                              color: FunkyColors.magenta,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -501,11 +543,7 @@ class _LobbyScreenState extends State<LobbyScreen>
     double? fontSize,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withAlpha(13),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white12),
-      ),
+      decoration: FunkyDecor.glowCard(FunkyColors.violet, radius: 20),
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
@@ -513,7 +551,8 @@ class _LobbyScreenState extends State<LobbyScreen>
         style: GoogleFonts.cairo(
           color: Colors.white,
           fontSize: fontSize ?? 16,
-
+          letterSpacing: letterSpacing,
+          fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
           labelText: label,
@@ -529,67 +568,13 @@ class _LobbyScreenState extends State<LobbyScreen>
     );
   }
 
-  Widget _buildButton({
-    required String label,
-    required IconData icon,
-    required LinearGradient gradient,
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedOpacity(
-        opacity: onTap == null ? 0.5 : 1.0,
-        duration: const Duration(milliseconds: 200),
-        child: Container(
-          width: double.infinity,
-          height: 64,
-          decoration: BoxDecoration(
-            gradient: gradient,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: gradient.colors.first.withAlpha(80),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: Colors.white, size: 24),
-              const SizedBox(width: 12),
-              Text(
-                label,
-                style: GoogleFonts.cairo(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildRejoinCard() {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.green.withValues(alpha: 0.15),
-            Colors.teal.withValues(alpha: 0.1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
-      ),
+      padding: const EdgeInsets.all(14),
+      decoration: FunkyDecor.glowCard(FunkyColors.mint, radius: 20),
       child: Row(
         children: [
-          const Icon(Icons.history_rounded, color: Colors.greenAccent),
+          const Icon(Icons.history_rounded, color: FunkyColors.mint),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -604,7 +589,8 @@ class _LobbyScreenState extends State<LobbyScreen>
                 ),
                 Text(
                   'غرفة $_lastRoomCode لا تزال نشطة',
-                  style: GoogleFonts.cairo(color: Colors.white70, fontSize: 12),
+                  style:
+                      GoogleFonts.cairo(color: Colors.white70, fontSize: 12),
                 ),
               ],
             ),
@@ -612,18 +598,15 @@ class _LobbyScreenState extends State<LobbyScreen>
           ElevatedButton(
             onPressed: _rejoinRoom,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
+              backgroundColor: FunkyColors.mint,
+              foregroundColor: FunkyColors.bgDeep,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Flexible(
-              child: Text(
-                'عودة',
-                style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-                overflow: TextOverflow.ellipsis,
-              ),
+            child: Text(
+              'عودة',
+              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
             ),
           ),
           IconButton(
