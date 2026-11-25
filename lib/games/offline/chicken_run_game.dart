@@ -149,7 +149,7 @@ class _ChickenRunGameState extends State<ChickenRunGame> {
           color: _colors[seat].withValues(alpha: alive ? 0.9 : 0.25),
           border: Border.all(color: FlatColors.ink, width: 2.5),
         ),
-        child: const Icon(Icons.swap_vert_rounded, color: Colors.white, size: 34),
+        child: const CustomPaint(painter: _FlipSymbol()),
       ),
     );
   }
@@ -332,4 +332,33 @@ class _RunPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _RunPainter old) => true;
+}
+
+/// Two opposing arrows drawn as vectors (no icon font needed).
+class _FlipSymbol extends CustomPainter {
+  const _FlipSymbol();
+  @override
+  void paint(Canvas canvas, Size size) {
+    final c = size.center(Offset.zero);
+    final p = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    final a = size.shortestSide * 0.22;
+    // left arrow pointing up, right arrow pointing down
+    for (final sgn in [-1.0, 1.0]) {
+      final x = c.dx + sgn * a * 0.9;
+      final top = c.dy - a * 1.2, bot = c.dy + a * 1.2;
+      canvas.drawLine(Offset(x, top), Offset(x, bot), p);
+      final tip = sgn < 0 ? top : bot;
+      final d = sgn < 0 ? 1.0 : -1.0;
+      canvas.drawLine(Offset(x, tip), Offset(x - a * 0.6, tip + d * a * 0.7), p);
+      canvas.drawLine(Offset(x, tip), Offset(x + a * 0.6, tip + d * a * 0.7), p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _FlipSymbol old) => false;
 }
