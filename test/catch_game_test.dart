@@ -56,5 +56,13 @@ void main() {
       expect(m.matchWinner, 0);
       expect(m.tap(1, 225), isFalse);
     });
+
+    test('wrong tap locks the player out for the rest of that lap only', () {
+      final m = CatchMatch(playerCount: 2);
+      expect(m.tap(0, 200), isFalse); // outside own arc
+      expect(m.tap(0, 45), isFalse, reason: 'locked in same lap');
+      expect(m.scores[0], 0);
+      expect(m.tap(0, 405), isTrue, reason: 'next lap is open again');
+    });
   });
 }

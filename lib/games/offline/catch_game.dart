@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
@@ -12,7 +11,7 @@ import '../../theme/flat_theme.dart';
 ///
 /// A marker rotates around a ring split into one colored arc per player.
 /// A player taps when the marker is inside their arc to score; tapping
-/// while it is outside costs nothing but scores nothing. First to
+/// while it is outside locks that player out until the next lap. First to
 /// [targetScore] wins.
 class CatchMatch {
   CatchMatch({
@@ -20,7 +19,8 @@ class CatchMatch {
     this.targetScore = 5,
     this.startAngle = 0.0,
   })  : scores = List<int>.filled(playerCount, 0),
-        _scoredLap = List<int>.filled(playerCount, -1);
+        _scoredLap = List<int>.filled(playerCount, -1),
+        _lockedLap = List<int>.filled(playerCount, -1);
 
   final int playerCount;
   final int targetScore;
@@ -31,6 +31,10 @@ class CatchMatch {
   /// once per pass through their arc, so spam-tapping while the marker
   /// sits inside the arc does not rack up points.
   final List<int> _scoredLap;
+
+  /// Lap in which a player tapped outside their arc. A wrong tap locks that
+  /// player out for the rest of the lap, so spamming no longer wins.
+  final List<int> _lockedLap;
 
   int? matchWinner;
 
@@ -61,7 +65,11 @@ class CatchMatch {
   bool tap(int player, double angle) {
     if (matchWinner != null) return false;
     final lap = angle ~/ 360;
-    if (!inZone(player, angle)) return false;
+    if (_lockedLap[player] == lap) return false;
+    if (!inZone(player, angle)) {
+      _lockedLap[player] = lap;
+      return false;
+    }
     if (_scoredLap[player] == lap) return false;
     _scoredLap[player] = lap;
     scores[player]++;
@@ -70,7 +78,7 @@ class CatchMatch {
   }
 }
 
-enum _CatchPhase { picking, playing }
+enum _CatchPhase { pickPlayers, pickBots, playing }
 
 class CatchGame extends StatefulWidget {
   const CatchGame({super.key, this.randomSeed});
@@ -82,22 +90,23 @@ class CatchGame extends StatefulWidget {
   State<CatchGame> createState() => _CatchGameState();
 }
 
-class _CatchGameState extends State<CatchGame>
-    with SingleTickerProviderStateMixin {
+class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMixin {
   bool _showIntro = true;
-  /// Entrance fade runs once; flutter_animate restarts effects on every
-  /// rebuild (new effect instances), which made the whole screen re-fade
-  /// on every tap during play.
-  bool _entranceFaded = false;
-  _CatchPhase _phase = _CatchPhase.picking;
+  _CatchPhase _phase = _CatchPhase.pickPlayers;
   late CatchMatch _match;
   late AnimationController _spin;
-  Timer? _roundTimer;
-  int _players = 2;
-  double _startAngle = 0;
   late final Random _random = widget.randomSeed != null ? Random(widget.randomSeed!) : Random();
-  String _banner = '';
+  int _humans = 2;
+  int _seats = 2;
+  bool _practice = false;
+  double _startAngle = 0;
+  int _lap = 0;
+  double _lastSpinValue = 0;
+  final Set<int> _botSeats = {};
+  // per bot: fraction of its arc where it taps this lap, or null (it misses the lap)
+  final Map<int, double?> _botPlan = {};
 
+  static const _emojiFallback = ['Noto Color Emoji'];
   static const List<Color> _zoneColors = [
     Color(0xFFFF8A5C),
     Color(0xFF4D8DFF),
@@ -105,192 +114,180 @@ class _CatchGameState extends State<CatchGame>
     Color(0xFFFF6FA5),
   ];
 
-  @override
-  void dispose() {
-    _spin.dispose();
-    _roundTimer?.cancel();
-    super.dispose();
-  }
-
-  void _startMatch(int players) {
-    _roundTimer?.cancel();
-    _spin.stop();
-    setState(() {
-      _players = players;
-      _phase = _CatchPhase.playing;
-      _startMatchRound();
-    });
-  }
-
-  void _startMatchRound() {
-    _lap = 0;
-    _lastSpinValue = 0;
-    _match = CatchMatch(playerCount: _players, startAngle: _startAngle);
-    _banner = 'اطقطف لما السمكة تعدي على لونك! 🐟';
-    _spin.duration = Duration(milliseconds: 2200 + _random.nextInt(1500));
+  @visibleForTesting
+  CatchMatch get debugMatch => _match;
+  @visibleForTesting
+  double get debugAngle => _spin.value * 360 + _lap * 360;
+  @visibleForTesting
+  set debugSpin(double v) {
+    _spin.value = v;
+    _lastSpinValue = v;
     _spin.repeat();
   }
+  @visibleForTesting
+  Set<int> get debugBots => _botSeats;
 
   @override
   void initState() {
     super.initState();
-    _spin = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..addListener(() {
-        // repeat() wraps the value from ~1 back to ~0 each revolution;
-        // count laps from the wrap so spam taps score once per pass
-        if (_spin.value < _lastSpinValue - 0.5) _lap++;
-        _lastSpinValue = _spin.value;
-      });
+    _spin = AnimationController(vsync: this, duration: const Duration(seconds: 3))
+      ..addListener(_onFrame);
   }
 
-  int _lap = 0;
-  double _lastSpinValue = 0;
+  @override
+  void dispose() {
+    _spin.dispose();
+    super.dispose();
+  }
 
-  void _onTapZone(int player) {
-    if (_match.matchWinner != null || !_spin.isAnimating) return;
+  void _planBots() {
+    for (final b in _botSeats) {
+      _botPlan[b] = _random.nextDouble() < 0.65 ? 0.15 + _random.nextDouble() * 0.7 : null;
+    }
+  }
+
+  void _onFrame() {
+    if (_phase != _CatchPhase.playing) return;
+    if (_spin.value < _lastSpinValue - 0.5) {
+      _lap++;
+      _planBots();
+    }
+    _lastSpinValue = _spin.value;
+    if (_match.matchWinner != null) return;
     final angle = _spin.value * 360 + _lap * 360;
-    final scored = _match.tap(player, angle);
-    setState(() {
-      _banner = scored
-          ? 'لاعب ${player + 1} قطفها! 🎉'
-          : 'لاعب ${player + 1} غلط اللون 😬';
-      if (_match.matchWinner != null) {
-        _spin.stop();
-        _banner = 'لاعب ${player + 1} كسب الماتش! 🏆';
+    for (final b in _botSeats) {
+      final f = _botPlan[b];
+      if (f == null) continue;
+      final z = _match.zoneOf(b);
+      final slice = 360.0 / _match.playerCount;
+      var rel = (angle % 360 - z.from) % 360;
+      if (rel < 0) rel += 360;
+      if (rel < slice && rel >= f * slice) {
+        _botPlan[b] = null;
+        _tap(b);
       }
-    });
+    }
   }
 
-  Widget _buildRing() {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: AnimatedBuilder(
-          animation: _spin,
-          builder: (context, child) {
-            return CustomPaint(
-              painter: _RingPainter(
-                players: _players,
-                startAngle: _startAngle,
-                markerAngle: _spin.value * 2 * pi,
-                colors: _zoneColors,
-              ),
-            );
-          },
+  void _start(int humans, bool withBots) {
+    _humans = humans;
+    _practice = humans == 1 && !withBots;
+    _seats = _practice ? 4 : (withBots ? 4 : humans);
+    _botSeats
+      ..clear()
+      ..addAll([for (var s = humans; s < _seats && withBots; s++) s]);
+    _lap = 0;
+    _lastSpinValue = 0;
+    _match = CatchMatch(playerCount: _seats, startAngle: _startAngle);
+    _spin.duration = Duration(milliseconds: 2200 + _random.nextInt(1500));
+    _planBots();
+    setState(() => _phase = _CatchPhase.playing);
+    _spin.repeat();
+  }
+
+  void _tap(int seat) {
+    if (_phase != _CatchPhase.playing || _match.matchWinner != null || !_spin.isAnimating) return;
+    _match.tap(seat, _spin.value * 360 + _lap * 360);
+    if (_match.matchWinner != null) _spin.stop();
+    setState(() {});
+  }
+
+  TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>
+      flatCairo(fontSize: size, fontWeight: w, color: color ?? FlatColors.ink)
+          .copyWith(fontFamilyFallback: _emojiFallback);
+
+  Widget _bigChoice(String label, VoidCallback onTap) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: SizedBox(
+          width: 220,
+          child: FilledButton(onPressed: onTap, child: Text(label, style: _t(18, color: Colors.white))),
         ),
-      ),
-    );
-  }
+      );
 
-  Widget _buildScoreBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          for (var p = 0; p < _players; p++)
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: _zoneColors[p].withValues(alpha: 0.85),
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Text(
-                'لاعب ${p + 1}: ${_match.scores[p]}',
-                style: flatCairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: FlatColors.ink,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+  Widget _buildPicker() => Center(
+        child: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text('كام لاعب؟', style: _t(26)),
+            const SizedBox(height: 20),
+            _bigChoice('لاعب واحد', () {
+              _humans = 1;
+              setState(() => _phase = _CatchPhase.pickBots);
+            }),
+            for (final n in [2, 3, 4])
+              _bigChoice('$n لاعبين', () {
+                _humans = n;
+                if (n == 4) {
+                  _start(4, false);
+                } else {
+                  setState(() => _phase = _CatchPhase.pickBots);
+                }
+              }),
+          ]),
+        ),
+      );
 
-  Widget _buildTapZones() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-      child: Row(
-        children: [
-          for (var p = 0; p < _players; p++)
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: _zoneColors[p],
-                    foregroundColor: FlatColors.ink,
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                  ),
-                  onPressed: () => _onTapZone(p),
-                  child: Text(
-                    'لاعب ${p + 1}',
-                    style: flatCairo(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPicker() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'كام لاعب؟',
-            style: flatCairo(
-              fontSize: 26,
-              fontWeight: FontWeight.w900,
-              color: FlatColors.ink,
-            ),
-          ),
+  Widget _buildBots() => Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('نضيف بوتات؟', style: _t(26)),
           const SizedBox(height: 8),
           Text(
-            'السمكة بتلف، دوس لما تدخل في لونك. أول ٥ نقط تكسب',
-            style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
+            _humans == 1
+                ? 'من غير بوتات هتتدرب لوحدك: ٥ نقط في أقل لفّات'
+                : 'البوتات بتكمّل لحد ٤ لاعبين',
+            style: _t(14, w: FontWeight.w600),
           ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (final n in [2, 3, 4])
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: _zoneColors[n - 2],
-                      foregroundColor: FlatColors.ink,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 26, vertical: 16),
-                    ),
-                    onPressed: () => _startMatch(n),
-                    child: Text(
-                      '$n',
-                      style: flatCairo(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
+          const SizedBox(height: 20),
+          _bigChoice('اه 🤖', () => _start(_humans, true)),
+          _bigChoice('لا', () => _start(_humans, false)),
+        ]),
+      );
+
+  Alignment _corner(int seat) => const [
+        Alignment.bottomLeft,
+        Alignment.topRight,
+        Alignment.bottomRight,
+        Alignment.topLeft,
+      ][seat];
+
+  Widget _pad(int seat) {
+    return Listener(
+      key: ValueKey('pad_$seat'),
+      onPointerDown: (_) => _tap(seat),
+      child: Container(
+        width: 66,
+        height: 66,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: _zoneColors[seat].withValues(alpha: 0.95),
+          border: Border.all(color: FlatColors.ink, width: 2.5),
+        ),
+        alignment: Alignment.center,
+        child: Text('${_match.scores[seat]}', style: _t(24, color: Colors.white)),
       ),
     );
+  }
+
+  Widget _buildOver() {
+    final w = _match.matchWinner;
+    Widget head;
+    if (_practice) {
+      head = Text('خلصت ٥ نقط في ${_lap + 1} لفّة', style: _t(22));
+    } else if (w != null && w >= _humans) {
+      head = Text('البوتات كسبوا 🤖', style: _t(22));
+    } else {
+      head = VictoryFriends(gameTitle: 'اقطفها', winnerName: 'لاعب ${w! + 1}');
+    }
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      head,
+      const SizedBox(height: 16),
+      FilledButton(
+        onPressed: () => setState(() {
+          _startAngle = _random.nextDouble() * 360;
+          _phase = _CatchPhase.pickPlayers;
+        }),
+        child: Text('ماتش جديد', style: _t(18, color: Colors.white)),
+      ),
+    ]);
   }
 
   @override
@@ -299,58 +296,69 @@ class _CatchGameState extends State<CatchGame>
       return GameIntroWidget(
         title: 'اقطفها',
         description:
-            'السمكة بتلف حوالين الدواير الملونة! دوس على زرارك بالظبط لما تكون السمكة جوه اللون بتاعك. دوسة غلط مفيهاش نقط. أول واحد يوصل ٥ نقط يكسب الماتش 🐟',
+            'السمكة بتلف حوالين الدواير الملونة! دوس على زرارك في ركنك بالظبط لما تكون السمكة جوه اللون بتاعك. لو دست في الوقت الغلط بتتقفل عليك لحد اللفّة الجاية. أول واحد يوصل ٥ نقط يكسب',
         icon: '🐟',
         onStart: () => setState(() => _showIntro = false),
       );
     }
-    final scaffold = OfflineGameScaffold(
+    return OfflineGameScaffold(
       title: 'اقطفها',
       backgroundColor: FlatColors.bg,
       body: SafeArea(
-        child: _phase == _CatchPhase.picking
-            ? _buildPicker()
-            : Column(
-                children: [
-                  _buildScoreBar(),
-                  if (_match.matchWinner != null)
-                    VictoryFriends(gameTitle: 'اقطفها', 
-                        winnerName: 'لاعب ${_match.matchWinner! + 1}'),
-                  Expanded(child: _buildRing()),
-                  Text(
-                    _banner,
-                    style: flatCairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: FlatColors.ink,
-                    ).copyWith(
-                        fontFamilyFallback: const ['Noto Color Emoji']),
-                  ),
-                  const SizedBox(height: 4),
-                  if (_match.matchWinner != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: FilledButton(
-                        onPressed: () => setState(() {
-                          _startAngle = _random.nextDouble() * 360;
-                          _startMatchRound();
-                        }),
-                        child: Text(
-                          'ماتش جديد',
-                          style:
-                              flatCairo(fontWeight: FontWeight.w800),
+        child: switch (_phase) {
+          _CatchPhase.pickPlayers => _buildPicker(),
+          _CatchPhase.pickBots => _buildBots(),
+          _CatchPhase.playing => _match.matchWinner != null
+              ? Center(child: _buildOver())
+              : LayoutBuilder(builder: (context, c) {
+                  final side = min(c.maxWidth - 24, c.maxHeight - 24);
+                  return Stack(children: [
+                    Center(
+                      child: SizedBox(
+                        width: side,
+                        height: side,
+                        child: AnimatedBuilder(
+                          animation: _spin,
+                          builder: (context, _) => CustomPaint(
+                            painter: _RingPainter(
+                              players: _match.playerCount,
+                              startAngle: _startAngle,
+                              markerAngle: _spin.value * 2 * pi,
+                              colors: _zoneColors,
+                              active: {for (var i = 0; i < _seats; i++) if (!_practice || i == 0) i},
+                            ),
+                          ),
                         ),
                       ),
-                    )
-                  else
-                    _buildTapZones(),
-                ],
-              ),
+                    ),
+                    for (var s = 0; s < _seats; s++)
+                      if (!_botSeats.contains(s) && (!_practice || s == 0))
+                        Align(
+                          alignment: _corner(s),
+                          child: Padding(padding: const EdgeInsets.all(8), child: _pad(s)),
+                        ),
+                    // bot scores (no pad, just a pill in their corner)
+                    for (final s in _botSeats)
+                      Align(
+                        alignment: _corner(s),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: _zoneColors[s].withValues(alpha: 0.35),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(color: FlatColors.ink, width: 2),
+                            ),
+                            child: Text('🤖 ${_match.scores[s]}', style: _t(16)),
+                          ),
+                        ),
+                      ),
+                  ]);
+                }),
+        },
       ),
     );
-    if (_entranceFaded) return scaffold;
-    _entranceFaded = true;
-    return scaffold.animate().fadeIn(duration: 300.ms);
   }
 }
 
@@ -360,12 +368,14 @@ class _RingPainter extends CustomPainter {
     required this.startAngle,
     required this.markerAngle,
     required this.colors,
+    required this.active,
   });
 
   final int players;
   final double startAngle;
   final double markerAngle;
   final List<Color> colors;
+  final Set<int> active;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -374,38 +384,30 @@ class _RingPainter extends CustomPainter {
     final slice = 2 * pi / players;
     final start = startAngle * pi / 180 - pi / 2;
     final paint = Paint()..style = PaintingStyle.fill;
-
     for (var p = 0; p < players; p++) {
-      paint.color = colors[p % colors.length].withValues(alpha: 0.8);
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        start + slice * p + 0.03,
-        slice - 0.06,
-        true,
-        paint,
-      );
+      paint.color = active.contains(p)
+          ? colors[p % colors.length].withValues(alpha: 0.85)
+          : FlatColors.border.withValues(alpha: 0.35);
+      canvas.drawArc(Rect.fromCircle(center: center, radius: radius), start + slice * p + 0.03, slice - 0.06, true, paint);
     }
-
-    // Center hole to make it a ring of arcs.
     paint.color = FlatColors.bg;
     canvas.drawCircle(center, radius * 0.55, paint);
-
-    // Marker fish on the ring.
+    // vector fish marker
     final mx = center.dx + radius * 0.78 * cos(markerAngle - pi / 2 + start);
     final my = center.dy + radius * 0.78 * sin(markerAngle - pi / 2 + start);
-    final tp = TextPainter(
-      text: const TextSpan(
-        text: '🐟',
-        style: TextStyle(fontSize: 34, fontFamily: 'Noto Color Emoji'),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    tp.paint(canvas, Offset(mx - tp.width / 2, my - tp.height / 2));
+    canvas.save();
+    canvas.translate(mx, my);
+    canvas.rotate(markerAngle + start);
+    final ink = Paint()..color = FlatColors.ink..style = PaintingStyle.stroke..strokeWidth = 2.5;
+    final tail = Path()..moveTo(-8, 0)..lineTo(-22, -9)..lineTo(-22, 9)..close();
+    canvas.drawPath(tail, Paint()..color = const Color(0xFFFFB02E));
+    canvas.drawPath(tail, ink);
+    canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: 38, height: 24), Paint()..color = const Color(0xFFFFB02E));
+    canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: 38, height: 24), ink);
+    canvas.drawCircle(const Offset(8, -3), 3, Paint()..color = FlatColors.ink);
+    canvas.restore();
   }
 
   @override
-  bool shouldRepaint(covariant _RingPainter oldDelegate) =>
-      oldDelegate.markerAngle != markerAngle ||
-      oldDelegate.players != players ||
-      oldDelegate.startAngle != startAngle;
+  bool shouldRepaint(covariant _RingPainter old) => old.markerAngle != markerAngle || old.players != players || old.startAngle != startAngle;
 }

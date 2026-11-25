@@ -205,10 +205,13 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
                   height: ph,
                   child: Stack(children: [
                     Positioned.fill(child: CustomPaint(painter: _CoinPainter(_match, _colors, _humans))),
-                    for (var s = 0; s < _humans; s++)
+                    for (var s = 0; s < _match.seats; s++)
                       Align(
                         alignment: _corner(s),
-                        child: Padding(padding: const EdgeInsets.all(5), child: _pad(s)),
+                        child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: s < _humans ? _pad(s) : IgnorePointer(child: Opacity(opacity: 0.6, child: _pad(s))),
+                          ),
                       ),
                   ]),
                 ),
@@ -269,21 +272,6 @@ class _CoinPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     )..layout();
     clk.paint(canvas, Offset((size.width - clk.width) / 2, 8));
-    // score pills in the middle of each side
-    for (var i = 0; i < m.seats; i++) {
-      final tp = TextPainter(
-        text: TextSpan(
-          text: 'لاعب ${i + 1}: ${m.scores[i]}',
-          style: flatCairo(fontSize: 14, fontWeight: FontWeight.w900, color: FlatColors.ink),
-        ),
-        textDirection: TextDirection.rtl,
-      )..layout();
-      final lx = CoinGrabMatch.bases[i][0] * k;
-      final ly = CoinGrabMatch.bases[i][1] * k;
-      final dx = lx < k / 2 ? 80.0 : size.width - 80 - tp.width;
-      final dy = ly < size.height / 2 ? 10.0 : size.height - 28.0;
-      tp.paint(canvas, Offset(dx, dy));
-    }
     canvas.restore();
     canvas.drawRRect(rr, Paint()..color = FlatColors.border..style = PaintingStyle.stroke..strokeWidth = 3);
   }

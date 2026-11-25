@@ -69,7 +69,12 @@ class CoinGrabMatch {
     final toCentre = atan2(arenaH / 2 - b[1], 0.5 - b[0]);
     final a = toCentre + (pi / 2.2) * sin(2 * pi * t / 2.6 + seat * 1.1);
     final r = 0.81 + 0.69 * sin(2 * pi * t / 3.4 + seat * 2.1 - pi / 2);
-    return (x: b[0] + r * cos(a), y: b[1] + r * sin(a));
+    // keep the tip on screen (clamped); coins are inside the clamp box so
+    // every coin is still hit by the unclamped part of the ray
+    return (
+      x: (b[0] + r * cos(a)).clamp(0.04, 0.96).toDouble(),
+      y: (b[1] + r * sin(a)).clamp(0.04, arenaH - 0.04).toDouble(),
+    );
   }
 
   ({double x, double y}) tip(int seat) => tipAt(seat, time);

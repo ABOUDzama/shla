@@ -130,7 +130,7 @@ void main() {
 
   testWidgets('proof: catch spinning ring 4p', (tester) async {
     await prep(tester, const CatchGame(randomSeed: 7));
-    await tester.tap(find.text('4'));
+    await tester.tap(find.text('4 لاعبين'));
     await tester.pump(const Duration(milliseconds: 900));
     await tester.pump(const Duration(seconds: 1));
     await snap(tester, 'catch_spin_4p');
