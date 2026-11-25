@@ -31,6 +31,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'اقطفها': [2, 3, 4],
     'سباق الدوس': [2, 3, 4],
     'كورة اللمسة': [2, 3, 4],
+    'جري الفراخ': [1, 2, 3, 4],
   };
 
   /// Original illustrated covers (drawn in-house). Cards with a cover show
@@ -62,6 +63,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'اقطفها': '🐟',
     'سباق الدوس': '👟',
     'كورة اللمسة': '⚽',
+    'جري الفراخ': '🐔',
   };
 
   @override

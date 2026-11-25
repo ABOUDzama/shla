@@ -38,6 +38,7 @@ import '../games/offline/never_have_i_game.dart';
 import '../games/offline/proverb_game.dart';
 import '../games/offline/reaction_game.dart';
 import '../games/offline/snake_arena_game.dart';
+import '../games/offline/chicken_run_game.dart';
 import '../games/offline/tank_battle_game.dart';
 import '../games/offline/tug_of_war_game.dart';
 import '../games/offline/snow_brawl_game.dart';
@@ -351,6 +352,15 @@ class GameRegistry {
       icon: Icons.grid_on,
       color: FunkyColors.lime,
       screen: WhackMoleGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'جري الفراخ',
+      description: 'اقلب الجاذبية بدوسة واحدة وانط فوق الحفر! آخر فرخة واقفة تكسب',
+      icon: Icons.flutter_dash,
+      color: FunkyColors.amber,
+      screen: ChickenRunGame(),
       badge: 'جديد',
       arcade1234: true,
     ),
