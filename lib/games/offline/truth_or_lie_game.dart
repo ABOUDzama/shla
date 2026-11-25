@@ -229,7 +229,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
 
     return OfflineGameScaffold(
       title: '🤔 حقيقة أو هبد',
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: FunkyColors.cyan,
       showAi: false,
       actions: [
         IconButton(
@@ -286,7 +286,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                     Expanded(
                       child: _ActionButton(
                         label: 'حقـيقة',
-                        color: const Color(0xFF14B8A6),
+                        color: FunkyColors.mint,
                         onPressed: () => _handleAnswer(true),
                         icon: Icons.check_circle_outline,
                       ),
@@ -295,7 +295,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                     Expanded(
                       child: _ActionButton(
                         label: 'هبـد',
-                        color: const Color(0xFFF43F5E),
+                        color: FunkyColors.coral,
                         onPressed: () => _handleAnswer(false),
                         icon: Icons.cancel_outlined,
                       ),
@@ -370,7 +370,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                       icon: const Icon(Icons.arrow_forward_rounded),
                       label: const Text('اللي بعده'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6366F1),
+                        backgroundColor: FunkyColors.violet,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,

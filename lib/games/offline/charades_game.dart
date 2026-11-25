@@ -848,7 +848,7 @@ class _CharadesGameState extends State<CharadesGame> {
                                 style: GoogleFonts.cairo(
                                   fontSize: 38,
                                   fontWeight: FontWeight.w900,
-                                  color: const Color(0xFF1A237E),
+                                  color: FunkyColors.card,
                                 ),
                                 textAlign: TextAlign.center,
                               ),

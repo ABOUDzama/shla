@@ -256,7 +256,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
             Text(
               _players[_currentPlayer],
               style: GoogleFonts.cairo(
-                color: const Color(0xFFCE93D8),
+                color: FunkyColors.coral,
                 fontSize: 34,
                 fontWeight: FontWeight.w900,
               ),
@@ -288,9 +288,9 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
           margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFF6A1B9A).withValues(alpha: 0.35),
+            color: FunkyColors.coral.withValues(alpha: 0.25),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFFBA68C8).withValues(alpha: 0.4)),
+            border: Border.all(color: FunkyColors.coral.withValues(alpha: 0.6)),
           ),
           child: Row(
             children: [

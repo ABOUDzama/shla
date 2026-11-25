@@ -315,11 +315,11 @@ class _GobbletGameState extends State<GobbletGame> {
     }
 
     Color baseColor = piece.player == 1
-        ? const Color(0xFFE53935)
-        : const Color(0xFF1E88E5);
+        ? FunkyColors.coral
+        : FunkyColors.sky;
     Color topColor = piece.player == 1
-        ? const Color(0xFFFF8A80)
-        : const Color(0xFF82B1FF);
+        ? FunkyColors.pink
+        : FunkyColors.cyan;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),

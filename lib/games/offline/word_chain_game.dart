@@ -816,7 +816,7 @@ class _WordChainGameState extends State<WordChainGame> {
                                 style: GoogleFonts.cairo(
                                   fontSize: 40,
                                   fontWeight: FontWeight.w900,
-                                  color: const Color(0xFF004D40),
+                                  color: FunkyColors.lime,
                                 ),
                                 textAlign: TextAlign.center,
                               ),

@@ -345,7 +345,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFF1B5E20),
+                            foregroundColor: FunkyColors.card,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 40,
                               vertical: 16,

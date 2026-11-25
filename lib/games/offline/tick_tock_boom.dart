@@ -564,7 +564,7 @@ class _TickTockBoomState extends State<TickTockBoom>
 
     return OfflineGameScaffold(
       title: '💣 قنبلة الحروف',
-      backgroundColor: hasExploded ? Colors.black : const Color(0xFFC62828),
+      backgroundColor: hasExploded ? Colors.black : FunkyColors.coral,
       showAi: false,
       actions: [
         IconButton(
@@ -593,7 +593,7 @@ class _TickTockBoomState extends State<TickTockBoom>
                   onPressed: startGame,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFFC62828),
+                    foregroundColor: FunkyColors.card,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
                       vertical: 20,
@@ -646,7 +646,7 @@ class _TickTockBoomState extends State<TickTockBoom>
                             style: const TextStyle(
                               fontSize: 100,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFFC62828),
+                              color: FunkyColors.coral,
                             ),
                           ),
                         ),

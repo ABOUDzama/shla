@@ -346,7 +346,7 @@ class _QuizGameState extends State<QuizGame> {
                             onPressed: _openPlayerSelection,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF0F172A),
+                              foregroundColor: FunkyColors.card,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),

@@ -234,7 +234,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFAD1457), Color(0xFF880E4F)],
+            colors: [FunkyColors.magenta, FunkyColors.pink],
           ),
         ),
         child: SafeArea(
@@ -338,7 +338,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
             const Icon(
               Icons.help_outline_rounded,
               size: 80,
-              color: Color(0xFFAD1457),
+              color: FunkyColors.magenta,
             ),
             const SizedBox(height: 20),
             Text(
@@ -362,7 +362,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
               style: GoogleFonts.cairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
-                color: const Color(0xFF880E4F),
+                color: FunkyColors.pink,
               ),
               textAlign: TextAlign.center,
             ),

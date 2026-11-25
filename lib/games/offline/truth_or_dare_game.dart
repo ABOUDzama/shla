@@ -825,7 +825,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFFB71C1C),
+                            foregroundColor: FunkyColors.magenta,
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
