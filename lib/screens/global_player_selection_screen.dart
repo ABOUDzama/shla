@@ -308,7 +308,9 @@ class _GlobalPlayerSelectionScreenState
                                     color: isSelected ? FunkyColors.magenta.withAlpha(120) : Colors.white.withAlpha(10),
                                   ),
                                 ),
-                                child: ListTile(
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: ListTile(
                                   onTap: () => _toggleSelection(name),
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                                   leading: Container(
@@ -341,6 +343,7 @@ class _GlobalPlayerSelectionScreenState
                                         icon: const Icon(Icons.close, color: Colors.white24, size: 18),
                                         onPressed: () => _removePlayer(player),
                                       ),
+                                ),
                                 ),
                               )
                               .animate()

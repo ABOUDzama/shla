@@ -77,7 +77,6 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
         gameTitle: '🧩 إيموجي إيه؟',
         minPlayers: 2,
         onStartGame: (ctx, selected) {
-          Navigator.pop(ctx);
           _start(selected);
         },
       );

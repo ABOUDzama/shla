@@ -105,7 +105,6 @@ class _MemoryGameState extends State<MemoryGame> {
         gameTitle: '🧠 ذاكرة الشلة',
         minPlayers: 1,
         onStartGame: (ctx, selected) {
-          Navigator.pop(ctx);
           _start(selected);
         },
       );

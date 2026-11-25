@@ -68,7 +68,6 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
         gameTitle: '👉 مين فينا؟',
         minPlayers: 2,
         onStartGame: (ctx, selected) {
-          Navigator.pop(ctx);
           _start(selected);
         },
       );
