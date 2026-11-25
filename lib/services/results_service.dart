@@ -7,16 +7,18 @@ class MatchResult {
   final String winner;
   final List<String> players;
   final int at; // epoch ms
-  const MatchResult(this.game, this.winner, this.players, this.at);
+  final String id; // stable round identity
+  const MatchResult(this.game, this.winner, this.players, this.at, [this.id = '']);
 
   Map<String, dynamic> toJson() =>
-      {'g': game, 'w': winner, 'p': players, 't': at};
+      {'g': game, 'w': winner, 'p': players, 't': at, 'i': id};
 
   static MatchResult? fromJson(dynamic j) {
     try {
       final m = j as Map;
       return MatchResult(m['g'] as String, m['w'] as String,
-          List<String>.from(m['p'] as List), m['t'] as int);
+          List<String>.from(m['p'] as List), m['t'] as int,
+          (m['i'] as String?) ?? '');
     } catch (_) {
       return null;
     }
@@ -32,7 +34,13 @@ class ResultsService extends ChangeNotifier {
 
   static const _key = 'match_results_v1';
   static const maxEntries = 300;
-  static const _dedupeMs = 8000;
+  static int _seq = 0;
+
+  /// Fresh identity for one finished round. Callers create it once when a
+  /// round ends; recording the same id twice is ignored (exactly once),
+  /// while a quick rematch has a new id and is always counted.
+  static String newRoundId() =>
+      '${DateTime.now().microsecondsSinceEpoch}-${_seq++}';
 
   /// Winner labels that are anonymous seats ("لاعب 2"), not profiles.
   static bool isSeat(String name) => name.startsWith('لاعب ');
@@ -50,23 +58,20 @@ class ResultsService extends ChangeNotifier {
     }
   }
 
-  /// Returns false when ignored as a duplicate of the same result just now.
+  /// Returns false when ignored (blank winner or this round id already saved).
   Future<bool> recordWin({
     required String game,
     required String winner,
     List<String> players = const [],
+    String? roundId,
     DateTime? now,
   }) async {
     if (winner.trim().isEmpty) return false;
     final t = (now ?? DateTime.now()).millisecondsSinceEpoch;
     final all = await load();
-    if (all.isNotEmpty) {
-      final last = all.last;
-      if (last.game == game && last.winner == winner && t - last.at < _dedupeMs) {
-        return false;
-      }
-    }
-    all.add(MatchResult(game, winner, players, t));
+    final id = roundId ?? newRoundId();
+    if (all.any((r) => r.id == id)) return false;
+    all.add(MatchResult(game, winner, players, t, id));
     final trimmed =
         all.length > maxEntries ? all.sublist(all.length - maxEntries) : all;
     try {
