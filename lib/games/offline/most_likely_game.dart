@@ -7,6 +7,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 import '../../data/most_likely_data.dart';
 
 /// مين فينا؟ — سؤال مضحك، الشلة تشاور على شخص، والمختار ياخد نقطة.
@@ -91,12 +92,12 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
                 const SizedBox(height: 16),
                 Text(
                   'المتهم الأول في الشلة:',
-                  style: FunkyText.title(size: 24, color: Colors.white),
+                  style: FunkyText.title(size: 24, color: FlatColors.ink),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   sorted.first['name'] as String,
-                  style: FunkyText.headline(size: 40, color: FunkyColors.lime),
+                  style: FunkyText.headline(size: 40, color: FlatColors.tilePastels[3]),
                 ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.3),
                 const SizedBox(height: 24),
                 ...sorted.map(
@@ -104,14 +105,14 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       '${p['name']} — ${p['score']} نقطة',
-                      style: FunkyText.body(size: 18, color: Colors.white),
+                      style: FunkyText.body(size: 18, color: FlatColors.ink),
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
                 FunkyButton(
           label: 'العب تاني 🔄',
-                  accent: FunkyColors.lime,
+                  accent: FlatColors.tilePastels[2],
                   onPressed: () => setState(() {
                     _started = false;
                     _showIntro = true;
@@ -136,13 +137,13 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
             children: [
               Text(
                 'الجولة ${_round + 1} من $totalRounds',
-                style: FunkyText.body(size: 16, color: Colors.white.withOpacity(0.7)),
+                style: FunkyText.body(size: 16, color: FlatColors.ink.withValues(alpha: 0.75)),
               ),
               const SizedBox(height: 12),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
-                decoration: FunkyDecor.glowCard(FunkyColors.lime),
+                decoration: FlatDecor.card(radius: 26),
                 child: Column(
                   children: [
                     const Text('👉', style: TextStyle(fontSize: 56)),
@@ -153,7 +154,7 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
                       style: GoogleFonts.cairo(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white,
+                        color: FlatColors.ink,
                         height: 1.5,
                       ),
                     ),
@@ -168,7 +169,7 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
               if (!_counted)
                 FunkyButton(
           label: 'عدّوا 3-2-1 وأشيروا! 👉',
-                  accent: FunkyColors.magenta,
+                  accent: FlatColors.tilePastels[5],
                   onPressed: () {
                     setState(() => _counted = true);
                     AudioService.playClick();
@@ -181,7 +182,7 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
                     children: [
                       Text(
                         'مين اختاروه؟ 👀',
-                        style: FunkyText.title(size: 20, color: FunkyColors.lime),
+                        style: FunkyText.title(size: 20, color: FlatColors.ink),
                       ),
                       const SizedBox(height: 12),
                       Expanded(
@@ -194,8 +195,8 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
                             return GestureDetector(
                               onTap: () => _pick(i),
                               child: Container(
-                                decoration: FunkyDecor.glowCard(
-                                  FunkyColors.accents[i % FunkyColors.accents.length],
+                                decoration: FlatDecor.tile(
+                                  FlatColors.tilePastels[i % FlatColors.tilePastels.length],
                                 ),
                                 child: Center(
                                   child: Text(

@@ -6,6 +6,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// مين قالها؟: each round one player secretly answers a fun question by
 /// picking 1 of 3 options. The group then sees the question and the answer
@@ -161,7 +162,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -171,13 +172,13 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                     child: Text(
                       '${p['name']}: ${p['score']}',
                       style: GoogleFonts.cairo(
-                          fontSize: 18, color: Colors.white70),
+                          fontSize: 18, color: FlatColors.ink.withValues(alpha: 0.75)),
                     ),
                   ),
                 const SizedBox(height: 32),
                 FunkyButton(
                   label: 'العب تاني',
-                  accent: FunkyColors.mint,
+                  accent: FlatColors.tilePastels[2],
                   icon: Icons.refresh_rounded,
                   onPressed: () => setState(() {
                     _started = false;
@@ -208,7 +209,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
               Text(
                 'الجولة ${_roundsPlayed + 1} من $_totalRounds',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(fontSize: 14, color: Colors.white60),
+                style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
               ),
               const SizedBox(height: 8),
               Text(
@@ -219,13 +220,13 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                 style: GoogleFonts.cairo(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: FlatColors.ink,
                 ),
               ),
               const SizedBox(height: 20),
               Expanded(
                 child: Container(
-                  decoration: FunkyDecor.glowCard(FunkyColors.mint, radius: 26),
+                  decoration: FlatDecor.card(radius: 26),
                   child: Center(
                     child: _questionRevealed
                         ? Padding(
@@ -239,7 +240,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                                   style: GoogleFonts.cairo(
                                     fontSize: 22,
                                     fontWeight: FontWeight.w900,
-                                    color: Colors.white,
+                                    color: FlatColors.ink,
                                   ),
                                 ),
                                 const SizedBox(height: 16),
@@ -248,7 +249,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                                     padding: const EdgeInsets.only(bottom: 10),
                                     child: FunkyButton(
                                       label: option,
-                                      accent: FunkyColors.mint,
+                                      accent: FlatColors.tilePastels[2],
                                       onPressed: () => _chooseAnswer(option),
                                     ),
                                   ),
@@ -256,7 +257,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                                 Text(
                                   'إجابتك سرية.. محدش يبص!',
                                   style: GoogleFonts.cairo(
-                                      fontSize: 13, color: Colors.white60),
+                                      fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                                 ),
                               ],
                             ),
@@ -271,7 +272,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                                     horizontal: 24),
                                 child: FunkyButton(
                                   label: 'شوف سؤالك',
-                                  accent: FunkyColors.mint,
+                                  accent: FlatColors.tilePastels[2],
                                   icon: Icons.visibility_rounded,
                                   onPressed: () => setState(
                                       () => _questionRevealed = true),
@@ -283,7 +284,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cairo(
-                                    fontSize: 13, color: Colors.white60),
+                                    fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                               ),
                             ],
                           ),
@@ -308,7 +309,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
           children: [
             Container(
               padding: const EdgeInsets.all(20),
-              decoration: FunkyDecor.glowCard(FunkyColors.cyan, radius: 24),
+              decoration: FlatDecor.card(radius: 24),
               child: Column(
                 children: [
                   Text(
@@ -317,7 +318,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                     style: GoogleFonts.cairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: FlatColors.ink,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -327,7 +328,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                     style: GoogleFonts.cairo(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: FunkyColors.lime,
+                      color: FlatColors.tilePastels[2],
                     ),
                   ),
                 ],
@@ -340,7 +341,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
               style: GoogleFonts.cairo(
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ),
             ),
             const SizedBox(height: 12),
@@ -353,7 +354,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: FunkyButton(
                         label: p['name'] as String,
-                        accent: FunkyColors.coral,
+                        accent: FlatColors.tilePastels[3],
                         icon: Icons.record_voice_over_rounded,
                         onPressed: () =>
                             _showReveal(context, p['name'] as String),
@@ -373,7 +374,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
     final identified = accusedName == answererName;
     showModalBottomSheet(
       context: context,
-      backgroundColor: FunkyColors.card,
+      backgroundColor: Colors.white,
       isDismissible: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -391,7 +392,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                 style: GoogleFonts.cairo(
                   fontSize: 26,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: FlatColors.ink,
                 ),
               ),
               const SizedBox(height: 12),
@@ -401,14 +402,14 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                     : 'اللي جاوب كان $answererName مش $accusedName!',
                 textAlign: TextAlign.center,
                 style:
-                    GoogleFonts.cairo(fontSize: 16, color: Colors.white70),
+                    GoogleFonts.cairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)),
               ),
               const SizedBox(height: 20),
               FunkyButton(
                 label: _roundsPlayed + 1 < _totalRounds
                     ? 'الجولة اللي بعدها'
                     : 'النتيجة النهائية',
-                accent: FunkyColors.mint,
+                accent: FlatColors.tilePastels[2],
                 icon: Icons.arrow_forward_rounded,
                 onPressed: () {
                   Navigator.pop(sheetCtx);

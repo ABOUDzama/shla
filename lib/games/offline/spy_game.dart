@@ -6,6 +6,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// الجاسوس (Spy): everyone secretly sees the same location except one spy,
 /// who sees only "you are the spy". Players question each other aloud, then
@@ -145,7 +146,7 @@ class _SpyGameState extends State<SpyGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -155,13 +156,13 @@ class _SpyGameState extends State<SpyGame> {
                     child: Text(
                       '${p['name']}: ${p['score']}',
                       style: GoogleFonts.cairo(
-                          fontSize: 18, color: Colors.white70),
+                          fontSize: 18, color: FlatColors.ink.withValues(alpha: 0.75)),
                     ),
                   ),
                 const SizedBox(height: 32),
                 FunkyButton(
                   label: 'العب تاني',
-                  accent: FunkyColors.violet,
+                  accent: FlatColors.tilePastels[0],
                   icon: Icons.refresh_rounded,
                   onPressed: () => setState(() {
                     _started = false;
@@ -193,7 +194,7 @@ class _SpyGameState extends State<SpyGame> {
               Text(
                 'الجولة ${_roundsPlayed + 1} من $_totalRounds',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(fontSize: 14, color: Colors.white60),
+                style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.75)),
               ),
               const SizedBox(height: 8),
               Text(
@@ -204,14 +205,13 @@ class _SpyGameState extends State<SpyGame> {
                 style: GoogleFonts.cairo(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: FlatColors.ink,
                 ),
               ),
               const SizedBox(height: 20),
               Expanded(
                 child: Container(
-                  decoration:
-                      FunkyDecor.glowCard(FunkyColors.violet, radius: 26),
+                  decoration: FlatDecor.card(radius: 26),
                   child: Center(
                     child: _cardRevealed
                         ? Column(
@@ -229,8 +229,8 @@ class _SpyGameState extends State<SpyGame> {
                                   fontSize: 34,
                                   fontWeight: FontWeight.w900,
                                   color: isSpy
-                                      ? FunkyColors.coral
-                                      : Colors.white,
+                                      ? FlatColors.mafia
+                                      : FlatColors.ink,
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -240,7 +240,7 @@ class _SpyGameState extends State<SpyGame> {
                                     : 'احفظ المكان كويس.. وفيه جاسوس بينكم ميعرفوش',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.cairo(
-                                    fontSize: 14, color: Colors.white60),
+                                    fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
                               ),
                             ],
                           ).animate().scale(duration: 300.ms)
@@ -254,7 +254,7 @@ class _SpyGameState extends State<SpyGame> {
                                     horizontal: 24),
                                 child: FunkyButton(
                                   label: 'شوف كارتك',
-                                  accent: FunkyColors.violet,
+                                  accent: FlatColors.tilePastels[0],
                                   icon: Icons.visibility_rounded,
                                   onPressed: () =>
                                       setState(() => _cardRevealed = true),
@@ -266,7 +266,7 @@ class _SpyGameState extends State<SpyGame> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cairo(
-                                    fontSize: 13, color: Colors.white60),
+                                    fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                               ),
                             ],
                           ),
@@ -279,7 +279,7 @@ class _SpyGameState extends State<SpyGame> {
                   label: _dealIndex == _players.length - 1
                       ? 'ابدأوا الأسئلة'
                       : 'خبّي وادّي للي بعده',
-                  accent: FunkyColors.mint,
+                  accent: FlatColors.tilePastels[2],
                   icon: Icons.arrow_forward_rounded,
                   onPressed: () => setState(() {
                     if (_dealIndex == _players.length - 1) {
@@ -309,7 +309,7 @@ class _SpyGameState extends State<SpyGame> {
             Text(
               'سألوا بعض عن المكان.. ولما تتفقوا، صوّتوا على الجاسوس!',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+              style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -321,7 +321,7 @@ class _SpyGameState extends State<SpyGame> {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: FunkyButton(
                         label: p['name'] as String,
-                        accent: FunkyColors.coral,
+                        accent: FlatColors.tilePastels[3],
                         icon: Icons.person_search_rounded,
                         onPressed: () =>
                             _showReveal(context, p['name'] as String),
@@ -341,7 +341,7 @@ class _SpyGameState extends State<SpyGame> {
     final caught = accusedName == spyName;
     showModalBottomSheet(
       context: context,
-      backgroundColor: FunkyColors.card,
+      backgroundColor: Colors.white,
       isDismissible: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -359,7 +359,7 @@ class _SpyGameState extends State<SpyGame> {
                 style: GoogleFonts.cairo(
                   fontSize: 26,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: FlatColors.ink,
                 ),
               ),
               const SizedBox(height: 12),
@@ -369,14 +369,14 @@ class _SpyGameState extends State<SpyGame> {
                     : 'الجاسوس الحقيقي هو $spyName.. والمكان كان: $_location',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.cairo(
-                    fontSize: 16, color: Colors.white70),
+                    fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)),
               ),
               const SizedBox(height: 20),
               FunkyButton(
                 label: _roundsPlayed + 1 < _totalRounds
                     ? 'الجولة اللي بعدها'
                     : 'النتيجة النهائية',
-                accent: FunkyColors.violet,
+                accent: FlatColors.tilePastels[0],
                 icon: Icons.arrow_forward_rounded,
                 onPressed: () {
                   Navigator.pop(sheetCtx);

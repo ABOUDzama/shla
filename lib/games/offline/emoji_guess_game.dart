@@ -7,6 +7,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 import '../../data/emoji_guess_data.dart';
 
 /// إيموجي إيه؟ — مجموعة إيموجي على الشاشة، والشلة تخمّن الكلمة أو الموقف.
@@ -100,7 +101,7 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
                 const SizedBox(height: 16),
                 Text(
                   'عبقري الإيموجي: ${sorted.first['name']}',
-                  style: FunkyText.title(size: 26, color: FunkyColors.amber),
+                  style: FunkyText.title(size: 26, color: FlatColors.ink),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
@@ -109,14 +110,14 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       '${p['name']} — ${p['score']} نقطة',
-                      style: FunkyText.body(size: 18, color: Colors.white),
+                      style: FunkyText.body(size: 18, color: FlatColors.ink),
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
                 FunkyButton(
           label: 'العب تاني 🔄',
-                  accent: FunkyColors.amber,
+                  accent: FlatColors.tilePastels[4],
                   onPressed: () => setState(() {
                     _started = false;
                     _showIntro = true;
@@ -142,22 +143,22 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
               Text(
                 'الجولة ${_round + 1} من $totalRounds',
                 style: FunkyText.body(
-                    size: 16, color: Colors.white.withOpacity(0.7)),
+                    size: 16, color: FlatColors.ink.withValues(alpha: 0.75)),
               ),
               const SizedBox(height: 12),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
-                decoration: FunkyDecor.glowCard(FunkyColors.amber),
+                decoration: FlatDecor.card(radius: 26),
                 child: Column(
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
-                      decoration: FunkyDecor.pill(FunkyColors.sky),
+                      decoration: FlatDecor.tag(),
                       child: Text(
                         card.category,
-                        style: FunkyText.body(size: 15, color: Colors.white),
+                        style: FunkyText.body(size: 15, color: FlatColors.tilePastels[1]),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -177,7 +178,7 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
                         style: GoogleFonts.cairo(
                           fontSize: 28,
                           fontWeight: FontWeight.w900,
-                          color: FunkyColors.mint,
+                          color: FlatColors.tilePastels[2],
                         ),
                       ).animate().fadeIn().slideY(begin: 0.3),
                   ],
@@ -187,7 +188,7 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
               if (!_revealed) ...[
                 Text(
                   'مين خمّن صح؟ اضغط على اسمه 👇',
-                  style: FunkyText.title(size: 18, color: FunkyColors.amber),
+                  style: FunkyText.title(size: 18, color: FlatColors.ink),
                 ),
                 const SizedBox(height: 12),
                 Expanded(
@@ -200,8 +201,8 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
                       return GestureDetector(
                         onTap: () => _award(i),
                         child: Container(
-                          decoration: FunkyDecor.glowCard(
-                            FunkyColors.accents[i % FunkyColors.accents.length],
+                          decoration: FlatDecor.tile(
+                            FlatColors.tilePastels[i % FlatColors.tilePastels.length],
                           ),
                           child: Center(
                             child: Text(
@@ -217,7 +218,7 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
                 ),
                 FunkyButton(
           label: 'محدش عرف 😅 اعرض الإجابة',
-                  accent: FunkyColors.coral,
+                  accent: FlatColors.tilePastels[3],
                   onPressed: () {
                     setState(() => _revealed = true);
                     AudioService.playFailure();
@@ -226,7 +227,7 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
               ] else
                 FunkyButton(
           label: 'الكارت اللي بعده ⏭️',
-                  accent: FunkyColors.amber,
+                  accent: FlatColors.tilePastels[4],
                   onPressed: _next,
                 ),
               const SizedBox(height: 8),

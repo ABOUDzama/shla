@@ -6,6 +6,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// أندر كافر (Undercover): word social-deduction, pass-and-play.
 /// Rules grounded in the official Undercover rules (yanstarstudio.com):
@@ -343,13 +344,13 @@ class _UndercoverGameState extends State<UndercoverGame> {
           style: GoogleFonts.cairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
-            color: Colors.white,
+            color: FlatColors.ink,
           ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
         ),
         const SizedBox(height: 20),
         Expanded(
           child: Container(
-            decoration: FunkyDecor.glowCard(FunkyColors.violet, radius: 26),
+            decoration: FlatDecor.card(radius: 26),
             child: Center(
               child: _cardRevealed
                   ? Padding(
@@ -364,7 +365,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.cairo(
                               fontSize: 18,
-                              color: Colors.white70,
+                              color: FlatColors.ink.withValues(alpha: 0.75),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -375,7 +376,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                               style: GoogleFonts.cairo(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.white,
+                                color: FlatColors.ink,
                               ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
                             )
                           else
@@ -387,7 +388,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                               style: GoogleFonts.cairo(
                                 fontSize: 40,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.white,
+                                color: FlatColors.ink,
                               ),
                             ).animate().scale(duration: 300.ms),
                         ],
@@ -402,7 +403,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                           padding: const EdgeInsets.symmetric(horizontal: 24),
                           child: FunkyButton(
                             label: 'شوف كلمتك يا $name',
-                            accent: FunkyColors.violet,
+                            accent: FlatColors.tilePastels[0],
                             icon: Icons.visibility_rounded,
                             onPressed: () =>
                                 setState(() => _cardRevealed = true),
@@ -414,7 +415,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.cairo(
-                              fontSize: 13, color: Colors.white60),
+                              fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                         ),
                       ],
                     ),
@@ -426,7 +427,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
           label: _cardRevealed
               ? (_dealIndex + 1 < _alive.length ? 'اللاعب اللي بعده' : 'ابدأ الوصف')
               : 'استنى.. متبصش 👀',
-          accent: _cardRevealed ? FunkyColors.mint : FunkyColors.coral,
+          accent: _cardRevealed ? FlatColors.tilePastels[2] : FlatColors.tilePastels[3],
           icon: _cardRevealed ? Icons.arrow_forward_rounded : Icons.block,
           onPressed: _cardRevealed
               ? () {
@@ -457,7 +458,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
           textAlign: TextAlign.center,
           style: GoogleFonts.cairo(
             fontSize: 14,
-            color: Colors.white60,
+            color: FlatColors.ink.withValues(alpha: 0.7),
           ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
         ),
         const SizedBox(height: 4),
@@ -467,7 +468,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
           style: GoogleFonts.cairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
-            color: Colors.white,
+            color: FlatColors.ink,
           ),
         ),
         const SizedBox(height: 16),
@@ -482,8 +483,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  decoration:
-                      FunkyDecor.glowCard(FunkyColors.coral, radius: 20),
+                  decoration: FlatDecor.card(radius: 20),
                   child: Text(
                     candidate,
                     textAlign: TextAlign.center,
@@ -492,7 +492,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
                     style: GoogleFonts.cairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: FlatColors.ink,
                     ),
                   ),
                 ),
@@ -519,7 +519,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
             Text(
               'اتصوّت عليه! ⚖️',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 16, color: Colors.white70).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+              style: GoogleFonts.cairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 12),
             Text(
@@ -530,7 +530,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
               style: GoogleFonts.cairo(
                 fontSize: 34,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ),
             ).animate().scale(duration: 300.ms),
             const SizedBox(height: 8),
@@ -540,13 +540,13 @@ class _UndercoverGameState extends State<UndercoverGame> {
               style: GoogleFonts.cairo(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: FlatColors.ink,
               ),
             ),
             const SizedBox(height: 32),
             FunkyButton(
               label: 'كمّلوا',
-              accent: FunkyColors.amber,
+              accent: FlatColors.tilePastels[4],
               icon: Icons.arrow_forward_rounded,
               onPressed: () {
                 if (_winnerSide == null) _nextRound();
@@ -577,14 +577,14 @@ class _UndercoverGameState extends State<UndercoverGame> {
               style: GoogleFonts.cairo(
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 8),
             Text(
               'لو خمّن كلمة المدنيين يكسب فورًا.. اكتب تخمينك:',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+              style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
             ),
             const SizedBox(height: 24),
             TextField(
@@ -593,13 +593,13 @@ class _UndercoverGameState extends State<UndercoverGame> {
               style: GoogleFonts.cairo(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: FlatColors.ink,
               ),
               decoration: InputDecoration(
                 hintText: 'كلمة المدنيين...',
-                hintStyle: GoogleFonts.cairo(color: Colors.white38),
+                hintStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.45)),
                 filled: true,
-                fillColor: FunkyColors.card,
+                fillColor: FlatColors.bg,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(18),
                   borderSide: BorderSide.none,
@@ -610,7 +610,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
             const SizedBox(height: 16),
             FunkyButton(
               label: 'خمّن!',
-              accent: FunkyColors.amber,
+              accent: FlatColors.tilePastels[4],
               icon: Icons.check_rounded,
               onPressed: () => _mrWhiteGuess(_guessController.text),
             ),
@@ -643,14 +643,14 @@ class _UndercoverGameState extends State<UndercoverGame> {
               style: GoogleFonts.cairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 8),
             Text(
               'كلمة المدنيين كانت: $_civWord',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+              style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
             ),
             const SizedBox(height: 20),
             for (final n in sorted)
@@ -660,13 +660,13 @@ class _UndercoverGameState extends State<UndercoverGame> {
                   '$n (${_roleText(_roles[n]!)}): ${_scores[n]}',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.cairo(
-                      fontSize: 16, color: Colors.white70),
+                      fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
               ),
             const SizedBox(height: 24),
             FunkyButton(
               label: 'العب تاني',
-              accent: FunkyColors.mint,
+              accent: FlatColors.tilePastels[2],
               icon: Icons.refresh_rounded,
               onPressed: () => setState(() {
                 _started = false;
