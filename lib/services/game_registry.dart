@@ -27,6 +27,7 @@ import '../games/offline/most_likely_game.dart';
 import '../games/offline/taboo_game.dart';
 import '../games/offline/memory_game.dart';
 import '../games/offline/emoji_guess_game.dart';
+import '../games/offline/password_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -177,7 +178,6 @@ class GameRegistry {
       icon: Icons.how_to_vote_rounded,
       color: FunkyColors.lime,
       screen: MostLikelyGame(),
-      badge: 'جديد',
     ),
     GameModel(
       title: 'كلمات ممنوعة',
@@ -185,7 +185,6 @@ class GameRegistry {
       icon: Icons.block_rounded,
       color: FunkyColors.coral,
       screen: TabooGame(),
-      badge: 'جديد',
     ),
     GameModel(
       title: 'ذاكرة الشلة',
@@ -193,6 +192,13 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'كلمة السر',
+      description: 'تلميح بكلمة واحدة والباقي يخمنوا كلمة السر',
+      icon: Icons.key_rounded,
+      color: FunkyColors.amber,
+      screen: PasswordGame(),
       badge: 'جديد',
     ),
     GameModel(
@@ -201,7 +207,6 @@ class GameRegistry {
       icon: Icons.emoji_emotions_rounded,
       color: FunkyColors.amber,
       screen: EmojiGuessGame(),
-      badge: 'جديد',
     ),
   ];
 }

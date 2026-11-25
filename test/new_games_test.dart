@@ -62,11 +62,12 @@ void main() {
   });
 
   group('Registry', () {
-    test('has 24 games and 4 new-badge games', () {
-      expect(GameRegistry.games.length, 24);
+    test('has 25 games and 1 new-badge game', () {
+      expect(GameRegistry.games.length, 25);
       final newOnes =
           GameRegistry.games.where((g) => g.badge == 'جديد').toList();
-      expect(newOnes.length, 4);
+      expect(newOnes.length, 1);
+      expect(newOnes.first.title, 'كلمة السر');
     });
     test('game titles are unique', () {
       final titles = GameRegistry.games.map((g) => g.title).toList();

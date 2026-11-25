@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/services/settings_service.dart';
 import 'package:shella/games/offline/memory_game.dart';
+import 'package:shella/games/offline/password_game.dart';
 import 'package:shella/games/offline/most_likely_game.dart';
 import 'package:shella/games/offline/taboo_game.dart';
 import 'package:shella/games/offline/emoji_guess_game.dart';
@@ -434,6 +435,40 @@ void main() {
       // Wrong: no points, back to an unanswered card afterwards.
       await tapText(tester, 'ما عرفش ❌');
       expect(find.text('اكشف الجواب'), findsOneWidget);
+      await flushFontCallbacks(tester);
+    });
+  });
+
+  group('password: full 2-round match', () {
+    testWidgets('reveal, correct guess scoring, no-guess, winner, replay',
+        (tester) async {
+      await pumpGame(tester, const PasswordGame());
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester);
+
+      // Round 1: أحمد is clue-giver (first player).
+      expect(find.text('الجولة 1 من 2'), findsOneWidget);
+      expect(find.textContaining('صاحب كلمة السر: أحمد'), findsOneWidget);
+      await tapText(tester, 'شوف الكلمة');
+      expect(find.text('خمنوها صح'), findsOneWidget);
+
+      await tapText(tester, 'خمنوها صح');
+      expect(find.text('مين اللي خمن صح؟'), findsOneWidget);
+      await tapText(tester, 'منى');
+
+      // Round 2: منى is clue-giver; nobody guesses.
+      expect(find.text('الجولة 2 من 2'), findsOneWidget);
+      expect(find.textContaining('صاحب كلمة السر: منى'), findsOneWidget);
+      await tapText(tester, 'محصلش تخمين');
+
+      // Final: منى wins 2-1 (guesser +2, clue-giver أحمد +1).
+      expect(find.text('الفايز: منى'), findsOneWidget);
+      expect(find.text('منى: 2'), findsOneWidget);
+      expect(find.text('أحمد: 1'), findsOneWidget);
+
+      await tapText(tester, 'العب تاني');
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
       await flushFontCallbacks(tester);
     });
   });
