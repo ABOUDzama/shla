@@ -25,7 +25,8 @@ void main() {
   });
 
   Future<void> open(WidgetTester tester) async {
-    reactionNow = () => tester.binding.clock.now();
+    final base = tester.binding.clock.now();
+    reactionNow = () => tester.binding.clock.now().difference(base);
     tester.view.physicalSize = const Size(360, 640);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
@@ -142,6 +143,8 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('zone_0')));
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.textContaining('ms'), findsOneWidget);
+    final shown = RegExp(r'(\d+) ms').firstMatch(tester.widgetList<Text>(find.textContaining('ms')).first.data!)!.group(1)!;
+    expect(int.parse(shown), inInclusiveRange(320, 420), reason: 'controlled 320ms delay plus pump granularity');
     final rec = await tester.runAsync(() => ResultsService.instance.load());
     expect(rec, isEmpty);
     await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/reaction_practice.png'));

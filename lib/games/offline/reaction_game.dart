@@ -50,8 +50,10 @@ class ReactionMatch {
   }
 }
 
-/// Clock used to time reactions; tests replace it with the fake test clock.
-DateTime Function() reactionNow = DateTime.now;
+/// Monotonic clock (Stopwatch) used to time reactions; tests replace it with
+/// the fake test clock so a controlled delay reports that delay.
+final Stopwatch _mono = Stopwatch()..start();
+Duration Function() reactionNow = () => _mono.elapsed;
 
 class ReactionGame extends StatefulWidget {
   const ReactionGame({super.key, this.randomSeed});
@@ -79,7 +81,7 @@ class _ReactionGameState extends State<ReactionGame> {
   int _humans = 2;
   bool _practice = false;
   final Set<int> _botSeats = {};
-  DateTime? _greenAt;
+  Duration? _greenAt;
   int? _lastWinner;
   bool _lastFalse = false;
   int? _lastMs;
@@ -162,7 +164,7 @@ class _ReactionGameState extends State<ReactionGame> {
       _lastFalse = outcome == ReactionOutcome.falseStart;
       _lastMs = _greenAt == null || _lastFalse
           ? null
-          : reactionNow().difference(_greenAt!).inMilliseconds;
+          : (reactionNow() - _greenAt!).inMilliseconds;
       _phase = _match.matchWinner != null ? _Phase.matchOver : _Phase.resolved;
     });
     if (_match.matchWinner == null) {
