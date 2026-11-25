@@ -11,6 +11,7 @@ import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class FiveSecondsGame extends StatefulWidget {
   const FiveSecondsGame({super.key});
@@ -198,7 +199,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
         backgroundColor: FunkyColors.magenta, // Deeper Pink
         showAi: false,
         body: const Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: FlatColors.ink),
         ),
       );
     }
@@ -225,19 +226,11 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
       showAi: false,
       actions: [
         IconButton(
-          icon: const Icon(Icons.home, color: Colors.white70),
+          icon: const Icon(Icons.home, color: FlatColors.ink),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [FunkyColors.magenta, FunkyColors.pink],
-          ),
-        ),
-        child: SafeArea(
+      body: SafeArea(
           child: Column(
             children: [
               Expanded(
@@ -270,7 +263,6 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
               ),
             ],
           ),
-        ),
       ),
     );
   }
@@ -285,11 +277,11 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
           child: CircularProgressIndicator(
             value: isTimerRunning ? timeLeft / 5 : 1.0,
             strokeWidth: 8,
-            backgroundColor: Colors.white10,
+            backgroundColor: FlatColors.border,
             valueColor: AlwaysStoppedAnimation<Color>(
               isTimerRunning && timeLeft <= 2
-                  ? Colors.orangeAccent
-                  : Colors.white,
+                  ? FlatColors.mafia
+                  : FlatColors.tilePastels[5],
             ),
           ),
         ),
@@ -297,8 +289,9 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
           width: 110,
           height: 110,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white,
             shape: BoxShape.circle,
+            border: Border.all(color: FlatColors.border, width: 2),
           ),
           child: Center(
             child: Text(
@@ -306,7 +299,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
               style: GoogleFonts.cairo(
                 fontSize: 60,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ),
             ),
           ),
@@ -335,10 +328,10 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (!isQuestionRevealed) ...[
-            const Icon(
+            Icon(
               Icons.help_outline_rounded,
               size: 80,
-              color: FunkyColors.magenta,
+              color: FlatColors.tilePastels[5],
             ),
             const SizedBox(height: 20),
             Text(
@@ -346,7 +339,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
               style: GoogleFonts.cairo(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.pink,
+                color: FlatColors.ink,
               ),
             ),
             const SizedBox(height: 10),
@@ -362,7 +355,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
               style: GoogleFonts.cairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
-                color: FunkyColors.pink,
+                color: FlatColors.ink,
               ),
               textAlign: TextAlign.center,
             ),
@@ -467,7 +460,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
               ),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.greenAccent[700],
+              backgroundColor: FlatColors.mintDark,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 20),
               shape: RoundedRectangleBorder(

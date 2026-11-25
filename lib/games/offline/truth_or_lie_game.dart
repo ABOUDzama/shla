@@ -9,6 +9,7 @@ import '../../services/raw_data_manager.dart';
 import '../../data/truth_or_lie_data.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class TruthOrLieGame extends StatefulWidget {
   const TruthOrLieGame({super.key});
@@ -219,7 +220,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
         backgroundColor: FunkyColors.cyan,
         showAi: false,
         body: const Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: FlatColors.ink),
         ),
       );
     }
@@ -233,7 +234,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
       showAi: false,
       actions: [
         IconButton(
-          icon: const Icon(Icons.home, color: Colors.white70),
+          icon: const Icon(Icons.home, color: FlatColors.ink),
           onPressed: () => setState(() => _showIntro = true),
         ),
       ],
@@ -248,9 +249,9 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(25),
+                  color: Colors.white,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white24, width: 2),
+                  border: Border.all(color: FlatColors.border, width: 2),
                 ),
                 child: Center(
                   child: Text(
@@ -271,7 +272,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                   style: const TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                     height: 1.4,
                   ),
                 ),
@@ -286,7 +287,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                     Expanded(
                       child: _ActionButton(
                         label: 'حقـيقة',
-                        color: FunkyColors.mint,
+                        color: FlatColors.tilePastels[2],
                         onPressed: () => _handleAnswer(true),
                         icon: Icons.check_circle_outline,
                       ),
@@ -295,7 +296,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                     Expanded(
                       child: _ActionButton(
                         label: 'هبـد',
-                        color: FunkyColors.coral,
+                        color: FlatColors.tilePastels[3],
                         onPressed: () => _handleAnswer(false),
                         icon: Icons.cancel_outlined,
                       ),
@@ -345,8 +346,8 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: _isCorrect!
-                                      ? Colors.tealAccent
-                                      : Colors.redAccent,
+                                      ? FlatColors.mintDark
+                                      : FlatColors.mafia,
                                 ),
                               ),
                             ],
@@ -357,7 +358,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18,
-                              color: Colors.white,
+                              color: FlatColors.ink,
                               height: 1.5,
                             ),
                           ),
@@ -370,8 +371,8 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                       icon: const Icon(Icons.arrow_forward_rounded),
                       label: const Text('اللي بعده'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: FunkyColors.violet,
-                        foregroundColor: Colors.white,
+                        backgroundColor: FlatColors.tilePastels[0],
+                        foregroundColor: FlatColors.ink,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 16,
@@ -406,19 +407,12 @@ class _ActionButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: color.withAlpha(75),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          foregroundColor: Colors.white,
+          foregroundColor: FlatDecor.textOn(color),
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),

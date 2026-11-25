@@ -9,6 +9,7 @@ import '../../services/ai_service.dart';
 import '../../services/raw_data_manager.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class OppositeDay extends StatefulWidget {
   const OppositeDay({super.key});
@@ -531,7 +532,7 @@ class _OppositeDayState extends State<OppositeDay> {
         backgroundColor: FunkyColors.lime,
         showAi: false,
         body: const Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: FlatColors.ink),
         ),
       );
     }
@@ -558,14 +559,14 @@ class _OppositeDayState extends State<OppositeDay> {
                   style: GoogleFonts.cairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'المطلوب تجاوب إجابة غلط تماماً وبسرعة في 5 ثواني!\nالسرعة هي كل حاجة ⚡',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+                  style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
                 const SizedBox(height: 50),
                 ElevatedButton.icon(
@@ -670,16 +671,12 @@ class _OppositeDayState extends State<OppositeDay> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: isActive ? Colors.white : Colors.white10,
+                      color: isActive ? FlatColors.tilePastels[2] : Colors.white,
                       borderRadius: BorderRadius.circular(25),
-                      boxShadow: isActive
-                          ? [
-                              BoxShadow(
-                                color: Colors.white.withValues(alpha: 0.3),
-                                blurRadius: 15,
-                              ),
-                            ]
-                          : null,
+                      border: Border.all(
+                        color: isActive ? Colors.transparent : FlatColors.border,
+                        width: 2,
+                      ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -687,9 +684,7 @@ class _OppositeDayState extends State<OppositeDay> {
                         Text(
                           p['name'],
                           style: GoogleFonts.cairo(
-                            color: isActive
-                                ? FunkyColors.card
-                                : Colors.white70,
+                            color: FlatColors.ink,
                             fontWeight: isActive
                                 ? FontWeight.w900
                                 : FontWeight.bold,
@@ -698,9 +693,7 @@ class _OppositeDayState extends State<OppositeDay> {
                         Text(
                           '${p['score']} ن',
                           style: GoogleFonts.cairo(
-                            color: isActive
-                                ? FunkyColors.card.withValues(alpha: 0.7)
-                                : Colors.white38,
+                            color: FlatColors.ink.withValues(alpha: 0.7),
                             fontSize: 12,
                           ),
                         ),
@@ -726,7 +719,7 @@ class _OppositeDayState extends State<OppositeDay> {
                             style: GoogleFonts.cairo(
                               fontSize: 28,
                               fontWeight: FontWeight.w900,
-                              color: Colors.yellowAccent,
+                              color: FlatColors.ink,
                             ),
                           ).animate().fadeIn().scale(),
                           const SizedBox(height: 30),
@@ -791,7 +784,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.cairo(
                                     fontSize: 24,
-                                    color: FunkyColors.card,
+                                    color: FlatColors.ink,
                                     fontWeight: FontWeight.w900,
                                   ),
                                 ),
@@ -812,9 +805,9 @@ class _OppositeDayState extends State<OppositeDay> {
                                   value: _secondsLeft / 5,
                                   strokeWidth: 10,
                                   color: _secondsLeft <= 1
-                                      ? Colors.redAccent
-                                      : Colors.yellow,
-                                  backgroundColor: Colors.white12,
+                                      ? FlatColors.mafia
+                                      : FlatColors.tilePastels[4],
+                                  backgroundColor: FlatColors.border,
                                 ),
                               ),
                               Container(
@@ -838,8 +831,8 @@ class _OppositeDayState extends State<OppositeDay> {
                                           fontSize: 50,
                                           fontWeight: FontWeight.w900,
                                           color: _secondsLeft <= 1
-                                              ? Colors.red
-                                              : FunkyColors.card,
+                                              ? FlatColors.mafia
+                                              : FlatColors.ink,
                                         ),
                                       ),
                                     ),
@@ -858,7 +851,7 @@ class _OppositeDayState extends State<OppositeDay> {
                             style: GoogleFonts.cairo(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: FlatColors.ink,
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -900,7 +893,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black26,
+                                  backgroundColor: FlatColors.mafia,
                                   foregroundColor: Colors.white,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 30,
@@ -924,7 +917,7 @@ class _OppositeDayState extends State<OppositeDay> {
                             'الممنوع كان:',
                             style: GoogleFonts.cairo(
                               fontSize: 18,
-                              color: Colors.white70,
+                              color: FlatColors.ink.withValues(alpha: 0.75),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -941,21 +934,20 @@ class _OppositeDayState extends State<OppositeDay> {
                                           vertical: 8,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: Colors.redAccent.withValues(
-                                            alpha: 0.2,
-                                          ),
+                                          color: Colors.white,
                                           borderRadius: BorderRadius.circular(
                                             20,
                                           ),
                                           border: Border.all(
-                                            color: Colors.redAccent,
+                                            color: FlatColors.mafia,
+                                            width: 2,
                                           ),
                                         ),
                                         child: Text(
                                           word.toString(),
                                           style: GoogleFonts.cairo(
                                             fontSize: 20,
-                                            color: Colors.yellowAccent,
+                                            color: FlatColors.mafia,
                                             fontWeight: FontWeight.w900,
                                           ),
                                         ),

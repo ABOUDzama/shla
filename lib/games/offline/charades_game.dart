@@ -10,6 +10,7 @@ import '../../services/ai_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class CharadesGame extends StatefulWidget {
   const CharadesGame({super.key});
@@ -449,9 +450,9 @@ class _CharadesGameState extends State<CharadesGame> {
   }
 
   Color _timerColor() {
-    if (_secondsLeft > 30) return Colors.green;
-    if (_secondsLeft > 10) return Colors.orange;
-    return Colors.red;
+    if (_secondsLeft > 30) return FlatColors.mintDark;
+    if (_secondsLeft > 10) return const Color(0xFF8A5A00);
+    return FlatColors.mafia;
   }
 
   @override
@@ -462,7 +463,7 @@ class _CharadesGameState extends State<CharadesGame> {
         backgroundColor: FunkyColors.violet,
         showAi: false,
         body: const Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: FlatColors.ink),
         ),
       );
     }
@@ -502,20 +503,20 @@ class _CharadesGameState extends State<CharadesGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ).animate().fadeIn(),
                 const SizedBox(height: 8),
                 Text(
                   'مثّل الكلمة من غير ما تتكلم!\nفريقك يخمّن في 60 ثانية 🤫',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+                  style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
                 const SizedBox(height: 20),
                 // Category
                 Text(
                   'اختار الفئة:',
-                  style: GoogleFonts.cairo(color: Colors.white70),
+                  style: GoogleFonts.cairo(color: FlatColors.ink),
                 ),
                 const SizedBox(height: 10),
                 Wrap(
@@ -542,20 +543,20 @@ class _CharadesGameState extends State<CharadesGame> {
                         ),
                         decoration: BoxDecoration(
                           color: selected
-                              ? Colors.indigoAccent
-                              : Colors.white.withAlpha(20),
+                              ? FlatColors.tilePastels[1]
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: selected
-                                ? Colors.indigoAccent
-                                : Colors.white24,
+                                ? FlatColors.tilePastels[1]
+                                : FlatColors.border,
                             width: 2,
                           ),
                         ),
                         child: Text(
                           cat,
                           style: GoogleFonts.cairo(
-                            color: Colors.white,
+                            color: FlatColors.ink,
                             fontWeight: selected
                                 ? FontWeight.bold
                                 : FontWeight.normal,
@@ -615,8 +616,8 @@ class _CharadesGameState extends State<CharadesGame> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.indigoAccent,
-                        foregroundColor: Colors.white,
+                        backgroundColor: FlatColors.tilePastels[1],
+                        foregroundColor: FlatColors.ink,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 20,
@@ -625,7 +626,7 @@ class _CharadesGameState extends State<CharadesGame> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         elevation: _selectedCategories.isNotEmpty ? 10 : 0,
-                        shadowColor: Colors.indigoAccent.withValues(alpha: 0.5),
+                        shadowColor: Colors.transparent,
                       ),
                     )
                     .animate(
@@ -650,7 +651,7 @@ class _CharadesGameState extends State<CharadesGame> {
       showAi: false,
       actions: [
         IconButton(
-          icon: const Icon(Icons.home, color: Colors.white70),
+          icon: const Icon(Icons.home, color: FlatColors.ink),
           onPressed: () {
             _timer?.cancel();
             setState(() {
@@ -678,8 +679,8 @@ class _CharadesGameState extends State<CharadesGame> {
                           _playerName(e.value),
                           style: GoogleFonts.cairo(
                             color: active
-                                ? Colors.indigoAccent
-                                : Colors.white54,
+                                ? FlatColors.ink
+                                : FlatColors.ink.withValues(alpha: 0.7),
                             fontWeight: active
                                 ? FontWeight.w900
                                 : FontWeight.normal,
@@ -688,7 +689,7 @@ class _CharadesGameState extends State<CharadesGame> {
                         Text(
                           '${_playerScore(e.value)} ✅',
                           style: GoogleFonts.cairo(
-                            color: Colors.white54,
+                            color: FlatColors.ink.withValues(alpha: 0.7),
                             fontSize: 12,
                           ),
                         ),
@@ -708,7 +709,7 @@ class _CharadesGameState extends State<CharadesGame> {
                           'دور: ${_playerName(_players[_currentPlayer])}',
                           style: GoogleFonts.cairo(
                             fontSize: 22,
-                            color: Colors.white,
+                            color: FlatColors.ink,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -723,7 +724,7 @@ class _CharadesGameState extends State<CharadesGame> {
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.cairo(
                                 fontSize: 13,
-                                color: Colors.indigoAccent,
+                                color: FlatColors.ink,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -735,7 +736,7 @@ class _CharadesGameState extends State<CharadesGame> {
                         'الممثل يرى الكلمة — الفريق يخمّن!\nعندك 60 ثانية 🤫',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.cairo(
-                          color: Colors.white54,
+                          color: FlatColors.ink.withValues(alpha: 0.75),
                           fontSize: 14,
                         ),
                       ),
@@ -753,8 +754,8 @@ class _CharadesGameState extends State<CharadesGame> {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.indigoAccent,
-                          foregroundColor: Colors.white,
+                          backgroundColor: FlatColors.tilePastels[1],
+                          foregroundColor: FlatColors.ink,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 50,
                             vertical: 16,
@@ -810,15 +811,15 @@ class _CharadesGameState extends State<CharadesGame> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      backgroundColor: Colors.green.shade700,
+                      backgroundColor: FlatColors.mintDark,
                     ),
                     const SizedBox(width: 10),
                     Chip(
                       label: Text(
                         '⏭️ $_skip',
-                        style: GoogleFonts.cairo(color: Colors.white),
+                        style: GoogleFonts.cairo(color: FlatColors.ink),
                       ),
-                      backgroundColor: Colors.orange.shade700,
+                      backgroundColor: FlatColors.tilePastels[4],
                     ),
                   ],
                 ),
@@ -848,7 +849,7 @@ class _CharadesGameState extends State<CharadesGame> {
                                 style: GoogleFonts.cairo(
                                   fontSize: 38,
                                   fontWeight: FontWeight.w900,
-                                  color: FunkyColors.card,
+                                  color: FlatColors.ink,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -867,7 +868,7 @@ class _CharadesGameState extends State<CharadesGame> {
                         child: Container(
                           height: 65,
                           decoration: BoxDecoration(
-                            color: Colors.orange.shade800,
+                            color: FlatColors.tilePastels[4],
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Center(
@@ -876,7 +877,7 @@ class _CharadesGameState extends State<CharadesGame> {
                               style: GoogleFonts.cairo(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.white,
+                                color: FlatColors.ink,
                               ),
                             ),
                           ),
@@ -890,7 +891,7 @@ class _CharadesGameState extends State<CharadesGame> {
                         child: Container(
                           height: 65,
                           decoration: BoxDecoration(
-                            color: Colors.green.shade700,
+                            color: FlatColors.mintDark,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Center(
@@ -919,17 +920,14 @@ class _CharadesGameState extends State<CharadesGame> {
                         '⏰ انتهى الوقت!',
                         style: GoogleFonts.cairo(
                           fontSize: 28,
-                          color: Colors.white,
+                          color: FlatColors.ink,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                       const SizedBox(height: 20),
                       Container(
                         padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(20),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                        decoration: FlatDecor.card(radius: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -941,13 +939,13 @@ class _CharadesGameState extends State<CharadesGame> {
                                   style: GoogleFonts.cairo(
                                     fontSize: 40,
                                     fontWeight: FontWeight.w900,
-                                    color: Colors.greenAccent,
+                                    color: FlatColors.mintDark,
                                   ),
                                 ),
                                 Text(
                                   'خمّن صح',
                                   style: GoogleFonts.cairo(
-                                    color: Colors.white54,
+                                    color: FlatColors.ink.withValues(alpha: 0.7),
                                   ),
                                 ),
                               ],
@@ -963,13 +961,13 @@ class _CharadesGameState extends State<CharadesGame> {
                                   style: GoogleFonts.cairo(
                                     fontSize: 40,
                                     fontWeight: FontWeight.w900,
-                                    color: Colors.orangeAccent,
+                                    color: FlatColors.day,
                                   ),
                                 ),
                                 Text(
                                   'تجاوز',
                                   style: GoogleFonts.cairo(
-                                    color: Colors.white54,
+                                    color: FlatColors.ink.withValues(alpha: 0.7),
                                   ),
                                 ),
                               ],
@@ -990,8 +988,8 @@ class _CharadesGameState extends State<CharadesGame> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.indigoAccent,
-                            foregroundColor: Colors.white,
+                            backgroundColor: FlatColors.tilePastels[1],
+                            foregroundColor: FlatColors.ink,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 30,
                               vertical: 14,
@@ -1013,8 +1011,8 @@ class _CharadesGameState extends State<CharadesGame> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.indigoAccent,
-                            foregroundColor: Colors.white,
+                            backgroundColor: FlatColors.tilePastels[1],
+                            foregroundColor: FlatColors.ink,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 30,
                               vertical: 14,

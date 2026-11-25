@@ -11,6 +11,7 @@ import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class TruthOrDareGame extends StatefulWidget {
   const TruthOrDareGame({super.key});
@@ -529,14 +530,14 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ).animate().fadeIn(),
                 const SizedBox(height: 8),
                 Text(
                   'اختار حقيقة لو عايز تجاوب بصراحة،\nأو جرأة لو قلبك جامد! 🔥',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+                  style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
                 const SizedBox(height: 50),
                 ElevatedButton.icon(
@@ -605,7 +606,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
       showAi: false,
       actions: [
         IconButton(
-          icon: const Icon(Icons.home, color: Colors.white70),
+          icon: const Icon(Icons.home, color: FlatColors.ink),
           onPressed: () => setState(() {
             _started = false;
             _typeChosen = false;
@@ -626,7 +627,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                     'دور: ${_players[_currentPlayer % _players.length]}',
                     style: GoogleFonts.cairo(
                       fontSize: 20,
-                      color: Colors.amberAccent,
+                      color: FlatColors.ink,
                       fontWeight: FontWeight.w900,
                     ),
                   ).animate().fadeIn(),
@@ -636,7 +637,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                     'اختار:',
                     style: GoogleFonts.cairo(
                       fontSize: 24,
-                      color: Colors.white70,
+                      color: FlatColors.ink,
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -647,24 +648,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                           onTap: () => _pick(true),
                           child: Container(
                             height: 160,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Colors.blue.shade700,
-                                  Colors.blue.shade900,
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(28),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blue.shade900,
-                                  blurRadius: 15,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
+                            decoration: FlatDecor.button(FlatColors.tilePastels[1], radius: 28),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -678,7 +662,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                                   style: GoogleFonts.cairo(
                                     fontSize: 26,
                                     fontWeight: FontWeight.w900,
-                                    color: Colors.white,
+                                    color: FlatDecor.textOn(FlatColors.tilePastels[1]),
                                   ),
                                 ),
                               ],
@@ -692,24 +676,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                           onTap: () => _pick(false),
                           child: Container(
                             height: 160,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Colors.orange.shade700,
-                                  Colors.red.shade800,
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(28),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.orange.shade900,
-                                  blurRadius: 15,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
+                            decoration: FlatDecor.button(FlatColors.tilePastels[3], radius: 28),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -723,7 +690,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                                   style: GoogleFonts.cairo(
                                     fontSize: 26,
                                     fontWeight: FontWeight.w900,
-                                    color: Colors.white,
+                                    color: FlatDecor.textOn(FlatColors.tilePastels[3]),
                                   ),
                                 ),
                               ],
@@ -738,31 +705,14 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(28),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: _isTruth
-                            ? [Colors.blue.shade700, Colors.blue.shade900]
-                            : [Colors.orange.shade700, Colors.red.shade800],
-                      ),
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: (_isTruth ? Colors.blue : Colors.orange)
-                              .withAlpha(100),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
+                    decoration: FlatDecor.card(radius: 30),
                     child: Column(
                       children: [
                         Text(
                           _isTruth ? '💬 حقيقة' : '🔥 جرأة',
                           style: GoogleFonts.cairo(
                             fontSize: 18,
-                            color: Colors.white70,
+                            color: FlatColors.ink.withValues(alpha: 0.75),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -771,7 +721,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                           _currentCard ?? '',
                           style: GoogleFonts.cairo(
                             fontSize: 22,
-                            color: Colors.white,
+                            color: FlatColors.ink,
                             fontWeight: FontWeight.bold,
                             height: 1.6,
                           ),
@@ -798,8 +748,8 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                             ),
                           ),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white70,
-                            side: const BorderSide(color: Colors.white30),
+                            foregroundColor: FlatColors.ink,
+                            side: const BorderSide(color: FlatColors.border, width: 2),
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -825,7 +775,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: FunkyColors.magenta,
+                            foregroundColor: FlatColors.ink,
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),

@@ -11,6 +11,7 @@ import '../../services/settings_service.dart';
 import '../../services/ai_service.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class WordChainGame extends StatefulWidget {
   const WordChainGame({super.key});
@@ -316,7 +317,7 @@ class _WordChainGameState extends State<WordChainGame> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('تم توليد كلمات جديدة بالذكاء الاصطناعي! ✨'),
-              backgroundColor: Colors.green,
+              backgroundColor: FlatColors.mintDark,
             ),
           );
         }
@@ -428,9 +429,9 @@ class _WordChainGameState extends State<WordChainGame> {
   }
 
   Color _timerColor() {
-    if (_secondsLeft > 30) return Colors.green;
-    if (_secondsLeft > 10) return Colors.orange;
-    return Colors.red;
+    if (_secondsLeft > 30) return FlatColors.mintDark;
+    if (_secondsLeft > 10) return const Color(0xFF8A5A00);
+    return FlatColors.mafia;
   }
 
 
@@ -488,13 +489,13 @@ class _WordChainGameState extends State<WordChainGame> {
                 Text(
                   'اشرح الكلمة لزميلك بدون ما تقول الكلمة نفسها!\nأكتر كلمة في الدقيقة = الفايز!',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+                  style: GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
                 const SizedBox(height: 24),
                 // Category Picker
                 Text(
                   'اختار الفئة:',
-                  style: GoogleFonts.cairo(color: Colors.white70, fontSize: 16),
+                  style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 16),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -521,20 +522,20 @@ class _WordChainGameState extends State<WordChainGame> {
                         ),
                         decoration: BoxDecoration(
                           color: selected
-                              ? Colors.tealAccent.shade700
-                              : Colors.white.withAlpha(20),
+                              ? FlatColors.tilePastels[2]
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: selected
-                                ? Colors.tealAccent
-                                : Colors.white24,
+                                ? FlatColors.ink.withValues(alpha: 0.3)
+                                : FlatColors.ink.withValues(alpha: 0.15),
                             width: 2,
                           ),
                         ),
                         child: Text(
                           cat,
                           style: GoogleFonts.cairo(
-                            color: selected ? Colors.white : Colors.white70,
+                            color: selected ? FlatColors.ink : FlatColors.ink.withValues(alpha: 0.75),
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
@@ -585,7 +586,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.tealAccent.shade700,
+                        backgroundColor: FlatColors.mintDark,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
@@ -595,7 +596,7 @@ class _WordChainGameState extends State<WordChainGame> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         elevation: _selectedCategories.isNotEmpty ? 10 : 0,
-                        shadowColor: Colors.tealAccent.withValues(alpha: 0.5),
+                        shadowColor: Colors.transparent,
                       ),
                     )
                     .animate(
@@ -622,7 +623,7 @@ class _WordChainGameState extends State<WordChainGame> {
       onAiRefresh: _generateAiContent,
       actions: [
         IconButton(
-          icon: const Icon(Icons.home, color: Colors.white70),
+          icon: Icon(Icons.home, color: FlatColors.ink.withValues(alpha: 0.75)),
           onPressed: () {
             _timer?.cancel();
             setState(() {
@@ -649,7 +650,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         Text(
                           p['name'],
                           style: GoogleFonts.cairo(
-                            color: active ? Colors.tealAccent : Colors.white54,
+                            color: active ? FlatColors.ink : FlatColors.ink.withValues(alpha: 0.7),
                             fontWeight: active
                                 ? FontWeight.w900
                                 : FontWeight.normal,
@@ -658,7 +659,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         Text(
                           '${p['score']} نقطة',
                           style: GoogleFonts.cairo(
-                            color: Colors.white54,
+                            color: FlatColors.ink.withValues(alpha: 0.7),
                             fontSize: 12,
                           ),
                         ),
@@ -678,7 +679,7 @@ class _WordChainGameState extends State<WordChainGame> {
                             : 'اضغط ابدأ!',
                         style: GoogleFonts.cairo(
                           fontSize: 24,
-                          color: Colors.white,
+                          color: FlatColors.ink,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -693,7 +694,7 @@ class _WordChainGameState extends State<WordChainGame> {
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.cairo(
                                 fontSize: 14,
-                                color: Colors.tealAccent,
+                                color: FlatColors.mintDark,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -705,7 +706,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         'عندك 60 ثانية تعرّف كلمات!',
                         style: GoogleFonts.cairo(
                           fontSize: 14,
-                          color: Colors.white54,
+                          color: FlatColors.ink.withValues(alpha: 0.7),
                         ),
                       ),
                       const SizedBox(height: 40),
@@ -722,7 +723,7 @@ class _WordChainGameState extends State<WordChainGame> {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.tealAccent.shade700,
+                          backgroundColor: FlatColors.mintDark,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 50,
@@ -746,7 +747,7 @@ class _WordChainGameState extends State<WordChainGame> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: _timerColor().withAlpha(30),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: _timerColor(), width: 2),
                   ),
@@ -778,15 +779,15 @@ class _WordChainGameState extends State<WordChainGame> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      backgroundColor: Colors.green.shade700,
+                      backgroundColor: FlatColors.mintDark,
                     ),
                     const SizedBox(width: 12),
                     Chip(
                       label: Text(
                         '⏭️ $_skipCount',
-                        style: GoogleFonts.cairo(color: Colors.white),
+                        style: GoogleFonts.cairo(color: FlatColors.ink),
                       ),
-                      backgroundColor: Colors.orange.shade700,
+                      backgroundColor: FlatColors.tilePastels[4],
                     ),
                   ],
                 ),
@@ -816,7 +817,7 @@ class _WordChainGameState extends State<WordChainGame> {
                                 style: GoogleFonts.cairo(
                                   fontSize: 40,
                                   fontWeight: FontWeight.w900,
-                                  color: FunkyColors.lime,
+                                  color: FlatColors.mintDark,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -835,7 +836,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         child: Container(
                           height: 70,
                           decoration: BoxDecoration(
-                            color: Colors.orange.shade800,
+                            color: FlatColors.tilePastels[4],
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Center(
@@ -844,7 +845,7 @@ class _WordChainGameState extends State<WordChainGame> {
                               style: GoogleFonts.cairo(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.white,
+                                color: FlatColors.ink,
                               ),
                             ),
                           ),
@@ -858,7 +859,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         child: Container(
                           height: 70,
                           decoration: BoxDecoration(
-                            color: Colors.green.shade700,
+                            color: FlatColors.mintDark,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Center(
@@ -886,7 +887,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         '⏰ انتهى الوقت!',
                         style: GoogleFonts.cairo(
                           fontSize: 28,
-                          color: Colors.white,
+                          color: FlatColors.ink,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -894,7 +895,7 @@ class _WordChainGameState extends State<WordChainGame> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(20),
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Column(
@@ -902,7 +903,7 @@ class _WordChainGameState extends State<WordChainGame> {
                             Text(
                               'النتيجة',
                               style: GoogleFonts.cairo(
-                                color: Colors.white70,
+                                color: FlatColors.ink.withValues(alpha: 0.75),
                                 fontSize: 16,
                               ),
                             ),
@@ -921,13 +922,13 @@ class _WordChainGameState extends State<WordChainGame> {
                                       style: GoogleFonts.cairo(
                                         fontSize: 36,
                                         fontWeight: FontWeight.w900,
-                                        color: Colors.greenAccent,
+                                        color: FlatColors.mintDark,
                                       ),
                                     ),
                                     Text(
                                       'عرّفها',
                                       style: GoogleFonts.cairo(
-                                        color: Colors.white54,
+                                        color: FlatColors.ink.withValues(alpha: 0.7),
                                       ),
                                     ),
                                   ],
@@ -943,13 +944,13 @@ class _WordChainGameState extends State<WordChainGame> {
                                       style: GoogleFonts.cairo(
                                         fontSize: 36,
                                         fontWeight: FontWeight.w900,
-                                        color: Colors.orangeAccent,
+                                        color: const Color(0xFF8A5A00),
                                       ),
                                     ),
                                     Text(
                                       'تجاوز',
                                       style: GoogleFonts.cairo(
-                                        color: Colors.white54,
+                                        color: FlatColors.ink.withValues(alpha: 0.7),
                                       ),
                                     ),
                                   ],
@@ -964,7 +965,7 @@ class _WordChainGameState extends State<WordChainGame> {
                       if (_answeredWords.isNotEmpty) ...[
                         Text(
                           'الكلمات:',
-                          style: GoogleFonts.cairo(color: Colors.white70),
+                          style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75)),
                         ),
                         const SizedBox(height: 8),
                         SizedBox(
@@ -976,7 +977,7 @@ class _WordChainGameState extends State<WordChainGame> {
                                   (w) => Text(
                                     w,
                                     style: GoogleFonts.cairo(
-                                      color: Colors.white,
+                                      color: FlatColors.ink,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -998,7 +999,7 @@ class _WordChainGameState extends State<WordChainGame> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.tealAccent.shade700,
+                            backgroundColor: FlatColors.mintDark,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 30,
@@ -1021,7 +1022,7 @@ class _WordChainGameState extends State<WordChainGame> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.tealAccent.shade700,
+                            backgroundColor: FlatColors.mintDark,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 30,
