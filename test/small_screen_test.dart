@@ -24,6 +24,7 @@ import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/who_said_game.dart';
 import 'package:shella/games/offline/undercover_game.dart';
 import 'package:shella/games/offline/mafia_game.dart';
+import 'package:shella/widgets/flat_home_preview.dart';
 import 'package:shella/screens/scoreboard_screen.dart';
 import 'package:shella/services/score_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as sio;
@@ -556,6 +557,15 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'mafia');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: flat home direction prototype (harness only)',
+      (tester) async {
+    await pumpSmall(tester, const FlatHomePreview());
+    await flushFontCallbacks(tester);
+    await fixedPumps(tester);
+    await capture360(tester, 'flat_home');
     expectNoOverflow(tester);
   });
 
