@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../services/score_service.dart';
-import '../widgets/base_game_scaffold.dart';
+import '../theme/funky_theme.dart';
 
 class ScoreboardScreen extends StatelessWidget {
   const ScoreboardScreen({super.key});
@@ -16,27 +16,101 @@ class ScoreboardScreen extends StatelessWidget {
       builder: (context, _) {
         final players = scoreService.rankedPlayers;
 
-        return BaseGameScaffold(
-          title: 'لوحة الشرف',
-          backgroundColor: const Color(0xFF121212),
-          actions: [
-            if (players.isNotEmpty)
-              IconButton(
-                icon: const Icon(Icons.delete_sweep, color: Colors.redAccent),
-                tooltip: 'إنهاء الجلسة',
-                onPressed: () => _showClearConfirm(context, scoreService),
+        return Scaffold(
+          body: FunkyBackground(
+            accent: FunkyColors.amber,
+            child: SafeArea(
+              child: Column(
+                children: [
+                  const SizedBox(height: 14),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            width: 42,
+                            height: 42,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: FunkyColors.card,
+                              border: Border.all(
+                                color: FunkyColors.amber.withValues(alpha: 0.5),
+                                width: 1.3,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.arrow_back_ios_new,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            'لوحة الشرف 🏆',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.cairo(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  color:
+                                      FunkyColors.amber.withValues(alpha: 0.7),
+                                  blurRadius: 14,
+                                ),
+                              ],
+                            ).copyWith(
+                                fontFamilyFallback: const ['Noto Color Emoji']),
+                          ),
+                        ),
+                        if (players.isNotEmpty)
+                          GestureDetector(
+                            onTap: () =>
+                                _showClearConfirm(context, scoreService),
+                            child: Container(
+                              width: 42,
+                              height: 42,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: FunkyColors.card,
+                                border: Border.all(
+                                  color:
+                                      FunkyColors.coral.withValues(alpha: 0.6),
+                                  width: 1.3,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.delete_sweep_rounded,
+                                color: FunkyColors.coral,
+                                size: 20,
+                              ),
+                            ),
+                          )
+                        else
+                          const SizedBox(width: 42),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: players.isEmpty
+                        ? _buildEmptyState(context)
+                        : ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20),
+                            itemCount: players.length,
+                            itemBuilder: (context, index) =>
+                                _buildPlayerCard(players[index], index),
+                          ),
+                  ),
+                ],
               ),
-          ],
-          body: players.isEmpty
-              ? _buildEmptyState(context)
-              : ListView.builder(
-                  padding: const EdgeInsets.all(20),
-                  itemCount: players.length,
-                  itemBuilder: (context, index) {
-                    final player = players[index];
-                    return _buildPlayerCard(player, index);
-                  },
-                ),
+            ),
+          ),
         );
       },
     );
@@ -44,90 +118,108 @@ class ScoreboardScreen extends StatelessWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('😶', style: TextStyle(fontSize: 80)).animate().shake(),
-          const SizedBox(height: 20),
-          Text(
-            'مفيش حد بيلعب لسه!',
-            style: GoogleFonts.cairo(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'ابدأ أي لعبة واختار أسماء الشلة عشان تظهر هنا.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(color: Colors.white60),
-          ),
-          const SizedBox(height: 30),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber,
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('😶', style: TextStyle(fontSize: 80))
+                .animate()
+                .shake(),
+            const SizedBox(height: 20),
+            Text(
+              'مفيش حد بيلعب لسه!',
+              style: GoogleFonts.cairo(
+                fontSize: 24,
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
               ),
             ),
-            child: Text(
-              'رجوع',
-              style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+            const SizedBox(height: 10),
+            Text(
+              'ابدأ أي لعبة واختار أسماء الشلة عشان تظهر هنا.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(color: Colors.white60),
             ),
-          ),
-        ],
+            const SizedBox(height: 30),
+            FunkyButton(
+              label: 'رجوع',
+              accent: FunkyColors.amber,
+              icon: Icons.arrow_back_rounded,
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildPlayerCard(PlayerScore player, int index) {
     final isFirst = index == 0;
+    final accent =
+        FunkyColors.accents[index % FunkyColors.accents.length];
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isFirst
-              ? [Colors.amber.withAlpha(50), Colors.amber.withAlpha(10)]
-              : [Colors.white.withAlpha(20), Colors.white.withAlpha(5)],
-        ),
-        borderRadius: BorderRadius.circular(25),
+        color: FunkyColors.card,
+        borderRadius: BorderRadius.circular(20),
+        gradient: isFirst
+            ? LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: [
+                  FunkyColors.amber.withValues(alpha: 0.4),
+                  FunkyColors.card,
+                ],
+              )
+            : null,
         border: Border.all(
-          color: isFirst ? Colors.amber.withAlpha(100) : Colors.white12,
+          color: isFirst
+              ? FunkyColors.amber
+              : accent.withValues(alpha: 0.35),
           width: isFirst ? 2 : 1,
         ),
+        boxShadow: isFirst
+            ? [
+                BoxShadow(
+                  color: FunkyColors.amber.withValues(alpha: 0.4),
+                  blurRadius: 16,
+                ),
+              ]
+            : null,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         child: Row(
           children: [
             Container(
-              width: 50,
-              height: 50,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
-                color: isFirst ? Colors.amber : Colors.white12,
                 shape: BoxShape.circle,
+                gradient: FunkyDecor.accentGradient(
+                    isFirst ? FunkyColors.amber : accent),
               ),
               child: Center(
                 child: Text(
                   '${index + 1}',
                   style: GoogleFonts.cairo(
                     fontWeight: FontWeight.w900,
-                    color: isFirst ? Colors.black : Colors.white,
+                    color: Colors.white,
                     fontSize: 20,
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 16),
             Expanded(
               child: Text(
                 player.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.cairo(
                   color: Colors.white,
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -138,14 +230,16 @@ class ScoreboardScreen extends StatelessWidget {
                 Text(
                   '${player.score}',
                   style: GoogleFonts.cairo(
-                    color: isFirst ? Colors.amber : Colors.white,
-                    fontSize: 28,
+                    color:
+                        isFirst ? FunkyColors.amber : Colors.white,
+                    fontSize: 26,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
                 Text(
                   'نقطة',
-                  style: GoogleFonts.cairo(color: Colors.white60, fontSize: 12),
+                  style: GoogleFonts.cairo(
+                      color: Colors.white60, fontSize: 12),
                 ),
               ],
             ),
@@ -166,10 +260,12 @@ class ScoreboardScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.grey[900],
+        backgroundColor: FunkyColors.card,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'إنهاء الجلسة؟',
-          style: GoogleFonts.cairo(color: Colors.white),
+          style: GoogleFonts.cairo(
+              color: Colors.white, fontWeight: FontWeight.bold),
         ),
         content: Text(
           'ده هيفتح السهم وهيخليك تبدأ من جديد بالأسماء.',
@@ -187,7 +283,7 @@ class ScoreboardScreen extends StatelessWidget {
             },
             child: const Text(
               'إنهاء',
-              style: TextStyle(color: Colors.redAccent),
+              style: TextStyle(color: FunkyColors.coral),
             ),
           ),
         ],

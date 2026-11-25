@@ -22,6 +22,8 @@ import 'package:shella/games/offline/password_game.dart';
 import 'package:shella/games/offline/spy_game.dart';
 import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/who_said_game.dart';
+import 'package:shella/screens/scoreboard_screen.dart';
+import 'package:shella/services/score_service.dart';
 
 /// Small-screen (360x640) overflow sweep: drives each interior into gameplay
 /// and fails on any unconsumed exception (RenderFlex overflow, layout asserts).
@@ -443,6 +445,21 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'who_said');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: scoreboard restyle', (tester) async {
+    final scores = ScoreService();
+    scores.setPlayers(['أحمد', 'منى', 'كريم']);
+    scores.addScore('أحمد', 7);
+    scores.addScore('منى', 3);
+    scores.addScore('كريم', 5);
+    addTearDown(scores.clearSession);
+    await pumpSmall(tester, const ScoreboardScreen());
+    await flushFontCallbacks(tester);
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'scoreboard');
     expectNoOverflow(tester);
   });
 }
