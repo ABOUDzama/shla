@@ -76,7 +76,7 @@ void main() {
     // Connectivity otherwise hang on a real network timeout in the harness.
     messenger.setMockMethodCallHandler(
       const MethodChannel('dev.fluttercommunity.plus/connectivity'),
-      (call) async => 'none',
+      (call) async => <String>['none'],
     );
   });
 
