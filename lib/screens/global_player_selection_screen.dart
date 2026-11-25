@@ -44,8 +44,15 @@ class _GlobalPlayerSelectionScreenState
 
   void _loadPlayers() {
     setState(() {
-      _allSavedPlayers = SettingsService.getSavedPlayersProfiles();
+      _refreshRoster();
     });
+  }
+
+  /// Re-reads the roster from SettingsService. Called on every build so
+  /// friends added/edited/deleted in شلتي while this screen sits in the
+  /// navigation stack appear the moment the user returns to it.
+  void _refreshRoster() {
+    _allSavedPlayers = SettingsService.getSavedPlayersProfiles();
   }
 
   Future<void> _pickTempAvatar() async {
@@ -133,6 +140,7 @@ class _GlobalPlayerSelectionScreenState
 
   @override
   Widget build(BuildContext context) {
+    _refreshRoster(); // always in sync with شلتي edits made while pushed
     final canStart = _selectedPlayerNames.length >= widget.minPlayers;
 
     return Scaffold(
