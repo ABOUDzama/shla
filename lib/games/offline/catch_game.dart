@@ -74,7 +74,10 @@ class CatchMatch {
 enum _CatchPhase { picking, playing }
 
 class CatchGame extends StatefulWidget {
-  const CatchGame({super.key});
+  const CatchGame({super.key, this.randomSeed});
+
+  /// Fixed RNG seed for deterministic tests; null uses a live random source.
+  final int? randomSeed;
 
   @override
   State<CatchGame> createState() => _CatchGameState();
@@ -93,7 +96,7 @@ class _CatchGameState extends State<CatchGame>
   Timer? _roundTimer;
   int _players = 2;
   double _startAngle = 0;
-  final Random _random = Random();
+  late final Random _random = widget.randomSeed != null ? Random(widget.randomSeed!) : Random();
   String _banner = '';
 
   static const List<Color> _zoneColors = [

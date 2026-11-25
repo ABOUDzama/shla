@@ -92,7 +92,10 @@ class TouchBallMatch {
 enum _BallPhase { pickPlayers, playing, matchOver }
 
 class TouchBallGame extends StatefulWidget {
-  const TouchBallGame({super.key});
+  const TouchBallGame({super.key, this.randomSeed});
+
+  /// Fixed RNG seed for deterministic tests; null uses a live random source.
+  final int? randomSeed;
 
   @override
   State<TouchBallGame> createState() => _TouchBallGameState();
@@ -102,7 +105,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
   bool _showIntro = true;
   _BallPhase _phase = _BallPhase.pickPlayers;
   late TouchBallMatch _match;
-  final Random _random = Random();
+  late final Random _random = widget.randomSeed != null ? Random(widget.randomSeed!) : Random();
   Timer? _ticker;
   Timer? _nextTimer;
   double _x = 0, _y = 0, _vx = 0, _vy = 0;
@@ -128,7 +131,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
     _ticker?.cancel();
     _nextTimer?.cancel();
     setState(() {
-      _match = TouchBallMatch(players: players);
+      _match = TouchBallMatch(players: players, random: _random);
       _match.start();
       _phase = _BallPhase.playing;
     });

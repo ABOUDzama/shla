@@ -123,7 +123,7 @@ void main() {
   });
 
   testWidgets('proof: catch spinning ring 4p', (tester) async {
-    await prep(tester, const CatchGame());
+    await prep(tester, const CatchGame(randomSeed: 7));
     await tester.tap(find.text('4'));
     await tester.pump(const Duration(milliseconds: 900));
     await tester.pump(const Duration(seconds: 1));
@@ -148,7 +148,7 @@ void main() {
   });
 
   testWidgets('proof: touch-ball live ball 4p', (tester) async {
-    await prep(tester, const TouchBallGame());
+    await prep(tester, const TouchBallGame(randomSeed: 7));
     await tester.tap(find.text('4 لاعبين'));
     // wait for the ball to be live and drifting
     await tester.pump(const Duration(milliseconds: 700));
