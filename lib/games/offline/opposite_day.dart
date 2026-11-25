@@ -609,7 +609,7 @@ class _OppositeDayState extends State<OppositeDay> {
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF3E2723),
+                        foregroundColor: FunkyColors.card,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 20,
@@ -688,7 +688,7 @@ class _OppositeDayState extends State<OppositeDay> {
                           p['name'],
                           style: GoogleFonts.cairo(
                             color: isActive
-                                ? const Color(0xFF3E2723)
+                                ? FunkyColors.card
                                 : Colors.white70,
                             fontWeight: isActive
                                 ? FontWeight.w900
@@ -699,7 +699,7 @@ class _OppositeDayState extends State<OppositeDay> {
                           '${p['score']} ن',
                           style: GoogleFonts.cairo(
                             color: isActive
-                                ? const Color(0xFF3E2723).withValues(alpha: 0.7)
+                                ? FunkyColors.card.withValues(alpha: 0.7)
                                 : Colors.white38,
                             fontSize: 12,
                           ),
@@ -734,7 +734,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                 onPressed: generateNew,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  foregroundColor: const Color(0xFF3E2723),
+                                  foregroundColor: FunkyColors.card,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 50,
                                     vertical: 20,
@@ -791,7 +791,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.cairo(
                                     fontSize: 24,
-                                    color: const Color(0xFF3E2723),
+                                    color: FunkyColors.card,
                                     fontWeight: FontWeight.w900,
                                   ),
                                 ),
@@ -839,7 +839,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                           fontWeight: FontWeight.w900,
                                           color: _secondsLeft <= 1
                                               ? Colors.red
-                                              : const Color(0xFF3E2723),
+                                              : FunkyColors.card,
                                         ),
                                       ),
                                     ),
@@ -968,7 +968,7 @@ class _OppositeDayState extends State<OppositeDay> {
                             onPressed: _nextPlayer,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF3E2723),
+                              foregroundColor: FunkyColors.card,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 50,
                                 vertical: 20,

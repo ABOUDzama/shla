@@ -215,7 +215,7 @@ class _SeegaGameState extends State<SeegaGame> {
               margin: const EdgeInsets.symmetric(horizontal: 24),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF1B1B1B).withValues(alpha: 0.8),
+                color: FunkyColors.bgDeep.withValues(alpha: 0.85),
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: Colors.white10),
               ),
@@ -285,10 +285,10 @@ class _SeegaGameState extends State<SeegaGame> {
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2D1B17),
+                    color: FunkyColors.card,
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(
-                      color: const Color(0xFF1E100D),
+                      color: FunkyColors.bgDeep,
                       width: 12,
                     ),
                     boxShadow: [
@@ -341,7 +341,7 @@ class _SeegaGameState extends State<SeegaGame> {
                                                 const Color(
                                                   0xFFEF9A9A,
                                                 ), // light red
-                                                const Color(0xFFD32F2F), // red
+                                                FunkyColors.coral, // red
                                                 const Color(
                                                   0xFF8B0000,
                                                 ), // dark red
@@ -350,7 +350,7 @@ class _SeegaGameState extends State<SeegaGame> {
                                                 const Color(
                                                   0xFF90CAF9,
                                                 ), // light blue
-                                                const Color(0xFF1976D2), // blue
+                                                FunkyColors.sky, // blue
                                                 const Color(
                                                   0xFF0D47A1,
                                                 ), // dark blue
@@ -358,8 +358,8 @@ class _SeegaGameState extends State<SeegaGame> {
                                       ),
                                       border: Border.all(
                                         color: value == 1
-                                            ? const Color(0xFFFFCDD2)
-                                            : const Color(0xFFBBDEFB),
+                                            ? FunkyColors.lime
+                                            : FunkyColors.amber,
                                         width: 2,
                                       ),
                                       boxShadow: [
@@ -393,7 +393,7 @@ class _SeegaGameState extends State<SeegaGame> {
               ElevatedButton(
                 onPressed: _resetGame,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF5D4037),
+                  backgroundColor: FunkyColors.orange,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 40,

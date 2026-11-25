@@ -467,7 +467,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                 style: GoogleFonts.cairo(
                                   fontSize: 32,
                                   fontWeight: FontWeight.w900,
-                                  color: const Color(0xFF6A1B9A),
+                                  color: FunkyColors.violet,
                                 ),
                               ).animate().fadeIn().scale(
                                 curve: Curves.elasticOut,
@@ -596,7 +596,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  foregroundColor: const Color(0xFF6A1B9A),
+                                  foregroundColor: FunkyColors.violet,
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
                                   ),

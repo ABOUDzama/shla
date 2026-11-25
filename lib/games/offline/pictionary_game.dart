@@ -702,7 +702,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFFFD600), Color(0xFFFFA000)],
+                  colors: [FunkyColors.amber, FunkyColors.orange],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
@@ -813,8 +813,8 @@ class _PictionaryGameState extends State<PictionaryGame> {
       final isCorrect = _guessCorrect == true;
       final drawerName = _drawerName;
       Color bgColor = _guessCorrect == null
-          ? const Color(0xFF1A237E) // neutral blue while drawer decides
-          : (isCorrect ? const Color(0xFF1B5E20) : const Color(0xFFB71C1C));
+          ? FunkyColors.sky // neutral accent while drawer decides
+          : (isCorrect ? FunkyColors.mint : FunkyColors.coral);
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
         backgroundColor: bgColor,

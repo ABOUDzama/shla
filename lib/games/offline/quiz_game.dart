@@ -408,7 +408,7 @@ class _QuizGameState extends State<QuizGame> {
                 child: LinearProgressIndicator(
                   value: progress,
                   backgroundColor: Colors.white12,
-                  color: Colors.orangeAccent,
+                  color: FunkyColors.amber,
                   minHeight: 4,
                 ),
               ),
@@ -425,10 +425,7 @@ class _QuizGameState extends State<QuizGame> {
                     horizontal: 24,
                     vertical: 40,
                   ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  decoration: FunkyDecor.glowCard(FunkyColors.amber, radius: 30),
                   child: Column(
                     children: [
                       Text(
@@ -437,7 +434,7 @@ class _QuizGameState extends State<QuizGame> {
                         style: GoogleFonts.cairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
-                          color: const Color(0xFF1E3A8A),
+                          color: Colors.white,
                           height: 1.4,
                         ),
                       ),
@@ -448,7 +445,7 @@ class _QuizGameState extends State<QuizGame> {
                               style: GoogleFonts.cairo(
                                 fontSize: 15,
                                 fontStyle: FontStyle.italic,
-                                color: Colors.blueAccent,
+                                color: FunkyColors.amber,
                                 fontWeight: FontWeight.bold,
                               ),
                             )
@@ -459,11 +456,18 @@ class _QuizGameState extends State<QuizGame> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE8F5E9),
+                            color: FunkyColors.card,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Colors.green.withValues(alpha: 0.3),
+                              color: FunkyColors.lime.withValues(alpha: 0.8),
+                              width: 1.6,
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: FunkyColors.lime.withValues(alpha: 0.3),
+                                blurRadius: 18,
+                              ),
+                            ],
                           ),
                           child: Column(
                             children: [
@@ -471,7 +475,7 @@ class _QuizGameState extends State<QuizGame> {
                                 'الإجابة الصحيحة:',
                                 style: GoogleFonts.cairo(
                                   fontSize: 14,
-                                  color: Colors.green[700],
+                                  color: FunkyColors.lime,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -482,7 +486,7 @@ class _QuizGameState extends State<QuizGame> {
                                 style: GoogleFonts.cairo(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w900,
-                                  color: const Color(0xFF2E7D32),
+                                  color: FunkyColors.lime,
                                 ),
                               ),
                             ],
@@ -568,7 +572,7 @@ class _QuizGameState extends State<QuizGame> {
                                 child: Container(
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Color(0xFF10B981),
+                                    color: FunkyColors.mint,
                                   ), // Green
                                   padding: const EdgeInsets.all(6),
                                   child: const Icon(
@@ -584,7 +588,7 @@ class _QuizGameState extends State<QuizGame> {
                                 child: Container(
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Color(0xFFEF4444),
+                                    color: FunkyColors.coral,
                                   ), // Red
                                   padding: const EdgeInsets.all(6),
                                   child: const Icon(
@@ -612,7 +616,7 @@ class _QuizGameState extends State<QuizGame> {
                         onPressed: _nextQuestion,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF1E3A8A),
+                          foregroundColor: FunkyColors.card,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),

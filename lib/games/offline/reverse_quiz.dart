@@ -700,7 +700,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF00838F),
+                        foregroundColor: FunkyColors.card,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 20,
@@ -792,7 +792,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                           p['name'],
                           style: GoogleFonts.cairo(
                             color: isActive
-                                ? const Color(0xFF00838F)
+                                ? FunkyColors.card
                                 : Colors.white70,
                             fontWeight: isActive
                                 ? FontWeight.w900
@@ -803,7 +803,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                           '${p['score']} ن',
                           style: GoogleFonts.cairo(
                             color: isActive
-                                ? const Color(0xFF00838F).withValues(alpha: 0.7)
+                                ? FunkyColors.card.withValues(alpha: 0.7)
                                 : Colors.white38,
                             fontSize: 12,
                           ),
@@ -838,7 +838,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                 onPressed: generateNew,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  foregroundColor: const Color(0xFF00838F),
+                                  foregroundColor: FunkyColors.card,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 50,
                                     vertical: 20,
@@ -1037,7 +1037,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                               onPressed: _nextPlayer,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                foregroundColor: const Color(0xFF00838F),
+                                foregroundColor: FunkyColors.card,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 50,
                                   vertical: 20,

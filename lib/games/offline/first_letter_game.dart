@@ -708,7 +708,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFFE64A19),
+                        foregroundColor: FunkyColors.orange,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 20,
@@ -785,7 +785,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                           p['name'],
                           style: GoogleFonts.cairo(
                             color: isActive
-                                ? const Color(0xFFE64A19)
+                                ? FunkyColors.orange
                                 : Colors.white70,
                             fontWeight: isActive
                                 ? FontWeight.w900
@@ -796,7 +796,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                           '${p['score']} ن',
                           style: GoogleFonts.cairo(
                             color: isActive
-                                ? const Color(0xFFE64A19).withValues(alpha: 0.7)
+                                ? FunkyColors.orange.withValues(alpha: 0.7)
                                 : Colors.white38,
                             fontSize: 12,
                           ),
@@ -830,7 +830,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                                 onPressed: generateNew,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  foregroundColor: const Color(0xFFE64A19),
+                                  foregroundColor: FunkyColors.orange,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 50,
                                     vertical: 20,
@@ -913,7 +913,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                                         style: GoogleFonts.cairo(
                                           fontSize: 110,
                                           fontWeight: FontWeight.w900,
-                                          color: const Color(0xFFE64A19),
+                                          color: FunkyColors.orange,
                                         ),
                                       ),
                                     ),
@@ -1025,7 +1025,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                             onPressed: _nextPlayer,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFFE64A19),
+                              foregroundColor: FunkyColors.orange,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 50,
                                 vertical: 20,

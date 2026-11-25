@@ -27,18 +27,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
   int _countdown = 0;
   Timer? _countdownTimer;
 
-  final List<Color> _circlePalette = [
-    const Color(0xFFE53935),
-    const Color(0xFF1E88E5),
-    const Color(0xFF43A047),
-    const Color(0xFFFF8F00),
-    const Color(0xFF8E24AA),
-    const Color(0xFF00ACC1),
-    const Color(0xFFF4511E),
-    const Color(0xFF00897B),
-    const Color(0xFF6D4C41),
-    const Color(0xFF3949AB),
-  ];
+  final List<Color> _circlePalette = FunkyColors.accents;
 
   void _startAutoSelection() {
     if (touches.length < 2) return;
@@ -115,11 +104,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
           // Gradient background
           Container(
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
-              ),
+              gradient: FunkyColors.backgroundGradient,
             ),
           ),
 
