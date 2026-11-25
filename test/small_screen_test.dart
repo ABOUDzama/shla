@@ -24,6 +24,11 @@ import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/who_said_game.dart';
 import 'package:shella/screens/scoreboard_screen.dart';
 import 'package:shella/services/score_service.dart';
+import 'package:socket_io_client/socket_io_client.dart' as sio;
+import 'package:shella/services/socket_service.dart';
+import 'package:shella/services/voice_chat_service.dart';
+import 'package:shella/screens/lobby_screen.dart';
+import 'package:shella/screens/room_screen.dart';
 
 /// Small-screen (360x640) overflow sweep: drives each interior into gameplay
 /// and fails on any unconsumed exception (RenderFlex overflow, layout asserts).
@@ -445,6 +450,49 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'who_said');
+    expectNoOverflow(tester);
+  });
+
+  /// Gives SocketService a timer-free fake socket for captures: built with
+  /// autoConnect+reconnection disabled, so no reconnect timers stay pending.
+  void useFakeSocket() {
+    SocketService.debugSocket = sio.io('http://127.0.0.1:9', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+      'reconnection': false,
+      'forceNew': true,
+      'multiplex': false,
+    });
+    SocketService.isTesting = true;
+    VoiceChatService.disabled = true;
+    addTearDown(() {
+      VoiceChatService.disabled = false;
+      SocketService.debugSocket?.dispose();
+      SocketService.debugSocket = null;
+      SocketService.isTesting = false;
+    });
+  }
+
+  testWidgets('small screen: online lobby restyle', (tester) async {
+    useFakeSocket();
+    await pumpSmall(tester, const LobbyScreen());
+    await flushFontCallbacks(tester);
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'lobby');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: online room restyle', (tester) async {
+    useFakeSocket();
+    await pumpSmall(
+      tester,
+      const RoomScreen(roomCode: 'ABC123', isHost: true, playerName: 'أحمد'),
+    );
+    await flushFontCallbacks(tester);
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'room');
     expectNoOverflow(tester);
   });
 

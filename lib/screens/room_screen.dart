@@ -158,6 +158,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
     });
 
     // Auto-sync mechanism (every 60 seconds)
+    if (!ss.SocketService.isTesting)
     _autoSyncTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
       if (mounted && ss.SocketService().isConnected) {
         ss.SocketService().forceRoomSync();
@@ -587,7 +588,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   color: Colors.white,
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                ),
+                                ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
                               ),
                             ],
                           ),

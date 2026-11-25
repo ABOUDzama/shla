@@ -37,7 +37,19 @@ class SocketService {
   factory SocketService() => _instance;
   SocketService._internal();
 
+  /// Test seam: when set, [socket] returns this instance and [initSocket]
+  /// never creates a real connection. Use a socket built with
+  /// {'autoConnect': false, 'reconnection': false} so no timers are pending.
+  @visibleForTesting
+  static io.Socket? debugSocket;
+
+  /// Test seam: when true, screens skip periodic socket timers that widget
+  /// tests cannot cancel.
+  @visibleForTesting
+  static bool isTesting = false;
+
   io.Socket get socket {
+    if (debugSocket != null) return debugSocket!;
     if (_socket == null) {
       _init();
     }
@@ -175,6 +187,7 @@ class SocketService {
   }
 
   void initSocket() {
+    if (debugSocket != null) return;
     if (_initialized && _socket != null) {
       if (!_socket!.connected) {
         _socket!.connect();

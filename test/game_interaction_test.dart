@@ -454,6 +454,18 @@ void main() {
       // Round 1: أحمد is clue-giver (first player).
       expect(find.text('الجولة 1 من 2'), findsOneWidget);
       expect(find.textContaining('صاحب كلمة السر: أحمد'), findsOneWidget);
+
+      // Regression: before the clue-giver reveals the word, scoring and
+      // skipping are gated - premature taps must not score or advance.
+      await tester.tap(find.text('محصلش تخمين'));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text('الجولة 1 من 2'), findsOneWidget);
+      expect(find.text('مين اللي خمن صح؟'), findsNothing);
+      await tester.tap(find.text('خمنوها صح'));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text('مين اللي خمن صح؟'), findsNothing);
+      expect(find.text('الجولة 1 من 2'), findsOneWidget);
+
       await tapText(tester, 'شوف الكلمة');
       expect(find.text('خمنوها صح'), findsOneWidget);
 
@@ -464,6 +476,7 @@ void main() {
       // Round 2: منى is clue-giver; nobody guesses.
       expect(find.text('الجولة 2 من 2'), findsOneWidget);
       expect(find.textContaining('صاحب كلمة السر: منى'), findsOneWidget);
+      await tapText(tester, 'شوف الكلمة');
       await tapText(tester, 'محصلش تخمين');
 
       // Final: منى wins 2-1 (guesser +2, clue-giver أحمد +1).

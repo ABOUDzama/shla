@@ -83,7 +83,13 @@ class VoiceChatService {
   String? _lastError;
   String? get lastError => _lastError;
 
+  /// Test seam: widget tests cannot request mic permissions or open WebRTC
+  /// platform channels; when true, [init] returns without touching them.
+  @visibleForTesting
+  static bool disabled = false;
+
   Future<void> init(String roomCode, String myId) async {
+    if (disabled) return;
     debugPrint(
       'WebRTC: [${DateTime.now()}] Initializing VoiceChatService for room: $roomCode, user: $myId',
     );

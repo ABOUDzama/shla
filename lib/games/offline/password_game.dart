@@ -46,6 +46,9 @@ class _PasswordGameState extends State<PasswordGame> {
   int _roundsPlayed = 0;
   String? _word;
   bool _wordRevealed = false;
+  // Gates scoring/skip until the clue-giver has seen the word at least once,
+  // so a premature tap cannot score or skip the round (parent review).
+  bool _wordSeen = false;
   final Set<String> _usedWords = {};
 
   int get _totalRounds => _players.length;
@@ -66,6 +69,7 @@ class _PasswordGameState extends State<PasswordGame> {
     _word = available[_rng.nextInt(available.length)];
     _usedWords.add(_word!);
     _wordRevealed = false;
+    _wordSeen = false;
   }
 
   void _guessed(String guesserName) {
@@ -229,8 +233,10 @@ class _PasswordGameState extends State<PasswordGame> {
                                 label: 'شوف الكلمة',
                                 accent: FunkyColors.amber,
                                 icon: Icons.visibility_rounded,
-                                onPressed: () =>
-                                    setState(() => _wordRevealed = true),
+                                onPressed: () => setState(() {
+                                  _wordRevealed = true;
+                                  _wordSeen = true;
+                                }),
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -251,14 +257,15 @@ class _PasswordGameState extends State<PasswordGame> {
               label: 'خمنوها صح',
               accent: FunkyColors.mint,
               icon: Icons.check_circle_rounded,
-              onPressed: () => _showGuesserPicker(context),
+              onPressed:
+                  _wordSeen ? () => _showGuesserPicker(context) : null,
             ),
             const SizedBox(height: 12),
             FunkyButton(
               label: 'محصلش تخمين',
               accent: FunkyColors.coral,
               icon: Icons.skip_next_rounded,
-              onPressed: _noGuess,
+              onPressed: _wordSeen ? _noGuess : null,
             ),
           ],
         ),
