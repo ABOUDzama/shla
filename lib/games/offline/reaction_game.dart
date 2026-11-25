@@ -51,13 +51,14 @@ class ReactionMatch {
 }
 
 class ReactionGame extends StatefulWidget {
-  const ReactionGame({super.key});
+  const ReactionGame({super.key, this.randomSeed});
+  final int? randomSeed;
 
   @override
   State<ReactionGame> createState() => _ReactionGameState();
 }
 
-enum _Phase { pickPlayers, waiting, green, resolved, matchOver }
+enum _Phase { pickPlayers, pickBots, waiting, green, resolved, matchOver }
 
 class _ReactionGameState extends State<ReactionGame> {
   bool _showIntro = true;
@@ -69,8 +70,23 @@ class _ReactionGameState extends State<ReactionGame> {
   late ReactionMatch _match;
   Timer? _greenTimer;
   Timer? _nextTimer;
-  final Random _random = Random();
-  String _banner = '';
+  late final Random _random =
+      widget.randomSeed != null ? Random(widget.randomSeed!) : Random();
+  final List<Timer> _botTimers = [];
+  int _humans = 2;
+  bool _practice = false;
+  final Set<int> _botSeats = {};
+  DateTime? _greenAt;
+  int? _lastWinner;
+  bool _lastFalse = false;
+  int? _lastMs;
+
+  @visibleForTesting
+  ReactionMatch get debugMatch => _match;
+  @visibleForTesting
+  Set<int> get debugBots => _botSeats;
+  @visibleForTesting
+  bool get debugGreen => _phase == _Phase.green;
 
   static const List<Color> _zoneColors = [
     FunkyColors.coral,
@@ -83,14 +99,24 @@ class _ReactionGameState extends State<ReactionGame> {
   void dispose() {
     _greenTimer?.cancel();
     _nextTimer?.cancel();
+    for (final t in _botTimers) {
+      t.cancel();
+    }
     super.dispose();
   }
 
-  void _startMatch(int players) {
+  void _startMatch(int humans, bool withBots) {
     _greenTimer?.cancel();
     _nextTimer?.cancel();
+    _humans = humans;
+    _practice = humans == 1 && !withBots;
+    final seats = _practice ? 1 : (withBots ? 4 : humans);
+    _botSeats
+      ..clear()
+      ..addAll([for (var i = humans; i < seats && withBots; i++) i]);
     setState(() {
-      _match = ReactionMatch(playerCount: players);
+      _match = ReactionMatch(playerCount: seats);
+      _lastWinner = null;
     });
     _armRound();
   }
@@ -100,15 +126,23 @@ class _ReactionGameState extends State<ReactionGame> {
     setState(() {
       _match.nextRound();
       _phase = _Phase.waiting;
-      _banner = 'استنى الأخضر...';
+      _lastWinner = null;
+      _lastMs = null;
     });
     final delay = Duration(milliseconds: 1500 + _random.nextInt(3000));
     _greenTimer = Timer(delay, () {
       if (!mounted || _phase != _Phase.waiting) return;
       setState(() {
         _phase = _Phase.green;
-        _banner = 'دوس!';
+        _greenAt = DateTime.now();
       });
+      for (final b in _botSeats) {
+        if (_random.nextDouble() < 0.85) {
+          _botTimers.add(Timer(Duration(milliseconds: 300 + _random.nextInt(350)), () {
+            if (mounted && _phase == _Phase.green) _onZoneTap(b);
+          }));
+        }
+      }
     });
   }
 
@@ -116,16 +150,17 @@ class _ReactionGameState extends State<ReactionGame> {
     if (_phase != _Phase.waiting && _phase != _Phase.green) return;
     final outcome = _match.tap(player, green: _phase == _Phase.green);
     if (outcome == ReactionOutcome.ignored) return;
+    for (final t in _botTimers) {
+      t.cancel();
+    }
+    _botTimers.clear();
     setState(() {
-      if (_match.matchWinner != null) {
-        _phase = _Phase.matchOver;
-        _banner = 'لاعب ${player + 1} كسب الماتش! 🏆';
-      } else {
-        _phase = _Phase.resolved;
-        _banner = outcome == ReactionOutcome.falseStart
-            ? 'لاعب ${player + 1} دوس بدري! نقطة تتخصم 😬'
-            : 'لاعب ${player + 1} كان الأسرع! ⚡';
-      }
+      _lastWinner = player;
+      _lastFalse = outcome == ReactionOutcome.falseStart;
+      _lastMs = _greenAt == null || _lastFalse
+          ? null
+          : DateTime.now().difference(_greenAt!).inMilliseconds;
+      _phase = _match.matchWinner != null ? _Phase.matchOver : _Phase.resolved;
     });
     if (_match.matchWinner == null) {
       _nextTimer?.cancel();
@@ -136,8 +171,11 @@ class _ReactionGameState extends State<ReactionGame> {
   }
 
   Widget _buildZone(int player) {
-    final isTop = (_match.playerCount == 2 && player == 0) ||
-        (_match.playerCount > 2 && player < 2);
+    // the zone drawn at the top of the screen faces the player sitting
+    // there, so its text is rotated; in a 2-player match that is player 2
+    final isTop = _match.playerCount == 2
+        ? player == 1
+        : _match.playerCount > 2 && player < 2;
     final waiting = _phase == _Phase.waiting;
     final green = _phase == _Phase.green;
     final color = green
@@ -148,7 +186,16 @@ class _ReactionGameState extends State<ReactionGame> {
     // max-contrast text on whatever the zone fill is (ink wins on every
     // flat pastel; white would fail on lime/cyan)
     final onZone = FlatDecor.textOn(color);
-    final label = 'لاعب ${player + 1}';
+    final label = _botSeats.contains(player) ? 'بوت ${player + 1}' : 'لاعب ${player + 1}';
+    final msg = green
+        ? 'دوس!'
+        : waiting
+            ? 'استنى الأخضر'
+            : _lastWinner == player
+                ? (_lastFalse
+                    ? 'بدري! -١'
+                    : (_lastMs != null ? 'الأسرع  $_lastMs ms' : 'الأسرع'))
+                : '';
     final score = _match.scores[player];
     final content = Center(
       child: Column(
@@ -162,6 +209,12 @@ class _ReactionGameState extends State<ReactionGame> {
               color: onZone,
             ),
           ),
+          if (msg.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(msg,
+                  style: flatCairo(fontSize: 26, fontWeight: FontWeight.w900, color: onZone)),
+            ),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
@@ -184,7 +237,8 @@ class _ReactionGameState extends State<ReactionGame> {
     );
     return Expanded(
       child: GestureDetector(
-        onTap: () => _onZoneTap(player),
+        key: ValueKey('zone_$player'),
+        onTap: _botSeats.contains(player) ? null : () => _onZoneTap(player),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 120),
           margin: const EdgeInsets.all(6),
@@ -206,7 +260,9 @@ class _ReactionGameState extends State<ReactionGame> {
     return Column(
       children: [
         Expanded(
-          child: players == 2
+          child: players == 1
+              ? Column(children: [zones[0]])
+              : players == 2
               ? Column(children: [zones[1], zones[0]])
               : Column(
                   children: [
@@ -224,22 +280,24 @@ class _ReactionGameState extends State<ReactionGame> {
                 ),
         ),
         if (_phase == _Phase.matchOver)
-          VictoryFriends(gameTitle: 'أسرع رد فعل', winnerName: 'لاعب ${_match.matchWinner! + 1}'),
-        Container(
-          width: double.infinity,
-          margin: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: FlatDecor.card(radius: 18),
-          child: Text(
-            _banner,
-            textAlign: TextAlign.center,
-            style: flatCairo(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
-          ),
-        ),
+          Builder(builder: (context) {
+            final w = _match.matchWinner!;
+            if (_practice) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text('خلصت ٥ جولات', style: _t(22)),
+              );
+            }
+            return w >= _humans
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text('البوتات كسبوا 🤖',
+                        style: flatCairo(fontSize: 22, fontWeight: FontWeight.w900, color: FlatColors.ink)
+                            .copyWith(fontFamilyFallback: const ['Noto Color Emoji'])))
+                : VictoryFriends(
+                    gameTitle: _practice ? null : 'أسرع رد فعل',
+                    winnerName: 'لاعب ${w + 1}');
+          }),
         if (_phase == _Phase.matchOver)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
@@ -255,54 +313,55 @@ class _ReactionGameState extends State<ReactionGame> {
     );
   }
 
-  Widget _buildPicker() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'كام لاعب؟',
-            style: flatCairo(
-              fontSize: 26,
-              fontWeight: FontWeight.w900,
-              color: FlatColors.ink,
-            ),
-          ),
+  TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>
+      flatCairo(fontSize: size, fontWeight: w, color: color ?? FlatColors.ink)
+          .copyWith(fontFamilyFallback: const ['Noto Color Emoji']);
+
+  Widget _bigChoice(String label, VoidCallback onTap) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: SizedBox(
+          width: 220,
+          child: FilledButton(onPressed: onTap, child: Text(label, style: _t(18, color: Colors.white))),
+        ),
+      );
+
+  Widget _buildPicker() => Center(
+        child: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text('كام لاعب؟', style: _t(26)),
+            const SizedBox(height: 20),
+            _bigChoice('لاعب واحد', () {
+              _humans = 1;
+              setState(() => _phase = _Phase.pickBots);
+            }),
+            for (final n in [2, 3, 4])
+              _bigChoice('$n لاعبين', () {
+                _humans = n;
+                if (n == 4) {
+                  _startMatch(4, false);
+                } else {
+                  setState(() => _phase = _Phase.pickBots);
+                }
+              }),
+          ]),
+        ),
+      );
+
+  Widget _buildBots() => Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('نضيف بوتات؟', style: _t(26)),
           const SizedBox(height: 8),
           Text(
-            'الكل على نفس الموبايل، وأول واحد يوصل ٥ نقط يكسب',
-            style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.7)),
+            _humans == 1
+                ? 'من غير بوتات هتتدرب لوحدك وتشوف سرعة ردّك'
+                : 'البوتات بتكمّل لحد ٤ لاعبين',
+            style: _t(14, w: FontWeight.w600),
           ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (final n in [2, 3, 4])
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: _zoneColors[n - 2],
-                      foregroundColor: FlatDecor.textOn(_zoneColors[n - 2]),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 26, vertical: 16),
-                    ),
-                    onPressed: () => _startMatch(n),
-                    child: Text(
-                      '$n',
-                      style: flatCairo(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+          const SizedBox(height: 20),
+          _bigChoice('اه 🤖', () => _startMatch(_humans, true)),
+          _bigChoice('لا', () => _startMatch(_humans, false)),
+        ]),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +378,11 @@ class _ReactionGameState extends State<ReactionGame> {
       title: 'أسرع رد فعل',
       backgroundColor: FlatColors.bg,
       body: SafeArea(
-        child: _phase == _Phase.pickPlayers ? _buildPicker() : _buildArena(),
+        child: switch (_phase) {
+          _Phase.pickPlayers => _buildPicker(),
+          _Phase.pickBots => _buildBots(),
+          _ => _buildArena(),
+        },
       ),
     );
     if (_entranceFaded) return scaffold;

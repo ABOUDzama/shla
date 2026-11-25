@@ -97,13 +97,15 @@ void main() {
 
   testWidgets('proof: reaction green state 2p', (tester) async {
     await prep(tester, const ReactionGame());
-    await tester.tap(find.text('2'));
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('لا'));
     await tester.pump();
     // wait for the green "دوس!" moment
     for (var i = 0; i < 40 && find.text('دوس!').evaluate().isEmpty; i++) {
       await tester.pump(const Duration(milliseconds: 250));
     }
-    expect(find.text('دوس!'), findsOneWidget);
+    expect(find.text('دوس!'), findsWidgets);
     // let the 120ms zone-color transition to lime finish before capture
     await tester.pump(const Duration(milliseconds: 300));
     await snap(tester, 'reaction_green_2p');

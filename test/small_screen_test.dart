@@ -523,7 +523,9 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'reaction_picker');
-    await tapIf(tester, find.text('2'));
+    await tapIf(tester, find.text('2 لاعبين'));
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('لا'));
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'reaction_arena');
