@@ -37,6 +37,7 @@ import '../games/offline/code_names_game.dart';
 import '../games/offline/never_have_i_game.dart';
 import '../games/offline/proverb_game.dart';
 import '../games/offline/reaction_game.dart';
+import '../games/offline/snake_arena_game.dart';
 import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
@@ -300,6 +301,15 @@ class GameRegistry {
       icon: Icons.bolt,
       color: FunkyColors.lime,
       screen: ReactionGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'حية الشلة',
+      description: 'لفّ حيتك بزرار واحد، كل التفاح وكبّر، ومتخبطش في حد!',
+      icon: Icons.turn_right,
+      color: FunkyColors.mint,
+      screen: SnakeArenaGame(),
       badge: 'جديد',
       arcade1234: true,
     ),
