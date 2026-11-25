@@ -30,3 +30,10 @@ HEAD: local commits only, NEVER push (standing rule).
 - wakeschedule-01M8A09XSV2D2SCH0G5MHTJA1E recurring 45min (stage-2 prompt).
 - wakeschedule-01M89SM6ACSAAAZ6YZMPFTKT6W one-shot 2026-11-26T00:05 EET midnight art queue (16/20 budget).
 - Task agent expires 2026-11-26 02:02:56 EET. Repo bundle owed to parent before expiry.
+
+
+## Batch 4 (b79df37+fix)
+- opposite_day, truth_or_lie, truth_or_dare, five_seconds, charades, word_chain converted + small360 captures (6 new, 31 tests in small_screen suite)
+- truth_or_lie tofu fix: statement/feedback/explanation/button labels now GoogleFonts.cairo (harness has no Arabic in default font; device consistency too)
+- word_chain setup title white->ink fix after pixel inspection
+- Remaining 22: word_story, first_letter, odd_one_out, tick_tock_boom, ranking_challenge, code_names, pictionary, seega, gobblet, multi_touch, reverse_quiz, who_am_i accents; arcade: reaction, tap_race, tug_of_war, sumo, snake_arena, whack_mole, coin_grab, catch, touch_ball, snow_brawl; verify tank_battle

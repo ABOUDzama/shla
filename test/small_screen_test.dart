@@ -22,6 +22,12 @@ import 'package:shella/games/offline/password_game.dart';
 import 'package:shella/games/offline/spy_game.dart';
 import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/who_said_game.dart';
+import 'package:shella/games/offline/opposite_day.dart';
+import 'package:shella/games/offline/truth_or_lie_game.dart';
+import 'package:shella/games/offline/truth_or_dare_game.dart';
+import 'package:shella/games/offline/five_seconds_game.dart';
+import 'package:shella/games/offline/charades_game.dart';
+import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/would_rather_game.dart';
 import 'package:shella/games/offline/never_have_i_game.dart';
 import 'package:shella/games/offline/undercover_game.dart';
@@ -222,6 +228,69 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'never_have_i');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: opposite day gameplay', (tester) async {
+    await pumpSmall(tester, const OppositeDay());
+    await flushFontCallbacks(tester);
+    await intoGameplay(tester);
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'opposite_day');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: truth or lie gameplay', (tester) async {
+    await pumpSmall(tester, const TruthOrLieGame());
+    await flushFontCallbacks(tester);
+    await intoGameplay(tester);
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'truth_or_lie');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: truth or dare gameplay', (tester) async {
+    await pumpSmall(tester, const TruthOrDareGame());
+    await flushFontCallbacks(tester);
+    await intoGameplay(tester);
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'truth_or_dare');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: five seconds gameplay', (tester) async {
+    await pumpSmall(tester, const FiveSecondsGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ التحدي 🔥'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'five_seconds');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: charades setup', (tester) async {
+    await pumpSmall(tester, const CharadesGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'charades');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: word chain setup', (tester) async {
+    await pumpSmall(tester, const WordChainGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'word_chain');
     expectNoOverflow(tester);
   });
 

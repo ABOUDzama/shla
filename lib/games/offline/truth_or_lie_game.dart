@@ -10,6 +10,7 @@ import '../../data/truth_or_lie_data.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TruthOrLieGame extends StatefulWidget {
   const TruthOrLieGame({super.key});
@@ -269,7 +270,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                 child: Text(
                   _displayedText,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: GoogleFonts.cairo(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: FlatColors.ink,
@@ -342,7 +343,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                                     : (currentFact['isTrue']
                                           ? 'غلط.. دي حقيقة!'
                                           : 'غلط.. ده هبد!'),
-                                style: TextStyle(
+                                style: GoogleFonts.cairo(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: _isCorrect!
@@ -356,7 +357,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                           Text(
                             currentFact['explanation'],
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: GoogleFonts.cairo(
                               fontSize: 18,
                               color: FlatColors.ink,
                               height: 1.5,
@@ -427,7 +428,7 @@ class _ActionButton extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(
+              style: GoogleFonts.cairo(
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
 
