@@ -9,6 +9,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 import '../../data/taboo_data.dart';
 
 /// كلمات ممنوعة — وصّف الكلمة من غير ما تقول الكلمات الممنوعة.
@@ -159,7 +160,7 @@ class _TabooGameState extends State<TabooGame> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       '${p['name']} — ${p['score']} نقطة',
-                      style: FunkyText.body(size: 18, color: Colors.white),
+                      style: FunkyText.body(size: 18, color: FlatColors.ink),
                     ),
                   ),
                 ),
@@ -217,7 +218,7 @@ class _TabooGameState extends State<TabooGame> {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(22),
-                decoration: FunkyDecor.glowCard(FunkyColors.coral),
+                decoration: FlatDecor.card(),
                 child: Column(
                   children: [
                     Text(
@@ -225,21 +226,22 @@ class _TabooGameState extends State<TabooGame> {
                       style: GoogleFonts.cairo(
                         fontSize: 34,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white,
+                        color: FlatColors.ink,
                       ),
                     ).animate(key: ValueKey(_cardIndex)).fadeIn().slideY(begin: -0.2),
                     const SizedBox(height: 16),
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.25),
+                        color: FlatColors.bg,
                         borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: FlatColors.border, width: 2),
                       ),
                       child: Column(
                         children: [
                           Text(
                             '🙊 ممنوع تقول:',
-                            style: FunkyText.title(size: 16, color: FunkyColors.amber),
+                            style: FunkyText.title(size: 16, color: FlatColors.tilePastels[3]),
                           ),
                           const SizedBox(height: 8),
                           Wrap(
@@ -251,7 +253,7 @@ class _TabooGameState extends State<TabooGame> {
                                   (w) => Container(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 12, vertical: 6),
-                                    decoration: FunkyDecor.pill(FunkyColors.magenta),
+                                    decoration: FunkyDecor.pill(FlatColors.tilePastels[5]),
                                     child: Text(
                                       w,
                                       style: FunkyText.body(size: 15, color: Colors.white),

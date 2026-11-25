@@ -7,6 +7,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// ذاكرة الشلة — افتح كارتين، لو متشابهين خدهم وجرب تاني.
 class MemoryGame extends StatefulWidget {
@@ -168,7 +169,7 @@ class _MemoryGameState extends State<MemoryGame> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       '${p['name']} — ${p['score']} زوج',
-                      style: FunkyText.body(size: 18, color: Colors.white),
+                      style: FunkyText.body(size: 18, color: FlatColors.ink),
                     ),
                   ),
                 ),
@@ -230,7 +231,7 @@ class _MemoryGameState extends State<MemoryGame> {
                         size: 14,
                         color: i == _turn
                             ? currentAccent
-                            : Colors.white.withOpacity(0.6),
+                            : FlatColors.ink.withValues(alpha: 0.55),
                       ),
                     ),
                   ),
@@ -266,19 +267,19 @@ class _MemoryGameState extends State<MemoryGame> {
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 250),
                             decoration: shown
-                                ? FunkyDecor.glowCard(
+                                ? FlatDecor.tile(
                                     _matched[i]
-                                        ? FunkyColors.mint
-                                        : currentAccent,
+                                        ? FlatColors.tilePastels[2]
+                                        : FlatColors.tilePastels[
+                                            _turn % FlatColors.tilePastels.length],
                                     radius: 14,
                                   )
                                 : BoxDecoration(
-                                    color: FunkyColors.cardLight,
+                                    color: Colors.white,
                                     borderRadius: BorderRadius.circular(14),
                                     border: Border.all(
-                                      color:
-                                          FunkyColors.violet.withOpacity(0.5),
-                                      width: 1.2,
+                                      color: FlatColors.border,
+                                      width: 2,
                                     ),
                                   ),
                             child: Center(

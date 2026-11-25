@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../screens/global_player_selection_screen.dart';
-import 'dart:math';
+
 import 'dart:async';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +13,7 @@ import '../../services/audio_service.dart';
 import '../../services/ai_cache_service.dart';
 import '../../services/played_history_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class QuizGame extends StatefulWidget {
   const QuizGame({super.key});
@@ -246,7 +247,7 @@ class _QuizGameState extends State<QuizGame> {
         backgroundColor: FunkyColors.amber,
         showAi: false,
         body: const Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: FlatColors.ink),
         ),
       );
     }
@@ -283,7 +284,7 @@ class _QuizGameState extends State<QuizGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 34,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                     height: 1.3,
                   ),
                   textAlign: TextAlign.center,
@@ -313,20 +314,22 @@ class _QuizGameState extends State<QuizGame> {
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? Colors.indigoAccent.withValues(alpha: 0.3)
-                              : Colors.transparent,
+                              ? FlatColors.tilePastels[1].withValues(alpha: 0.18)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(30),
                           border: Border.all(
                             color: isSelected
-                                ? Colors.indigoAccent
-                                : Colors.white38,
-                            width: 1.5,
+                                ? FlatColors.tilePastels[1]
+                                : FlatColors.border,
+                            width: 2,
                           ),
                         ),
                         child: Text(
                           cat,
                           style: GoogleFonts.cairo(
-                            color: isSelected ? Colors.white : Colors.white70,
+                            color: isSelected
+                                ? FlatColors.tilePastels[1]
+                                : FlatColors.ink,
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.normal,
@@ -347,8 +350,9 @@ class _QuizGameState extends State<QuizGame> {
                           child: ElevatedButton(
                             onPressed: _openPlayerSelection,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: FunkyColors.card,
+                              backgroundColor: FlatColors.tilePastels[3],
+                              foregroundColor: Colors.white,
+                              elevation: 0,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
@@ -381,7 +385,7 @@ class _QuizGameState extends State<QuizGame> {
       showAi: false,
       actions: [
         IconButton(
-          icon: const Icon(Icons.home, color: Colors.white70),
+          icon: const Icon(Icons.refresh_rounded, color: FlatColors.ink),
           onPressed: () {
             setState(() {
               gameStarted = false;
@@ -399,7 +403,7 @@ class _QuizGameState extends State<QuizGame> {
               Text(
                 'سؤال ${currentQuestionIndex + 1} من ${gameQuestions.length}',
                 style: GoogleFonts.cairo(
-                  color: Colors.white70,
+                  color: FlatColors.ink.withValues(alpha: 0.65),
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -409,7 +413,7 @@ class _QuizGameState extends State<QuizGame> {
                 borderRadius: BorderRadius.circular(10),
                 child: LinearProgressIndicator(
                   value: progress,
-                  backgroundColor: Colors.white12,
+                  backgroundColor: FlatColors.border,
                   color: FunkyColors.amber,
                   minHeight: 4,
                 ),
@@ -427,7 +431,7 @@ class _QuizGameState extends State<QuizGame> {
                     horizontal: 24,
                     vertical: 40,
                   ),
-                  decoration: FunkyDecor.glowCard(FunkyColors.amber, radius: 30),
+                  decoration: FlatDecor.card(radius: 30),
                   child: Column(
                     children: [
                       Text(
@@ -436,7 +440,7 @@ class _QuizGameState extends State<QuizGame> {
                         style: GoogleFonts.cairo(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: FlatColors.ink,
                           height: 1.4,
                         ),
                       ),
@@ -447,7 +451,7 @@ class _QuizGameState extends State<QuizGame> {
                               style: GoogleFonts.cairo(
                                 fontSize: 15,
                                 fontStyle: FontStyle.italic,
-                                color: FunkyColors.amber,
+                                color: FlatColors.tilePastels[3],
                                 fontWeight: FontWeight.bold,
                               ).copyWith(
                                   fontFamilyFallback:
@@ -460,18 +464,12 @@ class _QuizGameState extends State<QuizGame> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: FunkyColors.card,
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: FunkyColors.lime.withValues(alpha: 0.8),
-                              width: 1.6,
+                              color: FlatColors.tilePastels[2],
+                              width: 2,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: FunkyColors.lime.withValues(alpha: 0.3),
-                                blurRadius: 18,
-                              ),
-                            ],
                           ),
                           child: Column(
                             children: [
@@ -479,7 +477,7 @@ class _QuizGameState extends State<QuizGame> {
                                 'الإجابة الصحيحة:',
                                 style: GoogleFonts.cairo(
                                   fontSize: 14,
-                                  color: FunkyColors.lime,
+                                  color: FlatColors.tilePastels[2],
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -490,7 +488,7 @@ class _QuizGameState extends State<QuizGame> {
                                 style: GoogleFonts.cairo(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w900,
-                                  color: FunkyColors.lime,
+                                  color: FlatColors.ink,
                                 ),
                               ),
                             ],
@@ -507,11 +505,7 @@ class _QuizGameState extends State<QuizGame> {
               if (_players.isNotEmpty)
                 Container(
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.03),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white12, width: 1),
-                  ),
+                  decoration: FlatDecor.card(radius: 20),
                   child: Column(
                     children: [
                       Row(
@@ -525,7 +519,7 @@ class _QuizGameState extends State<QuizGame> {
                           Text(
                             'لوحة النقاط',
                             style: GoogleFonts.cairo(
-                              color: Colors.white,
+                              color: FlatColors.ink,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -534,7 +528,7 @@ class _QuizGameState extends State<QuizGame> {
                           Text(
                             'لاعبين ${_players.length}',
                             style: GoogleFonts.cairo(
-                              color: Colors.white54,
+                              color: FlatColors.ink.withValues(alpha: 0.55),
                               fontSize: 12,
                             ),
                           ),
@@ -542,7 +536,7 @@ class _QuizGameState extends State<QuizGame> {
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 12.0),
-                        child: Divider(color: Colors.white12, height: 1),
+                        child: Divider(color: FlatColors.border, height: 1),
                       ),
                       ..._players.map((pName) {
                         final score = _playerScores[pName] ?? 0;
@@ -554,7 +548,7 @@ class _QuizGameState extends State<QuizGame> {
                                 child: Text(
                                   pName,
                                   style: GoogleFonts.cairo(
-                                    color: Colors.white,
+                                    color: FlatColors.ink,
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -565,7 +559,7 @@ class _QuizGameState extends State<QuizGame> {
                               Text(
                                 '$score',
                                 style: GoogleFonts.cairo(
-                                  color: Colors.amberAccent,
+                                  color: FlatColors.tilePastels[4],
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -619,8 +613,9 @@ class _QuizGameState extends State<QuizGame> {
                       child: ElevatedButton(
                         onPressed: _nextQuestion,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: FunkyColors.card,
+                          backgroundColor: FlatColors.tilePastels[3],
+                          foregroundColor: Colors.white,
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),

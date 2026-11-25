@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'flat_theme.dart';
 
 /// Funky party design system for شِلَّة.
 /// Vivid, loud, but coherent: one deep space-purple base, a fixed set of
@@ -232,30 +233,12 @@ class FunkyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gradient = FunkyDecor.accentGradient(accent);
+    // Approved flat cartoon button: solid fill + darker bottom edge,
+    // no gradient, no glow (XO trial direction, user-approved 2026-11-25).
     return Opacity(
       opacity: onPressed == null ? 0.55 : 1,
       child: Container(
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.38),
-            width: 1.3,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: accent.withValues(alpha: 0.55),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-            BoxShadow(
-              color: accent.withValues(alpha: 0.9),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        decoration: FlatDecor.button(accent, radius: 22),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
