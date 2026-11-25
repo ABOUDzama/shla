@@ -1122,8 +1122,8 @@ void main() {
     (List<String>, List<String>) mirrorDeal() =>
         CodeNamesGame.deal(Random(seed), 'red');
 
-    const redColor = Color(0xFFE0483E);
-    const blueColor = Color(0xFF3E7BFA);
+    const redColor = Color(0xFFC63730); // darkened for 4.5:1 white text
+    const blueColor = Color(0xFF2B5CD6);
     const neutralColor = Color(0xFFB8A88A);
     const assassinColor = Color(0xFF22242E);
 

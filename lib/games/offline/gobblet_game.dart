@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/score_service.dart';
@@ -287,8 +286,8 @@ class _GobbletGameState extends State<GobbletGame> {
                 });
               }
             },
-            style: ElevatedButton.styleFrom(elevation: 0, 
-              backgroundColor: Colors.orange,
+            style: ElevatedButton.styleFrom(elevation: 0,
+              backgroundColor: FlatColors.mintDark,
               foregroundColor: Colors.white,
             ),
             child: Text(
@@ -318,9 +317,6 @@ class _GobbletGameState extends State<GobbletGame> {
     Color baseColor = piece.player == 1
         ? FunkyColors.coral
         : FunkyColors.sky;
-    Color topColor = piece.player == 1
-        ? FunkyColors.pink
-        : FunkyColors.cyan;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -329,15 +325,10 @@ class _GobbletGameState extends State<GobbletGame> {
       decoration: BoxDecoration(
         color: baseColor,
         shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [topColor, baseColor],
-          center: const Alignment(-0.3, -0.5),
-          radius: 0.8,
+        border: Border.all(
+          color: isSelected ? FlatColors.day : Colors.white,
+          width: 3,
         ),
-        
-        border: isSelected
-            ? Border.all(color: Colors.yellowAccent, width: 3)
-            : null,
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -423,10 +414,10 @@ class _GobbletGameState extends State<GobbletGame> {
       child: Container(
         margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.orange.shade100,
+          color: FlatColors.bg,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? Colors.yellowAccent : Colors.orange.shade300,
+            color: isSelected ? FlatColors.day : FlatColors.border,
             width: isSelected ? 4 : 2,
           ),
           
@@ -447,19 +438,19 @@ class _GobbletGameState extends State<GobbletGame> {
         (!widget.isHost && player == 2);
     final isCurrent =
         _currentPlayer == player && !_isGameOver && isOnlineMyTurn;
-    final color = player == 1 ? Colors.red.shade50 : Colors.blue.shade50;
+    final color = FlatColors.tileWhite;
     final borderColor = player == 1
-        ? Colors.red.shade300
-        : Colors.blue.shade300;
+        ? FlatColors.mafia
+        : FlatColors.detective;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        color: isCurrent ? color : Colors.grey.shade100,
+        color: color,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isCurrent ? borderColor : Colors.transparent,
-          width: 3,
+          color: isCurrent ? borderColor : FlatColors.border,
+          width: isCurrent ? 3 : 2,
         ),
       ),
       child: Column(
@@ -476,7 +467,7 @@ class _GobbletGameState extends State<GobbletGame> {
             style: flatCairo(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: player == 1 ? Colors.red.shade800 : Colors.blue.shade800,
+              color: player == 1 ? FlatColors.mafia : FlatColors.detective,
             ),
           ),
           const SizedBox(height: 8),
@@ -534,12 +525,13 @@ class _GobbletGameState extends State<GobbletGame> {
 
     return OfflineGameScaffold(
       title: '👾 جوبلت',
-      backgroundColor: FunkyColors.pink,
+      backgroundColor: FlatColors.bg,
       showAi: false,
       body: SafeArea(
-        child: Column(
+        child: SingleChildScrollView(
+          child: Column(
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
 
             // Player 2 Inventory (Top)
             Padding(
@@ -547,17 +539,13 @@ class _GobbletGameState extends State<GobbletGame> {
               child: _buildInventory(2),
             ),
 
-            const Spacer(),
+            const SizedBox(height: 8),
 
             // Game Board
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 24),
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.orange.shade400,
-                borderRadius: BorderRadius.circular(24),
-                
-              ),
+              decoration: FlatDecor.card(radius: 24),
               child: AspectRatio(
                 aspectRatio: 1,
                 child: Column(
@@ -574,7 +562,7 @@ class _GobbletGameState extends State<GobbletGame> {
               ),
             ),
 
-            const Spacer(),
+            const SizedBox(height: 8),
 
             // Player 1 Inventory (Bottom)
             Padding(
@@ -582,8 +570,9 @@ class _GobbletGameState extends State<GobbletGame> {
               child: _buildInventory(1),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
           ],
+        ),
         ),
       ),
     );

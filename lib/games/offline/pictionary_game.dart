@@ -763,7 +763,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
         title: '🎨 ارسم وخمّن',
         backgroundColor: bgColor,
         body: SafeArea(
-          child: Center(
+          child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(

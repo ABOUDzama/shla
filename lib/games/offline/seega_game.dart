@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../services/score_service.dart';
 import '../../services/socket_service.dart';
@@ -201,31 +200,21 @@ class _SeegaGameState extends State<SeegaGame> {
 
     return OfflineGameScaffold(
       title: '🎮 السيجة',
-      backgroundColor: FunkyColors.orange,
+      backgroundColor: FlatColors.bg,
       showAi: false,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home, color: Colors.white70),
-          onPressed: () => setState(() => _showIntro = true),
-        ),
-      ],
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 24),
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: FunkyColors.bgDeep.withValues(alpha: 0.85),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.white10),
-              ),
+              decoration: FlatDecor.card(radius: 16),
               child: Column(
                 children: [
                   Text(
                     isPlacementPhase ? 'مرحلة التوزيع' : 'مرحلة التحريك',
                     style: flatCairo(
-                      color: Colors.white,
+                      color: FlatColors.ink,
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
                     ),
@@ -237,7 +226,7 @@ class _SeegaGameState extends State<SeegaGame> {
                     textAlign: TextAlign.center,
                     style: flatCairo(
                       fontSize: 14,
-                      color: Colors.white70,
+                      color: FlatColors.ink.withValues(alpha: 0.7),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -250,10 +239,8 @@ class _SeegaGameState extends State<SeegaGame> {
                     horizontal: 24,
                     vertical: 8,
                   ),
-                  decoration: BoxDecoration(
-                    color: Colors.black45,
+                  decoration: FlatDecor.tag().copyWith(
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white12),
                   ),
                   child: Text(
                     winner != null
@@ -268,10 +255,10 @@ class _SeegaGameState extends State<SeegaGame> {
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                       color: winner != null
-                          ? Colors.amberAccent
+                          ? FlatColors.mintDark
                           : (currentPlayer == 1
-                                ? Colors.redAccent.shade100
-                                : Colors.blueAccent.shade100),
+                                ? FlatColors.mafia
+                                : FlatColors.detective),
                     ),
                   ),
                 )
@@ -286,13 +273,12 @@ class _SeegaGameState extends State<SeegaGame> {
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: FunkyColors.card,
+                    color: FlatColors.tileWhite,
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(
-                      color: FunkyColors.bgDeep,
+                      color: FlatColors.border,
                       width: 12,
                     ),
-                    
                   ),
                   child: GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
@@ -311,12 +297,10 @@ class _SeegaGameState extends State<SeegaGame> {
                         child: AnimatedContainer(
                           duration: 250.ms,
                           decoration: BoxDecoration(
-                            color: const Color(
-                              0xFF1A1A1A,
-                            ).withValues(alpha: 0.9),
+                            color: FlatColors.bg,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: isSelected ? Colors.amber : Colors.white10,
+                              color: isSelected ? FlatColors.day : FlatColors.border,
                               width: 2,
                             ),
                           ),
@@ -328,36 +312,13 @@ class _SeegaGameState extends State<SeegaGame> {
                                     height: 55,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      gradient: RadialGradient(
-                                        center: const Alignment(-0.3, -0.3),
-                                        radius: 0.9,
-                                        colors: value == 1
-                                            ? [
-                                                const Color(
-                                                  0xFFEF9A9A,
-                                                ), // light red
-                                                FunkyColors.coral, // red
-                                                const Color(
-                                                  0xFF8B0000,
-                                                ), // dark red
-                                              ]
-                                            : [
-                                                const Color(
-                                                  0xFF90CAF9,
-                                                ), // light blue
-                                                FunkyColors.sky, // blue
-                                                const Color(
-                                                  0xFF0D47A1,
-                                                ), // dark blue
-                                              ],
-                                      ),
+                                      color: value == 1
+                                          ? FlatColors.mafia
+                                          : FlatColors.detective,
                                       border: Border.all(
-                                        color: value == 1
-                                            ? FunkyColors.lime
-                                            : FunkyColors.amber,
-                                        width: 2,
+                                        color: Colors.white,
+                                        width: 3,
                                       ),
-                                      
                                     ),
                                   ).animate().scale(
                                     curve: Curves.elasticOut,
@@ -373,27 +334,11 @@ class _SeegaGameState extends State<SeegaGame> {
             ),
             const SizedBox(height: 25),
             if (winner != null)
-              ElevatedButton(
+              FunkyButton(
                 onPressed: _resetGame,
-                style: ElevatedButton.styleFrom(elevation: 0, 
-                  backgroundColor: FunkyColors.orange,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  'إعادة التحدي',
-                  style: flatCairo(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.amberAccent,
-                  ),
-                ),
+                label: 'إعادة التحدي',
+                accent: FunkyColors.orange,
+                fontSize: 18,
               ).animate().fadeIn().scale(),
           ],
         ),

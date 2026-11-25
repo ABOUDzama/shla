@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
-import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
@@ -97,18 +96,11 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
 
     return OfflineGameScaffold(
       title: '👆 تحدي اللمس',
-      backgroundColor: FunkyColors.mint,
+      backgroundColor: FlatColors.bg,
       showAi: false,
       actions: const [],
       body: Stack(
         children: [
-          // Gradient background
-          Container(
-            decoration: const BoxDecoration(
-              gradient: FunkyColors.backgroundGradient,
-            ),
-          ),
-
           // Main Touch Area
           Listener(
             onPointerDown: (details) {
@@ -203,17 +195,17 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                                         style: flatCairo(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w900,
-                                          color: Colors.white,
+                                          color: FlatDecor.textOn(color),
                                         ),
                                       ),
                                     ],
                                   )
                                 : Text(
                                     '${index + 1}',
-                                    style: const TextStyle(
+                                    style: flatCairo(
                                       fontSize: 32,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: FlatDecor.textOn(color),
                                     ),
                                   ),
                           ),
@@ -233,18 +225,14 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                           Container(
                             margin: const EdgeInsets.symmetric(horizontal: 40),
                             padding: const EdgeInsets.all(24),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(color: Colors.white30),
-                            ),
+                            decoration: FlatDecor.card(radius: 24),
                             child: Text(
                               'كل واحد يحط صباعه\nعلى الشاشة\nوالاختيار هيبدأ لوحده! 🎲',
                               textAlign: TextAlign.center,
                               style: flatCairo(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: FlatColors.ink,
                                 height: 1.5,
                               ),
                             ),
@@ -264,14 +252,11 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                             horizontal: 24,
                             vertical: 14,
                           ),
-                          decoration: BoxDecoration(
-                            color: Colors.black45,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                          decoration: FlatDecor.tag(),
                           child: Text(
                             'محتاج على الأقل شخصين! 👆👆',
                             style: flatCairo(
-                              color: Colors.white,
+                              color: FlatColors.ink,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -298,13 +283,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                                 style: flatCairo(
                                   fontSize: 120,
                                   fontWeight: FontWeight.w900,
-                                  color: Colors.white,
-                                  shadows: [
-                                    const Shadow(
-                                      color: Colors.black54,
-                                      blurRadius: 20,
-                                    ),
-                                  ],
+                                  color: FlatColors.ink,
                                 ),
                               ),
                             ),
@@ -312,7 +291,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                           Text(
                             'جاري الاختيار...',
                             style: flatCairo(
-                              color: Colors.white70,
+                              color: FlatColors.ink.withValues(alpha: 0.7),
                               fontSize: 18,
                             ),
                           ),
@@ -338,7 +317,8 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: FunkyColors.card,
+                            foregroundColor: FlatColors.ink,
+                            side: const BorderSide(color: FlatColors.border, width: 2),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 40,
                               vertical: 16,

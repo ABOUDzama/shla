@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../screens/global_player_selection_screen.dart';
 import 'dart:math';
-import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../services/raw_data_manager.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -72,7 +71,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('تم توليد شخصيات جديدة بالذكاء الاصطناعي! ✨'),
-              backgroundColor: Colors.green,
+              backgroundColor: FlatColors.mintDark,
             ),
           );
         }
@@ -82,7 +81,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('فشل توليد محتوى AI: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: FlatColors.mafia,
           ),
         );
       }
@@ -228,7 +227,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
     if (!_gameStarted) {
       return OfflineGameScaffold(
       title: '🎭 مين أنا؟',
-      backgroundColor: FunkyColors.sky,
+      backgroundColor: FlatColors.bg,
       onAiRefresh: _generateAiContent,
       actions: const [],
         body: Center(
@@ -243,17 +242,21 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                   style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ).animate().fadeIn(),
                 const SizedBox(height: 8),
                 Text(
                   'الشاشة تظهر شخصية معينة\nوالمطلوب تخمينها من التلميحات!',
                   textAlign: TextAlign.center,
-                  style: flatCairo(fontSize: 16, color: Colors.white70),
+                  style: flatCairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.7)),
                 ),
                 const SizedBox(height: 50),
-                ElevatedButton.icon(
+                FunkyButton(
+                      accent: FlatColors.day,
+                      icon: Icons.people_alt,
+                      label: 'اختار شلتك وابدأ!',
+                      fontSize: 22,
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -278,27 +281,6 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                           ),
                         );
                       },
-                      icon: const Icon(Icons.people_alt, size: 28),
-                      label: Text(
-                        'اختار شلتك وابدأ!',
-                        style: flatCairo(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amberAccent,
-                        foregroundColor: Colors.black87,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 20,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        elevation: 0,
-                        shadowColor: Colors.transparent,
-                      ),
                     )
                     .animate(onPlay: (c) => c.repeat(reverse: true))
                     .scale(
@@ -318,17 +300,8 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
 
     return OfflineGameScaffold(
       title: '🎭 مين أنا؟',
-      backgroundColor: FunkyColors.violet,
+      backgroundColor: FlatColors.bg,
       onAiRefresh: _generateAiContent,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.exit_to_app, color: Colors.white70),
-          onPressed: () => setState(() {
-            _gameStarted = false;
-            _players.clear();
-          }),
-        ),
-      ],
       body: SafeArea(
         child: Column(
           children: [
@@ -339,16 +312,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                   horizontal: 12,
                   vertical: 10,
                 ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.purple.shade900, Colors.purple.shade700],
-                  ),
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: Colors.purpleAccent.withValues(alpha: 0.5),
-                  ),
-                  
-                ),
+                decoration: FlatDecor.card(radius: 18),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: _players.asMap().entries.map((entry) {
@@ -363,11 +327,11 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                       ),
                       decoration: BoxDecoration(
                         color: isActive
-                            ? Colors.amberAccent.withValues(alpha: 0.25)
+                            ? FlatColors.day.withValues(alpha: 0.25)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
                         border: isActive
-                            ? Border.all(color: Colors.amberAccent, width: 2)
+                            ? Border.all(color: FlatColors.day, width: 2)
                             : null,
                       ),
                       child: Column(
@@ -376,8 +340,8 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                             p['name'],
                             style: flatCairo(
                               color: isActive
-                                  ? Colors.amberAccent
-                                  : Colors.white60,
+                                  ? FlatColors.ink
+                                  : FlatColors.ink.withValues(alpha: 0.55),
                               fontWeight: isActive
                                   ? FontWeight.w900
                                   : FontWeight.normal,
@@ -393,8 +357,8 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                 '${p['score']}',
                                 style: flatCairo(
                                   color: isActive
-                                      ? Colors.white
-                                      : Colors.white54,
+                                      ? FlatColors.ink
+                                      : FlatColors.ink.withValues(alpha: 0.5),
                                   fontSize: isActive ? 18 : 14,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -406,7 +370,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                               'دوره الحين',
                               style: flatCairo(
                                 fontSize: 10,
-                                color: Colors.amberAccent,
+                                color: FlatColors.ink.withValues(alpha: 0.6),
                               ),
                             ),
                         ],
@@ -428,7 +392,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                           'دور: ${_players[_currentPlayerTurn]['name']}',
                           style: flatCairo(
                             fontSize: 18,
-                            color: Colors.amberAccent,
+                            color: FlatColors.ink,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -437,11 +401,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(28),
-                          
-                        ),
+                        decoration: FlatDecor.card(radius: 28),
                         child: Column(
                           children: [
                             Text(
@@ -468,7 +428,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                 style: flatCairo(
                                   fontSize: 48,
                                   fontWeight: FontWeight.w900,
-                                  color: Colors.grey.shade300,
+                                  color: FlatColors.ink.withValues(alpha: 0.15),
                                 ),
                               ),
                             const Divider(height: 30),
@@ -485,8 +445,8 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                             Icon(
                                               Icons.lightbulb,
                                               color: i < _hintsRevealed
-                                                  ? Colors.amber.shade600
-                                                  : Colors.grey.shade400,
+                                                  ? FlatColors.day
+                                                  : FlatColors.ink.withValues(alpha: 0.25),
                                               size: 20,
                                             ),
                                             const SizedBox(width: 8),
@@ -496,8 +456,8 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                                 style: flatCairo(
                                                   fontSize: 18,
                                                   color: i < _hintsRevealed
-                                                      ? Colors.black87
-                                                      : Colors.grey.shade500,
+                                                      ? FlatColors.ink
+                                                      : FlatColors.ink.withValues(alpha: 0.45),
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -514,7 +474,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                 'اضغط "تلميح" لتبدأ!',
                                 style: flatCairo(
                                   fontSize: 16,
-                                  color: Colors.grey,
+                                  color: FlatColors.ink.withValues(alpha: 0.5),
                                 ),
                               ),
                             if (_hintsRevealed > 0 && !_answered)
@@ -525,18 +485,14 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.amber.shade50,
+                                  decoration: FlatDecor.tag().copyWith(
                                     borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: Colors.amber.shade300,
-                                    ),
                                   ),
                                   child: Text(
                                     'تلميح $_hintsRevealed من ${hints.length} • النقاط المتاحة: $_currentPoints ⭐',
                                     style: flatCairo(
                                       fontSize: 13,
-                                      color: Colors.amber.shade800,
+                                      color: FlatColors.ink,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -561,9 +517,9 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                style: ElevatedButton.styleFrom(elevation: 0, 
-                                  backgroundColor: Colors.amberAccent,
-                                  foregroundColor: Colors.black87,
+                                style: ElevatedButton.styleFrom(elevation: 0,
+                                  backgroundColor: FlatColors.day,
+                                  foregroundColor: FlatColors.ink,
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
                                   ),
@@ -584,9 +540,10 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                style: ElevatedButton.styleFrom(elevation: 0, 
+                                style: ElevatedButton.styleFrom(elevation: 0,
                                   backgroundColor: Colors.white,
-                                  foregroundColor: FunkyColors.violet,
+                                  foregroundColor: FlatColors.ink,
+                                  side: const BorderSide(color: FlatColors.border, width: 2),
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
                                   ),
@@ -604,7 +561,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                             'هل عرف ${_players[_currentPlayerTurn]['name']}؟',
                             style: flatCairo(
                               fontSize: 18,
-                              color: Colors.white,
+                              color: FlatColors.ink,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -625,8 +582,8 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                       fontSize: 13,
                                     ),
                                   ),
-                                  style: ElevatedButton.styleFrom(elevation: 0, 
-                                    backgroundColor: Colors.green,
+                                  style: ElevatedButton.styleFrom(elevation: 0,
+                                    backgroundColor: FlatColors.mintDark,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 14,
@@ -651,8 +608,8 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  style: ElevatedButton.styleFrom(elevation: 0, 
-                                    backgroundColor: Colors.red,
+                                  style: ElevatedButton.styleFrom(elevation: 0,
+                                    backgroundColor: FlatColors.mafia,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 14,
@@ -676,9 +633,9 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                 fontSize: 18,
                               ),
                             ),
-                            style: ElevatedButton.styleFrom(elevation: 0, 
-                              backgroundColor: Colors.amberAccent,
-                              foregroundColor: Colors.black87,
+                            style: ElevatedButton.styleFrom(elevation: 0,
+                              backgroundColor: FlatColors.day,
+                              foregroundColor: FlatColors.ink,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 40,
                                 vertical: 16,

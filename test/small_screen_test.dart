@@ -16,6 +16,9 @@ import 'package:shella/games/offline/quiz_game.dart';
 import 'package:shella/games/offline/xo_game.dart';
 import 'package:shella/games/offline/bus_complete_game.dart';
 import 'package:shella/games/offline/who_am_i_game.dart';
+import 'package:shella/games/offline/seega_game.dart';
+import 'package:shella/games/offline/gobblet_game.dart';
+import 'package:shella/games/offline/multi_touch_screen.dart';
 import 'package:shella/screens/settings_screen.dart';
 import 'package:shella/screens/profile_screen.dart';
 import 'package:shella/games/offline/password_game.dart';
@@ -429,6 +432,49 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'pictionary');
+    // drawing -> guessing -> drawer decision -> result phases
+    await tapIf(tester, find.textContaining('خلصت الرسم'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'pictionary_guess');
+    await tester.enterText(find.byType(TextField).first, 'سمكة');
+    await tapIf(tester, find.textContaining('تأكيد الإجابة'));
+    await fixedPumps(tester);
+    await capture360(tester, 'pictionary_decide');
+    await tapIf(tester, find.textContaining('صح ✅'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'pictionary_result');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: seega placement', (tester) async {
+    await pumpSmall(tester, const SeegaGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'seega');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: gobblet board', (tester) async {
+    await pumpSmall(tester, const GobbletGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'gobblet');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: multi touch idle', (tester) async {
+    await pumpSmall(tester, const MultiTouchScreen());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'multi_touch');
     expectNoOverflow(tester);
   });
 
@@ -555,6 +601,22 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'who_am_i_lobby');
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'who_am_i_setup');
+    await tapIf(tester, find.text('اختار شلتك وابدأ!'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('أحمد'));
+    await tapIf(tester, find.text('منى'));
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.textContaining('تلميح 💡'));
+    await fixedPumps(tester);
+    await capture360(tester, 'who_am_i');
     expectNoOverflow(tester);
   });
 
