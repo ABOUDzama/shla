@@ -25,6 +25,13 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
     SharedPreferences.setMockInitialValues({});
     await SettingsService.init();
+    // Seed three saved players so tests can select with taps instead of
+    // typing (avoids a text-input font race under fake async).
+    await SettingsService.savePlayersProfiles([
+      {'name': 'أحمد', 'avatar': ''},
+      {'name': 'منى', 'avatar': ''},
+      {'name': 'كريم', 'avatar': ''},
+    ]);
     for (final name in [
       'Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold', 'Black'
     ]) {
@@ -67,14 +74,12 @@ void main() {
     }
   }
 
-  /// Taps the intro start button, then fills 3 players and starts.
+  /// Taps the intro start button, selects the 3 seeded players, and starts.
   Future<void> intoGameplay(WidgetTester tester) async {
     await tester.tap(find.text('ابدأ اللعبة 🚀'));
     await fixedPumps(tester);
-    // Player selection: add three names.
     for (final name in ['أحمد', 'منى', 'كريم']) {
-      await tester.enterText(find.byType(TextField).first, name);
-      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.tap(find.text(name).first);
       await fixedPumps(tester, 3);
     }
     await tester.tap(find.text('بدء اللعبة'));
