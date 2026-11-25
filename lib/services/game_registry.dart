@@ -39,6 +39,7 @@ import '../games/offline/proverb_game.dart';
 import '../games/offline/reaction_game.dart';
 import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
+import '../games/offline/tap_race_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
 
@@ -314,6 +315,14 @@ class GameRegistry {
       icon: Icons.catching_pokemon,
       color: FunkyColors.sky,
       screen: CatchGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'سباق الدوس',
+      description: 'دوس على حارتك أسرع من الكل في ٥ ثواني',
+      icon: Icons.directions_run,
+      color: FunkyColors.orange,
+      screen: TapRaceGame(),
       badge: 'جديد',
     ),
   ];
