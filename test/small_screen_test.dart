@@ -20,6 +20,7 @@ import 'package:shella/games/offline/seega_game.dart';
 import 'package:shella/games/offline/gobblet_game.dart';
 import 'package:shella/games/offline/multi_touch_screen.dart';
 import 'package:shella/games/offline/reaction_game.dart';
+import 'package:shella/games/offline/balance_game.dart';
 import 'package:shella/games/offline/tap_race_game.dart';
 import 'package:shella/games/offline/tug_of_war_game.dart';
 import 'package:shella/games/offline/sumo_game.dart';
@@ -715,6 +716,17 @@ void main() {
     await fixedPumps(tester, 4);
     await flushFontCallbacks(tester);
     await capture360(tester, 'arc_tank_battle_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: balance', (tester) async {
+    await pumpSmall(tester, const BalanceGame());
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'balance_intro');
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'balance_menu');
     expectNoOverflow(tester);
   });
 

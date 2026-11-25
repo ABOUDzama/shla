@@ -6,7 +6,7 @@ import 'dart:ui';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../services/score_service.dart';
 import '../../widgets/game_intro_widget.dart';
-import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class BalanceGame extends StatefulWidget {
   const BalanceGame({super.key});
@@ -197,7 +197,7 @@ class _BalanceGameState extends State<BalanceGame> {
     if (_showIntro) {
       return OfflineGameScaffold(
         title: '⚖️ تحدي التوازن',
-        backgroundColor: FunkyColors.cyan,
+        backgroundColor: FlatColors.bg,
         showAi: false,
         body: GameIntroWidget(
           title: '⚖️ تحدي التوازن',
@@ -214,7 +214,7 @@ class _BalanceGameState extends State<BalanceGame> {
 
     return OfflineGameScaffold(
       title: '⚖️ تحدي التوازن',
-      backgroundColor: FunkyColors.cyan,
+      backgroundColor: FlatColors.bg,
       showAi: false,
       body: Stack(
         children: [
@@ -229,8 +229,8 @@ class _BalanceGameState extends State<BalanceGame> {
                   ElevatedButton.icon(
                     onPressed: startGame,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.tealAccent,
-                      foregroundColor: Colors.black,
+                      backgroundColor: FlatColors.tilePastels[2],
+                      foregroundColor: FlatColors.ink,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 50,
                         vertical: 20,
@@ -241,23 +241,23 @@ class _BalanceGameState extends State<BalanceGame> {
                       elevation: 0,
                     ),
                     icon: const Icon(Icons.play_arrow_rounded, size: 30),
-                    label: const Text(
+                    label: Text(
                       'ابدأ اللعبة 🚀',
-                      style: TextStyle(
+                      style: flatCairo(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
-                      ),
+                      ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
                     ),
                   ),
                 ] else if (hasLost) ...[
-                  const Text('💥', style: TextStyle(fontSize: 100)),
+                  Text('💥', style: TextStyle(fontSize: 100)),
                   const SizedBox(height: 20),
                   Text(
                     currentMessage ?? 'الكرة وقعت!',
-                    style: const TextStyle(
+                    style: flatCairo(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: FlatColors.ink,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -269,35 +269,35 @@ class _BalanceGameState extends State<BalanceGame> {
                         margin: const EdgeInsets.all(20),
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
+                          color: FlatColors.tileWhite,
                           borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.white24),
+                          border: Border.all(color: FlatColors.border, width: 2),
                         ),
                         child: Column(
                           children: [
-                            const Text(
+                            Text(
                               '⏱️ النتيجة',
-                              style: TextStyle(
+                              style: flatCairo(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white70,
+                                color: FlatColors.ink.withValues(alpha: 0.75),
                               ),
                             ),
                             const SizedBox(height: 12),
                             Text(
                               '$score ثانية',
-                              style: const TextStyle(
+                              style: flatCairo(
                                 fontSize: 56,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.tealAccent,
+                                color: FlatColors.mintDark,
                               ),
                             ),
                             const SizedBox(height: 16),
                             Text(
                               getRandomMessage(),
-                              style: const TextStyle(
+                              style: flatCairo(
                                 fontSize: 20,
-                                color: Colors.white,
+                                color: FlatColors.ink,
                                 fontWeight: FontWeight.bold,
                               ),
                               textAlign: TextAlign.center,
@@ -314,8 +314,8 @@ class _BalanceGameState extends State<BalanceGame> {
                       ElevatedButton.icon(
                         onPressed: resetGame,
                         style: ElevatedButton.styleFrom(elevation: 0, 
-                          backgroundColor: Colors.white12,
-                          foregroundColor: Colors.white,
+                          backgroundColor: FlatColors.tileWhite,
+                          foregroundColor: FlatColors.ink,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 25,
                             vertical: 15,
@@ -331,8 +331,8 @@ class _BalanceGameState extends State<BalanceGame> {
                       ElevatedButton.icon(
                         onPressed: startGame,
                         style: ElevatedButton.styleFrom(elevation: 0, 
-                          backgroundColor: Colors.tealAccent,
-                          foregroundColor: Colors.black,
+                          backgroundColor: FlatColors.tilePastels[2],
+                          foregroundColor: FlatColors.ink,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 25,
                             vertical: 15,
@@ -342,7 +342,7 @@ class _BalanceGameState extends State<BalanceGame> {
                           ),
                         ),
                         icon: const Icon(Icons.play_arrow_rounded),
-                        label: const Text('العب تاني'),
+                        label: Text('العب تاني'),
                       ),
                     ],
                   ),
@@ -366,24 +366,24 @@ class _BalanceGameState extends State<BalanceGame> {
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
+                        color: FlatColors.tileWhite,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white24),
+                        border: Border.all(color: FlatColors.border, width: 2),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(
                             Icons.timer_rounded,
-                            color: Colors.tealAccent,
+                            color: FlatColors.mintDark,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             '$score ثانية',
-                            style: const TextStyle(
+                            style: flatCairo(
                               fontSize: 24,
                               fontWeight: FontWeight.w900,
-                              color: Colors.white,
+                              color: FlatColors.ink,
                             ),
                           ),
                         ],
@@ -401,13 +401,13 @@ class _BalanceGameState extends State<BalanceGame> {
                 height: fullH * shrinkFactor,
                 decoration: BoxDecoration(
                   color: score > 30
-                      ? Colors.orange.withValues(alpha: 0.1)
-                      : Colors.white.withValues(alpha: 0.1),
+                      ? const Color(0xFFFFE9D6)
+                      : FlatColors.tileWhite,
                   borderRadius: BorderRadius.circular(32),
                   border: Border.all(
                     color: score > 30
-                        ? Colors.orangeAccent
-                        : Colors.tealAccent.withValues(alpha: 0.5),
+                        ? const Color(0xFFFF8A5C)
+                        : FlatColors.tilePastels[2],
                     width: 4,
                   ),
                   
@@ -420,8 +420,8 @@ class _BalanceGameState extends State<BalanceGame> {
                         height: 100,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.05),
-                          border: Border.all(color: Colors.white12, width: 2),
+                          color: FlatColors.bg,
+                          border: Border.all(color: FlatColors.border, width: 2),
                         ),
                         child: const Center(
                           child: Text('🎯', style: TextStyle(fontSize: 40)),
