@@ -11,6 +11,7 @@ import 'package:shella/games/offline/memory_game.dart';
 import 'package:shella/games/offline/password_game.dart';
 import 'package:shella/games/offline/spy_game.dart';
 import 'package:shella/games/offline/undercover_game.dart';
+import 'package:shella/games/offline/mafia_game.dart';
 import 'package:shella/theme/funky_theme.dart';
 import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/who_said_game.dart';
@@ -791,6 +792,107 @@ void main() {
       expect(find.text('أحمد: 2'), findsOneWidget);
       expect(find.text('كريم: 2'), findsOneWidget);
 
+      await tapText(tester, 'العب تاني');
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+      await flushFontCallbacks(tester);
+    });
+  });
+
+  group('mafia: full match and concealment', () {
+    const names = ['أحمد', 'منى', 'كريم', 'سارة', 'عمر', 'ليلى'];
+
+    Future<void> dealAllMafia(WidgetTester tester) async {
+      for (var deal = 0; deal < names.length; deal++) {
+        await tapText(tester, 'شوف دورك يا ${names[deal]}');
+        await tapText(tester,
+            deal == names.length - 1 ? 'ابدأ الليل 🌙' : 'اللاعب اللي بعده');
+      }
+    }
+
+    testWidgets('deal concealment: role hidden again after every pass',
+        (tester) async {
+      await pumpGame(tester, const MafiaGame(seed: 5));
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, names);
+      for (var deal = 0; deal < names.length; deal++) {
+        await tapText(tester, 'شوف دورك يا ${names[deal]}');
+        if (deal + 1 < names.length) {
+          await tapText(tester, 'اللاعب اللي بعده');
+          // Concealed again for the next player: no role text visible.
+          expect(find.text('مافيا 🔫'), findsNothing);
+          expect(find.text('دكتور 🩺'), findsNothing);
+          expect(find.text('محقق 🕵'), findsNothing);
+          expect(find.text('من المدنيين 🧑'), findsNothing);
+          expect(find.text('🤫'), findsWidgets);
+        }
+      }
+      await flushFontCallbacks(tester);
+    });
+
+    testWidgets(
+        'night/day cycle, eliminated players never vote, win screen, replay',
+        (tester) async {
+      await pumpGame(tester, const MafiaGame(seed: 5));
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, names);
+      await dealAllMafia(tester);
+
+      final gone = <String>{};
+      var guard = 0;
+      while (find.text('العب تاني').evaluate().isEmpty && guard < 200) {
+        guard++;
+        if (find.text('كمّلوا').evaluate().isNotEmpty) {
+          // Eliminated screen: record who was ousted (name is the only
+          // player-name text on this screen).
+          final elim = names.firstWhere(
+              (n) => !gone.contains(n) && find.text(n).evaluate().isNotEmpty);
+          gone.add(elim);
+          await tapText(tester, 'كمّلوا');
+        } else if (find.text('ابدأ التصويت ⚖️').evaluate().isNotEmpty) {
+          await tapText(tester, 'ابدأ التصويت ⚖️');
+        } else if (find
+            .textContaining('شوف مهمتك يا')
+            .evaluate()
+            .isNotEmpty) {
+          // Night gate: never addresses an eliminated player.
+          for (final g in gone) {
+            expect(find.text('شوف مهمتك يا $g').evaluate().isEmpty, isTrue,
+                reason: 'eliminated player asked to act at night');
+          }
+          await tapContaining(tester, 'شوف مهمتك يا');
+        } else if (find.text('خبّي وادّي للي بعده').evaluate().isNotEmpty) {
+          await tapText(tester, 'خبّي وادّي للي بعده');
+        } else if (find
+            .text('تمام، عدّي للي بعده')
+            .evaluate()
+            .isNotEmpty) {
+          await tapText(tester, 'تمام، عدّي للي بعده');
+        } else {
+          final listView = find.byType(ListView);
+          expect(listView, findsOneWidget,
+              reason: 'expected a night action or day ballot');
+          // Day ballot: eliminated players are not candidates.
+          if (find.textContaining('مشكوك فيه').evaluate().isNotEmpty) {
+            for (final g in gone) {
+              expect(find.text(g).evaluate().isEmpty, isTrue,
+                  reason: 'eliminated player still on the ballot');
+            }
+          }
+          await tester.tap(find
+              .descendant(of: listView, matching: find.byType(Text))
+              .first);
+          await tester.pump(const Duration(milliseconds: 120));
+          await flushFontCallbacks(tester);
+        }
+      }
+
+      final villageWin =
+          find.text('المدنيون كسبوا! 🎉').evaluate().isNotEmpty;
+      final mafiaWin = find.text('المافيا كسبت! 🔫').evaluate().isNotEmpty;
+      expect(villageWin || mafiaWin, isTrue,
+          reason: 'no win screen after $guard steps');
       await tapText(tester, 'العب تاني');
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
       await flushFontCallbacks(tester);

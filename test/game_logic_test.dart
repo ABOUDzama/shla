@@ -4,6 +4,7 @@ import 'package:shella/games/offline/ranking_challenge_game.dart';
 import 'package:shella/games/offline/bus_complete_game.dart';
 import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/undercover_game.dart';
+import 'package:shella/games/offline/mafia_game.dart';
 
 void main() {
   group('RankingChallengeGame.scoreGuess', () {
@@ -190,6 +191,50 @@ void main() {
       for (final p in UndercoverGame.wordPairs) {
         expect(p[0] == p[1], isFalse);
       }
+    });
+  });
+
+  group('MafiaGame rules (grounded in classic Mafia, Wikipedia)', () {
+    test('rolesFor: about a third mafia (Davidoff), min 1', () {
+      final r5 = MafiaGame.rolesFor(5, Random(3));
+      expect(r5.length, 5);
+      expect(r5.where((r) => r == MafiaGame.mafia).length, 2);
+      // Doctor and detective enter from 6 players (house rule, labeled).
+      expect(r5.contains(MafiaGame.doctor), isFalse);
+      expect(r5.contains(MafiaGame.detective), isFalse);
+      final r9 = MafiaGame.rolesFor(9, Random(3));
+      expect(r9.length, 9);
+      expect(r9.where((r) => r == MafiaGame.mafia).length, 3);
+      expect(r9.where((r) => r == MafiaGame.doctor).length, 1);
+      expect(r9.where((r) => r == MafiaGame.detective).length, 1);
+      expect(r9.where((r) => r == MafiaGame.villager).length, 4);
+    });
+    test('winner: village wins when no mafia remains', () {
+      final roles = {'a': 'mafia', 'b': 'villager', 'c': 'villager'};
+      expect(MafiaGame.winner(roles, {'b', 'c'}), 'village');
+    });
+    test('winner: mafia wins on numerical parity', () {
+      final roles = {'a': 'mafia', 'b': 'villager', 'c': 'villager', 'd': 'villager'};
+      expect(MafiaGame.winner(roles, {'a', 'b', 'c', 'd'}), isNull);
+      expect(MafiaGame.winner(roles, {'a', 'b', 'c'}), isNull);
+      // Parity: mafia equal the village.
+      expect(MafiaGame.winner(roles, {'a', 'b'}), 'mafia');
+    });
+    test('breakTie: seeded and deterministic', () {
+      final tied = ['a', 'b', 'c'];
+      final pick1 = MafiaGame.breakTie(tied, Random(42));
+      final pick2 = MafiaGame.breakTie(tied, Random(42));
+      expect(tied.contains(pick1), isTrue);
+      expect(pick1, pick2);
+    });
+    test('scoreWin: winning team members +3 each', () {
+      final roles = {'a': 'mafia', 'b': 'villager', 'c': 'doctor'};
+      final mafiaWin =
+          MafiaGame.scoreWin({'a': 1, 'b': 0, 'c': 0}, roles, winnerSide: 'mafia');
+      expect(mafiaWin, {'a': 4, 'b': 0, 'c': 0});
+      final villageWin =
+          MafiaGame.scoreWin({}, roles, winnerSide: 'village');
+      expect(villageWin, {'b': 3, 'c': 3});
     });
   });
 }

@@ -62,11 +62,11 @@ void main() {
   });
 
   group('Registry', () {
-    test('has 29 games and 5 new-badge games', () {
-      expect(GameRegistry.games.length, 29);
+    test('has 30 games and 6 new-badge games', () {
+      expect(GameRegistry.games.length, 30);
       final newOnes =
           GameRegistry.games.where((g) => g.badge == 'جديد').toList();
-      expect(newOnes.length, 5);
+      expect(newOnes.length, 6);
       expect(
           newOnes.map((g) => g.title),
           containsAll(<String>[
@@ -75,6 +75,7 @@ void main() {
             'أكمل المثل',
             'مين قالها؟',
             'أندر كافر',
+            'مافيا',
           ]));
     });
     test('game titles are unique', () {

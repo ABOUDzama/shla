@@ -30,6 +30,7 @@ import '../games/offline/emoji_guess_game.dart';
 import '../games/offline/password_game.dart';
 import '../games/offline/spy_game.dart';
 import '../games/offline/undercover_game.dart';
+import '../games/offline/mafia_game.dart';
 import '../games/offline/proverb_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
@@ -219,6 +220,14 @@ class GameRegistry {
       icon: Icons.groups_rounded,
       color: FunkyColors.violet,
       screen: UndercoverGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'مافيا',
+      description: 'مافيا خفية بينكم.. ليلًا بتقتل ونهارًا القرية بتحقق!',
+      icon: Icons.nightlight_round,
+      color: FunkyColors.pink,
+      screen: MafiaGame(),
       badge: 'جديد',
     ),
     GameModel(

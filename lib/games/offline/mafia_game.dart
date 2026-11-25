@@ -66,6 +66,11 @@ class MafiaGame extends StatefulWidget {
     return null;
   }
 
+  /// House tie-break: seeded random pick among tied names (labeled in the
+  /// intro; classic games revote or use a moderator).
+  static String breakTie(List<String> tied, Random rng) =>
+      tied[rng.nextInt(tied.length)];
+
   /// Winning team members +3 each.
   static Map<String, int> scoreWin(
     Map<String, int> scores,
@@ -168,7 +173,7 @@ class _MafiaGameState extends State<MafiaGame> {
         _protectedName = choice;
       } else if (role == MafiaGame.detective && choice != null) {
         _investigateResult =
-            _roles[choice] == MafiaGame.mafia ? 'مافيا 🔫' : 'مش مافيا 😇';
+            _roles[choice] == MafiaGame.mafia ? 'مافيا 🔫' : 'مش مافيا 😶';
       }
     });
   }
@@ -195,7 +200,7 @@ class _MafiaGameState extends State<MafiaGame> {
       }
       final top = counts.values.fold(0, max);
       final tied = counts.keys.where((n) => counts[n] == top).toList();
-      victim = tied[_rng.nextInt(tied.length)];
+      victim = MafiaGame.breakTie(tied, _rng);
     }
     setState(() {
       _nightVictim = victim;
@@ -226,7 +231,7 @@ class _MafiaGameState extends State<MafiaGame> {
     }
     final top = counts.values.fold(0, max);
     final tied = counts.keys.where((n) => counts[n] == top).toList();
-    final eliminated = tied[_rng.nextInt(tied.length)];
+    final eliminated = MafiaGame.breakTie(tied, _rng);
     setState(() {
       _alive.remove(eliminated);
       _eliminatedName = eliminated;
@@ -270,7 +275,7 @@ class _MafiaGameState extends State<MafiaGame> {
           title: '🔫 مافيا',
           icon: '🔫',
           description:
-              'الليل بيجمع والمافيا بتختار ضحية في السر، والدكتور بيحمي والمحقق بيكشف. بالنهار كلكم تتناقشوا وتصوّتوا تشيلوا واحد. المدنيين يكسبوا لو خلصوا على المافيا، والمافيا تكسب لو بقوا زيهم عددًا.',
+              'الليل بيجمع والمافيا بتختار ضحية في السر، والدكتور بيحمي والمحقق بيكشف. بالنهار كلكم تتناقشوا وتصوّتوا تشيلوا واحد. المدنيين يكسبوا لو خلصوا على المافيا، والمافيا تكسب لو بقوا زيهم عددًا. مبني على قواعد المافيا الكلاسيكية، بس التصويت عندنا سري بالتناوب على الموبايل والتعادل بيتحسم عشوائيًا، والدكتور والمحقق بيدخلوا من ٦ لاعبين.',
           onStart: () => setState(() => _showIntro = false),
         ),
       );
