@@ -30,6 +30,11 @@ void main() {
     final iconLoader = FontLoader('MaterialIcons')
       ..addFont(Future.value(ByteData.sublistView(icons)));
     await iconLoader.load();
+    final emojiBytes =
+        await File('test/fonts_NotoColorEmoji.ttf').readAsBytes();
+    final emojiLoader = FontLoader('Noto Color Emoji')
+      ..addFont(Future.value(ByteData.sublistView(emojiBytes)));
+    await emojiLoader.load();
   });
 
   testWidgets('home screen renders improved game grid', (tester) async {
@@ -38,9 +43,10 @@ void main() {
     addTearDown(tester.view.reset);
 
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Directionality(
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
           textDirection: TextDirection.rtl,
           child: HomeScreen(),
         ),

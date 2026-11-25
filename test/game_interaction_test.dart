@@ -30,6 +30,8 @@ void main() {
       {'name': 'سارة', 'avatar': ''},
       {'name': 'عمر', 'avatar': ''},
       {'name': 'ليلى', 'avatar': ''},
+      {'name': 'حسن', 'avatar': ''},
+      {'name': 'دينا', 'avatar': ''},
     ]);
     for (final name in [
       'Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold', 'Black'
@@ -351,6 +353,53 @@ void main() {
       final cells = find.descendant(
           of: find.byType(GridView), matching: find.byType(GestureDetector));
       expect(cells, findsNWidgets(30));
+      await flushFontCallbacks(tester);
+    });
+
+    testWidgets('eight players: 36 cards (6x6), all rendered, tappable size',
+        (tester) async {
+      await intoMemory(
+        tester,
+        ['أحمد', 'منى', 'كريم', 'سارة', 'عمر', 'ليلى', 'حسن', 'دينا'],
+      );
+      expect(debugBoardOf(tester).length, 36);
+      final cells = find.descendant(
+          of: find.byType(GridView), matching: find.byType(GestureDetector));
+      // Every card must be laid out (non-scrollable grid clips otherwise)
+      // and each cell stays a usable tap target in LOGICAL pixels.
+      expect(cells, findsNWidgets(36));
+      final size = tester.getSize(cells.first);
+      expect(size.width, greaterThanOrEqualTo(48),
+          reason: 'cell too narrow: $size');
+      expect(size.height, greaterThanOrEqualTo(48),
+          reason: 'cell too short: $size');
+      await flushFontCallbacks(tester);
+    });
+
+    testWidgets('phone-sized surface: 24-card board fits without clipping',
+        (tester) async {
+      // 360x640 logical: the size where the 4x6 board used to clip row 6.
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await pumpGame(tester, const MemoryGame());
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, ['أحمد', 'منى', 'كريم']);
+      expect(debugBoardOf(tester).length, 24);
+      final cells = find.descendant(
+          of: find.byType(GridView), matching: find.byType(GestureDetector));
+      expect(cells, findsNWidgets(24),
+          reason: 'rows clipped by non-scrollable grid');
+      final size = tester.getSize(cells.first);
+      expect(size.width, greaterThanOrEqualTo(48),
+          reason: 'cell too narrow: $size');
+      expect(size.height, greaterThanOrEqualTo(48),
+          reason: 'cell too short: $size');
+      // Bottom-most card must be fully inside the screen.
+      final last = tester.getRect(cells.at(23));
+      expect(last.bottom, lessThanOrEqualTo(640),
+          reason: 'last row clipped: $last');
       await flushFontCallbacks(tester);
     });
   });

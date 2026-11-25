@@ -240,10 +240,12 @@ class _MemoryGameState extends State<MemoryGame> {
                         (constraints.maxWidth - (cols - 1) * spacing) / cols;
                     final cellH =
                         (constraints.maxHeight - (rows - 1) * spacing) / rows;
-                    // Squash cells vertically when the board is taller than
-                    // the available area so every row stays reachable.
-                    final ratio = (cellW / cellH).clamp(0.5, 1.0);
-                    final emojiSize = (cellH * 0.55).clamp(14.0, 34.0);
+                    // Squash cells vertically (ratio > 1 = wider than tall)
+                    // when the board is taller than the available area, so
+                    // every row stays reachable. Never taller than square.
+                    final ratio = (cellW / cellH).clamp(1.0, 3.0);
+                    final fittedH = cellW / ratio;
+                    final emojiSize = (fittedH * 0.55).clamp(14.0, 34.0);
                     return GridView.count(
                       crossAxisCount: cols,
                       childAspectRatio: ratio,
