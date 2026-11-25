@@ -64,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'أنا عمري ما': '✋',
     'كلمة بكلمة': '📖',
     'الشيفرة': '🕵',
+    'أسرع رد فعل': '⚡',
   };
 
   /// Original illustrated artwork per game: generated in-house for Shla

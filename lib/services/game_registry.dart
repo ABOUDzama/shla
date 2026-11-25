@@ -36,6 +36,7 @@ import '../games/offline/word_story_game.dart';
 import '../games/offline/code_names_game.dart';
 import '../games/offline/never_have_i_game.dart';
 import '../games/offline/proverb_game.dart';
+import '../games/offline/reaction_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
 
@@ -288,6 +289,14 @@ class GameRegistry {
       icon: Icons.emoji_emotions_rounded,
       color: FunkyColors.amber,
       screen: EmojiGuessGame(),
+    ),
+    GameModel(
+      title: 'أسرع رد فعل',
+      description: 'الشاشة تقلب خضرا واللي يدوس الأول يكسب! دوس بدري = خصم نقطة',
+      icon: Icons.bolt,
+      color: FunkyColors.lime,
+      screen: ReactionGame(),
+      badge: 'جديد',
     ),
   ];
 }
