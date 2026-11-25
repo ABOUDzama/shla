@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/flat_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/game_model.dart';
@@ -30,7 +31,6 @@ class ArcadeSectionScreen extends StatefulWidget {
     'اقطفها': [2, 3, 4],
     'سباق الدوس': [2, 3, 4],
     'كورة اللمسة': [2, 3, 4],
-    'كورة الشلة': [2, 3, 4],
   };
 
   /// Original illustrated covers (drawn in-house). Cards with a cover show
@@ -62,7 +62,6 @@ class ArcadeSectionScreen extends StatefulWidget {
     'اقطفها': '🐟',
     'سباق الدوس': '👟',
     'كورة اللمسة': '⚽',
-    'كورة الشلة': '🥅',
   };
 
   @override
@@ -90,7 +89,7 @@ class _ArcadeSectionScreenState extends State<ArcadeSectionScreen> {
                   style: GoogleFonts.cairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ).copyWith(fontFamilyFallback: _emojiFallback),
                 ),
               ),
@@ -102,7 +101,7 @@ class _ArcadeSectionScreenState extends State<ArcadeSectionScreen> {
                 'اختار اللعبة، وبعدين حددوا عدد اللاعبين جواها 🎮',
                 style: GoogleFonts.cairo(
                   fontSize: 13,
-                  color: Colors.white70,
+                  color: FlatColors.ink.withValues(alpha: 0.75),
                 ).copyWith(fontFamilyFallback: _emojiFallback),
               ),
             ),
@@ -142,11 +141,11 @@ class _ArcadeSectionScreenState extends State<ArcadeSectionScreen> {
     if (widget.embedded) {
       return Container(
         key: const ValueKey('arcade_section'),
-        color: FunkyColors.bgDeep,
+        color: FlatColors.bg,
         child: body,
       );
     }
-    return Scaffold(backgroundColor: FunkyColors.bgDeep, body: body);
+    return Scaffold(backgroundColor: FlatColors.bg, body: body);
   }
 }
 
@@ -175,16 +174,9 @@ class _ArcadeCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: FunkyColors.card,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: game.color.withValues(alpha: 0.55), width: 1.6),
-          boxShadow: [
-            BoxShadow(
-              color: game.color.withValues(alpha: 0.25),
-              blurRadius: 14,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          border: Border.all(color: FlatColors.border, width: 2),
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -200,8 +192,8 @@ class _ArcadeCard extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          game.color.withValues(alpha: 0.85),
-                          Color.lerp(game.color, FunkyColors.bgDeep, 0.55)!,
+                          Color.lerp(game.color, Colors.white, 0.45)!,
+                          Color.lerp(game.color, Colors.white, 0.7)!,
                         ],
                       ),
                     ),
@@ -234,15 +226,16 @@ class _ArcadeCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 7, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.45),
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(999),
+                        border: Border.all(color: FlatColors.border),
                       ),
                       child: Text(
                         'غلاف مؤقت',
                         style: GoogleFonts.cairo(
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white70,
+                          color: FlatColors.ink,
                         ).copyWith(fontFamilyFallback: _emojiFallback),
                       ),
                     ),
@@ -262,7 +255,7 @@ class _ArcadeCard extends StatelessWidget {
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: FlatColors.ink,
                     ).copyWith(fontFamilyFallback: _emojiFallback),
                   ),
                   const SizedBox(height: 4),
@@ -274,10 +267,9 @@ class _ArcadeCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 7, vertical: 1),
                           decoration: BoxDecoration(
-                            color: game.color.withValues(alpha: 0.25),
+                            color: Color.lerp(game.color, Colors.white, 0.75),
                             borderRadius: BorderRadius.circular(999),
-                            border: Border.all(
-                                color: game.color.withValues(alpha: 0.7)),
+                            border: Border.all(color: FlatColors.border),
                           ),
                           child: Text(
                             counts.length == 1
@@ -286,7 +278,7 @@ class _ArcadeCard extends StatelessWidget {
                             style: GoogleFonts.cairo(
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
-                              color: Colors.white,
+                              color: FlatColors.ink,
                             ).copyWith(fontFamilyFallback: _emojiFallback),
                           ),
                         ),
