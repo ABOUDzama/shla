@@ -33,6 +33,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'كورة اللمسة': [2, 3, 4],
     'جري الفراخ': [1, 2, 3, 4],
     'سباق العربيات': [1, 2, 3, 4],
+    'أطعم الحمامة': [1, 2, 3, 4],
   };
 
   /// Original illustrated covers (drawn in-house). Cards with a cover show
@@ -52,6 +53,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'اضرب الخلد': 'assets/covers/whack_mole.png',
     'جري الفراخ': 'assets/covers/chicken_run.png',
     'سباق العربيات': 'assets/covers/car_race.png',
+    'أطعم الحمامة': 'assets/covers/pigeon.png',
   };
 
   static const Map<String, String> _emoji = {
@@ -68,6 +70,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'كورة اللمسة': '⚽',
     'جري الفراخ': '🐔',
     'سباق العربيات': '🏎',
+    'أطعم الحمامة': '🐦',
   };
 
   @override
