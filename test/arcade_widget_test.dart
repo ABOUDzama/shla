@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shella/games/offline/catch_game.dart';
 import 'package:shella/games/offline/reaction_game.dart';
+import 'package:shella/games/offline/sumo_game.dart';
 import 'package:shella/games/offline/tap_race_game.dart';
+import 'package:shella/games/offline/touch_ball_game.dart';
 
 /// Pumps until [finder] matches, advancing fake time in small steps.
 Future<void> pumpUntil(
@@ -246,6 +249,312 @@ void main() {
       await tester.pump(const Duration(milliseconds: 5500));
       await tester.pump(); // settle frame for the result banner
       expect(find.textContaining('لاعب 4 كسب الجولة'), findsOneWidget);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+  });
+
+  group('سومو الشلة widget', () {
+    testWidgets('2p: countdown ignores taps, shove-out win, replay',
+        (tester) async {
+      tester.view.physicalSize = const Size(412, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await warmGoogleFonts(tester);
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: SumoGame(),
+        ),
+      ));
+      await flushFontCallbacks(tester);
+      await startFromIntro(tester);
+
+      // countdown: both zones say wait, taps are ignored by the logic
+      expect(find.textContaining('استنى البداية'), findsWidgets);
+      await tester.tap(find.text('لاعب 1'), warnIfMissed: false);
+      await tester.pump();
+      expect(find.textContaining('استنى البداية'), findsWidgets);
+
+      // 3 one-second countdown ticks reach the fight
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pump();
+      expect(find.textContaining('دووووس'), findsWidgets);
+
+      // shove the ring fully out: 51 taps x 0.02 push wins for player 1
+      for (var i = 0; i < 55; i++) {
+        await tester.tap(find.text('لاعب 1'), warnIfMissed: false);
+      }
+      await tester.pump();
+      expect(find.textContaining('لاعب 1 كسب'), findsWidgets);
+
+      // replay starts a fresh countdown
+      await tester.tap(find.text('العب تاني'));
+      await tester.pump();
+      expect(find.textContaining('استنى البداية'), findsWidgets);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+  });
+
+  group('اقطفها widget', () {
+    testWidgets('2p: catch scoring, wrong-color taps, match win, replay',
+        (tester) async {
+      tester.view.physicalSize = const Size(412, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await warmGoogleFonts(tester);
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: CatchGame(),
+        ),
+      ));
+      await flushFontCallbacks(tester);
+      await startFromIntro(tester);
+      await tester.tap(find.text('2'));
+      await tester.pump();
+
+      // tap zone 1 every 100ms: scores when the fish crosses the zone's
+      // arc, wrong-color taps cost nothing; first to 5 wins the match
+      var sawCatch = false;
+      var sawWrong = false;
+      for (var i = 0;
+          i < 300 && find.textContaining('كسب الماتش').evaluate().isEmpty;
+          i++) {
+        await tester.pump(const Duration(milliseconds: 400));
+        await tester.tap(find.text('لاعب 1'), warnIfMissed: false);
+        await tester.pump();
+        if (find.textContaining('لاعب 1 قطفها').evaluate().isNotEmpty) {
+          sawCatch = true;
+        }
+        if (find.textContaining('غلط اللون').evaluate().isNotEmpty) {
+          sawWrong = true;
+        }
+      }
+      expect(sawCatch, isTrue, reason: 'a scoring catch must register');
+      expect(sawWrong, isTrue, reason: 'wrong-color taps must register');
+      expect(find.textContaining('كسب الماتش'), findsOneWidget);
+
+      // replay resets scores for the same player count
+      await tester.tap(find.text('ماتش جديد'));
+      await tester.pump();
+      expect(find.textContaining('لاعب 1: 0'), findsOneWidget);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+
+    testWidgets('4p: four zones render and taps register', (tester) async {
+      tester.view.physicalSize = const Size(412, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await warmGoogleFonts(tester);
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: CatchGame(),
+        ),
+      ));
+      await flushFontCallbacks(tester);
+      await startFromIntro(tester);
+      await tester.tap(find.text('4'));
+      await tester.pump();
+      for (final label in ['لاعب 1', 'لاعب 2', 'لاعب 3', 'لاعب 4']) {
+        expect(find.text(label), findsOneWidget);
+      }
+      // a tap always updates the banner (catch or wrong color)
+      await tester.tap(find.text('لاعب 4'));
+      await tester.pump();
+      final outcome = find
+          .textContaining('قطفها!')
+          .evaluate()
+          .isNotEmpty ||
+          find.textContaining('غلط اللون').evaluate().isNotEmpty;
+      expect(outcome, isTrue);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+  });
+
+  group('كورة اللمسة widget', () {
+    /// The ball is the only circular Container in the arena.
+    Finder ballCircle() => find.byWidgetPredicate((w) =>
+        w is Container &&
+        w.constraints != null &&
+        w.constraints!.maxWidth == 80 &&
+        w.decoration is BoxDecoration &&
+        (w.decoration as BoxDecoration).shape == BoxShape.circle);
+
+    /// Owner index parsed from the round banner 'كورة لاعب N!'.
+    int? bannerOwner(WidgetTester tester) {
+      final f = find.textContaining('كورة لاعب');
+      if (f.evaluate().isEmpty) return null;
+      final data = (tester.widget(f.first) as Text).data ?? '';
+      final m = RegExp(r'كورة لاعب (\d)').firstMatch(data);
+      return m == null ? null : int.parse(m.group(1)!) - 1;
+    }
+
+    /// Zone of the ball's rendered center inside its arena Stack, using
+    /// the same quadrant mapping as the game (2p: top/bottom halves;
+    /// 3p: top-left/top-right/bottom; 4p: quadrants).
+    int ballZone(WidgetTester tester, int players) {
+      final stack =
+          find.ancestor(of: ballCircle(), matching: find.byType(Stack));
+      final arena = tester.getRect(stack.first);
+      final c = tester.getCenter(ballCircle());
+      final top = c.dy < arena.center.dy;
+      final left = c.dx < arena.center.dx;
+      if (players == 2) return top ? 0 : 1;
+      if (players == 3) return top ? (left ? 0 : 1) : 2;
+      return top ? (left ? 0 : 1) : (left ? 2 : 3);
+    }
+    testWidgets('2p: owner taps score, match win, replay', (tester) async {
+      tester.view.physicalSize = const Size(412, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await warmGoogleFonts(tester);
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: TouchBallGame(),
+        ),
+      ));
+      await flushFontCallbacks(tester);
+      await startFromIntro(tester);
+      await tester.tap(find.text('2 لاعبين'));
+      await tester.pump();
+
+      bool live() => ballCircle().evaluate().isNotEmpty;
+      bool over() => find.textContaining('كسب الماتش').evaluate().isNotEmpty;
+
+      var rounds = 0;
+      while (!over() && rounds < 90) {
+        // wait for a live ball
+        var waited = 0;
+        while (!live() && !over() && waited < 60) {
+          await tester.pump(const Duration(milliseconds: 100));
+          waited++;
+        }
+        if (!live()) break;
+        // step until the ball drifts into its owner's zone, then tap it
+        var steps = 0;
+        while (live() &&
+            (bannerOwner(tester) == null ||
+                ballZone(tester, 2) != bannerOwner(tester)) &&
+            steps < 52) {
+          await tester.pump(const Duration(milliseconds: 50));
+          steps++;
+        }
+        if (live() &&
+            bannerOwner(tester) != null &&
+            ballZone(tester, 2) == bannerOwner(tester)) {
+          await tester.tap(ballCircle());
+          await tester.pump();
+        }
+        rounds++;
+      }
+      expect(over(), isTrue, reason: 'someone reaches 5 within 90 rounds');
+
+      // replay restarts with the same players and zeroed scores
+      await tester.tap(find.text('ماتش جديد'));
+      await tester.pump();
+      expect(find.text('1: 0'), findsOneWidget);
+      expect(find.text('2: 0'), findsOneWidget);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+
+    testWidgets('2p: wrong-zone tap is penalized with the right banner',
+        (tester) async {
+      tester.view.physicalSize = const Size(412, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await warmGoogleFonts(tester);
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: TouchBallGame(),
+        ),
+      ));
+      await flushFontCallbacks(tester);
+      await startFromIntro(tester);
+      await tester.tap(find.text('2 لاعبين'));
+      await tester.pump();
+
+      bool live() => ballCircle().evaluate().isNotEmpty;
+
+      // within a few rounds a ball must be tappable while outside the
+      // owner's zone; tapping it then is a penalty
+      var tapped = false;
+      for (var round = 0; round < 10 && !tapped; round++) {
+        var waited = 0;
+        while (!live() && waited < 60) {
+          await tester.pump(const Duration(milliseconds: 100));
+          waited++;
+        }
+        var steps = 0;
+        while (live() &&
+            (bannerOwner(tester) == null ||
+                ballZone(tester, 2) == bannerOwner(tester)) &&
+            steps < 52) {
+          await tester.pump(const Duration(milliseconds: 50));
+          steps++;
+        }
+        if (live() &&
+            bannerOwner(tester) != null &&
+            ballZone(tester, 2) != bannerOwner(tester)) {
+          await tester.tap(ballCircle());
+          await tester.pump();
+          tapped = true;
+        }
+      }
+      expect(tapped, isTrue, reason: 'a misaligned ball must occur');
+      expect(find.textContaining('لمس كورة مش بتاعته'), findsOneWidget);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+
+    testWidgets('4p: scoreboard renders four players and a tap resolves',
+        (tester) async {
+      tester.view.physicalSize = const Size(412, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await warmGoogleFonts(tester);
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: TouchBallGame(),
+        ),
+      ));
+      await flushFontCallbacks(tester);
+      await startFromIntro(tester);
+      await tester.tap(find.text('4 لاعبين'));
+      await tester.pump();
+      for (final row in ['1: 0', '2: 0', '3: 0', '4: 0']) {
+        expect(find.text(row), findsOneWidget);
+      }
+      // wait for the ball, tap it, and verify the outcome matches reality
+      var waited = 0;
+      while (ballCircle().evaluate().isEmpty && waited < 60) {
+        await tester.pump(const Duration(milliseconds: 100));
+        waited++;
+      }
+      expect(ballCircle(), findsOneWidget);
+      final owner = bannerOwner(tester);
+      expect(owner, isNotNull);
+      final good = ballZone(tester, 4) == owner;
+      await tester.tap(ballCircle());
+      await tester.pump();
+      expect(
+        find.textContaining(good ? 'لمسها في وقتها' : 'مش بتاعته'),
+        findsOneWidget,
+      );
       await flushFontCallbacks(tester);
       await settleDown(tester);
     });

@@ -38,10 +38,21 @@ void main() {
       expect(m.inZone(1, 100), isFalse);
     });
 
+    test('one score per revolution per player', () {
+      final m = CatchMatch(playerCount: 2);
+      expect(m.tap(0, 45), isTrue);
+      // same arc, same revolution: spam taps do not score again
+      expect(m.tap(0, 45), isFalse);
+      expect(m.tap(0, 90), isFalse);
+      // next revolution scores again
+      expect(m.tap(0, 405), isTrue);
+      expect(m.scores[0], 2);
+    });
+
     test('reaching the target wins the match and locks taps', () {
       final m = CatchMatch(playerCount: 2, targetScore: 2);
       expect(m.tap(0, 45), isTrue);
-      expect(m.tap(0, 45), isTrue);
+      expect(m.tap(0, 405), isTrue);
       expect(m.matchWinner, 0);
       expect(m.tap(1, 225), isFalse);
     });

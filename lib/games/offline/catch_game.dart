@@ -20,12 +20,18 @@ class CatchMatch {
     required this.playerCount,
     this.targetScore = 5,
     this.startAngle = 0.0,
-  }) : scores = List<int>.filled(playerCount, 0);
+  })  : scores = List<int>.filled(playerCount, 0),
+        _scoredLap = List<int>.filled(playerCount, -1);
 
   final int playerCount;
   final int targetScore;
   final double startAngle;
   final List<int> scores;
+
+  /// Last revolution each player scored in; a player can score at most
+  /// once per pass through their arc, so spam-tapping while the marker
+  /// sits inside the arc does not rack up points.
+  final List<int> _scoredLap;
 
   int? matchWinner;
 
@@ -49,11 +55,16 @@ class CatchMatch {
     return a >= z.from || a < z.to;
   }
 
-  /// Registers a tap for [player] at marker position [angle]. Returns true
-  /// when the tap scores.
+  /// Registers a tap for [player] at marker position [angle], which may
+  /// exceed 360 to mark later revolutions. Returns true when the tap
+  /// scores: the marker must be inside the player's arc and the player
+  /// must not have scored yet this revolution.
   bool tap(int player, double angle) {
     if (matchWinner != null) return false;
+    final lap = angle ~/ 360;
     if (!inZone(player, angle)) return false;
+    if (_scoredLap[player] == lap) return false;
+    _scoredLap[player] = lap;
     scores[player]++;
     if (scores[player] >= targetScore) matchWinner = player;
     return true;
@@ -106,6 +117,8 @@ class _CatchGameState extends State<CatchGame>
   }
 
   void _startMatchRound() {
+    _lap = 0;
+    _lastSpinValue = 0;
     _match = CatchMatch(playerCount: _players, startAngle: _startAngle);
     _banner = 'اطقطف لما السمكة تعدي على لونك! 🐟';
     _spin.duration = Duration(milliseconds: 2200 + _random.nextInt(1500));
@@ -118,12 +131,20 @@ class _CatchGameState extends State<CatchGame>
     _spin = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
-    );
+    )..addListener(() {
+        // repeat() wraps the value from ~1 back to ~0 each revolution;
+        // count laps from the wrap so spam taps score once per pass
+        if (_spin.value < _lastSpinValue - 0.5) _lap++;
+        _lastSpinValue = _spin.value;
+      });
   }
+
+  int _lap = 0;
+  double _lastSpinValue = 0;
 
   void _onTapZone(int player) {
     if (_match.matchWinner != null || !_spin.isAnimating) return;
-    final angle = (_spin.value * 360) % 360;
+    final angle = _spin.value * 360 + _lap * 360;
     final scored = _match.tap(player, angle);
     setState(() {
       _banner = scored
