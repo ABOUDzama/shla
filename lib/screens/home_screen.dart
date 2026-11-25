@@ -69,6 +69,12 @@ class _HomeScreenState extends State<HomeScreen> {
   /// art renders the illustration; the rest keep the emoji tile until their
   /// artwork is generated.
   static const Map<String, String> _gameArt = {
+    'إكس أو': 'assets/tiles/xo.png',
+    'السيجة': 'assets/tiles/seega.png',
+    'جوبلت': 'assets/tiles/goblet.png',
+    'لعبة الأسئلة': 'assets/tiles/questions.png',
+    'قنبلة الحروف': 'assets/tiles/letter_bomb.png',
+    'تحدي اللمس': 'assets/tiles/touch.png',
     'مافيا': 'assets/tiles/mafia.png',
     'لو خيروك': 'assets/tiles/would_rather.png',
     'أنا عمري ما': 'assets/tiles/never_have_i.png',
