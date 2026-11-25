@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shella/games/offline/tank_battle_game.dart';
 
@@ -33,7 +34,32 @@ Future<void> warmGoogleFonts(WidgetTester tester) async {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   final enabled = Platform.environment['CAPTURE_VIDEO'] == '1';
+
+  setUpAll(() async {
+    GoogleFonts.config.allowRuntimeFetching = false;
+    for (final name in [
+      'Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold', 'Black'
+    ]) {
+      final bytes = await File('assets/fonts/Cairo-$name.ttf').readAsBytes();
+      final loader = FontLoader('Cairo')
+        ..addFont(Future.value(ByteData.sublistView(bytes)));
+      await loader.load();
+    }
+    final emojiBytes =
+        await File('test/fonts_NotoColorEmoji.ttf').readAsBytes();
+    final emojiLoader = FontLoader('Noto Color Emoji')
+      ..addFont(Future.value(ByteData.sublistView(emojiBytes)));
+    await emojiLoader.load();
+    final icons = await File(
+      Platform.environment['HOME']! +
+          '/sdk/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
+    ).readAsBytes();
+    final iconLoader = FontLoader('MaterialIcons')
+      ..addFont(Future.value(ByteData.sublistView(icons)));
+    await iconLoader.load();
+  });
 
   testWidgets('capture scripted match frames', (tester) async {
     final outDir = Directory('build/video_frames');
@@ -63,17 +89,23 @@ void main() {
       theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
       home: Directionality(
         textDirection: TextDirection.rtl,
-        child: RepaintBoundary(
-          key: boundaryKey,
-          child: const TankBattleGame(randomSeed: 2026),
+        child: Material(
+          color: const Color(0xFF0B0820),
+          child: RepaintBoundary(
+            key: boundaryKey,
+            child: const TankBattleGame(randomSeed: 2026),
+          ),
         ),
       ),
     ));
     await tester.runAsync(() => Future.delayed(const Duration(milliseconds: 500)));
     await tester.pump();
-
-    // intro (2 frames)
+    // let the intro entrance animation finish before capturing it
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 300));
+    }
     await snapFrame();
+    await tester.pump(const Duration(milliseconds: 200));
     await snapFrame();
     await tester.tap(find.textContaining('ابدأ اللعبة'));
     await tester.pump();

@@ -88,4 +88,37 @@ void main() {
     expect(find.text('كام لاعب؟'), findsOneWidget);
     await settleDown(tester);
   });
+
+  testWidgets('rematch fully resets match state', (tester) async {
+    await boot(tester);
+    await tester.tap(find.textContaining('ابدأ اللعبة'));
+    await tester.pump();
+    await tester.tap(find.text('3 لاعبين'));
+    await tester.pump();
+    // play a little: player 1 fires
+    final g = await tester.startGesture(
+        tester.getCenter(find.text('لاعب 1 🎯')));
+    await tester.pump(const Duration(milliseconds: 200));
+    await g.up();
+    await tester.pump(const Duration(milliseconds: 200));
+    (tester.state(find.byType(TankBattleGame)) as dynamic).debugForceWin(2);
+    await tester.pump();
+    // rematch
+    await tester.tap(find.text('العبوا تاني 🎯'));
+    await tester.pump();
+    expect(find.text('كام لاعب؟'), findsOneWidget);
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    final m = ((tester.state(find.byType(TankBattleGame)) as dynamic)
+        .debugMatch) as dynamic;
+    expect(m.playerCount, 2);
+    expect(m.aliveCount, 2);
+    expect(m.shells, isEmpty);
+    expect(m.destroyedAt, isEmpty);
+    expect(m.winner, isNull);
+    expect(m.tickCount, 0);
+    // banner reset to the how-to hint
+    expect(find.textContaining('دوس مطوّل'), findsWidgets);
+    await settleDown(tester);
+  });
 }

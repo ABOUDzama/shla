@@ -50,7 +50,10 @@ class GameIntroWidget extends StatelessWidget {
                 ),
                 child: Text(
                   icon,
-                  style: const TextStyle(fontSize: 72),
+                  style: const TextStyle(
+                    fontSize: 72,
+                    fontFamilyFallback: ['Noto Color Emoji'],
+                  ),
                 ),
               ),
             ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),

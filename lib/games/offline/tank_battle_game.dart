@@ -86,6 +86,10 @@ class _TankBattleGameState extends State<TankBattleGame> {
   }
 
 
+  /// Test hook: current match (read-only) for state assertions.
+  @visibleForTesting
+  TankBattleMatch get debugMatch => _match;
+
   /// Test hook: jump straight to the over screen with [winner] as victor.
   @visibleForTesting
   void debugForceWin(int winner) {
