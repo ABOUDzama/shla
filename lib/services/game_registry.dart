@@ -39,6 +39,7 @@ import '../games/offline/proverb_game.dart';
 import '../games/offline/reaction_game.dart';
 import '../games/offline/snake_arena_game.dart';
 import '../games/offline/tank_battle_game.dart';
+import '../games/offline/tug_of_war_game.dart';
 import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
@@ -320,6 +321,15 @@ class GameRegistry {
       icon: Icons.gps_fixed,
       color: FunkyColors.orange,
       screen: TankBattleGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'شد الحبل',
+      description: 'دوس في اللحظة الصح لما المؤشر يبقى في النص واشدد الحبل لناحيتك!',
+      icon: Icons.front_hand,
+      color: FunkyColors.amber,
+      screen: TugOfWarGame(),
       badge: 'جديد',
       arcade1234: true,
     ),
