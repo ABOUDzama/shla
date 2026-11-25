@@ -32,6 +32,7 @@ import '../games/offline/spy_game.dart';
 import '../games/offline/undercover_game.dart';
 import '../games/offline/mafia_game.dart';
 import '../games/offline/would_rather_game.dart';
+import '../games/offline/word_story_game.dart';
 import '../games/offline/never_have_i_game.dart';
 import '../games/offline/proverb_game.dart';
 import '../games/offline/who_said_game.dart';
@@ -246,6 +247,14 @@ class GameRegistry {
       icon: Icons.front_hand_rounded,
       color: FunkyColors.pink,
       screen: NeverHaveIGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'قصة كلمة بكلمة',
+      description: 'كل واحد يضيف كلمة.. ونشوف القصة هتوصل لفين!',
+      icon: Icons.menu_book_rounded,
+      color: FunkyColors.mint,
+      screen: WordStoryGame(),
       badge: 'جديد',
     ),
     GameModel(

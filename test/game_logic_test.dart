@@ -7,6 +7,7 @@ import 'package:shella/games/offline/undercover_game.dart';
 import 'package:shella/games/offline/mafia_game.dart';
 import 'package:shella/games/offline/would_rather_game.dart';
 import 'package:shella/games/offline/never_have_i_game.dart';
+import 'package:shella/games/offline/word_story_game.dart';
 
 void main() {
   group('RankingChallengeGame.scoreGuess', () {
@@ -288,6 +289,29 @@ void main() {
           List.generate(NeverHaveIGame.statements.length, (i) => i));
       expect(o1, o2); // same seed, same order
       expect(o1, isNot(o3));
+    });
+  });
+  group('WordStoryGame rules', () {
+    test('normalizeWord: trims, single word only, rejects empty/multi/overlong',
+        () {
+      expect(WordStoryGame.normalizeWord('  قطة '), 'قطة');
+      expect(WordStoryGame.normalizeWord(''), isNull);
+      expect(WordStoryGame.normalizeWord('   '), isNull);
+      expect(WordStoryGame.normalizeWord('كلمتين مع بعض'), isNull);
+      expect(WordStoryGame.normalizeWord('a b'), isNull);
+      expect(WordStoryGame.normalizeWord('كلمة' * 6), isNull); // > 20 chars
+    });
+    test('isEnd: players x wordsPerPlayer words closes the story', () {
+      expect(WordStoryGame.isEnd(0, 3), isFalse);
+      expect(WordStoryGame.isEnd(14, 3), isFalse);
+      expect(WordStoryGame.isEnd(15, 3), isTrue);
+      expect(WordStoryGame.isEnd(10, 2), isTrue);
+      expect(WordStoryGame.isEnd(5, 0), isFalse); // no players, no end
+    });
+    test('openers: non-empty, unique', () {
+      expect(WordStoryGame.openers.length, greaterThanOrEqualTo(4));
+      expect(WordStoryGame.openers.toSet().length,
+          WordStoryGame.openers.length);
     });
   });
 }

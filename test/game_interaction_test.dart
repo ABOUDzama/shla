@@ -21,6 +21,7 @@ import 'package:shella/games/offline/emoji_guess_game.dart';
 import 'package:shella/games/offline/who_am_i_game.dart';
 import 'package:shella/games/offline/would_rather_game.dart';
 import 'package:shella/games/offline/never_have_i_game.dart';
+import 'package:shella/games/offline/word_story_game.dart';
 
 /// Interaction/state-transition tests: play each of the 4 new games through
 /// real taps and assert real state changes (round counters, turn rotation,
@@ -1063,6 +1064,54 @@ void main() {
       expect(topMona < topAhmed && topAhmed < topKarim, isTrue);
 
       await tapText(tester, 'العب تاني');
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+    });
+  });
+  group('word story: rotation, single-word validation, accumulation, end',
+      () {
+    Future<void> typeWord(WidgetTester tester, String word) async {
+      await tester.enterText(find.byType(TextField), word);
+      await fixedPumps(tester, 2);
+      await tapText(tester, 'ضيف الكلمة ✍');
+    }
+
+    testWidgets(
+        'turns rotate, story accumulates in order, multi-word rejected, end + replay',
+        (tester) async {
+      const names = ['أحمد', 'منى'];
+      await pumpGame(tester, const WordStoryGame());
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, names);
+
+      // Rotation: أحمد then منى.
+      expect(find.textContaining('الدور على: أحمد'), findsOneWidget);
+      // Opener visible before any word.
+      expect(find.textContaining('في يوم من الأيام'), findsOneWidget);
+
+      // Multi-word input rejected with the error, story unchanged.
+      await typeWord(tester, 'كلمتين مع بعض');
+      expect(find.text('كلمة واحدة بس، من غير مسافات!'), findsOneWidget);
+      expect(find.textContaining('الدور على: أحمد'), findsOneWidget);
+
+      await typeWord(tester, 'قطة');
+      expect(find.textContaining('الدور على: منى'), findsOneWidget);
+      expect(find.textContaining('في يوم من الأيام قطة'), findsOneWidget);
+
+      // Play out the remaining 9 words (2 players x 5 total).
+      final words = [
+        'كلت', 'كشري', 'ورقصت', 'في', 'المطبخ', 'مع', 'بطة', 'وضحكت', 'جدا'
+      ];
+      for (var i = 0; i < words.length; i++) {
+        await typeWord(tester, words[i]);
+      }
+      expect(find.text('قصتكم جاهزة! 🎉'), findsOneWidget);
+      expect(
+          find.textContaining(
+              'في يوم من الأيام قطة كلت كشري ورقصت في المطبخ مع بطة وضحكت جدا'),
+          findsOneWidget);
+
+      await tapText(tester, 'قصة جديدة');
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
     });
   });
