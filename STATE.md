@@ -65,3 +65,10 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - Parked, not in repo: farmer-collecting chicken logic in /downloads/parked (from a different app, not the reference).
 - Next: Feed the Pigeon style slingshot game; other reference-listing games not yet covered (Monster Attack low confidence); mid-play/win captures for older arcade games; winner screen should highlight the winner among the 4 avatars.
 - Gaps: no real-device test; persistence checked by SharedPreferences reread only; icon fonts only verified in test harness; Chicken Run rules inferred.
+
+## Batch 14 (01:00-01:15 EET, Nov 26)
+- Pushed: أطعم الحمامة (pigeon_logic/game, cover assets/covers/pigeon.png, tests pigeon_*), لمّ الفلوس rework (hash 8471f36).
+- User said the 11 OLD arcade games "weren't fun". Main: fix explicit corner/setup/bot gaps and responsiveness first; do NOT turn simple timing games into movement games from guessed taste; keep each game's core mechanic; add fair replay/round structure and clarity.
+- Template for conversion = pigeon_game.dart / coin_grab_game.dart (1-4 humans picker, bots yes/no, corner pads keyed pad_N, no banner, VictoryFriends(gameTitle), debugMatch getter, dt-based step 33ms).
+- Old-11 status: DONE: coin_grab. TODO in order: catch (اقطفها), reaction, whack_mole, tap_race, snake_arena, tug_of_war, snow_brawl, sumo, touch_ball, tank_battle. Defects common to the TODO ones: 2-4 only (tank has 1P), no bots yes/no, bottom button strip with labels/emoji, text banner. Update tests that tap '2 لاعبين'/'لاعب N <emoji>' (small_screen_test, arcade_play_proof_test, per-game widget tests).
+- Gaps: no real-device run; winner screen does not mark the winner among avatars; old-game result captures missing.
