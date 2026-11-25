@@ -595,7 +595,7 @@ class _WordChainGameState extends State<WordChainGame> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        elevation: _selectedCategories.isNotEmpty ? 10 : 0,
+                        elevation: 0,
                         shadowColor: Colors.transparent,
                       ),
                     )
@@ -788,13 +788,7 @@ class _WordChainGameState extends State<WordChainGame> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(30),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black38,
-                                    blurRadius: 20,
-                                    offset: const Offset(0, 10),
-                                  ),
-                                ],
+                                
                               ),
                               child: Text(
                                 _shuffledWords.isNotEmpty

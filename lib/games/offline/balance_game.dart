@@ -238,7 +238,7 @@ class _BalanceGameState extends State<BalanceGame> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      elevation: 10,
+                      elevation: 0,
                     ),
                     icon: const Icon(Icons.play_arrow_rounded, size: 30),
                     label: const Text(
@@ -410,15 +410,7 @@ class _BalanceGameState extends State<BalanceGame> {
                         : Colors.tealAccent.withValues(alpha: 0.5),
                     width: 4,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color:
-                          (score > 30 ? Colors.orangeAccent : Colors.tealAccent)
-                              .withValues(alpha: 0.2),
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    ),
-                  ],
+                  
                 ),
                 child: Stack(
                   children: [
@@ -447,19 +439,7 @@ class _BalanceGameState extends State<BalanceGame> {
                             gradient: const RadialGradient(
                               colors: [Colors.orangeAccent, Colors.deepOrange],
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.5),
-                                blurRadius: 15,
-                                offset: const Offset(0, 5),
-                              ),
-                              BoxShadow(
-                                color: Colors.orangeAccent.withValues(
-                                  alpha: 0.5,
-                                ),
-                                blurRadius: 20,
-                              ),
-                            ],
+                            
                           ),
                           child: const Center(
                             child: Text('⚽', style: TextStyle(fontSize: 40)),

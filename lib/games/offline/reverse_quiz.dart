@@ -847,7 +847,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  elevation: 10,
+                                  elevation: 0,
                                 ),
                                 child: Text(
                                   'يلا جاهز؟ 🏁',

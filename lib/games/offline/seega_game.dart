@@ -292,13 +292,7 @@ class _SeegaGameState extends State<SeegaGame> {
                       color: FunkyColors.bgDeep,
                       width: 12,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black54,
-                        blurRadius: 20,
-                        offset: const Offset(8, 8),
-                      ),
-                    ],
+                    
                   ),
                   child: GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
@@ -363,19 +357,7 @@ class _SeegaGameState extends State<SeegaGame> {
                                             : FunkyColors.amber,
                                         width: 2,
                                       ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: value == 1
-                                              ? Colors.red.withValues(
-                                                  alpha: 0.6,
-                                                )
-                                              : Colors.blue.withValues(
-                                                  alpha: 0.6,
-                                                ),
-                                          blurRadius: 12,
-                                          spreadRadius: 2,
-                                        ),
-                                      ],
+                                      
                                     ),
                                   ).animate().scale(
                                     curve: Curves.elasticOut,

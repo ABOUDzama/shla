@@ -453,10 +453,8 @@ class _PictionaryGameState extends State<PictionaryGame> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        elevation: 10,
-                        shadowColor: Colors.lightBlueAccent.withValues(
-                          alpha: 0.5,
-                        ),
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
                       ),
                     )
                     .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -706,13 +704,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                   colors: [FunkyColors.amber, FunkyColors.orange],
                 ),
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.amber.withValues(alpha: 0.5),
-                    blurRadius: 15,
-                    spreadRadius: 2,
-                  ),
-                ],
+                
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1045,7 +1037,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        elevation: 8,
+                        elevation: 0,
                       ),
                     ),
                   ],

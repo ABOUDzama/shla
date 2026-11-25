@@ -442,13 +442,7 @@ class _OddOneOutState extends State<OddOneOut> {
                                       decoration: BoxDecoration(
                                         color: cardColor,
                                         borderRadius: BorderRadius.circular(16),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black26,
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
+                                        
                                       ),
                                       child: Center(
                                         child: Row(

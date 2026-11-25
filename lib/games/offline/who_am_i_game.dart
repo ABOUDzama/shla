@@ -296,8 +296,8 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        elevation: 10,
-                        shadowColor: Colors.amberAccent.withValues(alpha: 0.5),
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
                       ),
                     )
                     .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -347,12 +347,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                   border: Border.all(
                     color: Colors.purpleAccent.withValues(alpha: 0.5),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.purple.withValues(alpha: 0.4),
-                      blurRadius: 12,
-                    ),
-                  ],
+                  
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -445,13 +440,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(28),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black38,
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
+                          
                         ),
                         child: Column(
                           children: [

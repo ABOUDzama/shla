@@ -601,7 +601,7 @@ class _TickTockBoomState extends State<TickTockBoom>
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    elevation: 10,
+                    elevation: 0,
                   ),
                   icon: const Icon(Icons.play_arrow, size: 30),
                   label: const Text(
@@ -632,13 +632,7 @@ class _TickTockBoomState extends State<TickTockBoom>
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.4),
-                              blurRadius: 20 + (_pulseController.value * 15),
-                              spreadRadius: 5,
-                            ),
-                          ],
+                          
                         ),
                         child: Center(
                           child: Text(
@@ -756,7 +750,7 @@ class _TickTockBoomState extends State<TickTockBoom>
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        elevation: 5,
+                        elevation: 0,
                       ),
                       child: const Text(
                         'العب تاني 🔄',

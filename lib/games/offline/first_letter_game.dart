@@ -826,7 +826,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  elevation: 10,
+                                  elevation: 0,
                                 ),
                                 child: Text(
                                   'يلا جاهز؟ 🏁',
@@ -887,13 +887,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                                     decoration: const BoxDecoration(
                                       color: Colors.white,
                                       shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black38,
-                                          blurRadius: 30,
-                                          spreadRadius: 5,
-                                        ),
-                                      ],
+                                      
                                     ),
                                     child: Center(
                                       child: Text(

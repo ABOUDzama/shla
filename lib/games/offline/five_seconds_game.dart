@@ -310,13 +310,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black45,
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -418,7 +412,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
-          elevation: 10,
+          elevation: 0,
         ),
         child: Text(
           'ابدأ التحدي 🔥',
@@ -460,7 +454,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
-              elevation: 15,
+              elevation: 0,
             ),
           ),
         ),
@@ -490,7 +484,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
-                elevation: 8,
+                elevation: 0,
               ),
             ),
           ),

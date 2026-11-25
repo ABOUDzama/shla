@@ -187,15 +187,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                               color: isChosen ? Colors.white : Colors.white60,
                               width: isChosen ? 5 : 3,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: color.withValues(
-                                  alpha: isChosen ? 0.7 : 0.3,
-                                ),
-                                blurRadius: isChosen ? 30 : 10,
-                                spreadRadius: isChosen ? 8 : 2,
-                              ),
-                            ],
+                            
                           ),
                           child: Center(
                             child: isChosen
@@ -354,7 +346,7 @@ class _MultiTouchScreenState extends State<MultiTouchScreen>
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            elevation: 8,
+                            elevation: 0,
                           ),
                         ),
                       ),

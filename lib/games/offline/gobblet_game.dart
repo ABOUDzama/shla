@@ -334,19 +334,7 @@ class _GobbletGameState extends State<GobbletGame> {
           center: const Alignment(-0.3, -0.5),
           radius: 0.8,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
-            blurRadius: isSelected ? 8 : 4,
-            offset: Offset(0, isSelected ? 6 : 3),
-          ),
-          if (isSelected)
-            BoxShadow(
-              color: Colors.yellowAccent.withValues(alpha: 0.6),
-              blurRadius: 15,
-              spreadRadius: 5,
-            ),
-        ],
+        
         border: isSelected
             ? Border.all(color: Colors.yellowAccent, width: 3)
             : null,

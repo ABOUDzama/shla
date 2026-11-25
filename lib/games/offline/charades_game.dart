@@ -625,7 +625,7 @@ class _CharadesGameState extends State<CharadesGame> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        elevation: _selectedCategories.isNotEmpty ? 10 : 0,
+                        elevation: 0,
                         shadowColor: Colors.transparent,
                       ),
                     )
@@ -820,13 +820,7 @@ class _CharadesGameState extends State<CharadesGame> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(28),
-                                boxShadow: [
-                                  const BoxShadow(
-                                    color: Colors.black38,
-                                    blurRadius: 20,
-                                    offset: Offset(0, 10),
-                                  ),
-                                ],
+                                
                               ),
                               child: Text(
                                 _shuffledWords.isNotEmpty

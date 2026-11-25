@@ -727,7 +727,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  elevation: 10,
+                                  elevation: 0,
                                 ),
                                 child: Text(
                                   'يلا جاهز؟ 🏁',
@@ -808,13 +808,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                     decoration: const BoxDecoration(
                                       color: Colors.white,
                                       shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black38,
-                                          blurRadius: 20,
-                                          spreadRadius: 2,
-                                        ),
-                                      ],
+                                      
                                     ),
                                     child: Center(
                                       child: Text(
