@@ -11,6 +11,7 @@ import 'package:shella/games/offline/memory_game.dart';
 import 'package:shella/games/offline/password_game.dart';
 import 'package:shella/games/offline/spy_game.dart';
 import 'package:shella/games/offline/proverb_game.dart';
+import 'package:shella/games/offline/who_said_game.dart';
 import 'package:shella/games/offline/most_likely_game.dart';
 import 'package:shella/games/offline/taboo_game.dart';
 import 'package:shella/games/offline/emoji_guess_game.dart';
@@ -545,6 +546,60 @@ void main() {
       expect(find.text('الفايز: منى'), findsOneWidget);
       expect(find.text('منى: 2'), findsOneWidget);
       expect(find.text('أحمد: 0'), findsOneWidget);
+
+      await tapText(tester, 'العب تاني');
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+      await flushFontCallbacks(tester);
+    });
+  });
+
+  group('who said: full 3-round match', () {
+    testWidgets('secret answer, group vote, reveal, scoring, replay',
+        (tester) async {
+      await pumpGame(tester, const WhoSaidGame());
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(tester, ['أحمد', 'منى', 'كريم']);
+
+      // Round 1: أحمد answers secretly; group identifies him correctly.
+      expect(find.text('الجولة 1 من 3'), findsOneWidget);
+      await tapText(tester, 'شوف سؤالك');
+      final options1 = WhoSaidGame.questions
+          .map((q) => q.options.first)
+          .toList();
+      await tapText(tester, options1.firstWhere((o) =>
+          find.text(o).evaluate().isNotEmpty));
+      expect(find.text('مين اللي جاوب كده؟ 👀'), findsOneWidget);
+      await tapText(tester, 'أحمد'); // correct: أحمد is the answerer
+      expect(find.text('عرفتوه! 🎯'), findsOneWidget);
+      await tapText(tester, 'الجولة اللي بعدها');
+
+      // Round 2: منى answers; group accuses the wrong player.
+      await tapText(tester, 'شوف سؤالك');
+      final visible2 = WhoSaidGame.questions
+          .map((q) => q.options.first)
+          .firstWhere((o) => find.text(o).evaluate().isNotEmpty);
+      await tapText(tester, visible2);
+      await tapText(tester, 'كريم'); // wrong: answerer is منى
+      expect(find.text('ضحك عليكم! 😎'), findsOneWidget);
+      await tapText(tester, 'الجولة اللي بعدها');
+
+      // Round 3: كريم answers; group identifies him.
+      await tapText(tester, 'شوف سؤالك');
+      final visible3 = WhoSaidGame.questions
+          .map((q) => q.options.first)
+          .firstWhere((o) => find.text(o).evaluate().isNotEmpty);
+      await tapText(tester, visible3);
+      await tapText(tester, 'كريم'); // correct
+      expect(find.text('عرفتوه! 🎯'), findsOneWidget);
+      await tapText(tester, 'النتيجة النهائية');
+
+      // Scores: R1 others +2 (منى 2, كريم 2); R2 منى +3; R3 others +2
+      // (أحمد 2, منى +2). Totals: منى 7, كريم 2, أحمد 2.
+      expect(find.text('الفايز: منى'), findsOneWidget);
+      expect(find.text('منى: 7'), findsOneWidget);
+      expect(find.text('أحمد: 2'), findsOneWidget);
+      expect(find.text('كريم: 2'), findsOneWidget);
 
       await tapText(tester, 'العب تاني');
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);

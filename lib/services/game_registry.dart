@@ -30,6 +30,7 @@ import '../games/offline/emoji_guess_game.dart';
 import '../games/offline/password_game.dart';
 import '../games/offline/spy_game.dart';
 import '../games/offline/proverb_game.dart';
+import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -194,6 +195,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'مين قالها؟',
+      description: 'إجابة سرية والشلة تخمن صاحبها!',
+      icon: Icons.record_voice_over_rounded,
+      color: FunkyColors.mint,
+      screen: WhoSaidGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'أكمل المثل',
