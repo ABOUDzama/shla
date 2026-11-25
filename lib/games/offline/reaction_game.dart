@@ -50,6 +50,9 @@ class ReactionMatch {
   }
 }
 
+/// Clock used to time reactions; tests replace it with the fake test clock.
+DateTime Function() reactionNow = DateTime.now;
+
 class ReactionGame extends StatefulWidget {
   const ReactionGame({super.key, this.randomSeed});
   final int? randomSeed;
@@ -134,7 +137,7 @@ class _ReactionGameState extends State<ReactionGame> {
       if (!mounted || _phase != _Phase.waiting) return;
       setState(() {
         _phase = _Phase.green;
-        _greenAt = DateTime.now();
+        _greenAt = reactionNow();
       });
       for (final b in _botSeats) {
         if (_random.nextDouble() < 0.85) {
@@ -159,7 +162,7 @@ class _ReactionGameState extends State<ReactionGame> {
       _lastFalse = outcome == ReactionOutcome.falseStart;
       _lastMs = _greenAt == null || _lastFalse
           ? null
-          : DateTime.now().difference(_greenAt!).inMilliseconds;
+          : reactionNow().difference(_greenAt!).inMilliseconds;
       _phase = _match.matchWinner != null ? _Phase.matchOver : _Phase.resolved;
     });
     if (_match.matchWinner == null) {

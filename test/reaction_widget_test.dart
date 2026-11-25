@@ -25,6 +25,7 @@ void main() {
   });
 
   Future<void> open(WidgetTester tester) async {
+    reactionNow = () => tester.binding.clock.now();
     tester.view.physicalSize = const Size(360, 640);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
@@ -83,6 +84,8 @@ void main() {
     await waitGreen(tester);
     expect(find.text('دوس!'), findsWidgets);
     await tester.pump(const Duration(milliseconds: 200));
+    await tester.runAsync(() => Future.delayed(const Duration(milliseconds: 500)));
+    await tester.pump(const Duration(milliseconds: 50));
     await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/reaction_green.png'));
     await tester.tap(find.byKey(const ValueKey('zone_1')));
     await tester.pump(const Duration(milliseconds: 100));
@@ -112,6 +115,7 @@ void main() {
     final match = m(tester);
     for (var r = 0; r < 5; r++) {
       await waitGreen(tester);
+      await tester.pump(const Duration(milliseconds: 350)); // controlled test delay, not a human measurement
       await tester.tap(find.byKey(const ValueKey('zone_0')));
       await tester.pump(const Duration(milliseconds: 1700));
     }
@@ -134,7 +138,7 @@ void main() {
     await start(tester, 'لاعب واحد', 'لا');
     expect(m(tester).playerCount, 1);
     await waitGreen(tester);
-    await tester.pump(const Duration(milliseconds: 240));
+    await tester.pump(const Duration(milliseconds: 320)); // controlled test delay
     await tester.tap(find.byKey(const ValueKey('zone_0')));
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.textContaining('ms'), findsOneWidget);
