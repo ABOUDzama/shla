@@ -98,6 +98,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 250));
     }
     expect(find.text('دوس!'), findsOneWidget);
+    // let the 120ms zone-color transition to lime finish before capture
+    await tester.pump(const Duration(milliseconds: 300));
     await snap(tester, 'reaction_green_2p');
     await settleDown(tester);
   });

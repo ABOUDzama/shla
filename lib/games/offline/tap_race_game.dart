@@ -268,6 +268,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
             ),
             child: Text(
               '$score / ${_match.roundsToWin}',
+              textDirection: TextDirection.ltr,
               style: GoogleFonts.cairo(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,

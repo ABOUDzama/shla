@@ -145,6 +145,11 @@ class _ReactionGameState extends State<ReactionGame> {
         : waiting
             ? FunkyColors.card
             : _zoneColors[player];
+    // dark text only on bright lime (green state or lime zone); the
+    // waiting card is dark purple, where dark text was illegible
+    final onZone = green || (!waiting && color == FunkyColors.lime)
+        ? FunkyColors.bgDeep
+        : Colors.white;
     final label = 'لاعب ${player + 1}';
     final score = _match.scores[player];
     final content = Center(
@@ -156,7 +161,7 @@ class _ReactionGameState extends State<ReactionGame> {
             style: GoogleFonts.cairo(
               fontSize: 22,
               fontWeight: FontWeight.w800,
-              color: waiting || green ? FunkyColors.bgDeep : Colors.white,
+              color: onZone,
             ),
           ),
           const SizedBox(height: 4),
@@ -168,10 +173,11 @@ class _ReactionGameState extends State<ReactionGame> {
             ),
             child: Text(
               '$score / ${_match.targetScore}',
+              textDirection: TextDirection.ltr,
               style: GoogleFonts.cairo(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: waiting || green ? FunkyColors.bgDeep : Colors.white,
+                color: onZone,
               ),
             ),
           ),
