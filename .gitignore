@@ -1,3 +1,13 @@
 node_modules/
 elshla/
 *.class
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+local.properties
+android/key.properties
+*.keystore
+*.jks
+.vault/
