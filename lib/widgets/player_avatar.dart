@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../services/voice_chat_service.dart';
+import '../theme/funky_theme.dart';
 
 /// Circular player avatar: base64 photo when available, otherwise a colored
 /// initial derived deterministically from the name. Optional host crown and
@@ -27,7 +28,7 @@ class PlayerAvatar extends StatelessWidget {
   });
 
   static const List<List<Color>> _palettes = [
-    [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+    [FunkyColors.magenta, FunkyColors.violet],
     [Color(0xFF14B8A6), Color(0xFF06B6D4)],
     [Color(0xFFF59E0B), Color(0xFFEF4444)],
     [Color(0xFFEC4899), Color(0xFFF43F5E)],

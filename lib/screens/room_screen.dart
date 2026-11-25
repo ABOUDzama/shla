@@ -31,6 +31,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
 import '../services/voice_chat_service.dart';
 import '../widgets/reaction_overlay.dart';
+import '../theme/funky_theme.dart';
 
 class RoomScreen extends StatefulWidget {
   final String roomCode;
@@ -458,7 +459,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
         final bool? shouldClose = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF1E293B),
+            backgroundColor: FunkyColors.card,
             title: Text(
               'مغادرة الغرفة',
               style: GoogleFonts.cairo(color: Colors.white),
@@ -527,7 +528,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                               height: 200,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: const Color(0xFF6366F1).withAlpha(30),
+                                color: FunkyColors.magenta.withAlpha(30),
                               ),
                             )
                             .animate(
@@ -772,7 +773,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'الكبير ياكل',
                                     emoji: '🔴🔵',
-                                    color: const Color(0xFF8B5CF6),
+                                    color: FunkyColors.violet,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('gobblet')
                                         : null,
@@ -922,7 +923,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
             right: 16,
           ),
           decoration: BoxDecoration(
-            color: const Color(0xFF0F172A).withValues(alpha: 0.8),
+            color: FunkyColors.bgDeep.withValues(alpha: 0.8),
           ),
           child: Row(
             children: [
@@ -932,7 +933,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: const BoxDecoration(
-                    color: Color(0xFF334155),
+                    color: FunkyColors.cardLight,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -978,7 +979,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: const BoxDecoration(
-                            color: Color(0xFF334155),
+                            color: FunkyColors.cardLight,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -998,7 +999,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                               color: Colors.red,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: const Color(0xFF0F172A),
+                                color: FunkyColors.bgDeep,
                                 width: 1.5,
                               ),
                             ),
@@ -1118,12 +1119,12 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF6366F1).withAlpha(40),
-            const Color(0xFF8B5CF6).withAlpha(40),
+            FunkyColors.magenta.withAlpha(40),
+            FunkyColors.violet.withAlpha(40),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF6366F1).withAlpha(80)),
+        border: Border.all(color: FunkyColors.magenta.withAlpha(80)),
       ),
       child: Column(
         children: [
@@ -1198,11 +1199,11 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: isMe
-            ? const Color(0xFF6366F1).withAlpha(25)
+            ? FunkyColors.magenta.withAlpha(25)
             : Colors.white.withAlpha(8),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isMe ? const Color(0xFF6366F1).withAlpha(80) : Colors.white12,
+          color: isMe ? FunkyColors.magenta.withAlpha(80) : Colors.white12,
         ),
       ),
       child: Row(

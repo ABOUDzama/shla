@@ -5,6 +5,7 @@ import '../services/socket_service.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:async';
 import 'dart:ui';
+import '../theme/funky_theme.dart';
 
 class VoiceChatWidget extends StatefulWidget {
   final String roomCode;
@@ -106,7 +107,7 @@ class _VoiceChatWidgetState extends State<VoiceChatWidget> {
                 height: 40,
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF334155),
+                  color: FunkyColors.cardLight,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -128,7 +129,7 @@ class _VoiceChatWidgetState extends State<VoiceChatWidget> {
                 decoration: BoxDecoration(
                   color: isConnected ? Colors.greenAccent : Colors.orangeAccent,
                   shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFF334155), width: 1.5),
+                  border: Border.all(color: FunkyColors.cardLight, width: 1.5),
                 ),
               ).animate(onPlay: (c) => c.repeat())
                .fadeIn(duration: 500.ms)

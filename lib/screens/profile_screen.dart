@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../services/settings_service.dart';
 import '../services/haptic_service.dart';
 import '../services/socket_service.dart' as ss;
+import '../theme/funky_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: const Color(0xFF1E293B),
+      backgroundColor: FunkyColors.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -149,8 +150,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF0F172A),
-                  Color(0xFF1E1B4B),
+                  FunkyColors.bgDeep,
+                  FunkyColors.bgMid,
                 ],
               ),
             ),
@@ -193,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       fit: BoxFit.cover,
                                     )
                                   : Container(
-                                      color: const Color(0xFF1E293B),
+                                      color: FunkyColors.card,
                                       child: const Icon(
                                         Icons.person_rounded,
                                         size: 80,
@@ -205,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: const BoxDecoration(
-                              color: Color(0xFF6366F1),
+                              color: FunkyColors.magenta,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -259,13 +260,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: ElevatedButton(
                       onPressed: _saveProfile,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6366F1),
+                        backgroundColor: FunkyColors.magenta,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                         elevation: 10,
-                        shadowColor: const Color(0xFF6366F1).withAlpha(100),
+                        shadowColor: FunkyColors.magenta.withAlpha(100),
                       ),
                       child: Text(
                         'حفظ التغييرات',

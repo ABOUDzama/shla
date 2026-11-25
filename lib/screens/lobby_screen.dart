@@ -7,6 +7,7 @@ import 'room_screen.dart';
 import 'profile_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../theme/funky_theme.dart';
 
 class LobbyScreen extends StatefulWidget {
   final bool showBackButton;
@@ -352,8 +353,8 @@ class _LobbyScreenState extends State<LobbyScreen>
                                 shape: BoxShape.circle,
                                 gradient: const LinearGradient(
                                   colors: [
-                                    Color(0xFF6366F1),
-                                    Color(0xFF8B5CF6),
+                                    FunkyColors.magenta,
+                                    FunkyColors.violet,
                                   ],
                                 ),
                               ),
@@ -427,7 +428,7 @@ class _LobbyScreenState extends State<LobbyScreen>
                         label: 'إنشاء غرفة جديدة',
                         icon: Icons.add_circle_outline_rounded,
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
+                          colors: [FunkyColors.magenta, FunkyColors.violet],
                         ),
                         onTap: _isLoading ? null : _createRoom,
                       ),
@@ -477,7 +478,7 @@ class _LobbyScreenState extends State<LobbyScreen>
                         const Padding(
                           padding: EdgeInsets.only(top: 32),
                           child: CircularProgressIndicator(
-                            color: Color(0xFF6366F1),
+                            color: FunkyColors.magenta,
                           ),
                         ),
                     ],

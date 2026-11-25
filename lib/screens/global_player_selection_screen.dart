@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
 import '../services/settings_service.dart';
 import '../services/score_service.dart';
+import '../theme/funky_theme.dart';
 
 class GlobalPlayerSelectionScreen extends StatefulWidget {
   final int minPlayers;
@@ -51,7 +52,7 @@ class _GlobalPlayerSelectionScreenState
     
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: const Color(0xFF1E293B),
+      backgroundColor: FunkyColors.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -270,7 +271,7 @@ class _GlobalPlayerSelectionScreenState
                     ),
                     IconButton(
                       onPressed: _addPlayer,
-                      icon: const Icon(Icons.add_circle, color: Color(0xFF6366F1), size: 36),
+                      icon: const Icon(Icons.add_circle, color: FunkyColors.magenta, size: 36),
                       padding: EdgeInsets.zero,
                     ),
                   ],
@@ -304,7 +305,7 @@ class _GlobalPlayerSelectionScreenState
                                   color: isSelected ? Colors.indigo.withAlpha(25) : Colors.transparent,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: isSelected ? const Color(0xFF6366F1).withAlpha(120) : Colors.white.withAlpha(10),
+                                    color: isSelected ? FunkyColors.magenta.withAlpha(120) : Colors.white.withAlpha(10),
                                   ),
                                 ),
                                 child: ListTile(
@@ -335,7 +336,7 @@ class _GlobalPlayerSelectionScreenState
                                     ),
                                   ),
                                   trailing: isSelected 
-                                    ? const Icon(Icons.check_circle, color: Color(0xFF6366F1), size: 22)
+                                    ? const Icon(Icons.check_circle, color: FunkyColors.magenta, size: 22)
                                     : IconButton(
                                         icon: const Icon(Icons.close, color: Colors.white24, size: 18),
                                         onPressed: () => _removePlayer(player),
@@ -358,7 +359,7 @@ class _GlobalPlayerSelectionScreenState
                   child: ElevatedButton(
                     onPressed: canStart ? _startGame : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6366F1),
+                      backgroundColor: FunkyColors.magenta,
                       foregroundColor: Colors.white,
                       disabledBackgroundColor: Colors.white.withAlpha(5),
                       disabledForegroundColor: Colors.white24,
