@@ -29,6 +29,7 @@ class _QuizGameState extends State<QuizGame> {
   bool showAnswer = false;
   List<String> selectedCategories = [];
   bool gameStarted = false;
+  bool _offlineNoticeShown = false;
   bool _showIntro = true;
 
   // Multiplayer
@@ -164,7 +165,8 @@ class _QuizGameState extends State<QuizGame> {
       if (gameQuestions.isEmpty) {
         await _loadOfflineQuestions();
       }
-      if (mounted) {
+      if (mounted && !_offlineNoticeShown) {
+        _offlineNoticeShown = true;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -447,7 +449,9 @@ class _QuizGameState extends State<QuizGame> {
                                 fontStyle: FontStyle.italic,
                                 color: FunkyColors.amber,
                                 fontWeight: FontWeight.bold,
-                              ),
+                              ).copyWith(
+                                  fontFamilyFallback:
+                                      FunkyText.emojiFallback),
                             )
                             .animate(onPlay: (c) => c.repeat(reverse: true))
                             .fade(duration: 1.5.seconds)

@@ -105,6 +105,15 @@ class _MyAppState extends State<MyApp> {
       scaffoldMessengerKey: scaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
       title: 'شِلَّة',
+      // Global emoji fallback: explicit TextStyles (e.g. raw GoogleFonts.cairo
+      // calls) inherit this fontFamilyFallback, so emoji render even where a
+      // style does not set its own fallback chain.
+      builder: (context, child) => DefaultTextStyle(
+        style: DefaultTextStyle.of(context)
+            .style
+            .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+        child: child!,
+      ),
 
       theme: ThemeData(
         useMaterial3: true,

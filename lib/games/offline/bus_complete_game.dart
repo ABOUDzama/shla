@@ -471,7 +471,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
             child: ElevatedButton.icon(
               onPressed: () => _finishTurn(),
               icon: const Icon(Icons.check_circle),
-              label: Text('خلصت! ✅', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 17)),
+              label: Text('خلصت! ✅', style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 17).copyWith(fontFamilyFallback: FunkyText.emojiFallback)),
             ),
           ),
         ),

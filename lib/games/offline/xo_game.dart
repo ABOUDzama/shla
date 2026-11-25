@@ -197,7 +197,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
                     fontWeight: FontWeight.w900,
                     color: Colors.white.withValues(alpha: 0.95),
 
-                  ),
+                  ).copyWith(fontFamilyFallback: FunkyText.emojiFallback),
                 ),
               ),
             ).animate().fadeIn().slideY(begin: -0.2, end: 0),

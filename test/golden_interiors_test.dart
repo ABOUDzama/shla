@@ -15,6 +15,7 @@ import 'package:shella/games/offline/emoji_guess_game.dart';
 import 'package:shella/games/offline/quiz_game.dart';
 import 'package:shella/games/offline/who_am_i_game.dart';
 import 'package:shella/games/offline/xo_game.dart';
+import 'package:shella/games/offline/bus_complete_game.dart';
 
 /// Interior screenshot generator: drives games into real gameplay and writes
 /// PNG renders to test/goldens/. These are visual-proof artifacts, not
@@ -48,6 +49,10 @@ void main() {
     final emojiLoader = FontLoader('Noto Color Emoji')
       ..addFont(Future.value(ByteData.sublistView(emojiBytes)));
     await emojiLoader.load();
+    final pmBytes = await File('test/fonts_PermanentMarker-Regular.ttf').readAsBytes();
+    final pmLoader = FontLoader('Permanent Marker')
+      ..addFont(Future.value(ByteData.sublistView(pmBytes)));
+    await pmLoader.load();
     final icons = await File(
       Platform.environment['HOME']! +
           '/sdk/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
@@ -66,6 +71,12 @@ void main() {
     messenger.setMockMethodCallHandler(
       const MethodChannel('xyz.luan/audioplayers'),
       (call) async => null,
+    );
+    // Force the offline path: games that gate AI content fetches on
+    // Connectivity otherwise hang on a real network timeout in the harness.
+    messenger.setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/connectivity'),
+      (call) async => 'none',
     );
   });
 
@@ -102,6 +113,14 @@ void main() {
     // Let pending font futures resolve before rasterizing.
     await tester.runAsync(() => Future.delayed(const Duration(milliseconds: 400)));
     await fixedPumps(tester, 2);
+    // Some games surface an offline-fallback snackbar whenever their async
+    // content fetch resolves; hide any current one so captures stay clean.
+    final scaffoldFind = find.byType(Scaffold);
+    if (scaffoldFind.evaluate().isNotEmpty) {
+      ScaffoldMessenger.of(tester.element(scaffoldFind.first))
+          .hideCurrentSnackBar();
+      await fixedPumps(tester, 1);
+    }
     final boundary = boundaryKey.currentContext!.findRenderObject()!
         as RenderRepaintBoundary;
     final image = await tester.runAsync(() => boundary.toImage(pixelRatio: 2.0));
@@ -166,6 +185,31 @@ void main() {
 
   testWidgets('quiz interior', (tester) async {
     await pumpGame(tester, const QuizGame());
+    await tester.tap(find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await tester.tap(find.text('ثقافة عامة'));
+    await fixedPumps(tester);
+    await tester.tap(find.text('اختار الشلة وابدأ >'));
+    await fixedPumps(tester);
+    for (final name in ['أحمد', 'منى']) {
+      final tile = find.text(name);
+      if (tile.evaluate().isEmpty) break;
+      await tester.tap(tile.first);
+      await fixedPumps(tester, 3);
+    }
+    final begin = find.text('بدء اللعبة');
+    if (begin.evaluate().isNotEmpty) {
+      await tester.tap(begin);
+      await fixedPumps(tester);
+    }
+    // Offline-fallback snackbar shows as soon as questions load; hide it
+    // (the game shows it at most once).
+    if (find.byType(SnackBar).evaluate().isNotEmpty) {
+      ScaffoldMessenger.of(tester.element(find.byType(Scaffold).first))
+          .hideCurrentSnackBar();
+      await fixedPumps(tester, 3);
+    }
+    tester.takeException();
     await capture(tester, 'interior_quiz');
   });
 
@@ -176,7 +220,34 @@ void main() {
       await tester.tap(startBtn);
       await fixedPumps(tester);
     }
+    // Play X O X O X (top row win) so the board shows real marks.
+    for (final cell in [0, 4, 1, 5, 2]) {
+      final cells = find.descendant(
+          of: find.byType(GridView), matching: find.byType(GestureDetector));
+      if (cells.evaluate().length != 9) break;
+      await tester.tap(cells.at(cell));
+      await fixedPumps(tester, 2);
+    }
     await capture(tester, 'interior_xo');
+  });
+
+  testWidgets('bus complete interior', (tester) async {
+    await pumpGame(tester, const BusCompleteGame());
+    final field = find.byType(TextField);
+    for (final name in ['أحمد', 'منى']) {
+      await tester.enterText(field, name);
+      await fixedPumps(tester, 2);
+      await tester.tap(find.widgetWithIcon(IconButton, Icons.add));
+      await fixedPumps(tester, 2);
+      tester.takeException();
+    }
+    await tester.tap(find.text('اركبوا الأتوبيس! 🚌'));
+    await fixedPumps(tester);
+    tester.takeException();
+    await tester.tap(find.textContaining('يلا'));
+    await fixedPumps(tester);
+    tester.takeException();
+    await capture(tester, 'interior_bus');
   });
 
   testWidgets('who am i interior', (tester) async {
