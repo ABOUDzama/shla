@@ -67,7 +67,7 @@ void main() {
     expect(saved.length, 1);
     expect(saved.first['name'], 'مونا');
     expect(saved.first['avatar'],
-        '${AvatarService.assetPrefix}${AvatarService.builtInAvatars[0]}');
+        '${AvatarService.assetPrefix}${AvatarService.pickerAvatars[0]}');
     await flushFontCallbacks(tester);
   });
 

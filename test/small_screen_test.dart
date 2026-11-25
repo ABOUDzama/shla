@@ -723,6 +723,7 @@ void main() {
   testWidgets('small screen: balance', (tester) async {
     await pumpSmall(tester, const BalanceGame());
     await flushFontCallbacks(tester);
+    await fixedPumps(tester, 6);
     await capture360(tester, 'balance_intro');
     await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
     await fixedPumps(tester);

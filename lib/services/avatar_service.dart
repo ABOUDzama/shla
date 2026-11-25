@@ -20,6 +20,10 @@ class AvatarService {
     'assets/avatars/card_yellow.png',
   ];
 
+  /// Avatars offered in the picker: the first three legacy ones stay in
+  /// [builtInAvatars] so saved `asset:` ids keep resolving, but are hidden.
+  static List<String> get pickerAvatars => builtInAvatars.sublist(3);
+
   static const String assetPrefix = 'asset:';
 
   static bool isBuiltIn(String avatar) => avatar.startsWith(assetPrefix);

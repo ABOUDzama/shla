@@ -54,7 +54,7 @@ void main() {
     await tester.tap(find.text('x'));
     await tester.pump(const Duration(milliseconds: 400));
     await tester.runAsync(() async {
-      for (final asset in AvatarService.builtInAvatars) {
+      for (final asset in AvatarService.pickerAvatars) {
         await precacheImage(AssetImage(asset),
             tester.element(find.byType(Scaffold)));
       }

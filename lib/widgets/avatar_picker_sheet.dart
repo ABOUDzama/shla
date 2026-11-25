@@ -76,12 +76,12 @@ class _AvatarPickerSheet extends StatelessWidget {
                 spacing: 12,
                 runSpacing: 12,
                 children: [
-                  for (var i = 0; i < AvatarService.builtInAvatars.length; i++)
+                  for (var i = 0; i < AvatarService.pickerAvatars.length; i++)
                     GestureDetector(
                       key: Key('builtin_avatar_$i'),
                       onTap: () => Navigator.pop(
                         context,
-                        '${AvatarService.assetPrefix}${AvatarService.builtInAvatars[i]}',
+                        '${AvatarService.assetPrefix}${AvatarService.pickerAvatars[i]}',
                       ),
                       child: Container(
                         width: 64,
@@ -93,7 +93,7 @@ class _AvatarPickerSheet extends StatelessWidget {
                             width: 3,
                           ),
                           image: DecorationImage(
-                            image: AssetImage(AvatarService.builtInAvatars[i]),
+                            image: AssetImage(AvatarService.pickerAvatars[i]),
                             fit: BoxFit.cover,
                           ),
                         ),
