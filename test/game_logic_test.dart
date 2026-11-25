@@ -316,7 +316,7 @@ void main() {
     });
   });
 
-  group('CodeNamesGame rules (grounded in official Codenames, Wikipedia)', () {
+  group('CodeNamesGame rules (verified against the CGE publisher rulebook)', () {
     test('deal: 25 unique board words from the pool, key 9/8/7/1', () {
       final (words, key) = CodeNamesGame.deal(Random(21), 'red');
       expect(words.length, 25);

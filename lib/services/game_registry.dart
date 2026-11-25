@@ -251,7 +251,7 @@ class GameRegistry {
       badge: 'جديد',
     ),
     GameModel(
-      title: 'قصة كلمة بكلمة',
+      title: 'كلمة بكلمة',
       description: 'كل واحد يضيف كلمة.. ونشوف القصة هتوصل لفين!',
       icon: Icons.menu_book_rounded,
       color: FunkyColors.mint,

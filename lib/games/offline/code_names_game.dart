@@ -6,15 +6,21 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
 
-/// الشيفرة: a two-team word-association grid game in the Codenames genre
-/// (rules reference: https://en.wikipedia.org/wiki/Codenames_(board_game)).
-/// Original Arabic name, original word pool, original art - no branded
-/// assets. Two spymasters see a secret key behind a concealment gate and
-/// give one-word clues; their teams guess on a public 5x5 grid.
+/// الشيفرة: a two-team word-association grid game in the Codenames genre.
+/// Mechanics verified against the publisher rulebook (Czech Games Edition):
+/// https://filemanager.czechgames.com/storage/files/codenames-2015/rules/codenames-rules-en.pdf
+/// 25 words in a 5x5 grid; starting team has 9 agents, the other 8, seven
+/// innocent bystanders, one assassin; clue = one word + a number; a correct
+/// guess earns another (up to number+1); any wrong guess ends the turn;
+/// contacting the assassin loses instantly; first team to contact all its
+/// agents wins. Original Arabic name, original word pool, original art -
+/// no branded assets.
 ///
-/// House adaptation (labeled): an invalid clue (empty, multi-word, or a
+/// House adaptations (labeled): an invalid clue (empty, multi-word, or a
 /// word already on the board) is blocked at entry with an error message
-/// instead of ending the turn, which fits single-device pass-and-play.
+/// instead of ending the turn with a penalty; the end-turn button is always
+/// available, while the publisher rules require at least one guess. Both
+/// fit single-device pass-and-play.
 class CodeNamesGame extends StatefulWidget {
   const CodeNamesGame({super.key, this.seed = 21});
 

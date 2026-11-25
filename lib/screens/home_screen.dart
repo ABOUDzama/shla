@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'إيموجي إيه؟': '🧩',
     'لو خيروك': '🤔',
     'أنا عمري ما': '✋',
-    'قصة كلمة بكلمة': '📖',
+    'كلمة بكلمة': '📖',
     'الشيفرة': '🕵',
   };
 
@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'طلع الغريب': 'assets/tiles/odd_one.png',
     'أول حرف': 'assets/tiles/first_letter.png',
     'عكس العكاس': 'assets/tiles/opposite.png',
-    'قصة كلمة بكلمة': 'assets/tiles/story.png',
+    'كلمة بكلمة': 'assets/tiles/story.png',
     'الشيفرة': 'assets/tiles/code.png',
     'مافيا': 'assets/tiles/mafia.png',
     'لو خيروك': 'assets/tiles/would_rather.png',
