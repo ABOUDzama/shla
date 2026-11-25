@@ -41,6 +41,9 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   fonts:
+    - family: Noto Color Emoji
+      fonts:
+        - asset: assets/fonts/NotoColorEmoji.ttf
     - family: Cairo
       fonts:
         - asset: assets/fonts/Cairo-Regular.ttf
