@@ -301,6 +301,7 @@ class GameRegistry {
       color: FunkyColors.lime,
       screen: ReactionGame(),
       badge: 'جديد',
+      arcade1234: true,
     ),
     GameModel(
       title: 'سومو الشلة',
@@ -309,6 +310,7 @@ class GameRegistry {
       color: FunkyColors.coral,
       screen: SumoGame(),
       badge: 'جديد',
+      arcade1234: true,
     ),
     GameModel(
       title: 'اقطفها',
@@ -317,6 +319,7 @@ class GameRegistry {
       color: FunkyColors.sky,
       screen: CatchGame(),
       badge: 'جديد',
+      arcade1234: true,
     ),
     GameModel(
       title: 'سباق الدوس',
@@ -325,6 +328,7 @@ class GameRegistry {
       color: FunkyColors.orange,
       screen: TapRaceGame(),
       badge: 'جديد',
+      arcade1234: true,
     ),
     GameModel(
       title: 'كورة اللمسة',
@@ -333,6 +337,7 @@ class GameRegistry {
       color: FunkyColors.violet,
       screen: TouchBallGame(),
       badge: 'جديد',
+      arcade1234: true,
     ),
   ];
 }

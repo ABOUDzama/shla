@@ -221,4 +221,44 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(milliseconds: 1));
   });
+  testWidgets('١٢٣٤ tab: section shows arcade games with working count filter', (tester) async {
+    tester.view.physicalSize = const Size(412, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    await warmGoogleFonts(tester);
+    await tester.pumpWidget(rtl(const HomeScreen()));
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+
+    await tester.tap(find.text('١٢٣٤'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(find.text('ألعاب ١٢٣٤'), findsOneWidget);
+    for (final title in [
+      'أسرع رد فعل',
+      'سومو الشلة',
+      'اقطفها',
+      'سباق الدوس',
+      'كورة اللمسة',
+    ]) {
+      expect(find.text(title), findsOneWidget, reason: title);
+    }
+
+    // ٣-player filter hides the 2-player-only sumo, keeps the rest
+    await tester.tap(find.text('٣'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('سومو الشلة'), findsNothing);
+    expect(find.text('أسرع رد فعل'), findsOneWidget);
+    expect(find.text('اقطفها'), findsOneWidget);
+
+    // back to الكل shows all five again
+    await tester.tap(find.text('الكل'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('سومو الشلة'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 1));
+  });
 }

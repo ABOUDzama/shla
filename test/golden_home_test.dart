@@ -109,4 +109,33 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
+  testWidgets('goldens: ١٢٣٤ arcade section tab', (tester) async {
+    tester.view.physicalSize = const Size(412, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: HomeScreen(),
+        ),
+      ),
+    );
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 500));
+    }
+    await tester.tap(find.text('١٢٣٤'));
+    await tester.pump();
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+    await expectLater(
+      find.byType(HomeScreen),
+      matchesGoldenFile('goldens/home_arcade_section.png'),
+    );
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
 }

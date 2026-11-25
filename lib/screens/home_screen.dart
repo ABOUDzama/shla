@@ -12,6 +12,7 @@ import '../theme/flat_theme.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
 import 'shellty_screen.dart';
+import 'arcade_section_screen.dart';
 
 /// Home — flat/cartoon direction (user-approved WePlay reference):
 /// light cream background, flat pastel game tiles with a big emoji
@@ -25,7 +26,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isNavigating = false;
-  int _tab = 0; // 0 = الألعاب, 1 = شلتي
+  int _tab = 0; // 0 = الألعاب, 1 = شلتي, 2 = ألعاب ١٢٣٤
   final Random _rand = Random();
 
   /// Big emoji "character" per game tile (all verified against the bundled
@@ -142,7 +143,9 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: _tab == 1
                   ? const ShelltyScreen(embedded: true)
-                  : SafeArea(
+                  : _tab == 2
+                      ? const ArcadeSectionScreen(embedded: true)
+                      : SafeArea(
                       key: const ValueKey('games_feed'),
                       child: ListView(
                         physics: const BouncingScrollPhysics(),
@@ -322,6 +325,14 @@ class _HomeScreenState extends State<HomeScreen> {
             active: _tab == 1,
             onTap: () {
               if (_tab != 1) setState(() => _tab = 1);
+            },
+          ),
+          _modePill(
+            label: '١٢٣٤',
+            icon: Icons.sports_esports_rounded,
+            active: _tab == 2,
+            onTap: () {
+              if (_tab != 2) setState(() => _tab = 2);
             },
           ),
         ],
