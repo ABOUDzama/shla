@@ -472,9 +472,15 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'gobblet');
-    await tester.tap(find.byKey(const ValueKey('gobblet_inv_1_2')), warnIfMissed: false);
+    final invPiece = find.byKey(const ValueKey('gobblet_inv_1_2'));
+    await tester.ensureVisible(invPiece);
     await fixedPumps(tester, 2);
-    await tester.tap(find.byKey(const ValueKey('gobblet_cell_1_1')), warnIfMissed: false);
+    await tester.tap(invPiece);
+    await fixedPumps(tester, 2);
+    final boardCell = find.byKey(const ValueKey('gobblet_cell_1_1'));
+    await tester.ensureVisible(boardCell);
+    await fixedPumps(tester, 2);
+    await tester.tap(boardCell);
     await fixedPumps(tester, 2);
     await capture360(tester, 'gobblet_mid');
     expectNoOverflow(tester);
