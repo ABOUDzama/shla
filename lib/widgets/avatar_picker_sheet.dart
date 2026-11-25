@@ -24,12 +24,19 @@ class _AvatarPickerSheet extends StatelessWidget {
 
   Future<void> _pickPhoto(BuildContext context, ImageSource source) async {
     final picker = ImagePicker();
-    final picked = await picker.pickImage(
-      source: source,
-      maxWidth: 200,
-      maxHeight: 200,
-      imageQuality: 70,
-    );
+    XFile? picked;
+    try {
+      picked = await picker.pickImage(
+        source: source,
+        maxWidth: 200,
+        maxHeight: 200,
+        imageQuality: 70,
+      );
+    } catch (_) {
+      // Permission denied or source unavailable: leave the sheet open so
+      // the current avatar and the other options stay usable.
+      return;
+    }
     if (picked != null && context.mounted) {
       final bytes = await picked.readAsBytes();
       Navigator.pop(context, base64Encode(bytes));
