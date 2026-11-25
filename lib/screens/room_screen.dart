@@ -549,77 +549,12 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF030303),
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: -50,
-                    left: -50,
-                    child:
-                        Container(
-                              width: 200,
-                              height: 200,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: FunkyColors.magenta.withAlpha(30),
-                              ),
-                            )
-                            .animate(
-                              onPlay: (controller) => controller.repeat(),
-                            )
-                            .moveY(
-                              begin: 0,
-                              end: 30,
-                              duration: 5.seconds,
-                              curve: Curves.easeInOut,
-                            )
-                            .then()
-                            .moveY(
-                              begin: 30,
-                              end: 0,
-                              duration: 5.seconds,
-                              curve: Curves.easeInOut,
-                            ),
-                  ),
-                  Positioned(
-                    bottom: 100,
-                    right: -30,
-                    child:
-                        Container(
-                              width: 180,
-                              height: 180,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: const Color(0xFFEC4899).withAlpha(20),
-                              ),
-                            )
-                            .animate(
-                              onPlay: (controller) => controller.repeat(),
-                            )
-                            .scale(
-                              begin: const Offset(1, 1),
-                              end: const Offset(1.1, 1.1),
-                              duration: 6.seconds,
-                              curve: Curves.easeInOut,
-                            )
-                            .then()
-                            .scale(
-                              begin: const Offset(1.1, 1.1),
-                              end: const Offset(1, 1),
-                              duration: 6.seconds,
-                              curve: Curves.easeInOut,
-                            ),
-                  ),
-                ],
-              ),
-            ),
-            SafeArea(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                child: Column(
+        body: FunkyBackground(
+          accent: FunkyColors.magenta,
+          child: Stack(
+            children: [
+              SafeArea(
+              child: Column(
                   children: [
                     StreamBuilder<bool>(
                       stream: Stream.periodic(
@@ -691,13 +626,8 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                       horizontal: 10,
                                       vertical: 4,
                                     ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.orange.withAlpha(30),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: Colors.orange.withAlpha(80),
-                                      ),
-                                    ),
+                                    decoration:
+                                        FunkyDecor.pill(FunkyColors.amber),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -706,15 +636,16 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                           height: 10,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            color: Colors.orange,
+                                            color: Colors.white,
                                           ),
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
                                           'بانتظار لاعبين',
                                           style: GoogleFonts.cairo(
-                                            color: Colors.orange,
+                                            color: Colors.white,
                                             fontSize: 12,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -727,27 +658,23 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                       horizontal: 10,
                                       vertical: 4,
                                     ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green.withAlpha(30),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: Colors.green.withAlpha(80),
-                                      ),
-                                    ),
+                                    decoration:
+                                        FunkyDecor.pill(FunkyColors.mint),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         const Icon(
                                           Icons.check_circle,
-                                          color: Colors.green,
+                                          color: Colors.white,
                                           size: 14,
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
                                           'جاهز للبدء',
                                           style: GoogleFonts.cairo(
-                                            color: Colors.green,
+                                            color: Colors.white,
                                             fontSize: 12,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -895,7 +822,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                         : null,
                                   ),
                                   _GameCard(
-                                    title: 'مين فينا؟ جديد',
+                                    title: 'مين فينا؟',
                                     emoji: '🫵',
                                     color: FunkyColors.lime,
                                     onTap: (isReady && widget.isHost)
@@ -903,7 +830,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                         : null,
                                   ),
                                   _GameCard(
-                                    title: 'كلمات ممنوعة جديد',
+                                    title: 'كلمات ممنوعة',
                                     emoji: '🙊',
                                     color: FunkyColors.coral,
                                     onTap: (isReady && widget.isHost)
@@ -911,7 +838,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                         : null,
                                   ),
                                   _GameCard(
-                                    title: 'ذاكرة الشلة جديد',
+                                    title: 'ذاكرة الشلة',
                                     emoji: '🧠',
                                     color: FunkyColors.sky,
                                     onTap: (isReady && widget.isHost)
@@ -919,7 +846,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                         : null,
                                   ),
                                   _GameCard(
-                                    title: 'إيموجي إيه؟ جديد',
+                                    title: 'إيموجي إيه؟',
                                     emoji: '🧩',
                                     color: FunkyColors.amber,
                                     onTap: (isReady && widget.isHost)
@@ -937,7 +864,6 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                   ],
                 ),
               ),
-            ),
             // Floating Reaction UI
             Positioned(bottom: 20, right: 20, child: _EmojiPicker()),
             // Reaction Overlay (Flying Emojis)
@@ -948,7 +874,8 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                 ),
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -978,122 +905,122 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
   }
 
   Widget _buildHeader() {
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).padding.top + 4,
-            bottom: 8,
-            left: 16,
-            right: 16,
-          ),
-          decoration: BoxDecoration(
-            color: FunkyColors.bgDeep.withValues(alpha: 0.8),
-          ),
-          child: Row(
-            children: [
-              // Back Button
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: FunkyColors.cardLight,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white,
-                    size: 18,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: FunkyDecor.glowCard(FunkyColors.magenta, radius: 22),
+        child: Row(
+          children: [
+            // Back Button
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: FunkyColors.bgDeep.withValues(alpha: 0.6),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: FunkyColors.magenta.withValues(alpha: 0.5),
+                    width: 1.3,
                   ),
                 ),
+                child: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'غرفة الانتظار',
-                      style: GoogleFonts.cairo(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'غرفة الانتظار 🛋️',
+                style: GoogleFonts.cairo(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  shadows: [
+                    Shadow(
+                      color: FunkyColors.magenta.withValues(alpha: 0.7),
+                      blurRadius: 12,
                     ),
                   ],
-                ),
+                ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+                overflow: TextOverflow.ellipsis,
               ),
-              const Spacer(),
-              // Communication Actions
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  VoiceChatWidget(
-                    roomCode: widget.roomCode,
-                    myId: ss.SocketService().socket.id ?? widget.playerName,
-                  ),
-                  const SizedBox(width: 8),
-                  Stack(
-                    alignment: Alignment.topRight,
-                    clipBehavior: Clip.none,
-                    children: [
-                      GestureDetector(
-                        onTap: _showChat,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(
-                            color: FunkyColors.cardLight,
-                            shape: BoxShape.circle,
+            ),
+            // Communication Actions
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                VoiceChatWidget(
+                  roomCode: widget.roomCode,
+                  myId: ss.SocketService().socket.id ?? widget.playerName,
+                ),
+                const SizedBox(width: 8),
+                Stack(
+                  alignment: Alignment.topRight,
+                  clipBehavior: Clip.none,
+                  children: [
+                    GestureDetector(
+                      onTap: _showChat,
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: FunkyColors.bgDeep.withValues(alpha: 0.6),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: FunkyColors.cyan.withValues(alpha: 0.5),
+                            width: 1.3,
                           ),
-                          child: const Icon(
-                            Icons.forum_rounded,
-                            color: Colors.blueAccent,
-                            size: 18,
+                        ),
+                        child: const Icon(
+                          Icons.forum_rounded,
+                          color: FunkyColors.cyan,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                    if (_unreadMessages > 0)
+                      Positioned(
+                        right: -2,
+                        top: -2,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: FunkyColors.coral,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: FunkyColors.bgDeep,
+                              width: 1.5,
+                            ),
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 16,
+                            minHeight: 16,
+                          ),
+                          child: Text(
+                            '$_unreadMessages',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
-                      if (_unreadMessages > 0)
-                        Positioned(
-                          right: -2,
-                          top: -2,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: FunkyColors.bgDeep,
-                                width: 1.5,
-                              ),
-                            ),
-                            constraints: const BoxConstraints(
-                              minWidth: 16,
-                              minHeight: 16,
-                            ),
-                            child: Text(
-                              '$_unreadMessages',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      if (_previewMsg != null)
-                        _buildMessagePreview(_previewMsg!),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
+                    if (_previewMsg != null)
+                      _buildMessagePreview(_previewMsg!),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -1184,32 +1111,29 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            FunkyColors.magenta.withAlpha(40),
-            FunkyColors.violet.withAlpha(40),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: FunkyColors.magenta.withAlpha(80)),
-      ),
+      decoration: FunkyDecor.glowCard(FunkyColors.magenta, radius: 24),
       child: Column(
         children: [
           Text(
             'كود الغرفة',
-            style: GoogleFonts.cairo(color: Colors.white54, fontSize: 14),
+            style: GoogleFonts.cairo(color: Colors.white60, fontSize: 14),
           ),
           const SizedBox(height: 8),
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
               widget.roomCode,
-              style: const TextStyle(
+              style: GoogleFonts.cairo(
                 fontSize: 42,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF818CF8),
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
                 letterSpacing: 10,
+                shadows: [
+                  Shadow(
+                    color: FunkyColors.magenta.withValues(alpha: 0.8),
+                    blurRadius: 18,
+                  ),
+                ],
               ),
             ),
           ),
@@ -1218,17 +1142,13 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
             onTap: _copyCode,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white.withAlpha(15),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white24),
-              ),
+              decoration: FunkyDecor.pill(FunkyColors.violet),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(
                     Icons.copy_rounded,
-                    color: Colors.white54,
+                    color: Colors.white,
                     size: 16,
                   ),
                   const SizedBox(width: 6),
@@ -1236,8 +1156,9 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                     child: Text(
                       'انسخ الكود وشاركه مع أصحابك',
                       style: GoogleFonts.cairo(
-                        color: Colors.white54,
+                        color: Colors.white,
                         fontSize: 13,
+                        fontWeight: FontWeight.bold,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1266,13 +1187,30 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isMe
-            ? FunkyColors.magenta.withAlpha(25)
-            : Colors.white.withAlpha(8),
-        borderRadius: BorderRadius.circular(16),
+        color: FunkyColors.card,
+        borderRadius: BorderRadius.circular(18),
+        gradient: isMe
+            ? LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: [
+                  FunkyColors.magenta.withValues(alpha: 0.35),
+                  FunkyColors.card,
+                ],
+              )
+            : null,
         border: Border.all(
-          color: isMe ? FunkyColors.magenta.withAlpha(80) : Colors.white12,
+          color: isMe ? FunkyColors.magenta : Colors.white.withAlpha(14),
+          width: isMe ? 1.8 : 1,
         ),
+        boxShadow: isMe
+            ? [
+                BoxShadow(
+                  color: FunkyColors.magenta.withValues(alpha: 0.35),
+                  blurRadius: 12,
+                ),
+              ]
+            : null,
       ),
       child: Row(
         children: [
@@ -1308,7 +1246,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                       Text(
                         '(أنت)',
                         style: GoogleFonts.cairo(
-                          color: const Color(0xFF818CF8),
+                          color: FunkyColors.mint,
                           fontSize: 13,
                         ),
                       ),
@@ -1323,7 +1261,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
               ],
             ),
           ),
-          const Icon(Icons.circle, color: Colors.green, size: 12),
+          const Icon(Icons.circle, color: FunkyColors.mint, size: 12),
         ],
       ),
     );
@@ -1334,9 +1272,9 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(5),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white12, style: BorderStyle.solid),
+        color: FunkyColors.card.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.white.withAlpha(14)),
       ),
       child: Row(
         children: [
@@ -1396,27 +1334,9 @@ class _GameCard extends StatelessWidget {
       child: AnimatedOpacity(
         opacity: isDisabled ? 0.6 : 1.0,
         duration: const Duration(milliseconds: 200),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-            child: Container(
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: color.withValues(alpha: 0.4),
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.15),
-                    blurRadius: 25,
-                    spreadRadius: -10,
-                  ),
-                ],
-              ),
-              child: Stack(
+        child: Container(
+          decoration: FunkyDecor.glowCard(color, radius: 24),
+          child: Stack(
                 children: [
                   // Subtle Glow Background
                   Positioned(
@@ -1483,8 +1403,6 @@ class _GameCard extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ),
       ),
     );
   }
@@ -1510,9 +1428,11 @@ class _EmojiPickerState extends State<_EmojiPicker> {
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.8),
+              color: FunkyColors.card,
               borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.white24),
+              border: Border.all(
+                  color: FunkyColors.violet.withValues(alpha: 0.6),
+                  width: 1.3),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.5),
@@ -1549,15 +1469,11 @@ class _EmojiPickerState extends State<_EmojiPicker> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF3B82F6), Color(0xFF7C3AED)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              gradient: FunkyDecor.accentGradient(FunkyColors.violet),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blueAccent.withValues(alpha: 0.5),
+                  color: FunkyColors.violet.withValues(alpha: 0.5),
                   blurRadius: 15,
                   offset: const Offset(0, 6),
                 ),
