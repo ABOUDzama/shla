@@ -84,7 +84,7 @@ class _ArcadeSectionScreenState extends State<ArcadeSectionScreen> {
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
               child: Center(
                 child: Text(
-                  'ألعاب ١٢٣٤',
+                  'ألعاب 1234',
                   style: GoogleFonts.cairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,

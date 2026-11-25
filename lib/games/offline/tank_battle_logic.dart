@@ -54,7 +54,7 @@ class TankBattleMatch {
       alive.add(true);
       holding.add(false);
       // corner spawns, headings toward center
-      final (sx, sy, h) = _spawns[p];
+      final (sx, sy, h) = spawnsFor(playerCount)[p];
       xs.add(sx);
       ys.add(sy);
       headings.add(h);
@@ -65,12 +65,31 @@ class TankBattleMatch {
   final Random _random;
   late final TankArena arena;
 
-  static const List<(double, double, double)> _spawns = [
-    (0.08, 0.08, pi / 4), // top-left -> down-right
-    (0.92, 0.08, 3 * pi / 4),
-    (0.92, 0.92, 5 * pi / 4),
-    (0.08, 0.92, 7 * pi / 4),
-  ];
+  /// Corner spawns per player count (each player owns a screen corner,
+  /// like the reference). 2P uses diagonal corners, 3P leaves bottom-right
+  /// free, 4P uses all four. Heading aims at the arena center.
+  static List<(double, double, double)> spawnsFor(int playerCount) {
+    switch (playerCount) {
+      case 2:
+        return [
+          (0.08, 0.92, -pi / 4), // bottom-left -> up-right
+          (0.92, 0.08, 3 * pi / 4), // top-right -> down-left
+        ];
+      case 3:
+        return [
+          (0.08, 0.08, pi / 4),
+          (0.92, 0.08, 3 * pi / 4),
+          (0.08, 0.92, -pi / 4),
+        ];
+      default:
+        return [
+          (0.08, 0.08, pi / 4),
+          (0.92, 0.08, 3 * pi / 4),
+          (0.92, 0.92, 5 * pi / 4),
+          (0.08, 0.92, -pi / 4),
+        ];
+    }
+  }
 
   static const double tankRadius = 0.045;
   static const double speed = 0.0035; // per tick

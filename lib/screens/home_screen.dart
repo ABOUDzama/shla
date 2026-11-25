@@ -342,7 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(width: 10),
         _navCard(
-          label: '١٢٣٤',
+          label: '1234',
           emoji: '⚡',
           color: const Color(0xFFFFC233),
           active: _tab == 2,

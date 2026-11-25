@@ -232,11 +232,11 @@ void main() {
       await tester.pump(const Duration(milliseconds: 400));
     }
 
-    await tester.tap(find.text('١٢٣٤'));
+    await tester.tap(find.text('1234'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
-    expect(find.text('ألعاب ١٢٣٤'), findsOneWidget);
+    expect(find.text('ألعاب 1234'), findsOneWidget);
     // no global count filter chips: count is picked inside each game
     expect(find.text('الكل'), findsNothing);
     for (final title in [

@@ -148,7 +148,7 @@ Future<void> warmGoogleFonts(WidgetTester tester) async {
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 500));
     }
-    await tester.tap(find.text('١٢٣٤'));
+    await tester.tap(find.text('1234'));
     await tester.pump();
     for (var i = 0; i < 4; i++) {
       await tester.pump(const Duration(milliseconds: 400));
@@ -186,7 +186,7 @@ Future<void> warmGoogleFonts(WidgetTester tester) async {
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 500));
     }
-    await tester.tap(find.text('١٢٣٤'));
+    await tester.tap(find.text('1234'));
     await tester.pump();
     for (var i = 0; i < 4; i++) {
       await tester.pump(const Duration(milliseconds: 400));

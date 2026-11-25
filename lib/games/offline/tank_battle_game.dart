@@ -181,40 +181,55 @@ class _TankBattleGameState extends State<TankBattleGame> {
     );
   }
 
-  Widget _holdButton(int i) {
+  /// Circular corner pad: hold to steer, release to fire. Top-corner pads
+  /// are rotated 180 degrees so they face the player across the phone.
+  Widget _cornerPad(int i) {
     final active = _phase == _TankPhase.playing && _match.alive[i];
     final held = active && _match.holding[i];
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: GestureDetector(
-          onTapDown: active ? (_) => _holdStart(i) : null,
-          onTapUp: active ? (_) => _holdEnd(i) : null,
-          onTapCancel: active ? () => _holdEnd(i) : null,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 120),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            decoration: BoxDecoration(
-              color: !active
-                  ? _colors[i].withValues(alpha: 0.15)
-                  : held
-                      ? Colors.white
-                      : _colors[i],
-              borderRadius: BorderRadius.circular(14),
+    return GestureDetector(
+        onTapDown: active ? (_) => _holdStart(i) : null,
+        onTapUp: active ? (_) => _holdEnd(i) : null,
+        onTapCancel: active ? () => _holdEnd(i) : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          width: 86,
+          height: 86,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: !active
+                ? _colors[i].withValues(alpha: 0.18)
+                : held
+                    ? Colors.white
+                    : _colors[i],
+            border: Border.all(
+              color: held ? _colors[i] : Colors.white.withValues(alpha: 0.35),
+              width: held ? 4 : 2,
             ),
-            child: Center(
-              child: Text(
-                'لاعب ${i + 1} 🎯',
-                style: GoogleFonts.cairo(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: held ? _colors[i] : Colors.black87,
-                ).copyWith(fontFamilyFallback: _emojiFallback),
+            boxShadow: [
+              BoxShadow(
+                color: _colors[i].withValues(alpha: active ? 0.5 : 0.15),
+                blurRadius: held ? 18 : 8,
+                offset: const Offset(0, 4),
               ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              'لاعب ${i + 1} 🎯',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                height: 1.25,
+                fontWeight: FontWeight.w800,
+                color: held
+                    ? _colors[i]
+                    : active
+                        ? Colors.black87
+                        : Colors.white38,
+              ).copyWith(fontFamilyFallback: _emojiFallback),
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -291,26 +306,38 @@ class _TankBattleGameState extends State<TankBattleGame> {
                     ),
                   ),
                   Expanded(
-                    child: Center(
-                      child: _phase == _TankPhase.over
-                          ? _buildOver()
-                          : Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: AspectRatio(
-                                aspectRatio: 1,
-                                child: CustomPaint(
-                                  painter: _TankPainter(_match, _colors),
-                                ),
-                              ),
-                            ),
-                    ),
+                    child: _phase == _TankPhase.over
+                        ? Center(child: _buildOver())
+                        : LayoutBuilder(
+                            builder: (context, constraints) {
+                              final side =
+                                  min(constraints.maxWidth - 16, 420.0);
+                              return Stack(
+                                children: [
+                                  Center(
+                                    child: SizedBox(
+                                      width: side,
+                                      height: side,
+                                      child: CustomPaint(
+                                        painter:
+                                            _TankPainter(_match, _colors),
+                                      ),
+                                    ),
+                                  ),
+                                  for (var i = 0; i < players; i++)
+                                    Positioned(
+                                      left: _match.xs[i] < 0.5 ? 6 : null,
+                                      right: _match.xs[i] < 0.5 ? null : 6,
+                                      top: _match.ys[i] < 0.5 ? 6 : null,
+                                      bottom: _match.ys[i] < 0.5 ? null : 6,
+                                      child: _cornerPad(i),
+                                    ),
+                                ],
+                              );
+                            },
+                          ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
-                    child: Row(
-                      children: [for (var i = 0; i < players; i++) _holdButton(i)],
-                    ),
-                  ),
+                  const SizedBox(height: 8),
                 ],
               ),
       ),
