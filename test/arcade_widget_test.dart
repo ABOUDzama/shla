@@ -595,4 +595,62 @@ void main() {
       await settleDown(tester);
     });
   });
+  group('3p smoke: picker-driven zone layout', () {
+    Future<void> boot(WidgetTester tester, Widget game,
+        {String threeLabel = '3 لاعبين'}) async {
+      tester.view.physicalSize = const Size(412, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await warmGoogleFonts(tester);
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: Directionality(
+          textDirection: TextDirection.rtl,
+          child: game,
+        ),
+      ));
+      await flushFontCallbacks(tester);
+      await startFromIntro(tester);
+      await tester.tap(find.text(threeLabel));
+      await tester.pump();
+    }
+
+    testWidgets('reaction renders exactly 3 zones', (tester) async {
+      await boot(tester, const ReactionGame(), threeLabel: '3');
+      for (final l in ['لاعب 1', 'لاعب 2', 'لاعب 3']) {
+        expect(find.text(l), findsOneWidget);
+      }
+      expect(find.text('لاعب 4'), findsNothing);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+
+    testWidgets('catch renders exactly 3 players', (tester) async {
+      await boot(tester, const CatchGame(), threeLabel: '3');
+      for (final l in ['لاعب 1', 'لاعب 2', 'لاعب 3']) {
+        expect(find.text(l), findsOneWidget);
+      }
+      expect(find.text('لاعب 4'), findsNothing);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+
+    testWidgets('tap race renders 3 lanes', (tester) async {
+      await boot(tester, const TapRaceGame());
+      expect(find.text('0 / 3'), findsNWidgets(3));
+      expect(find.text('لاعب 4'), findsNothing);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+
+    testWidgets('touch ball renders 3 score rows', (tester) async {
+      await boot(tester, const TouchBallGame());
+      for (final row in ['1: 0', '2: 0', '3: 0']) {
+        expect(find.text(row), findsOneWidget);
+      }
+      expect(find.text('4: 0'), findsNothing);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+  });
 }
