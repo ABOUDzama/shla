@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shella/games/offline/tank_battle_game.dart';
+import 'package:shella/widgets/victory_friends.dart';
 
 Future<void> flushFontCallbacks(WidgetTester tester) async {
   await tester.runAsync(() => Future.delayed(const Duration(milliseconds: 500)));
@@ -133,6 +134,34 @@ void main() {
     expect(m.deathTick, isEmpty);
     expect(m.winner, isNull);
     expect(m.tickCount, 0);
+    await settleDown(tester);
+  });
+
+  testWidgets('solo practice: tag + countdown, no win verdict, explicit exit',
+      (tester) async {
+    await boot(tester);
+    await tester.tap(find.textContaining('ابدأ اللعبة'));
+    await tester.pump();
+    await tester.tap(find.text('لاعب واحد'));
+    await tester.pump();
+    await tester.tap(find.text('لا'));
+    await tester.pump();
+    final m = stateOf(tester).debugMatch;
+    expect(m.practice, isTrue);
+    // practice tag with countdown is visible
+    expect(find.textContaining('تدريب · باقي'), findsOneWidget);
+    expect(find.text('إنهاء'), findsOneWidget);
+    // let the match run a few seconds: no early win/draw screen
+    for (var i = 0; i < 40; i++) {
+      await tester.pump(const Duration(milliseconds: 60));
+    }
+    expect(find.text('انتهت جولة التدريب 👏'), findsNothing);
+    expect(find.text('مفيش ناجي! الكل اتدمر 💥'), findsNothing);
+    expect(find.byType(VictoryFriends), findsNothing);
+    // explicit exit returns to the player picker
+    await tester.tap(find.text('إنهاء'));
+    await tester.pump();
+    expect(find.text('كام لاعب؟'), findsOneWidget);
     await settleDown(tester);
   });
 }

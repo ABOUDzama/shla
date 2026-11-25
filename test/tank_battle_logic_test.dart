@@ -137,5 +137,33 @@ void main() {
       expect(a.shells.length, b.shells.length);
       expect(a.alive, b.alive);
     });
+
+    test('solo practice never declares a winner and runs to the cap', () {
+      final m = TankBattleMatch(playerCount: 1, random: Random(3));
+      expect(m.practice, isTrue);
+      for (var t = 0; t < 200; t++) {
+        m.tick();
+      }
+      expect(m.isOver, isFalse);
+      expect(m.winner, isNull);
+      expect(m.aliveCount, 1);
+      expect(m.remainingSeconds, lessThan(108));
+      // run past the safety cap: round ends, still no winner
+      for (var t = 0; t < TankBattleMatch.maxTicks; t++) {
+        m.tick();
+      }
+      expect(m.isOver, isTrue);
+      expect(m.winner, isNull);
+    });
+
+    test('practice ends neutrally when the solo tank self-destructs', () {
+      final m = TankBattleMatch(playerCount: 1, random: Random(3));
+      // own shell right on top of the tank
+      m.shells.add(TankShell2(m.xs[0], m.ys[0], 0, 0, 0));
+      m.tick();
+      expect(m.aliveCount, 0);
+      expect(m.isOver, isTrue);
+      expect(m.winner, isNull);
+    });
   });
 }

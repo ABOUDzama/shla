@@ -238,10 +238,20 @@ class _TankBattleGameState extends State<TankBattleGame> {
   }
 
   Widget _buildOver() {
+    final practice = _match.practice;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (_match.winner != null)
+        if (practice)
+          Text(
+            'انتهت جولة التدريب 👏',
+            style: GoogleFonts.cairo(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+            ).copyWith(fontFamilyFallback: _emojiFallback),
+          )
+        else if (_match.winner != null)
           VictoryFriends(
               winnerName: _match.winner! < _humans
                   ? 'لاعب ${_match.winner! + 1}'
@@ -257,16 +267,69 @@ class _TankBattleGameState extends State<TankBattleGame> {
           ),
         const SizedBox(height: 16),
         FilledButton(
-          onPressed: () => setState(() => _phase = _TankPhase.pickPlayers),
+          onPressed: () => practice
+              ? _startMatch(1, false)
+              : setState(() => _phase = _TankPhase.pickPlayers),
           child: Text(
-            'العبوا تاني 🎯',
+            practice ? 'تدريب تاني 🎯' : 'العبوا تاني 🎯',
             style: GoogleFonts.cairo(
               fontSize: 18,
               fontWeight: FontWeight.w800,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           ),
         ),
+        TextButton(
+          onPressed: () => setState(() => _phase = _TankPhase.pickPlayers),
+          child: Text(
+            'رجوع',
+            style: GoogleFonts.cairo(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Colors.white70,
+            ).copyWith(fontFamilyFallback: _emojiFallback),
+          ),
+        ),
       ],
+    );
+  }
+
+  /// Small floating header during solo practice: label, countdown, exit.
+  Widget _practiceTag() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.black54,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'تدريب · باقي ${_match.remainingSeconds} ث',
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ).copyWith(fontFamilyFallback: _emojiFallback),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () {
+              _ticker?.cancel();
+              setState(() => _phase = _TankPhase.pickPlayers);
+            },
+            child: Text(
+              'إنهاء',
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: FunkyColors.coral,
+              ).copyWith(fontFamilyFallback: _emojiFallback),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -315,6 +378,13 @@ class _TankBattleGameState extends State<TankBattleGame> {
                         top: _match.ys[i] < 0.5 ? 8 : null,
                         bottom: _match.ys[i] < 0.5 ? null : 8,
                         child: _cornerPad(i),
+                      ),
+                    if (_match.practice)
+                      Positioned(
+                        top: 8,
+                        left: 0,
+                        right: 0,
+                        child: Center(child: _practiceTag()),
                       ),
                   ],
                 );

@@ -102,7 +102,9 @@ class TankBattleMatch {
   static const double turnRate = pi / 60; // per held tick
   static const double shellSpeed = 0.012;
   static const double shellRadius = 0.012;
-  static const int maxTicks = 60 * 30; // ~30s safety at 60ms ticks
+  // Ticker fires every 60ms (~16.7 ticks/s), so 1800 ticks ~= 108 seconds.
+  static const int maxTicks = 60 * 30;
+  static const int tickMillis = 60;
 
   final List<bool> alive = [];
   final List<bool> holding = [];
@@ -118,9 +120,18 @@ class TankBattleMatch {
   int? winner;
 
   int get aliveCount => alive.where((a) => a).length;
+
+  /// Solo rounds are practice: no opponents, so no win/loss verdict.
+  bool get practice => playerCount == 1;
+
+  /// Seconds left before the safety cap ends the round.
+  int get remainingSeconds =>
+      ((maxTicks - tickCount) * tickMillis / 1000).ceil().clamp(0, 999);
+
   bool get isOver =>
       winner != null ||
-      (aliveCount <= 1 && tickCount > 30) ||
+      (!practice && aliveCount <= 1 && tickCount > 30) ||
+      (practice && aliveCount == 0) ||
       tickCount >= maxTicks;
 
   bool _inObstacle(double x, double y, double pad) {
@@ -275,7 +286,7 @@ class TankBattleMatch {
       }
     }
 
-    if (aliveCount == 1 && winner == null) {
+    if (!practice && aliveCount == 1 && winner == null) {
       winner = alive.indexOf(true);
     }
   }
