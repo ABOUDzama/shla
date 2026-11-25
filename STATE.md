@@ -74,3 +74,10 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - Test commands (workspace box, `export PATH=$HOME/sdk/flutter/bin:$PATH`): per-game `flutter test test/<game>_widget_test.dart [--update-goldens]`; `flutter test test/small_screen_test.dart --name arcade` (10 tests, ~30s); do NOT run the whole suite in one call (110s limit); run small_screen in parts.
 - Push: tools box `tools vault write-file --key password --name "GitHub PAT (fitnic)" --return-channel whatsapp`, then workspace credential.helper one-shot push and `rm` the file (see earlier STATE).
 - Gaps: no real-device run; persistence checked by SharedPreferences reread only; Chicken Run/Pigeon rules inferred from listing text; Pigeon art is a simple blob; bot skill numbers are my tuning; winner crown missing on the friend-name site; old non-arcade games lack result captures. NO interim APK; next APK versionCode 7 only after user approval.
+
+## Batch 14b (01:42) tap_race rework done
+- tap_race (سباق الدوس): 1-4 humans + bots yes ('اه 🤖') / no ('لا'); 1P+لا = practice; lane msgs; FittedBox lanes (fixed 3-lane overflow); test/tap_race_widget_test.dart (2 tests) pass; arcade proof golden updated and viewed (top lane rotated: its "6" reads as 9 by design).
+- Reaction uses monotonic Stopwatch; test asserts controlled 320ms delay reports 320-420.
+- KNOWN: 7 other goldens in test/arcade_play_proof_test.dart (sumo, touch-ball, snake, tank, tug, snow) fail pixel diffs in this env (not touched by me; need regenerate after viewing, or are due to their own pending reworks).
+- Whack: still owed an explicit tap test on the rotated top grid hole.
+- Remaining old-11: snake_arena, tug_of_war, snow_brawl, sumo, touch_ball, tank_battle (bots yes/no + banner/emoji cleanup), friend-name crown site.

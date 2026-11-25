@@ -142,8 +142,10 @@ void main() {
   testWidgets('proof: tap-race sprint 2p', (tester) async {
     await prep(tester, const TapRaceGame());
     await tester.tap(find.text('2 لاعبين'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('لا'));
     await tester.pump(const Duration(milliseconds: 3500));
-    expect(find.textContaining('دوسوا'), findsOneWidget);
+    expect(find.byKey(const ValueKey('clock')), findsOneWidget);
     for (var i = 0; i < 6; i++) {
       await tester.tap(find.text('لاعب 1'), warnIfMissed: false);
     }

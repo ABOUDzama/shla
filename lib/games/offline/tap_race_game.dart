@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
@@ -15,9 +14,9 @@ import '../../theme/flat_theme.dart';
 /// replay round (no points). First to [roundsToWin] points wins the match.
 class TapRaceMatch {
   TapRaceMatch({required this.players, this.roundsToWin = 3, Random? random})
-      : assert(players >= 2 && players <= 4),
-        assert(roundsToWin >= 1),
-        _random = random ?? Random();
+    : assert(players >= 1 && players <= 4),
+      assert(roundsToWin >= 1),
+      _random = random ?? Random();
 
   final int players;
   final int roundsToWin;
@@ -108,10 +107,18 @@ class TapRaceMatch {
 // Widget
 // ---------------------------------------------------------------------------
 
-enum _RacePhase { pickPlayers, countdown, sprint, roundResult, matchOver }
+enum _RacePhase {
+  pickPlayers,
+  pickBots,
+  countdown,
+  sprint,
+  roundResult,
+  matchOver,
+}
 
 class TapRaceGame extends StatefulWidget {
-  const TapRaceGame({super.key});
+  const TapRaceGame({super.key, this.randomSeed});
+  final int? randomSeed;
 
   @override
   State<TapRaceGame> createState() => _TapRaceGameState();
@@ -125,6 +132,18 @@ class _TapRaceGameState extends State<TapRaceGame> {
   int _countdown = 3;
   int _secondsLeft = TapRaceMatch.roundDurationSeconds;
   int? _lastWinner;
+  int _humans = 2;
+  bool _practice = false;
+  final Set<int> _botSeats = {};
+  Timer? _botTimer;
+  late final Random _random = widget.randomSeed != null
+      ? Random(widget.randomSeed!)
+      : Random();
+
+  @visibleForTesting
+  TapRaceMatch get debugMatch => _match;
+  @visibleForTesting
+  Set<int> get debugBots => _botSeats;
 
   static const List<Color> _laneColors = [
     Color(0xFFFF8A5C),
@@ -136,18 +155,43 @@ class _TapRaceGameState extends State<TapRaceGame> {
   @override
   void dispose() {
     _timer?.cancel();
+    _botTimer?.cancel();
     super.dispose();
   }
 
-  void _startMatch(int players) {
+  void _startMatch(int humans, bool withBots) {
     _timer?.cancel();
+    _humans = humans;
+    _practice = humans == 1 && !withBots;
+    final seats = _practice ? 1 : (withBots ? 4 : humans);
+    _botSeats
+      ..clear()
+      ..addAll([for (var i = humans; i < seats && withBots; i++) i]);
     setState(() {
-      _match = TapRaceMatch(players: players);
+      _match = TapRaceMatch(
+        players: seats,
+        roundsToWin: _practice ? 1 : 3,
+        random: _random,
+      );
       _match.start();
       _phase = _RacePhase.countdown;
       _countdown = 3;
     });
     _tickCountdown();
+  }
+
+  void _runBots() {
+    _botTimer?.cancel();
+    if (_botSeats.isEmpty) return;
+    _botTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
+      if (!mounted || _phase != _RacePhase.sprint) return;
+      setState(() {
+        for (final b in _botSeats) {
+          // about 4-6 taps a second, a bit different per seat
+          if (_random.nextDouble() < 0.4 + 0.06 * (b - _humans)) _match.tap(b);
+        }
+      });
+    });
   }
 
   void _tickCountdown() {
@@ -162,6 +206,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
           _phase = _RacePhase.sprint;
           _secondsLeft = TapRaceMatch.roundDurationSeconds;
         });
+        _runBots();
         _tickSprint();
       }
     });
@@ -175,6 +220,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
         setState(() => _secondsLeft--);
         _tickSprint();
       } else {
+        _botTimer?.cancel();
         final winner = _match.endSprint();
         setState(() {
           _secondsLeft = 0;
@@ -197,123 +243,164 @@ class _TapRaceGameState extends State<TapRaceGame> {
     _tickCountdown();
   }
 
-  Widget _buildPicker() {
-    return Center(
+  TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>
+      flatCairo(
+        fontSize: size,
+        fontWeight: w,
+        color: color ?? FlatColors.ink,
+      ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']);
+
+  Widget _bigChoice(String label, VoidCallback onTap) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6),
+    child: SizedBox(
+      width: 220,
+      child: FilledButton(
+        onPressed: onTap,
+        child: Text(label, style: _t(18, color: Colors.white)),
+      ),
+    ),
+  );
+
+  Widget _buildPicker() => Center(
+    child: SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            'كام لاعب؟',
-            style: flatCairo(
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ),
-          ),
+          Text('كام لاعب؟', style: _t(26)),
           const SizedBox(height: 20),
+          _bigChoice('لاعب واحد', () {
+            _humans = 1;
+            setState(() => _phase = _RacePhase.pickBots);
+          }),
           for (final n in [2, 3, 4])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: SizedBox(
-                width: 200,
-                child: FilledButton(
-                  onPressed: () => _startMatch(n),
-                  child: Text(
-                    '$n لاعبين',
-                    style: flatCairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            _bigChoice('$n لاعبين', () {
+              _humans = n;
+              if (n == 4) {
+                _startMatch(4, false);
+              } else {
+                setState(() => _phase = _RacePhase.pickBots);
+              }
+            }),
         ],
       ),
-    );
-  }
+    ),
+  );
+
+  Widget _buildBots() => Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text('نضيف بوتات؟', style: _t(26)),
+        const SizedBox(height: 8),
+        Text(
+          _humans == 1
+              ? 'من غير بوتات هتتدرب لوحدك: دوسة كام في ٥ ثواني'
+              : 'البوتات بتكمّل لحد ٤ لاعبين',
+          style: _t(14, w: FontWeight.w600),
+        ),
+        const SizedBox(height: 20),
+        _bigChoice('اه 🤖', () => _startMatch(_humans, true)),
+        _bigChoice('لا', () => _startMatch(_humans, false)),
+      ],
+    ),
+  );
 
   Widget _buildLane(int player) {
-    final isTop = (_match.players == 2 && player == 0) ||
-        (_match.players > 2 && player < 2);
+    final isTop =
+        _match.players > 1 &&
+        ((_match.players == 2 && player == 0) ||
+            (_match.players > 2 && player < 2));
     final sprinting = _phase == _RacePhase.sprint;
     final taps = _match.taps[player];
     final score = _match.scores[player];
     final onLane = FlatDecor.textOn(_laneColors[player]);
+    final laneMsg = switch (_phase) {
+      _RacePhase.countdown => '$_countdown',
+      _RacePhase.roundResult =>
+        _lastWinner == null
+            ? 'تعادل، الجولة تتعاد'
+            : (_lastWinner == player ? 'كسبت الجولة' : ''),
+      _ => '',
+    };
     final content = Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'لاعب ${player + 1}',
-            style: flatCairo(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: onLane,
-            ),
-          ),
-          Text(
-            '$taps',
-            style: flatCairo(
-              fontSize: 34,
-              fontWeight: FontWeight.w900,
-              color: onLane,
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.55),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Text(
-              '$score / ${_match.roundsToWin}',
-              textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '${_botSeats.contains(player) ? 'بوت' : 'لاعب'} ${player + 1}',
               style: flatCairo(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: FlatColors.ink,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: onLane,
               ),
             ),
-          ),
-        ],
+            Text(
+              '$taps',
+              style: flatCairo(
+                fontSize: 34,
+                fontWeight: FontWeight.w900,
+                color: onLane,
+              ),
+            ),
+            if (laneMsg.isNotEmpty)
+              Text(
+                laneMsg,
+                style: flatCairo(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: onLane,
+                ),
+              ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.55),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                '$score / ${_match.roundsToWin}',
+                textDirection: TextDirection.ltr,
+                style: flatCairo(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: FlatColors.ink,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          if (!sprinting) return;
+          if (!sprinting || _botSeats.contains(player)) return;
           setState(() => _match.tap(player));
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 100),
           margin: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: sprinting ? _laneColors[player] : Color.alphaBlend(_laneColors[player].withValues(alpha: 0.55), Colors.white),
+            color: sprinting
+                ? _laneColors[player]
+                : Color.alphaBlend(
+                    _laneColors[player].withValues(alpha: 0.55),
+                    Colors.white,
+                  ),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: FlatColors.ink, width: 2),
           ),
-          child: isTop ? Transform.rotate(angle: pi, child: content) : content,
+          child: KeyedSubtree(
+            key: ValueKey('lane_$player'),
+            child: isTop
+                ? Transform.rotate(angle: pi, child: content)
+                : content,
+          ),
         ),
       ),
     );
-  }
-
-  String get _banner {
-    switch (_phase) {
-      case _RacePhase.countdown:
-        return '$_countdown...';
-      case _RacePhase.sprint:
-        return 'دوسوا! $_secondsLeft';
-      case _RacePhase.roundResult:
-        return _lastWinner == null
-            ? 'تعادل! الجولة تتعاد 😬'
-            : 'لاعب ${_lastWinner! + 1} كسب الجولة! 🏁';
-      case _RacePhase.matchOver:
-        return 'لاعب ${_match.matchWinner! + 1} كسب الماتش! 🏆';
-      case _RacePhase.pickPlayers:
-        return '';
-    }
   }
 
   @override
@@ -322,7 +409,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
       return GameIntroWidget(
         title: 'سباق الدوس',
         description:
-            '٢-٤ لاعبين على نفس الموبايل. لما العد يخلص، دوس على حارتك أسرع ما تقدر لمدة ٥ ثواني! الأكثر دوسات ياخد الجولة، وأول واحد يوصل ٣ جولات يكسب الماتش. تعادل؟ الجولة تتعاد.',
+            'لما العد يخلص، دوس على حارتك أسرع ما تقدر لمدة ٥ ثواني! الأكثر دوسات ياخد الجولة، وأول واحد يوصل ٣ جولات يكسب الماتش. تعادل؟ الجولة تتعاد.',
         icon: '👟',
         onStart: () => setState(() => _showIntro = false),
       );
@@ -333,30 +420,40 @@ class _TapRaceGameState extends State<TapRaceGame> {
       body: SafeArea(
         child: _phase == _RacePhase.pickPlayers
             ? _buildPicker()
+            : _phase == _RacePhase.pickBots
+            ? _buildBots()
             : Column(
                 children: [
                   if (_phase == _RacePhase.matchOver)
-                    VictoryFriends(gameTitle: 'سباق الدوس', 
-                        winnerName: 'لاعب ${_match.matchWinner! + 1}'),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      decoration: FlatDecor.card(radius: 16),
+                    _practice
+                        ? Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Text(
+                              'دوست ${_match.taps[0]} دوسة في ٥ ثواني',
+                              style: _t(22),
+                            ),
+                          )
+                        : (_match.matchWinner! >= _humans
+                              ? Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Text(
+                                    'البوتات كسبوا 🤖',
+                                    style: _t(22),
+                                  ),
+                                )
+                              : VictoryFriends(
+                                  gameTitle: 'سباق الدوس',
+                                  winnerName: 'لاعب ${_match.matchWinner! + 1}',
+                                )),
+                  if (_phase == _RacePhase.sprint)
+                    Padding(
+                      padding: const EdgeInsets.all(6),
                       child: Text(
-                        _banner,
-                        textAlign: TextAlign.center,
-                        style: flatCairo(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: FlatColors.ink,
-                        ).copyWith(
-                            fontFamilyFallback: const ['Noto Color Emoji']),
+                        '$_secondsLeft',
+                        key: const ValueKey('clock'),
+                        style: _t(28),
                       ),
                     ),
-                  ),
                   Expanded(
                     child: Column(
                       children: List.generate(_match.players, _buildLane),
@@ -368,14 +465,15 @@ class _TapRaceGameState extends State<TapRaceGame> {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: FilledButton(
                         onPressed: _phase == _RacePhase.matchOver
-                            ? () => _startMatch(_match.players)
+                            ? () => setState(
+                                () => _phase = _RacePhase.pickPlayers,
+                              )
                             : _nextRound,
                         child: Text(
                           _phase == _RacePhase.matchOver
                               ? 'ماتش جديد'
                               : 'الجولة الجاية',
-                          style:
-                              flatCairo(fontWeight: FontWeight.w800),
+                          style: flatCairo(fontWeight: FontWeight.w800),
                         ),
                       ),
                     ),
