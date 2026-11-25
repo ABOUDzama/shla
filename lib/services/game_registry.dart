@@ -134,7 +134,7 @@ class GameRegistry {
     ),
     GameModel(
       title: 'سلسلة الكلمات',
-      description: 'عرّف الكلمة بدون ما تقولها في 60 ثانية!',
+      description: 'قول كلمة بتبدأ بآخر حرف من كلمة زميلك!',
       icon: Icons.record_voice_over,
       color: FunkyColors.lime,
       screen: WordChainGame(),

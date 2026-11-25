@@ -88,6 +88,23 @@ class _HomeScreenState extends State<HomeScreen> {
     'مافيا': 'assets/tiles/mafia.png',
     'لو خيروك': 'assets/tiles/would_rather.png',
     'أنا عمري ما': 'assets/tiles/never_have_i.png',
+    'تحدي الترتيب': 'assets/tiles/ranking.png',
+    'أتوبيس كومبليت': 'assets/tiles/bus.png',
+    'مين فينا؟': 'assets/tiles/most_likely.png',
+    'كلمات ممنوعة': 'assets/tiles/taboo.png',
+    'ذاكرة الشلة': 'assets/tiles/memory.png',
+    'مين قالها؟': 'assets/tiles/who_said.png',
+    'أكمل المثل': 'assets/tiles/proverb.jpg',
+    'أندر كافر': 'assets/tiles/undercover.png',
+    'الجاسوس': 'assets/tiles/spy.png',
+    'كلمة السر': 'assets/tiles/password.png',
+    'إيموجي إيه؟': 'assets/tiles/emoji_guess.png',
+    'ارسم وخمّن': 'assets/tiles/draw.png',
+    'تمثيل صامت': 'assets/tiles/charades.png',
+    'حقيقة أو هبد': 'assets/tiles/truth_cap.png',
+    'صراحة ولا جرأة': 'assets/tiles/truth_dare.png',
+    'مين أنا؟': 'assets/tiles/who_am_i.png',
+    'سلسلة الكلمات': 'assets/tiles/word_chain.png',
   };
 
   void _handleNavigation(Widget screen) async {
