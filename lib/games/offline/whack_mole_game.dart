@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
@@ -21,7 +20,7 @@ class WhackMoleGame extends StatefulWidget {
   State<WhackMoleGame> createState() => _WhackMoleGameState();
 }
 
-enum _MolePhase { pickPlayers, playing, over }
+enum _MolePhase { pickPlayers, pickBots, playing, over }
 
 class _WhackMoleGameState extends State<WhackMoleGame> {
   static const _emojiFallback = ['Noto Color Emoji'];
@@ -30,7 +29,11 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
   _MolePhase _phase = _MolePhase.pickPlayers;
   late WhackMoleMatch _match;
   Timer? _ticker;
-  String _banner = '';
+  int _humans = 2;
+  bool _practice = false;
+
+  @visibleForTesting
+  WhackMoleMatch get debugMatch => _match;
 
   static const List<Color> _colors = [
     Color(0xFFFF8A5C),
@@ -45,14 +48,20 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
     super.dispose();
   }
 
-  void _startMatch(int players) {
+  void _startMatch(int humans, bool withBots) {
     _ticker?.cancel();
+    _humans = humans;
+    _practice = humans == 1 && !withBots;
+    final seats = _practice ? 1 : (withBots ? 4 : humans);
+    final m = WhackMoleMatch(
+      playerCount: seats,
+      random: widget.randomSeed != null ? Random(widget.randomSeed!) : null,
+    );
+    for (var i = humans; i < seats && withBots; i++) {
+      m.botSeats.add(i);
+    }
     setState(() {
-      _match = WhackMoleMatch(
-        playerCount: players,
-        random: widget.randomSeed != null ? Random(widget.randomSeed!) : null,
-      );
-      _banner = 'اضرب الخلد في المربع بتاعك بس! 🔨';
+      _match = m;
       _phase = _MolePhase.playing;
     });
     _ticker = Timer.periodic(const Duration(milliseconds: 60), (_) {
@@ -68,12 +77,9 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
   }
 
   void _whack(int player, int hole) {
-    if (_phase != _MolePhase.playing) return;
-    final hit = _match.whack(player, hole);
+    if (_phase != _MolePhase.playing || player >= _humans) return;
+    _match.whack(player, hole);
     setState(() {
-      _banner = hit
-          ? 'لاعب ${player + 1} جابها! 🔨'
-          : 'لاعب ${player + 1} ضرب في الفاضي 😅';
       if (_match.isOver) {
         _ticker?.cancel();
         _phase = _MolePhase.over;
@@ -81,48 +87,62 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
     });
   }
 
-  Widget _buildPicker() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+  TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>
+      flatCairo(fontSize: size, fontWeight: w, color: color ?? FlatColors.ink)
+          .copyWith(fontFamilyFallback: _emojiFallback);
+
+  Widget _bigChoice(String label, VoidCallback onTap) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: SizedBox(
+          width: 220,
+          child: FilledButton(onPressed: onTap, child: Text(label, style: _t(18, color: Colors.white))),
+        ),
+      );
+
+  Widget _buildPicker() => Center(
+        child: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text('كام لاعب؟', style: _t(26)),
+            const SizedBox(height: 20),
+            _bigChoice('لاعب واحد', () {
+              _humans = 1;
+              setState(() => _phase = _MolePhase.pickBots);
+            }),
+            for (final n in [2, 3, 4])
+              _bigChoice('$n لاعبين', () {
+                _humans = n;
+                if (n == 4) {
+                  _startMatch(4, false);
+                } else {
+                  setState(() => _phase = _MolePhase.pickBots);
+                }
+              }),
+          ]),
+        ),
+      );
+
+  Widget _buildBots() => Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('نضيف بوتات؟', style: _t(26)),
+          const SizedBox(height: 8),
           Text(
-            'كام لاعب؟',
-            style: flatCairo(
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
+            _humans == 1
+                ? 'من غير بوتات هتتدرب لوحدك وتشوف جبت كام خلد'
+                : 'البوتات بتكمّل لحد ٤ لاعبين',
+            style: _t(14, w: FontWeight.w600),
           ),
           const SizedBox(height: 20),
-          for (final n in [2, 3, 4])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: SizedBox(
-                width: 200,
-                child: FilledButton(
-                  onPressed: () => _startMatch(n),
-                  child: Text(
-                    '$n لاعبين',
-                    style: flatCairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ).copyWith(fontFamilyFallback: _emojiFallback),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+          _bigChoice('اه 🤖', () => _startMatch(_humans, true)),
+          _bigChoice('لا', () => _startMatch(_humans, false)),
+        ]),
+      );
 
   Widget _playerPanel(int p) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'لاعب ${p + 1}: ${_match.scores[p]}',
+          '${p >= _humans ? 'بوت' : 'لاعب'} ${p + 1}: ${_match.scores[p]}',
           style: flatCairo(
             fontSize: 14,
             fontWeight: FontWeight.w800,
@@ -158,6 +178,15 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
     );
   }
 
+  Widget _bigPanel(int p, {bool rotated = false}) {
+    return LayoutBuilder(builder: (context, c) {
+      final side = min(c.maxWidth, c.maxHeight - 28);
+      Widget panel = SizedBox(width: side, child: _playerPanel(p));
+      if (rotated) panel = Transform.rotate(angle: pi, child: panel);
+      return Center(child: panel);
+    });
+  }
+
   Widget _buildPlaying() {
     final players = _match.playerCount;
     final rows = (players / 2).ceil();
@@ -173,18 +202,19 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
             borderRadius: BorderRadius.circular(999),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: Text(
-            _banner,
-            textAlign: TextAlign.center,
-            style: flatCairo(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: FlatColors.ink,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
-          ),
-        ),
+        if (players <= 2)
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(children: [
+                // the top grid faces the player sitting at the top
+                if (players == 2)
+                  Expanded(child: _bigPanel(1, rotated: true)),
+                Expanded(child: _bigPanel(0)),
+              ]),
+            ),
+          )
+        else
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(10),
@@ -212,43 +242,28 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
 
   Widget _buildOver() {
     final w = _match.winner();
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (w != null)
-          VictoryFriends(gameTitle: 'اضرب الخلد', winnerName: 'لاعب ${w + 1}')
-        else
-          Text(
-            'تعادل! الكل ضرب نفس العدد 🔨',
-            style: flatCairo(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
-          ),
-        const SizedBox(height: 12),
-        for (var p = 0; p < _match.playerCount; p++)
-          Text(
-            'لاعب ${p + 1}: ${_match.scores[p]}',
-            style: flatCairo(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: _colors[p],
-            ).copyWith(fontFamilyFallback: _emojiFallback),
-          ),
-        const SizedBox(height: 16),
-        FilledButton(
-          onPressed: () => setState(() => _phase = _MolePhase.pickPlayers),
-          child: Text(
-            'العبوا تاني 🔨',
-            style: flatCairo(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
-          ),
-        ),
-      ],
-    );
+    Widget head;
+    if (_practice) {
+      head = Text('ضربت ${_match.scores[0]} خلد', style: _t(22));
+    } else if (w == null) {
+      head = Text('تعادل! الكل ضرب نفس العدد', style: _t(20));
+    } else if (w >= _humans) {
+      head = Text('البوتات كسبوا 🤖', style: _t(22));
+    } else {
+      head = VictoryFriends(gameTitle: 'اضرب الخلد', winnerName: 'لاعب ${w + 1}');
+    }
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      head,
+      const SizedBox(height: 12),
+      for (var p = 0; p < _match.playerCount; p++)
+        Text('${p >= _humans ? 'بوت' : 'لاعب'} ${p + 1}: ${_match.scores[p]}',
+            style: _t(16, color: _colors[p], w: FontWeight.w700)),
+      const SizedBox(height: 16),
+      FilledButton(
+        onPressed: () => setState(() => _phase = _MolePhase.pickPlayers),
+        child: Text('العبوا تاني', style: _t(18, color: Colors.white)),
+      ),
+    ]);
   }
 
   @override
@@ -257,7 +272,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
       return GameIntroWidget(
         title: 'اضرب الخلد',
         description:
-            '٢-٤ لاعبين على نفس الموبايل. لكل لاعب مربع فيه ٤ جحور.. الخلد بيطلع وينزل بسرعة، اضربه في مربعك بس قبل ما يهرب! اللي يجيب أكتر عدد قبل ما الوقت يخلص يكسب 🔨',
+            'لكل لاعب مربع فيه ٤ جحور.. الخلد بيطلع وينزل بسرعة، اضربه في مربعك بس قبل ما يهرب! كل واحد بيطلعله نفس عدد الخلدان، واللي يجيب أكتر قبل ما الوقت يخلص يكسب',
         icon: '🔨',
         onStart: () => setState(() => _showIntro = false),
       );
@@ -268,7 +283,9 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
       body: SafeArea(
         child: _phase == _MolePhase.pickPlayers
             ? _buildPicker()
-            : _phase == _MolePhase.playing
+            : _phase == _MolePhase.pickBots
+                ? _buildBots()
+                : _phase == _MolePhase.playing
                 ? _buildPlaying()
                 : Center(child: _buildOver()),
       ),

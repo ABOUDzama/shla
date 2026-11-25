@@ -98,4 +98,43 @@ void main() {
       expect(a.scores, b.scores);
     });
   });
+
+  group('fairness and bots', () {
+    test('each player gets about the same number of moles', () {
+      final m = WhackMoleMatch(playerCount: 4, random: Random(5));
+      final ups = List.filled(4, 0);
+      final prevUp = List.generate(4, (_) => List.filled(4, false));
+      while (!m.isOver) {
+        m.tick();
+        for (var p = 0; p < 4; p++) {
+          for (var h = 0; h < 4; h++) {
+            final up = m.isUp(p, h);
+            if (up && !prevUp[p][h]) ups[p]++;
+            prevUp[p][h] = up;
+          }
+        }
+      }
+      final lo = ups.reduce(min), hi = ups.reduce(max);
+      expect(lo, greaterThan(25));
+      expect(hi - lo, lessThan(12));
+    });
+
+    test('bot seat scores on its own, human seats do not', () {
+      final m = WhackMoleMatch(playerCount: 2, random: Random(9));
+      m.botSeats.add(1);
+      while (!m.isOver) {
+        m.tick();
+      }
+      expect(m.scores[1], greaterThan(5));
+      expect(m.scores[0], 0);
+    });
+
+    test('single practice seat has no winner', () {
+      final m = WhackMoleMatch(playerCount: 1, random: Random(1));
+      while (!m.isOver) {
+        m.tick();
+      }
+      expect(m.winner(), isNull);
+    });
+  });
 }

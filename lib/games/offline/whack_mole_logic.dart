@@ -3,7 +3,7 @@ import 'dart:math';
 /// Pure logic for Shla Whack-a-Mole (اضرب الخلد), kept separate from the
 /// widget so it can be unit-tested without pumping frames.
 ///
-/// 2-4 players, each owns a 2x2 grid of holes in their quadrant. Moles
+/// 1-4 players (1 = practice), each owns a 2x2 grid of holes in their quadrant. Moles
 /// pop up on a seeded schedule and stay for [moleUpTicks]; whacking an
 /// up mole in YOUR grid scores a point and a small speed-up (that mole
 /// pops down early). Most hits when the round timer ends wins; a tie for
@@ -14,7 +14,7 @@ class WhackMoleMatch {
     this.roundTicks = 750, // ~45s at 60ms ticks
     this.moleUpTicks = 26,
     Random? random,
-  })  : assert(playerCount >= 2 && playerCount <= 4),
+  })  : assert(playerCount >= 1 && playerCount <= 4),
         _random = random ?? Random() {
     for (var p = 0; p < playerCount; p++) {
       scores.add(0);
@@ -22,7 +22,10 @@ class WhackMoleMatch {
         _moles.add(null);
       }
     }
-    _scheduleNext(0);
+    for (var p = 0; p < playerCount; p++) {
+      _nextPopAt.add(0);
+      _scheduleNext(p, 0);
+    }
   }
 
   final int playerCount;
@@ -39,7 +42,12 @@ class WhackMoleMatch {
   final List<int?> _moles = [];
 
   int tickCount = 0;
-  int? _nextPopAt;
+  /// Each player has their own pop schedule at the same rate, so the
+  /// number of moles is equal for everyone (it used to be one global
+  /// schedule spread over all grids, which left each grid mostly empty).
+  final List<int> _nextPopAt = [];
+  final Set<int> botSeats = {};
+  final List<int> _upFor = List.filled(16, 0);
 
   bool get isOver => tickCount >= roundTicks;
 
@@ -50,8 +58,8 @@ class WhackMoleMatch {
     return left != null && left > 0;
   }
 
-  void _scheduleNext(int fromTick) {
-    _nextPopAt = fromTick + 8 + _random.nextInt(14);
+  void _scheduleNext(int p, int fromTick) {
+    _nextPopAt[p] = fromTick + 6 + _random.nextInt(10);
   }
 
   void tick() {
@@ -64,17 +72,28 @@ class WhackMoleMatch {
         if (_moles[i] == 0) _moles[i] = null;
       }
     }
-    if (_nextPopAt != null && tickCount >= _nextPopAt!) {
-      // find a random free hole
-      for (var tries = 0; tries < 8; tries++) {
-        final p = _random.nextInt(playerCount);
-        final h = _random.nextInt(holesPerPlayer);
-        if (!isUp(p, h)) {
-          _moles[_index(p, h)] = moleUpTicks;
-          break;
+    for (var p = 0; p < playerCount; p++) {
+      if (tickCount >= _nextPopAt[p]) {
+        for (var tries = 0; tries < 6; tries++) {
+          final h = _random.nextInt(holesPerPlayer);
+          if (!isUp(p, h)) {
+            _moles[_index(p, h)] = moleUpTicks;
+            _upFor[_index(p, h)] = 0;
+            break;
+          }
+        }
+        _scheduleNext(p, tickCount);
+      }
+      if (botSeats.contains(p)) {
+        for (var h = 0; h < holesPerPlayer; h++) {
+          if (isUp(p, h)) {
+            _upFor[_index(p, h)]++;
+            if (_upFor[_index(p, h)] >= 6 && _random.nextDouble() < 0.045) {
+              whack(p, h);
+            }
+          }
         }
       }
-      _scheduleNext(tickCount);
     }
   }
 
@@ -91,7 +110,7 @@ class WhackMoleMatch {
 
   /// Winner index, or null on a tie for first place.
   int? winner() {
-    if (!isOver) return null;
+    if (!isOver || playerCount == 1) return null;
     var top = -1;
     var winners = <int>[];
     for (var p = 0; p < playerCount; p++) {
