@@ -39,6 +39,7 @@ import '../games/offline/proverb_game.dart';
 import '../games/offline/reaction_game.dart';
 import '../games/offline/snake_arena_game.dart';
 import '../games/offline/chicken_run_game.dart';
+import '../games/offline/car_race_game.dart';
 import '../games/offline/tank_battle_game.dart';
 import '../games/offline/tug_of_war_game.dart';
 import '../games/offline/snow_brawl_game.dart';
@@ -361,6 +362,15 @@ class GameRegistry {
       icon: Icons.flutter_dash,
       color: FunkyColors.amber,
       screen: ChickenRunGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'سباق العربيات',
+      description: 'حلبة من فوق وتلات لفات! لفّ بالأسهم اللي في ركنك وخلّي عربيتك على الأسفلت',
+      icon: Icons.directions_car,
+      color: FunkyColors.sky,
+      screen: CarRaceGame(),
       badge: 'جديد',
       arcade1234: true,
     ),

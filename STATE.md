@@ -55,3 +55,13 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - Suites: small_screen 53/53 (run in parts), game_interaction 28/28, golden_interiors 8/8, shellty + avatar picker golden pass.
 
 - Batch 12 (00:25): balance_game flat -> 45/45 interiors converted (balance play/lost states not captured). VictoryFriends + GlobalPlayerSelection now use card-character circular avatars (builtInAvatars only appended: saved asset: ids unchanged). Winner text color fixed (was white on cream). small_screen 55 tests green (run in parts), game_interaction not rerun after this commit.
+
+## Batch 13+ (1234 section, reference-driven) - updated 01:04
+- Reference app (user's link, 00:47): https://play.google.com/store/apps/details?id=com.ction.playergames "2 3 4 Player Mini Games" (Better World Games). Listing names: Snake Arena, Skateboard Racing, Tank Battle, Grab the Fish, Soccer, Sumo, Chicken Run, Rally Drifters, Micro Speed Racers, Feed the Pigeon; screenshots also show Monster Attack. Soccer CANCELLED by user (code kept in lib/games/offline/soccer_*.dart, not in registry).
+- Profile/first-launch flow, leaderboard page (الترتيب), cream flat 1234 section: done and pushed.
+- جري الفراخ (chicken_run_*): one-touch gravity-flip runner, ORIGINAL adaptation (rules inferred from listing text + App Store review, not verified). Tests: logic 7, widget 6 with captures (holes, midair, elimination, win with cast, draw).
+- سباق العربيات (car_race_*): oval track, 3 laps, hold left/right corner pads, grass slows. Tests: logic 6, widget 4 with captures. Based on the observed reference screenshot.
+- Covers: all 13 section games now have bright 3D card-cast covers (assets/covers/*.png, generated from goblet tile + cast avatars as references).
+- Parked, not in repo: farmer-collecting chicken logic in /downloads/parked (from a different app, not the reference).
+- Next: Feed the Pigeon style slingshot game; other reference-listing games not yet covered (Monster Attack low confidence); mid-play/win captures for older arcade games; winner screen should highlight the winner among the 4 avatars.
+- Gaps: no real-device test; persistence checked by SharedPreferences reread only; icon fonts only verified in test harness; Chicken Run rules inferred.
