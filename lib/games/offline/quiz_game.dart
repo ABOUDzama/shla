@@ -476,7 +476,7 @@ class _QuizGameState extends State<QuizGame> {
                                 'الإجابة الصحيحة:',
                                 style: GoogleFonts.cairo(
                                   fontSize: 14,
-                                  color: FlatColors.tilePastels[2],
+                                  color: FlatColors.mintDark,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -558,7 +558,7 @@ class _QuizGameState extends State<QuizGame> {
                               Text(
                                 '$score',
                                 style: GoogleFonts.cairo(
-                                  color: FlatColors.tilePastels[4],
+                                  color: FlatColors.ink,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -567,14 +567,14 @@ class _QuizGameState extends State<QuizGame> {
                               GestureDetector(
                                 onTap: () => _changeScore(pName, 1),
                                 child: Container(
-                                  decoration: const BoxDecoration(
+                                  decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: FunkyColors.mint,
-                                  ), // Green
+                                    color: FlatColors.tilePastels[2],
+                                  ),
                                   padding: const EdgeInsets.all(6),
                                   child: const Icon(
                                     Icons.add,
-                                    color: Colors.white,
+                                    color: FlatColors.ink,
                                     size: 22,
                                   ),
                                 ),
@@ -585,8 +585,8 @@ class _QuizGameState extends State<QuizGame> {
                                 child: Container(
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: FunkyColors.coral,
-                                  ), // Red
+                                    color: FlatColors.mafia,
+                                  ),
                                   padding: const EdgeInsets.all(6),
                                   child: const Icon(
                                     Icons.remove,

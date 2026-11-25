@@ -328,7 +328,7 @@ class _WhoSaidGameState extends State<WhoSaidGame> {
                     style: GoogleFonts.cairo(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: FlatColors.tilePastels[2],
+                      color: FlatColors.mintDark,
                     ),
                   ),
                 ],

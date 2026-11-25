@@ -178,7 +178,7 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
                         style: GoogleFonts.cairo(
                           fontSize: 28,
                           fontWeight: FontWeight.w900,
-                          color: FlatColors.tilePastels[2],
+                          color: FlatColors.mintDark,
                         ),
                       ).animate().fadeIn().slideY(begin: 0.3),
                   ],
@@ -207,7 +207,7 @@ class _EmojiGuessGameState extends State<EmojiGuessGame> {
                           child: Center(
                             child: Text(
                               '${_players[i]['name']} (${_players[i]['score']})',
-                              style: FunkyText.title(size: 16, color: Colors.white),
+                              style: FunkyText.title(size: 16, color: FlatDecor.textOn(FlatColors.tilePastels[i % FlatColors.tilePastels.length])),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),

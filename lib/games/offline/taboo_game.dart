@@ -196,20 +196,22 @@ class _TabooGameState extends State<TabooGame> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: FunkyDecor.pill(FunkyColors.violet),
+                    decoration: FlatDecor.tag(),
                     child: Text(
                       'الواصف: $describer',
-                      style: FunkyText.title(size: 16, color: Colors.white),
+                      style: FunkyText.title(size: 16, color: FlatColors.ink),
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: FunkyDecor.pill(
-                      _secondsLeft <= 10 ? FunkyColors.coral : FunkyColors.mint,
+                    decoration: BoxDecoration(
+                      color: _secondsLeft <= 10 ? FlatColors.mafia : Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: _secondsLeft <= 10 ? FlatColors.mafia : FlatColors.border, width: 2),
                     ),
                     child: Text(
                       '⏱ $_secondsLeft',
-                      style: FunkyText.title(size: 18, color: Colors.white),
+                      style: FunkyText.title(size: 18, color: _secondsLeft <= 10 ? Colors.white : FlatColors.ink),
                     ),
                   ),
                 ],
@@ -274,7 +276,7 @@ class _TabooGameState extends State<TabooGame> {
                   Expanded(
                     child: FunkyButton(
           label: 'تخطي ⏭️',
-                      accent: FunkyColors.amber,
+                      accent: FlatColors.tilePastels[4],
                       onPressed: _skip,
                     ),
                   ),
@@ -283,7 +285,7 @@ class _TabooGameState extends State<TabooGame> {
                     flex: 2,
                     child: FunkyButton(
           label: 'خمّنوها! +1 ✅',
-                      accent: FunkyColors.mint,
+                      accent: FlatColors.tilePastels[2],
                       onPressed: _guessed,
                     ),
                   ),

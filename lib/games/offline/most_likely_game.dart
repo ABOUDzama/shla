@@ -201,7 +201,7 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
                                 child: Center(
                                   child: Text(
                                     '${_players[i]['name']} (${_players[i]['score']})',
-                                    style: FunkyText.title(size: 16, color: Colors.white),
+                                    style: FunkyText.title(size: 16, color: FlatDecor.textOn(FlatColors.tilePastels[i % FlatColors.tilePastels.length])),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),

@@ -363,7 +363,7 @@ class _MafiaGameState extends State<MafiaGame> {
             style: GoogleFonts.cairo(
               fontSize: 17,
               fontWeight: FontWeight.w900,
-              color: Colors.white,
+              color: FlatDecor.textOn(color),
             ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
         ),

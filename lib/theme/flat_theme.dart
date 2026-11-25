@@ -26,6 +26,10 @@ class FlatColors {
     Color(0xFFFF6FA5), // pink
   ];
 
+  /// Darker mint for success text on light backgrounds (3.4:1 on white;
+  /// the pastel mint itself is only 2.1:1).
+  static const Color mintDark = Color(0xFF1F9E77);
+
   // Role/phase solids.
   static const Color mafia = Color(0xFFFF5A5A);
   static const Color doctor = Color(0xFF35C99E);
@@ -68,6 +72,12 @@ class FlatDecor {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: FlatColors.border, width: 2),
       );
+
+  /// Readable text color on a pastel/solid fill: white only where the fill
+  /// is dark enough for >=3:1 (violet, sky, mafia red); ink otherwise
+  /// (mint, coral, amber, pink all fail with white).
+  static Color textOn(Color bg) =>
+      bg.computeLuminance() > 0.32 ? FlatColors.ink : Colors.white;
 
   static TextStyle title({double size = 22, Color color = FlatColors.ink}) =>
       GoogleFonts.cairo(

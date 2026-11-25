@@ -6,6 +6,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// أنا عمري ما (Never Have I Ever): the classic party confession game.
 /// Each turn one player reads the statement out loud; everyone who DID it
@@ -127,20 +128,19 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style:
-                  GoogleFonts.cairo(fontSize: 14, color: Colors.white60),
+                  GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
             ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(24),
-              decoration:
-                  FunkyDecor.glowCard(FunkyColors.pink, radius: 26),
+              decoration: FlatDecor.card(radius: 26),
               child: Text(
                 NeverHaveIGame.statements[statement],
                 textAlign: TextAlign.center,
                 style: GoogleFonts.cairo(
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: FlatColors.ink,
                 ),
               ).animate(key: ValueKey(_turn)).scale(duration: 300.ms),
             ),
@@ -149,7 +149,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
               'مين عملها؟ دوس على اسمه لكل اعتراف:',
               textAlign: TextAlign.center,
               style:
-                  GoogleFonts.cairo(fontSize: 14, color: Colors.white70)
+                  GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.75))
                       .copyWith(
                           fontFamilyFallback: const ['Noto Color Emoji']),
             ),
@@ -165,8 +165,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 18, vertical: 12),
-                      decoration: FunkyDecor.glowCard(FunkyColors.mint,
-                          radius: 18),
+                      decoration: FlatDecor.card(radius: 18),
                       child: Row(
                         mainAxisAlignment:
                             MainAxisAlignment.spaceBetween,
@@ -179,7 +178,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
                               style: GoogleFonts.cairo(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.white,
+                                color: FlatColors.ink,
                               ),
                             ),
                           ),
@@ -187,7 +186,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
                             '${_confessions[n]} اعتراف',
                             style: GoogleFonts.cairo(
                               fontSize: 13,
-                              color: Colors.white70,
+                              color: FlatColors.ink.withValues(alpha: 0.75),
                             ),
                           ),
                         ],
@@ -200,7 +199,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
             const SizedBox(height: 12),
             FunkyButton(
               label: 'الجملة اللي بعدها ⏭',
-              accent: FunkyColors.pink,
+              accent: FlatColors.tilePastels[5],
               icon: Icons.arrow_forward_rounded,
               onPressed: () => setState(() => _turn++),
             ),
@@ -228,7 +227,7 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
               style: GoogleFonts.cairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 20),
@@ -240,14 +239,14 @@ class _NeverHaveIGameState extends State<NeverHaveIGame> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.cairo(
                     fontSize: 17,
-                    color: Colors.white70,
+                    color: FlatColors.ink.withValues(alpha: 0.75),
                   ),
                 ),
               ),
             const SizedBox(height: 24),
             FunkyButton(
               label: 'العب تاني',
-              accent: FunkyColors.mint,
+              accent: FlatColors.tilePastels[2],
               icon: Icons.refresh_rounded,
               onPressed: () => setState(() {
                 _started = false;

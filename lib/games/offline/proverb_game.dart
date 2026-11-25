@@ -264,7 +264,7 @@ class _ProverbGameState extends State<ProverbGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: FlatColors.tilePastels[2],
+                    color: FlatColors.mintDark,
                   ),
                 ),
               ),

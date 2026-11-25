@@ -80,7 +80,7 @@ class GameIntroWidget extends StatelessWidget {
                     child: Center(
                       child: Text(
                         'ابدأ اللعبة 🚀',
-                        style: FlatDecor.title(size: 19, color: Colors.white),
+                        style: FlatDecor.title(size: 19, color: FlatDecor.textOn(FlatColors.tilePastels[3])),
                       ),
                     ),
                   ),

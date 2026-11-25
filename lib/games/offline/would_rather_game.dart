@@ -6,6 +6,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// لو خيروك (Would You Rather): a party conversation game for gatherings.
 /// The group sees a question with two options; every player votes secretly
@@ -167,7 +168,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
                 'لو خيروك..',
                 style: GoogleFonts.cairo(
                   fontSize: 18,
-                  color: Colors.white70,
+                  color: FlatColors.ink.withValues(alpha: 0.75),
                 ),
               ),
               const SizedBox(height: 16),
@@ -179,7 +180,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 20,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ),
               ),
@@ -189,7 +190,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
         ),
         FunkyButton(
           label: 'ابدأ التصويت ⚖️',
-          accent: FunkyColors.amber,
+          accent: FlatColors.tilePastels[4],
           icon: Icons.how_to_vote_rounded,
           onPressed: () => setState(() {
             _voteStarted = true;
@@ -211,8 +212,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
           const SizedBox(height: 20),
           Expanded(
             child: Container(
-              decoration:
-                  FunkyDecor.glowCard(FunkyColors.amber, radius: 26),
+              decoration: FlatDecor.card(radius: 26),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -224,7 +224,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
                           const EdgeInsets.symmetric(horizontal: 24),
                       child: FunkyButton(
                         label: 'صوّت يا $voter',
-                        accent: FunkyColors.amber,
+                        accent: FlatColors.tilePastels[4],
                         icon: Icons.visibility_rounded,
                         onPressed: () =>
                             setState(() => _gateOpen = true),
@@ -236,7 +236,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.cairo(
-                          fontSize: 13, color: Colors.white60),
+                          fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                     ),
                   ],
                 ),
@@ -259,7 +259,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
           style: GoogleFonts.cairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
-            color: Colors.white,
+            color: FlatColors.ink,
           ),
         ),
         const SizedBox(height: 16),
@@ -302,7 +302,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
                 style: GoogleFonts.cairo(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: FlatColors.ink,
                 ).copyWith(
                     fontFamilyFallback: const ['Noto Color Emoji']),
               ),
@@ -311,7 +311,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
         ),
         FunkyButton(
           label: 'السؤال اللي بعده ⏭',
-          accent: FunkyColors.amber,
+          accent: FlatColors.tilePastels[4],
           icon: Icons.arrow_forward_rounded,
           onPressed: () => setState(() {
             _round++;
@@ -339,7 +339,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
               style: GoogleFonts.cairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 12),
@@ -347,14 +347,14 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
               'عرفتوا بعض أكتر شوية؟ 😄',
               textAlign: TextAlign.center,
               style:
-                  GoogleFonts.cairo(fontSize: 15, color: Colors.white70)
+                  GoogleFonts.cairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75))
                       .copyWith(
                           fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 24),
             FunkyButton(
               label: 'العب تاني',
-              accent: FunkyColors.mint,
+              accent: FlatColors.tilePastels[2],
               icon: Icons.refresh_rounded,
               onPressed: () => setState(() {
                 _started = false;
@@ -367,11 +367,21 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
     );
   }
 
+  /// Neon identity colors -> flat pastels (coral/sky keep their A/B identity).
+  static Color _flatOptionColor(Color accent) =>
+      accent == FunkyColors.coral ? FlatColors.tilePastels[3] : FlatColors.tilePastels[1];
+
+  /// Darkened option color for text on white cards (pastels alone fail 3:1).
+  static Color _flatOptionTextColor(Color accent) {
+    final hsl = HSLColor.fromColor(_flatOptionColor(accent));
+    return hsl.withLightness((hsl.lightness - 0.15).clamp(0.0, 1.0)).toColor();
+  }
+
   Widget _roundLabel() {
     return Text(
       'السؤال ${_round + 1}',
       textAlign: TextAlign.center,
-      style: GoogleFonts.cairo(fontSize: 14, color: Colors.white60),
+      style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
     );
   }
 
@@ -379,14 +389,14 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
-      decoration: FunkyDecor.glowCard(accent, radius: 22),
+      decoration: FlatDecor.tile(_flatOptionColor(accent), radius: 22),
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: GoogleFonts.cairo(
           fontSize: 22,
           fontWeight: FontWeight.w900,
-          color: Colors.white,
+          color: FlatDecor.textOn(_flatOptionColor(accent)),
         ),
       ),
     ).animate().scale(duration: 300.ms);
@@ -398,14 +408,14 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
-        decoration: FunkyDecor.glowCard(accent, radius: 22),
+        decoration: FlatDecor.tile(_flatOptionColor(accent), radius: 22),
         child: Text(
           text,
           textAlign: TextAlign.center,
           style: GoogleFonts.cairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
-            color: Colors.white,
+            color: FlatDecor.textOn(_flatOptionColor(accent)),
           ),
         ),
       ),
@@ -416,7 +426,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: FunkyDecor.glowCard(accent, radius: 22),
+      decoration: FlatDecor.card(radius: 22),
       child: Column(
         children: [
           Text(
@@ -425,7 +435,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
             style: GoogleFonts.cairo(
               fontSize: 18,
               fontWeight: FontWeight.w900,
-              color: Colors.white,
+              color: _flatOptionTextColor(accent),
             ),
           ),
           const SizedBox(height: 8),
@@ -434,7 +444,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
             textAlign: TextAlign.center,
             style: GoogleFonts.cairo(
               fontSize: 15,
-              color: Colors.white70,
+              color: FlatColors.ink.withValues(alpha: 0.75),
             ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
           const SizedBox(height: 4),
@@ -443,7 +453,7 @@ class _WouldRatherGameState extends State<WouldRatherGame> {
             style: GoogleFonts.cairo(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: FlatColors.ink.withValues(alpha: 0.7),
             ),
           ),
         ],

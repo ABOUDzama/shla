@@ -511,7 +511,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                         Expanded(
                           child: Text(p, style: GoogleFonts.cairo(color: FlatColors.ink, fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
-                        Text('+${roundScores[p]}', style: GoogleFonts.cairo(color: FlatColors.doctor, fontWeight: FontWeight.bold)),
+                        Text('+${roundScores[p]}', style: GoogleFonts.cairo(color: FlatColors.mintDark, fontWeight: FontWeight.bold)),
                         const SizedBox(width: 12),
                         Text('المجموع: ${_totalScores[p]}', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.7), fontSize: 13)),
                       ],
@@ -589,7 +589,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                     Text(
                       '+$pts',
                       style: GoogleFonts.cairo(
-                        color: pts == 10 ? FlatColors.doctor : (pts == 5 ? FlatColors.day : FlatColors.ink.withValues(alpha: 0.45)),
+                        color: pts == 10 ? FlatColors.mintDark : (pts == 5 ? const Color(0xFFB07800) : FlatColors.ink.withValues(alpha: 0.45)),
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
                       ),
