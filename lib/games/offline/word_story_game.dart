@@ -133,7 +133,7 @@ class _WordStoryGameState extends State<WordStoryGame> {
               style: flatCairo(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: Colors.white70,
+                color: FlatColors.ink.withValues(alpha: 0.75),
               ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 14),
@@ -142,14 +142,14 @@ class _WordStoryGameState extends State<WordStoryGame> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration:
-                    FunkyDecor.glowCard(FunkyColors.mint, radius: 26),
+                    FlatDecor.card(radius: 26),
                 child: SingleChildScrollView(
                   child: Text(
                     '$_opener ${_words.join(' ')}',
                     style: flatCairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: FlatColors.ink,
                       height: 1.8,
                     ),
                   ),
@@ -163,16 +163,16 @@ class _WordStoryGameState extends State<WordStoryGame> {
               style: flatCairo(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: FlatColors.ink,
               ),
               decoration: InputDecoration(
                 hintText: 'اكتب كلمة واحدة بس..',
                 hintStyle:
-                    flatCairo(color: Colors.white38, fontSize: 15),
+                    flatCairo(color: FlatColors.ink.withValues(alpha: 0.5), fontSize: 15),
                 errorText: _entryError,
                 errorStyle: flatCairo(fontSize: 13),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.08),
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -210,7 +210,7 @@ class _WordStoryGameState extends State<WordStoryGame> {
               style: flatCairo(
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 16),
@@ -219,14 +219,14 @@ class _WordStoryGameState extends State<WordStoryGame> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration:
-                    FunkyDecor.glowCard(FunkyColors.mint, radius: 26),
+                    FlatDecor.card(radius: 26),
                 child: SingleChildScrollView(
                   child: Text(
                     story,
                     style: flatCairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: FlatColors.ink,
                       height: 1.9,
                     ),
                   ),

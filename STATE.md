@@ -43,3 +43,4 @@ HEAD: local commits only, NEVER push (standing rule).
 - Removed duplicate per-game home IconButtons in all 6 batch-4 games; shared OfflineGameScaffold home covers exit.
 - Tofu root cause: google_fonts 6.3.3 cairo() has no fontFamilyFallback param; scaffold title had it via raw TextStyle. Added flatCairo() wrapper in flat_theme.dart (Cairo + kEmojiFontFallback) and swept all GoogleFonts.cairo call sites in offline games + widgets (49 files). Chip emoji now render in goldens (verified pixels).
 - first_letter converted (batch 5 start): ink on orange hue, white cards, removed duplicate home, success/fail to mintDark/mafia. Capture pixel-viewed.
+- batch5: word_story, ranking_challenge, odd_one_out, tick_tock_boom converted. odd_one_out + tick_tock_boom needed TextStyle->flatCairo (harness tofu). tick_tock explosion phase keeps white on black (intentional dark phase). Elevation/shadow sweep validated by suites; tank control glow restored.

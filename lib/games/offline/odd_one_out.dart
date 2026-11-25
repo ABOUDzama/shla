@@ -8,6 +8,7 @@ import '../../services/settings_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/audio_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class OddOneOut extends StatefulWidget {
   const OddOneOut({super.key});
@@ -194,7 +195,7 @@ class _OddOneOutState extends State<OddOneOut> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('تم توليد أسئلة ذكية وجديدة! 🎯'),
-              backgroundColor: Colors.green,
+              backgroundColor: FlatColors.mintDark,
             ),
           );
         }
@@ -204,7 +205,7 @@ class _OddOneOutState extends State<OddOneOut> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('فشل توليد محتوى AI: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: FlatColors.mafia,
           ),
         );
       }
@@ -284,7 +285,7 @@ class _OddOneOutState extends State<OddOneOut> {
         backgroundColor: FunkyColors.amber,
         showAi: false,
         body: const Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: FlatColors.ink),
         ),
       );
     }
@@ -296,26 +297,6 @@ class _OddOneOutState extends State<OddOneOut> {
       title: '🎯 طلع الغريب',
       backgroundColor: FunkyColors.amber,
       onAiRefresh: _generateAiContent,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home, color: Colors.white70),
-          onPressed: () => setState(() {
-            // Assuming _gameStarted and _players are defined elsewhere
-            // and this is meant to reset the game state or navigate home.
-            // The original context for these variables is not provided,
-            // so keeping the user's provided code as is.
-            // If this is a single-player game, _gameStarted and _players might not be relevant.
-            // For now, I'll assume they are part of a larger game state.
-            // If this is a single-player game, a more appropriate action might be:
-            // Navigator.of(context).pop(); // To go back to a previous screen
-            // Or _restartGame(); // To restart the current game
-            // Since the instruction is to "Remove manual AI button" and add this,
-            // I'll keep the provided onPressed logic.
-            // _gameStarted = false;
-            // _players.clear();
-          }),
-        ),
-      ],
       body: SafeArea(
         child: Stack(
           children: [
@@ -336,7 +317,7 @@ class _OddOneOutState extends State<OddOneOut> {
                             index < lives
                                 ? Icons.favorite
                                 : Icons.favorite_border,
-                            color: Colors.redAccent,
+                            color: FlatColors.mafia,
                             size: 28,
                           );
                         }),
@@ -352,12 +333,12 @@ class _OddOneOutState extends State<OddOneOut> {
                         ),
                         child: Text(
                           '00:${timeLeft.toString().padLeft(2, '0')}',
-                          style: TextStyle(
+                          style: flatCairo(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: timeLeft <= 3
-                                ? Colors.redAccent
-                                : Colors.white,
+                                ? FlatColors.mafia
+                                : FlatColors.ink,
                           ),
                         ),
                       ),
@@ -372,9 +353,9 @@ class _OddOneOutState extends State<OddOneOut> {
                     borderRadius: BorderRadius.circular(10),
                     child: LinearProgressIndicator(
                       value: timeLeft / 10,
-                      backgroundColor: Colors.white24,
+                      backgroundColor: Colors.white,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        timeLeft <= 3 ? Colors.redAccent : Colors.tealAccent,
+                        timeLeft <= 3 ? FlatColors.mafia : FlatColors.mintDark,
                       ),
                       minHeight: 8,
                     ),
@@ -393,13 +374,10 @@ class _OddOneOutState extends State<OddOneOut> {
                         children: [
                           Text(
                             'أي واحد مش زي الباقيين؟',
-                            style: TextStyle(
+                            style: flatCairo(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(color: Colors.black38, blurRadius: 8),
-                              ],
+                              color: FlatColors.ink,
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -413,23 +391,23 @@ class _OddOneOutState extends State<OddOneOut> {
                             childAspectRatio: 2.2,
                             children: _shuffledItems.map((item) {
                               Color cardColor = Colors.white;
-                              Color textColor = Colors.amber.shade900;
+                              Color textColor = FlatColors.ink;
                               IconData? icon;
 
                               if (answered || isGameOver) {
                                 if (item == oddOne) {
-                                  cardColor = Colors.green.shade400;
+                                  cardColor = FlatColors.mintDark;
                                   textColor = Colors.white;
                                   icon = Icons.check_circle;
                                 } else if (item == selectedAnswer) {
-                                  cardColor = Colors.red.shade400;
+                                  cardColor = FlatColors.mafia;
                                   textColor = Colors.white;
                                   icon = Icons.cancel;
                                 } else {
                                   cardColor = Colors.white.withValues(
-                                    alpha: 0.5,
+                                    alpha: 0.6,
                                   );
-                                  textColor = Colors.white70;
+                                  textColor = FlatColors.ink.withValues(alpha: 0.6);
                                 }
                               }
 
@@ -462,7 +440,7 @@ class _OddOneOutState extends State<OddOneOut> {
                                             Flexible(
                                               child: Text(
                                                 item,
-                                                style: TextStyle(
+                                                style: flatCairo(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                   color: textColor,
@@ -495,8 +473,8 @@ class _OddOneOutState extends State<OddOneOut> {
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: selectedAnswer == oddOne
-                                    ? Colors.green.shade700
-                                    : Colors.red.shade700,
+                                    ? FlatColors.mintDark
+                                    : FlatColors.mafia,
                                 borderRadius: BorderRadius.circular(18),
                               ),
                               child: Column(
@@ -507,7 +485,7 @@ class _OddOneOutState extends State<OddOneOut> {
                                         : (selectedAnswer == null
                                               ? '⏰ خلص الوقت! الإجابة هي: $oddOne'
                                               : '❌ غلط! الإجابة الصح هي: $oddOne'),
-                                    style: const TextStyle(
+                                    style: flatCairo(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
@@ -517,9 +495,9 @@ class _OddOneOutState extends State<OddOneOut> {
                                   const SizedBox(height: 8),
                                   Text(
                                     q['reason'],
-                                    style: const TextStyle(
+                                    style: flatCairo(
                                       fontSize: 15,
-                                      color: Colors.white70,
+                                      color: Colors.white,
                                       height: 1.4,
                                     ),
                                     textAlign: TextAlign.center,
@@ -531,16 +509,16 @@ class _OddOneOutState extends State<OddOneOut> {
                             ElevatedButton.icon(
                               onPressed: nextQuestion,
                               icon: const Icon(Icons.arrow_forward_rounded),
-                              label: const Text(
+                              label: Text(
                                 'سؤال جديد',
-                                style: TextStyle(
+                                style: flatCairo(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                foregroundColor: Colors.amber.shade900,
+                                foregroundColor: FlatColors.ink,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 40,
                                   vertical: 16,
@@ -554,9 +532,9 @@ class _OddOneOutState extends State<OddOneOut> {
                             const SizedBox(height: 20),
                             Text(
                               'اختار الإجابة الغريبة بسرعة! 👆',
-                              style: TextStyle(
+                              style: flatCairo(
                                 fontSize: 16,
-                                color: Colors.white70,
+                                color: FlatColors.ink,
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
@@ -577,11 +555,11 @@ class _OddOneOutState extends State<OddOneOut> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('💔', style: TextStyle(fontSize: 80)),
+                      Text('💔', style: flatCairo(fontSize: 80)),
                       const SizedBox(height: 20),
-                      const Text(
+                      Text(
                         'خسرت كل المحاولات!',
-                        style: TextStyle(
+                        style: flatCairo(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -591,10 +569,10 @@ class _OddOneOutState extends State<OddOneOut> {
                       ElevatedButton.icon(
                         onPressed: _restartGame,
                         icon: const Icon(Icons.play_arrow),
-                        label: const Text('حاول تاني'),
+                        label: Text('حاول تاني'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber.shade700,
-                          foregroundColor: Colors.white,
+                          backgroundColor: FlatColors.tilePastels[4],
+                          foregroundColor: FlatColors.ink,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 40,
                             vertical: 16,

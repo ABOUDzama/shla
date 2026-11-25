@@ -8,6 +8,7 @@ import '../../services/settings_service.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 class TickTockBoom extends StatefulWidget {
   const TickTockBoom({super.key});
@@ -76,7 +77,7 @@ class _TickTockBoomState extends State<TickTockBoom>
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('تم توليد تصنيفات جديدة بالذكاء الاصطناعي! ✨'),
-              backgroundColor: Colors.green,
+              backgroundColor: FlatColors.mintDark,
             ),
           );
         }
@@ -86,7 +87,7 @@ class _TickTockBoomState extends State<TickTockBoom>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('فشل توليد محتوى AI: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: FlatColors.mafia,
           ),
         );
       }
@@ -557,7 +558,7 @@ class _TickTockBoomState extends State<TickTockBoom>
         title: '💣 قنبلة الحروف',
         backgroundColor: FunkyColors.coral,
         body: const Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: FlatColors.ink),
         ),
       );
     }
@@ -566,26 +567,20 @@ class _TickTockBoomState extends State<TickTockBoom>
       title: '💣 قنبلة الحروف',
       backgroundColor: hasExploded ? Colors.black : FunkyColors.coral,
       showAi: false,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home, color: Colors.white70),
-          onPressed: resetGame,
-        ),
-      ],
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (!isPlaying && !hasExploded) ...[
-                const Text('💣', style: TextStyle(fontSize: 100)),
+                Text('💣', style: flatCairo(fontSize: 100)),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'قنبلة الحروف',
-                  style: TextStyle(
+                  style: flatCairo(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ),
                 const SizedBox(height: 50),
@@ -593,7 +588,7 @@ class _TickTockBoomState extends State<TickTockBoom>
                   onPressed: startGame,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: FunkyColors.card,
+                    foregroundColor: FlatColors.ink,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
                       vertical: 20,
@@ -604,20 +599,19 @@ class _TickTockBoomState extends State<TickTockBoom>
                     elevation: 0,
                   ),
                   icon: const Icon(Icons.play_arrow, size: 30),
-                  label: const Text(
+                  label: Text(
                     'ابدأ اللعبة',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: flatCairo(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
               ] else if (isPlaying) ...[
                 const SizedBox(height: 30),
                 Text(
                   'الفئة: $currentCategory',
-                  style: const TextStyle(
+                  style: flatCairo(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [Shadow(color: Colors.black45, blurRadius: 10)],
+                    color: FlatColors.ink,
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -637,10 +631,10 @@ class _TickTockBoomState extends State<TickTockBoom>
                         child: Center(
                           child: Text(
                             currentLetter,
-                            style: const TextStyle(
+                            style: flatCairo(
                               fontSize: 100,
                               fontWeight: FontWeight.bold,
-                              color: FunkyColors.coral,
+                              color: FlatColors.ink,
                             ),
                           ),
                         ),
@@ -649,10 +643,10 @@ class _TickTockBoomState extends State<TickTockBoom>
                   },
                 ),
                 const SizedBox(height: 50),
-                const Text(
+                Text(
                   'تيك توك... تيك توك...',
-                  style: TextStyle(
-                    color: Colors.white70,
+                  style: flatCairo(
+                    color: FlatColors.ink.withValues(alpha: 0.75),
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -662,12 +656,12 @@ class _TickTockBoomState extends State<TickTockBoom>
                     begin: 0.5,
                     end: 2.0,
                   ).animate(_explosionController),
-                  child: const Text('💥', style: TextStyle(fontSize: 150)),
+                  child: Text('💥', style: flatCairo(fontSize: 150)),
                 ),
                 const SizedBox(height: 30),
-                const Text(
+                Text(
                   'بووووم! 💥',
-                  style: TextStyle(
+                  style: flatCairo(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -684,9 +678,9 @@ class _TickTockBoomState extends State<TickTockBoom>
                   ),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         'الموبايل انفجر! 😱\nاللي الموبايل في إيده هو الخسران!',
-                        style: TextStyle(
+                        style: flatCairo(
                           fontSize: 20,
                           color: Colors.white,
                           height: 1.5,
@@ -698,7 +692,7 @@ class _TickTockBoomState extends State<TickTockBoom>
                       const SizedBox(height: 8),
                       Text(
                         '💡 أمثلة على حرف "$currentLetter" في فئة $currentCategory:',
-                        style: const TextStyle(
+                        style: flatCairo(
                           fontSize: 14,
                           color: Colors.white70,
                           fontWeight: FontWeight.bold,
@@ -708,9 +702,9 @@ class _TickTockBoomState extends State<TickTockBoom>
                       const SizedBox(height: 8),
                       Text(
                         _getExamples(currentCategory, currentLetter),
-                        style: const TextStyle(
+                        style: flatCairo(
                           fontSize: 16,
-                          color: Colors.amberAccent,
+                          color: FlatColors.day,
                           height: 1.6,
                         ),
                         textAlign: TextAlign.center,
@@ -725,7 +719,7 @@ class _TickTockBoomState extends State<TickTockBoom>
                     ElevatedButton(
                       onPressed: resetGame,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white24,
+                        backgroundColor: Colors.white.withValues(alpha: 0.15),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
@@ -735,14 +729,14 @@ class _TickTockBoomState extends State<TickTockBoom>
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      child: const Text('القائمة الرئيسية'),
+                      child: Text('القائمة الرئيسية'),
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton(
                       onPressed: startGame,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orangeAccent,
-                        foregroundColor: Colors.white,
+                        backgroundColor: FlatColors.day,
+                        foregroundColor: FlatColors.ink,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 16,
@@ -752,9 +746,9 @@ class _TickTockBoomState extends State<TickTockBoom>
                         ),
                         elevation: 0,
                       ),
-                      child: const Text(
+                      child: Text(
                         'العب تاني 🔄',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: flatCairo(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],

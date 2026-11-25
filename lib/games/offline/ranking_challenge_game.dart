@@ -161,7 +161,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
           Text(
             'مين أدق واحد في الشلة؟\nرتّب العناصر صح واكسب!',
             textAlign: TextAlign.center,
-            style: flatCairo(color: Colors.white70, fontSize: 16, height: 1.6),
+            style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 16, height: 1.6),
           ),
           const SizedBox(height: 24),
           Row(
@@ -170,12 +170,12 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                 child: TextField(
                   controller: _nameCtrl,
                   textAlign: TextAlign.right,
-                  style: flatCairo(color: Colors.white),
+                  style: flatCairo(color: FlatColors.ink),
                   decoration: InputDecoration(
                     hintText: 'اسم اللاعب',
-                    hintStyle: flatCairo(color: Colors.white38),
+                    hintStyle: flatCairo(color: FlatColors.ink.withValues(alpha: 0.5)),
                     filled: true,
-                    fillColor: Colors.white.withValues(alpha: 0.08),
+                    fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
@@ -199,9 +199,9 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
             children: [
               for (int i = 0; i < _players.length; i++)
                 Chip(
-                  label: Text('${_players[i]} ${i == 0 ? "👑" : ""}', style: flatCairo(color: Colors.white)),
-                  backgroundColor: Colors.white.withValues(alpha: 0.12),
-                  deleteIcon: const Icon(Icons.close, size: 18, color: Colors.white54),
+                  label: Text('${_players[i]} ${i == 0 ? "👑" : ""}', style: flatCairo(color: FlatColors.ink)),
+                  backgroundColor: Colors.white,
+                  deleteIcon: const Icon(Icons.close, size: 18, color: FlatColors.ink),
                   onDeleted: () => setState(() {
                     _totalScores.remove(_players[i]);
                     _players.removeAt(i);
@@ -210,7 +210,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
             ],
           ),
           const SizedBox(height: 24),
-          Text('عدد الجولات', style: flatCairo(color: Colors.white70, fontSize: 15)),
+          Text('عدد الجولات', style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15)),
           const SizedBox(height: 8),
           SegmentedButton<int>(
             segments: const [
@@ -246,13 +246,13 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('الجولة $_round / $_totalRounds',
-                style: flatCairo(color: Colors.white54, fontSize: 15)),
+                style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.7), fontSize: 15)),
             const SizedBox(height: 16),
             Text('📱', style: const TextStyle(fontSize: 64)),
             const SizedBox(height: 12),
             Text(
               'عدّي الموبايل لـ',
-              style: flatCairo(color: Colors.white70, fontSize: 18),
+              style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 18),
             ),
             Text(
               _players[_currentPlayer],
@@ -265,7 +265,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
             const SizedBox(height: 8),
             Text(
               'باقي الشلة يبصوا في التانية 😄',
-              style: flatCairo(color: Colors.white38, fontSize: 14),
+              style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.5), fontSize: 14),
             ),
             const SizedBox(height: 28),
             ElevatedButton(
@@ -300,7 +300,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
               Expanded(
                 child: Text(
                   _deck['topic'],
-                  style: flatCairo(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                  style: flatCairo(color: FlatColors.ink, fontSize: 15, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -308,7 +308,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
         ),
         Text(
           'اسحب ورتّب من الأول للأخير',
-          style: flatCairo(color: Colors.white54, fontSize: 13),
+          style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.7), fontSize: 13),
         ),
         Expanded(
           child: ReorderableListView.builder(
@@ -327,16 +327,16 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                 key: ValueKey(_currentGuess[i]),
                 margin: const EdgeInsets.only(bottom: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: ListTile(
                   leading: CircleAvatar(
                     backgroundColor: FunkyColors.coral,
-                    child: Text('${i + 1}', style: flatCairo(color: Colors.white, fontWeight: FontWeight.bold)),
+                    child: Text('${i + 1}', style: flatCairo(color: FlatColors.ink, fontWeight: FontWeight.bold)),
                   ),
-                  title: Text(_currentGuess[i], style: flatCairo(color: Colors.white, fontSize: 16)),
-                  trailing: const Icon(Icons.drag_indicator, color: Colors.white38),
+                  title: Text(_currentGuess[i], style: flatCairo(color: FlatColors.ink, fontSize: 16)),
+                  trailing: const Icon(Icons.drag_indicator, color: FlatColors.ink),
                 ),
               );
             },
@@ -371,14 +371,14 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
       child: Column(
         children: [
           Text('الترتيب الصح ✅',
-              style: flatCairo(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
+              style: flatCairo(color: FlatColors.ink, fontSize: 20, fontWeight: FontWeight.w900)),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.green.withValues(alpha: 0.15),
+              color: FlatColors.tilePastels[2],
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.green.withValues(alpha: 0.4)),
+              border: Border.all(color: FlatColors.mintDark),
             ),
             child: Column(
               children: [
@@ -390,9 +390,9 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                         SizedBox(
                           width: 26,
                           child: Text('${i + 1}',
-                              style: flatCairo(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
+                              style: flatCairo(color: FlatColors.mintDark, fontWeight: FontWeight.bold)),
                         ),
-                        Expanded(child: Text(truth[i], style: flatCairo(color: Colors.white, fontSize: 15))),
+                        Expanded(child: Text(truth[i], style: flatCairo(color: FlatColors.ink, fontSize: 15))),
                       ],
                     ),
                   ),
@@ -401,7 +401,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
           ),
           const SizedBox(height: 20),
           Text('نتايج الجولة',
-              style: flatCairo(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.bold)),
+              style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           for (final p in sorted)
             _scoreTile(
@@ -441,7 +441,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
@@ -450,12 +450,12 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
           Row(
             children: [
               Expanded(
-                child: Text(name, style: flatCairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                child: Text(name, style: flatCairo(color: FlatColors.ink, fontWeight: FontWeight.bold, fontSize: 16)),
               ),
               Text('+$roundScore',
-                  style: flatCairo(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 16)),
+                  style: flatCairo(color: FlatColors.mintDark, fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(width: 10),
-              Text('المجموع: $total', style: flatCairo(color: Colors.white54, fontSize: 13)),
+              Text('المجموع: $total', style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.7), fontSize: 13)),
             ],
           ),
           const SizedBox(height: 6),
@@ -475,7 +475,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                   child: Text(
                     '${i + 1}. ${guess[i]}',
                     style: flatCairo(
-                      color: truth[i] == guess[i] ? Colors.greenAccent : Colors.red.shade200,
+                      color: truth[i] == guess[i] ? FlatColors.mintDark : FlatColors.mafia,
                       fontSize: 12,
                     ),
                   ),
@@ -504,7 +504,7 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
             Text(
               'أدق واحد في الشلة: ${sorted.first}!',
               textAlign: TextAlign.center,
-              style: flatCairo(color: Colors.amber, fontSize: 22, fontWeight: FontWeight.w900),
+              style: flatCairo(color: const Color(0xFF8A5A00), fontSize: 22, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 24),
             for (int i = 0; i < sorted.length; i++)
@@ -512,9 +512,9 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: i == 0 ? Colors.amber.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.07),
+                  color: i == 0 ? FlatColors.tilePastels[4] : Colors.white,
                   borderRadius: BorderRadius.circular(14),
-                  border: i == 0 ? Border.all(color: Colors.amber.withValues(alpha: 0.5)) : null,
+                  border: i == 0 ? Border.all(color: const Color(0xFF8A5A00)) : null,
                 ),
                 child: Row(
                   children: [
@@ -522,10 +522,10 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(sorted[i],
-                          style: flatCairo(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
+                          style: flatCairo(color: FlatColors.ink, fontSize: 17, fontWeight: FontWeight.bold)),
                     ),
                     Text('${_totalScores[sorted[i]]} نقطة',
-                        style: flatCairo(color: Colors.white70, fontSize: 15)),
+                        style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15)),
                   ],
                 ),
               ).animate().fadeIn(delay: (i * 120).ms).slideX(begin: 0.2),
@@ -543,10 +543,10 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.home_outlined, color: Colors.white70),
-                    label: Text('الرئيسية', style: flatCairo(color: Colors.white70)),
+                    icon: const Icon(Icons.home_outlined, color: FlatColors.ink),
+                    label: Text('الرئيسية', style: flatCairo(color: FlatColors.ink)),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.white24),
+                      side: BorderSide(color: FlatColors.ink.withValues(alpha: 0.3)),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     ),

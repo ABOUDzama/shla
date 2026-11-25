@@ -29,6 +29,10 @@ import 'package:shella/games/offline/five_seconds_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
+import 'package:shella/games/offline/word_story_game.dart';
+import 'package:shella/games/offline/ranking_challenge_game.dart';
+import 'package:shella/games/offline/odd_one_out.dart';
+import 'package:shella/games/offline/tick_tock_boom.dart';
 import 'package:shella/games/offline/would_rather_game.dart';
 import 'package:shella/games/offline/never_have_i_game.dart';
 import 'package:shella/games/offline/undercover_game.dart';
@@ -310,6 +314,54 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'first_letter');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: word story gameplay', (tester) async {
+    await pumpSmall(tester, const WordStoryGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('أحمد'));
+    await tapIf(tester, find.text('منى'));
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'word_story');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: ranking challenge setup', (tester) async {
+    await pumpSmall(tester, const RankingChallengeGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'ranking_challenge');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: odd one out gameplay', (tester) async {
+    await pumpSmall(tester, const OddOneOut());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'odd_one_out');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: tick tock boom gameplay', (tester) async {
+    await pumpSmall(tester, const TickTockBoom());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ'));
+    await fixedPumps(tester);
+    await capture360(tester, 'tick_tock_boom');
     expectNoOverflow(tester);
   });
 
