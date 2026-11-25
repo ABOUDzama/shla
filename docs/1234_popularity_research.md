@@ -97,7 +97,59 @@ named), Paintball/Paint fight (territory painting, official JindoBlu named),
 Air hockey (2P, official JindoBlu named), Color Claim (trail loops), Bank
 Heist (collect + avoid police).
 
-## 6. Qualifications
+## 6. Observed gameplay footage (2026-11-25, cloud browser on YouTube)
+
+Method: seek + pause + screenshot at multiple timestamps; frames actually
+viewed. Sources:
+- Soccer: youtube.com/watch?v=CSY9vl8Zk5M ("Stickman Party : Soccer
+  Gameplay.", EBRUZA Gaming, 1:19).
+- Tanks: youtube.com/watch?v=gXi19-b_miY ("TANK BATTLE WITH BOTS |
+  Stickman Party", Atlista Gaming, 9:07, 143K views).
+
+### Soccer — observed
+- CHOOSE MAP screen with 2 maps: classic green grass pitch and a blue
+  pool/beach pitch (swim-ring players).
+- Landscape field, white markings, netted goals on left and right ends.
+- 4 players, one per color (red/blue/yellow/green); 2v2 teams (the win
+  screen shows TWO winner faces: blue + yellow beat red + green).
+- Scoreboard rendered twice, rotated 180°, once per side of the phone
+  (same score + timer mirrored for players sitting opposite each other).
+- Timer counts down from 90s. Match ends EARLY when a team reaches 3
+  goals (observed 3-0 with 65s left → Winner screen). Win screen: Winner
+  ribbons, MENU / PLAY AGAIN, coin reward (+37, with ad multiplier).
+- Ball: classic soccer ball, starts center at kickoff; players run into
+  it to shoot (no kick button visible anywhere); an AI/static goalkeeper
+  sits in each goal mouth; body collisions and goal-mouth scrambles are
+  the core action; GOAL! banner then kickoff reset.
+- No persistent on-screen buttons seen; players run continuously.
+
+### Tanks — observed (with an important variant caveat)
+- Industrial/metal arena with obstacle blocks and hazard-striped edges;
+  corner battery-segment HUD per player.
+- This 5-year-old footage shows SEGMENTED HEALTH bars (blue drops 4→2
+  after hits), flag-topped base pads, and respawn with a glow ring —
+  consistent with the "Capture The Flag" tank mode (a separate listed
+  video title), not necessarily the classic elimination mode.
+- Our implementation (one-hit elimination, last tank standing) matches
+  the classic mode described by the rules screen quote "Be the last tank
+  standing!" and the fan mechanics pages; the observed footage is a
+  different/older variant. Logged as a discrepancy, not silently merged.
+
+### Adaptation decisions for our Soccer (pending implementation)
+- One original map (our own art in the approved flat language), not the
+  two reference maps.
+- 2v2 fixed teams (players 1+3 vs 2+4), bots fill empty slots; 2 humans =
+  1v1 with optional bot teammates... simplest: always 2 teams, bots fill
+  to 4 total players.
+- 90s countdown, first to 3 goals ends early; draw possible at 0-0 etc.
+- No kick button: run into the ball, momentum + contact angle set the
+  shot. Static AI keeper per goal (matches footage).
+- Controls: our approved corner pads (hold = steer while auto-running),
+  the same control family as دبابات الشلة and the reference's one-touch
+  scheme. Corner pads are our approved control adaptation, not a
+  reference-copied UI.
+
+## 7. Qualifications
 
 - Fan-site mechanics (stickmanpartyapk.com, stickmanpartymodapk.app) are
   treated as proposed design guidance, NOT confirmed official rules.
