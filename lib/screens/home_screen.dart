@@ -66,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'الشيفرة': '🕵',
     'أسرع رد فعل': '⚡',
     'سومو الشلة': '🤼',
+    'اقطفها': '🐟',
   };
 
   /// Original illustrated artwork per game: generated in-house for Shla

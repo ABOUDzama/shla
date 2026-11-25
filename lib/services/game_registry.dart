@@ -38,6 +38,7 @@ import '../games/offline/never_have_i_game.dart';
 import '../games/offline/proverb_game.dart';
 import '../games/offline/reaction_game.dart';
 import '../games/offline/sumo_game.dart';
+import '../games/offline/catch_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
 
@@ -305,6 +306,14 @@ class GameRegistry {
       icon: Icons.sports_kabaddi,
       color: FunkyColors.coral,
       screen: SumoGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'اقطفها',
+      description: 'السمكة بتلف! دوس لما تعدي على لونك قبل غيرك',
+      icon: Icons.catching_pokemon,
+      color: FunkyColors.sky,
+      screen: CatchGame(),
       badge: 'جديد',
     ),
   ];

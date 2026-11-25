@@ -1,4 +1,11 @@
+import 'package:flutter/material.dart';
+import 'dart:async';
 import 'dart:math';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../../widgets/offline_game_scaffold.dart';
+import '../../widgets/game_intro_widget.dart';
+import '../../theme/funky_theme.dart';
 
 /// Pure logic for اقطفها (Grab the Fish-style timing game), kept separate
 /// from the widget so it can be unit-tested without pumping frames.
@@ -50,4 +57,321 @@ class CatchMatch {
     if (scores[player] >= targetScore) matchWinner = player;
     return true;
   }
+}
+
+enum _CatchPhase { picking, playing }
+
+class CatchGame extends StatefulWidget {
+  const CatchGame({super.key});
+
+  @override
+  State<CatchGame> createState() => _CatchGameState();
+}
+
+class _CatchGameState extends State<CatchGame>
+    with SingleTickerProviderStateMixin {
+  bool _showIntro = true;
+  _CatchPhase _phase = _CatchPhase.picking;
+  late CatchMatch _match;
+  late AnimationController _spin;
+  Timer? _roundTimer;
+  int _players = 2;
+  double _startAngle = 0;
+  final Random _random = Random();
+  String _banner = '';
+
+  static const List<Color> _zoneColors = [
+    FunkyColors.coral,
+    FunkyColors.sky,
+    FunkyColors.lime,
+    FunkyColors.pink,
+  ];
+
+  @override
+  void dispose() {
+    _spin.dispose();
+    _roundTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startMatch(int players) {
+    _roundTimer?.cancel();
+    _spin.stop();
+    setState(() {
+      _players = players;
+      _phase = _CatchPhase.playing;
+      _startMatchRound();
+    });
+  }
+
+  void _startMatchRound() {
+    _match = CatchMatch(playerCount: _players, startAngle: _startAngle);
+    _banner = 'اطقطف لما السمكة تعدي على لونك! 🐟';
+    _spin.duration = Duration(milliseconds: 2200 + _random.nextInt(1500));
+    _spin.repeat();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _spin = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  void _onTapZone(int player) {
+    if (_match.matchWinner != null || !_spin.isAnimating) return;
+    final angle = (_spin.value * 360) % 360;
+    final scored = _match.tap(player, angle);
+    setState(() {
+      _banner = scored
+          ? 'لاعب ${player + 1} قطفها! 🎉'
+          : 'لاعب ${player + 1} غلط اللون 😬';
+      if (_match.matchWinner != null) {
+        _spin.stop();
+        _banner = 'لاعب ${player + 1} كسب الماتش! 🏆';
+      }
+    });
+  }
+
+  Widget _buildRing() {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: AnimatedBuilder(
+          animation: _spin,
+          builder: (context, child) {
+            return CustomPaint(
+              painter: _RingPainter(
+                players: _players,
+                startAngle: _startAngle,
+                markerAngle: _spin.value * 2 * pi,
+                colors: _zoneColors,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScoreBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          for (var p = 0; p < _players; p++)
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: _zoneColors[p].withValues(alpha: 0.85),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                'لاعب ${p + 1}: ${_match.scores[p]}',
+                style: GoogleFonts.cairo(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: FunkyColors.bgDeep,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTapZones() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+      child: Row(
+        children: [
+          for (var p = 0; p < _players; p++)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _zoneColors[p],
+                    foregroundColor: FunkyColors.bgDeep,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                  ),
+                  onPressed: () => _onTapZone(p),
+                  child: Text(
+                    'لاعب ${p + 1}',
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPicker() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'كام لاعب؟',
+            style: GoogleFonts.cairo(
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'السمكة بتلف، دوس لما تدخل في لونك. أول ٥ نقط تكسب',
+            style: GoogleFonts.cairo(fontSize: 15, color: Colors.white70),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (final n in [2, 3, 4])
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: _zoneColors[n - 2],
+                      foregroundColor: FunkyColors.bgDeep,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 26, vertical: 16),
+                    ),
+                    onPressed: () => _startMatch(n),
+                    child: Text(
+                      '$n',
+                      style: GoogleFonts.cairo(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showIntro) {
+      return GameIntroWidget(
+        title: 'اقطفها',
+        description:
+            'السمكة بتلف حوالين الدواير الملونة! دوس على زرارك بالظبط لما تكون السمكة جوه اللون بتاعك. دوسة غلط مفيهاش نقط. أول واحد يوصل ٥ نقط يكسب الماتش 🐟',
+        icon: '🐟',
+        onStart: () => setState(() => _showIntro = false),
+      );
+    }
+    return OfflineGameScaffold(
+      title: 'اقطفها',
+      backgroundColor: FunkyColors.sky,
+      body: SafeArea(
+        child: _phase == _CatchPhase.picking
+            ? _buildPicker()
+            : Column(
+                children: [
+                  _buildScoreBar(),
+                  Expanded(child: _buildRing()),
+                  Text(
+                    _banner,
+                    style: GoogleFonts.cairo(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ).copyWith(
+                        fontFamilyFallback: const ['Noto Color Emoji']),
+                  ),
+                  const SizedBox(height: 4),
+                  if (_match.matchWinner != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: FilledButton(
+                        onPressed: () => setState(() {
+                          _startAngle = _random.nextDouble() * 360;
+                          _startMatchRound();
+                        }),
+                        child: Text(
+                          'ماتش جديد',
+                          style:
+                              GoogleFonts.cairo(fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                    )
+                  else
+                    _buildTapZones(),
+                ],
+              ),
+      ),
+    ).animate().fadeIn(duration: 300.ms);
+  }
+}
+
+class _RingPainter extends CustomPainter {
+  _RingPainter({
+    required this.players,
+    required this.startAngle,
+    required this.markerAngle,
+    required this.colors,
+  });
+
+  final int players;
+  final double startAngle;
+  final double markerAngle;
+  final List<Color> colors;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final radius = size.shortestSide / 2;
+    final slice = 2 * pi / players;
+    final start = startAngle * pi / 180 - pi / 2;
+    final paint = Paint()..style = PaintingStyle.fill;
+
+    for (var p = 0; p < players; p++) {
+      paint.color = colors[p % colors.length].withValues(alpha: 0.8);
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        start + slice * p + 0.03,
+        slice - 0.06,
+        true,
+        paint,
+      );
+    }
+
+    // Center hole to make it a ring of arcs.
+    paint.color = const Color(0xFF1A1140);
+    canvas.drawCircle(center, radius * 0.55, paint);
+
+    // Marker fish on the ring.
+    final mx = center.dx + radius * 0.78 * cos(markerAngle - pi / 2 + start);
+    final my = center.dy + radius * 0.78 * sin(markerAngle - pi / 2 + start);
+    final tp = TextPainter(
+      text: const TextSpan(
+        text: '🐟',
+        style: TextStyle(fontSize: 34, fontFamily: 'Noto Color Emoji'),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, Offset(mx - tp.width / 2, my - tp.height / 2));
+  }
+
+  @override
+  bool shouldRepaint(covariant _RingPainter oldDelegate) =>
+      oldDelegate.markerAngle != markerAngle ||
+      oldDelegate.players != players ||
+      oldDelegate.startAngle != startAngle;
 }
