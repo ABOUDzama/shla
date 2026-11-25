@@ -327,11 +327,11 @@ class _TrackPainter extends CustomPainter {
       final tp = TextPainter(
         text: TextSpan(
           text: 'لاعب ${i + 1}: لفة $lap/${m.laps}',
-          style: flatCairo(fontSize: 11, fontWeight: FontWeight.w800, color: FlatColors.ink),
+          style: flatCairo(fontSize: 15, fontWeight: FontWeight.w900, color: FlatColors.ink),
         ),
         textDirection: TextDirection.rtl,
       )..layout();
-      tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - 32 + i * 16));
+      tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - 40 + i * 22));
     }
     canvas.restore();
     canvas.drawRRect(rr, Paint()..color = FlatColors.border..style = PaintingStyle.stroke..strokeWidth = 3);

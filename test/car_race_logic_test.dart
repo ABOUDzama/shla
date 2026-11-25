@@ -63,4 +63,21 @@ void main() {
     expect(m.winner, isNull);
     expect(m.cars[0].finishedAt, greaterThan(0));
   });
+  test('cars stay fully inside the arena and can recover from the edge', () {
+    final m = CarRaceMatch(seats: 1, random: Random(5));
+    final c = m.cars[0];
+    // drive straight into the bottom-right corner and hold
+    c.x = 0.9; c.y = 1.3; c.heading = 0.8;
+    for (var i = 0; i < 600; i++) {
+      m.step(0.016, {});
+      expect(c.x, inInclusiveRange(CarRaceMatch.edge, 1 - CarRaceMatch.edge));
+      expect(c.y, inInclusiveRange(CarRaceMatch.edge, CarRaceMatch.arenaH - CarRaceMatch.edge));
+    }
+    // pinned at the wall, steering still turns it and it moves away
+    final h = c.heading;
+    for (var i = 0; i < 40; i++) { m.step(0.016, {0: 1}); }
+    expect(c.heading, greaterThan(h));
+    for (var i = 0; i < 100; i++) { m.step(0.016, {0: 1}); }
+    expect(c.speed, greaterThan(0.05));
+  });
 }

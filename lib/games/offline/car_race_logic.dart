@@ -29,6 +29,8 @@ class CarRaceMatch {
 
   static const double arenaH = 1.4;
   static const double startAngle = 0;
+  /// Cars never leave the visible arena (car is about 0.08 long).
+  static const double edge = 0.06;
   static const double cx = 0.5, cy = 0.7;
   static const double a = 0.33, b = 0.53;
   static const double band = 0.24; // |rho - 1| < band is asphalt
@@ -73,8 +75,8 @@ class CarRaceMatch {
       c.speed += (cap - c.speed) * min(1.0, 3.0 * dt);
       c.x += cos(c.heading) * c.speed * dt;
       c.y += sin(c.heading) * c.speed * dt;
-      c.x = c.x.clamp(0.03, 0.97);
-      c.y = c.y.clamp(0.03, arenaH - 0.03);
+      c.x = c.x.clamp(edge, 1 - edge);
+      c.y = c.y.clamp(edge, arenaH - edge);
       // progress: unwrap the change of the ellipse angle
       final th = atan2((c.y - cy) / b, (c.x - cx) / a);
       var prev = (c.theta + startAngle) % (2 * pi);
