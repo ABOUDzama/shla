@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'dart:math';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
@@ -99,10 +98,17 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
   int _humans = 2;
   int _seats = 2;
   bool _practice = false;
-  double _startAngle = 0;
   int _lap = 0;
   double _lastSpinValue = 0;
   final Set<int> _botSeats = {};
+
+  /// The ring always has 4 quadrants, one per corner, clockwise from the
+  /// top: top-right = seat 2, bottom-right = seat 3, bottom-left = seat 1,
+  /// top-left = seat 4 (seat index 1, 2, 0, 3). So a player's arc sits in
+  /// the same corner as their pad. Quadrants of absent seats are grey.
+  static const _zoneOfSeat = [2, 0, 1, 3];
+  static const _seatOfZone = [1, 2, 0, 3];
+  int _score(int seat) => _match.scores[_zoneOfSeat[seat]];
   // per bot: fraction of its arc where it taps this lap, or null (it misses the lap)
   final Map<int, double?> _botPlan = {};
 
@@ -126,6 +132,11 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
   }
   @visibleForTesting
   Set<int> get debugBots => _botSeats;
+  @visibleForTesting
+  int debugScore(int seat) => _score(seat);
+  @visibleForTesting
+  int? get debugWinnerSeat =>
+      _match.matchWinner == null ? null : _seatOfZone[_match.matchWinner!];
 
   @override
   void initState() {
@@ -158,8 +169,8 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
     for (final b in _botSeats) {
       final f = _botPlan[b];
       if (f == null) continue;
-      final z = _match.zoneOf(b);
-      final slice = 360.0 / _match.playerCount;
+      final z = _match.zoneOf(_zoneOfSeat[b]);
+      const slice = 90.0;
       var rel = (angle % 360 - z.from) % 360;
       if (rel < 0) rel += 360;
       if (rel < slice && rel >= f * slice) {
@@ -172,13 +183,13 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
   void _start(int humans, bool withBots) {
     _humans = humans;
     _practice = humans == 1 && !withBots;
-    _seats = _practice ? 4 : (withBots ? 4 : humans);
+    _seats = _practice ? 1 : (withBots ? 4 : humans);
     _botSeats
       ..clear()
       ..addAll([for (var s = humans; s < _seats && withBots; s++) s]);
     _lap = 0;
     _lastSpinValue = 0;
-    _match = CatchMatch(playerCount: _seats, startAngle: _startAngle);
+    _match = CatchMatch(playerCount: 4, startAngle: 0);
     _spin.duration = Duration(milliseconds: 2200 + _random.nextInt(1500));
     _planBots();
     setState(() => _phase = _CatchPhase.playing);
@@ -187,7 +198,7 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
 
   void _tap(int seat) {
     if (_phase != _CatchPhase.playing || _match.matchWinner != null || !_spin.isAnimating) return;
-    _match.tap(seat, _spin.value * 360 + _lap * 360);
+    _match.tap(_zoneOfSeat[seat], _spin.value * 360 + _lap * 360);
     if (_match.matchWinner != null) _spin.stop();
     setState(() {});
   }
@@ -262,13 +273,13 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
           border: Border.all(color: FlatColors.ink, width: 2.5),
         ),
         alignment: Alignment.center,
-        child: Text('${_match.scores[seat]}', style: _t(24, color: Colors.white)),
+        child: Text('${_score(seat)}', style: _t(24, color: Colors.white)),
       ),
     );
   }
 
   Widget _buildOver() {
-    final w = _match.matchWinner;
+    final w = _match.matchWinner == null ? null : _seatOfZone[_match.matchWinner!];
     Widget head;
     if (_practice) {
       head = Text('خلصت ٥ نقط في ${_lap + 1} لفّة', style: _t(22));
@@ -282,7 +293,6 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
       const SizedBox(height: 16),
       FilledButton(
         onPressed: () => setState(() {
-          _startAngle = _random.nextDouble() * 360;
           _phase = _CatchPhase.pickPlayers;
         }),
         child: Text('ماتش جديد', style: _t(18, color: Colors.white)),
@@ -321,11 +331,11 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
                           animation: _spin,
                           builder: (context, _) => CustomPaint(
                             painter: _RingPainter(
-                              players: _match.playerCount,
-                              startAngle: _startAngle,
+                              players: 4,
+                              startAngle: 0,
                               markerAngle: _spin.value * 2 * pi,
-                              colors: _zoneColors,
-                              active: {for (var i = 0; i < _seats; i++) if (!_practice || i == 0) i},
+                              colors: [for (var z = 0; z < 4; z++) _zoneColors[_seatOfZone[z]]],
+                              active: {for (var i = 0; i < _seats; i++) _zoneOfSeat[i]},
                             ),
                           ),
                         ),
@@ -350,7 +360,7 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
                               borderRadius: BorderRadius.circular(999),
                               border: Border.all(color: FlatColors.ink, width: 2),
                             ),
-                            child: Text('🤖 ${_match.scores[s]}', style: _t(16)),
+                            child: Text('🤖 ${_score(s)}', style: _t(16)),
                           ),
                         ),
                       ),

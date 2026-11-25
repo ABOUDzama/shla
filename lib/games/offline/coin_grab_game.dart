@@ -195,7 +195,15 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
           _Phase.pickPlayers => _buildPicker(),
           _Phase.pickBots => _buildBots(),
           _Phase.over => Center(child: _buildOver()),
-          _Phase.playing => LayoutBuilder(builder: (context, c) {
+          _Phase.playing => Column(children: [
+              SizedBox(
+                height: 34,
+                child: Center(
+                  child: Text('${_match.timeLeft.ceil()}',
+                      key: const ValueKey('clock'), style: _t(24)),
+                ),
+              ),
+              Expanded(child: LayoutBuilder(builder: (context, c) {
               final h = c.maxHeight - 8;
               final w = min(c.maxWidth - 8, h / CoinGrabMatch.arenaH);
               final ph = w * CoinGrabMatch.arenaH;
@@ -216,7 +224,8 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
                   ]),
                 ),
               );
-            }),
+            })),
+          ]),
         },
       ),
     );
@@ -266,12 +275,6 @@ class _CoinPainter extends CustomPainter {
       )..layout();
       tp.paint(canvas, Offset(lg.x * k - tp.width / 2, lg.y * k - 30 - (0.6 - lg.ttl) * 30));
     }
-    // clock
-    final clk = TextPainter(
-      text: TextSpan(text: '${m.timeLeft.ceil()}', style: flatCairo(fontSize: 22, fontWeight: FontWeight.w900, color: FlatColors.ink)),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    clk.paint(canvas, Offset((size.width - clk.width) / 2, 8));
     canvas.restore();
     canvas.drawRRect(rr, Paint()..color = FlatColors.border..style = PaintingStyle.stroke..strokeWidth = 3);
   }

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -61,14 +60,22 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
     final match = m(tester);
     expect(match.playerCount, 4);
-    spin(tester, 0.125); // 45 degrees: seat 0 arc is 0-90
+    spin(tester, 0.625); // 225 degrees = bottom-left quadrant = seat 0's corner
     await tester.tap(find.byKey(const ValueKey('pad_0')));
     await tester.tap(find.byKey(const ValueKey('pad_1')));
-    expect(match.scores.sublist(0, 2), [1, 0]);
-    spin(tester, 0.375); // 135 degrees: seat 1 arc, but seat 1 already tapped wrong this lap
+    final st = tester.state(find.byType(CatchGame)) as dynamic;
+    expect([st.debugScore(0), st.debugScore(1)], [1, 0]);
+    spin(tester, 0.125); // 45 degrees = top-right quadrant = seat 1's corner
     await tester.tap(find.byKey(const ValueKey('pad_1')));
-    expect(match.scores[1], 0, reason: 'locked out for the lap');
-    spin(tester, 0.375);
+    expect(st.debugScore(1), 0, reason: 'seat 1 tapped wrong earlier this lap: locked out');
+    spin(tester, 0.875); // 315 = top-left = seat 3 corner
+    await tester.tap(find.byKey(const ValueKey('pad_3')));
+    expect(st.debugScore(3), 1);
+    spin(tester, 0.375); // 135 = bottom-right = seat 2: only seat 2 may score here
+    await tester.tap(find.byKey(const ValueKey('pad_2')));
+    expect(st.debugScore(2), 1);
+    expect(find.byType(CatchGame), findsOneWidget);
+    spin(tester, 0.625);
     await tester.pump(const Duration(milliseconds: 20));
     await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/catch_play.png'));
     await settle(tester);
@@ -80,7 +87,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
     await tester.tap(find.text('لا'));
     await tester.pump(const Duration(milliseconds: 50));
-    expect(m(tester).playerCount, 2);
+    expect((tester.state(find.byType(CatchGame)) as dynamic).debugBots, isEmpty);
     await settle(tester);
     await open(tester);
     await tester.tap(find.text('2 لاعبين'));
@@ -93,7 +100,7 @@ void main() {
     for (var i = 0; i < 60 && m(tester).matchWinner == null; i++) {
       await tester.pump(const Duration(milliseconds: 250));
     }
-    expect(m(tester).scores[2] + m(tester).scores[3], greaterThan(0));
+    expect(st.debugScore(2) + st.debugScore(3), greaterThan(0));
     await settle(tester);
   });
 
@@ -103,15 +110,16 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
     await tester.tap(find.text('لا'));
     await tester.pump(const Duration(milliseconds: 50));
-    final match = m(tester);
     for (var lap = 0; lap < 5; lap++) {
-      spin(tester, 0.25); // 90 degrees of a 2-seat ring: seat 0 arc is 0-180
+      spin(tester, 0.625); // seat 0's bottom-left quadrant
       await tester.tap(find.byKey(const ValueKey('pad_0')));
       spin(tester, 0.99);
+      await tester.pump(const Duration(milliseconds: 50));
       await tester.pump(const Duration(milliseconds: 500));
     }
-    expect(match.scores[0], 5);
-    expect(match.matchWinner, 0);
+    final st2 = tester.state(find.byType(CatchGame)) as dynamic;
+    expect(st2.debugScore(0), 5);
+    expect(st2.debugWinnerSeat, 0);
     await tester.pump(const Duration(milliseconds: 600));
     final rec = await tester.runAsync(() async {
       await Future.delayed(const Duration(milliseconds: 150));
@@ -132,12 +140,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
     await tester.tap(find.text('لا'));
     await tester.pump(const Duration(milliseconds: 50));
-    final match = m(tester);
-    expect(match.playerCount, 4);
     for (var lap = 0; lap < 5; lap++) {
-      spin(tester, 0.125);
+      spin(tester, 0.625);
       await tester.tap(find.byKey(const ValueKey('pad_0')));
       spin(tester, 0.99);
+      await tester.pump(const Duration(milliseconds: 50));
       await tester.pump(const Duration(milliseconds: 500));
     }
     await tester.pump(const Duration(milliseconds: 600));
