@@ -148,7 +148,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             decoration:
                                 FunkyDecor.pill(FunkyColors.violet),
                             child: Text(
-                              'v1.2.1',
+                              'v1.2.2',
                               style: GoogleFonts.cairo(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
