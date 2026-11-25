@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       key: const ValueKey('games_feed'),
                       child: ListView(
                         physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
+                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 130),
                         children: [
                           _buildHeader(),
                           const SizedBox(height: 10),
@@ -198,10 +198,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           Positioned(
-            left: 24,
-            right: 24,
-            bottom: 26,
-            child: _buildBottomNav(),
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              color: FlatColors.bg,
+              padding: const EdgeInsets.fromLTRB(24, 10, 24, 26),
+              child: _buildBottomNav(),
+            ),
           ),
         ],
       ),
@@ -312,89 +316,98 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Deep-violet floating bar; each tab lights up in its own bright color.
   /// Redesigned 2026-11-25 after the user rejected the white pill.
   Widget _buildBottomNav() {
-    return Container(
-      height: 62,
-      padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        color: FlatColors.ink,
-        borderRadius: BorderRadius.circular(40),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x552B2140),
-            blurRadius: 18,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          _modePill(
-            label: 'الألعاب',
-            icon: Icons.grid_view_rounded,
-            activeColor: const Color(0xFFFF8A5C),
-            active: _tab == 0,
-            onTap: () {
-              if (_tab != 0) setState(() => _tab = 0);
-            },
-          ),
-          _modePill(
-            label: 'شلتي',
-            icon: Icons.groups_rounded,
-            activeColor: const Color(0xFF35C99E),
-            active: _tab == 1,
-            onTap: () {
-              if (_tab != 1) setState(() => _tab = 1);
-            },
-          ),
-          _modePill(
-            label: '١٢٣٤',
-            icon: Icons.sports_esports_rounded,
-            activeColor: const Color(0xFFFFC233),
-            active: _tab == 2,
-            onTap: () {
-              if (_tab != 2) setState(() => _tab = 2);
-            },
-          ),
-        ],
-      ),
+    // Card-style nav: three separate chunky buttons in the same visual
+    // language as the game tiles (bright color + white label pill), no
+    // enclosing bar.
+    return Row(
+      children: [
+        _navCard(
+          label: 'الألعاب',
+          emoji: '🎮',
+          color: const Color(0xFFFF8A5C),
+          active: _tab == 0,
+          onTap: () {
+            if (_tab != 0) setState(() => _tab = 0);
+          },
+        ),
+        const SizedBox(width: 10),
+        _navCard(
+          label: 'شلتي',
+          emoji: '👥',
+          color: const Color(0xFF35C99E),
+          active: _tab == 1,
+          onTap: () {
+            if (_tab != 1) setState(() => _tab = 1);
+          },
+        ),
+        const SizedBox(width: 10),
+        _navCard(
+          label: '١٢٣٤',
+          emoji: '⚡',
+          color: const Color(0xFFFFC233),
+          active: _tab == 2,
+          onTap: () {
+            if (_tab != 2) setState(() => _tab = 2);
+          },
+        ),
+      ],
     );
   }
 
-  Widget _modePill({
+  Widget _navCard({
     required String label,
-    required IconData icon,
-    required Color activeColor,
+    required String emoji,
+    required Color color,
     required bool active,
     required VoidCallback onTap,
   }) {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          decoration: BoxDecoration(
-            color: active ? activeColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(32),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 18,
-                color: active ? FlatColors.ink : Colors.white70,
+        child: AnimatedScale(
+          duration: const Duration(milliseconds: 200),
+          scale: active ? 1.0 : 0.93,
+          child: Container(
+              height: 58,
+              decoration: BoxDecoration(
+                color: active ? color : Color.lerp(color, Colors.white, 0.25),
+                borderRadius: BorderRadius.circular(18),
+                border: active
+                    ? Border.all(color: Colors.white, width: 3)
+                    : null,
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.45),
+                    blurRadius: active ? 14 : 6,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
               ),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: FlatDecor.title(
-                  size: 13,
-                  color: active ? FlatColors.ink : Colors.white70,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    emoji,
+                    style: const TextStyle(fontSize: 18).copyWith(
+                        fontFamilyFallback: const ['Noto Color Emoji']),
+                  ),
+                  const SizedBox(height: 2),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      label,
+                      style: FlatDecor.title(size: 12),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
       ),
     );
   }

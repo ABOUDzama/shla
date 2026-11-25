@@ -1,71 +1,115 @@
 import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shella/games/offline/tank_battle_logic.dart';
 
 void main() {
-  test('2-4 players init with zero scores and no winner', () {
-    for (var n = 2; n <= 4; n++) {
-      final m = TankBattleMatch(playerCount: n, random: Random(1));
-      expect(m.scores, List.filled(n, 0));
-      expect(m.isOver, isFalse);
-      expect(m.shells, isEmpty);
-    }
-  });
-
-  test('fire launches a shell inward and starts cooldown', () {
-    final m = TankBattleMatch(playerCount: 2, random: Random(1));
-    expect(m.fire(0), isTrue);
-    expect(m.shells.length, 1);
-    final s = m.shells.first;
-    expect(s.owner, 0);
-    expect(s.dy, lessThan(0)); // bottom tank fires upward
-    // cooldown blocks immediate refire
-    expect(m.fire(0), isFalse);
-    for (var i = 0; i < m.cooldownTicks; i++) { m.tick(); }
-    expect(m.fire(0), isTrue);
-  });
-
-  test('turret sweeps within range and reverses', () {
-    final m = TankBattleMatch(playerCount: 2, random: Random(1));
-    final a0 = m.aimAngle(0);
-    var reversed = false;
-    var last = a0;
-    for (var i = 0; i < 200; i++) {
-      m.tick();
-      final a = m.aimAngle(0);
-      if ((a - last).sign != (last - a0).sign && i > 0) reversed = true;
-      expect(a - TankBattleMatch.baseAngles[0], inInclusiveRange(-0.61, 0.61));
-      last = a;
-    }
-    expect(reversed, isTrue);
-  });
-
-  test('shell hitting a tank scores and ends at target', () {
-    final m = TankBattleMatch(playerCount: 2, targetScore: 2, random: Random(5));
-    // player 0 fires straight up at player 1's anchor: force alignment by
-    // ticking until aim is near zero offset, then fire repeatedly.
-    var guard = 0;
-    while (!m.isOver && guard++ < 5000) {
-      if ((m.aimAngle(0) - TankBattleMatch.baseAngles[0]).abs() < 0.02) {
-        m.fire(0);
+  group('TankBattleMatch (rebuilt reference mechanics)', () {
+    test('2-4 players spawn alive in corners aiming at center', () {
+      for (var n = 2; n <= 4; n++) {
+        final m = TankBattleMatch(playerCount: n, random: Random(7));
+        expect(m.aliveCount, n);
+        expect(m.isOver, isFalse);
+        expect(m.shells, isEmpty);
+        for (var p = 0; p < n; p++) {
+          expect(m.xs[p], inInclusiveRange(0.05, 0.95));
+          expect(m.ys[p], inInclusiveRange(0.05, 0.95));
+        }
       }
-      m.tick();
-    }
-    expect(m.winner, 0);
-    expect(m.scores[0], greaterThanOrEqualTo(2));
-  });
+    });
 
-  test('deterministic with the same seed', () {
-    List<String> run() {
-      final m = TankBattleMatch(playerCount: 4, random: Random(9));
-      final trace = <String>[];
-      for (var i = 0; i < 120 && !m.isOver; i++) {
-        if (i % 11 == 0) m.fire(i % 4);
+    test('tanks auto-drive forward every tick', () {
+      final m = TankBattleMatch(playerCount: 2, random: Random(3));
+      final x0 = m.xs[0], y0 = m.ys[0];
+      m.tick();
+      final moved =
+          sqrt(pow(m.xs[0] - x0, 2) + pow(m.ys[0] - y0, 2));
+      expect(moved, greaterThan(0));
+    });
+
+    test('holding steers (rotates), releasing fires one shell', () {
+      final m = TankBattleMatch(playerCount: 2, random: Random(5));
+      final h0 = m.headings[0];
+      m.holdStart(0);
+      for (var t = 0; t < 10; t++) {
         m.tick();
-        trace.add(m.shells.map((s) => '${s.x},${s.y}').join(';') + '|${m.scores}');
       }
-      return trace;
-    }
-    expect(run(), run());
+      expect(m.headings[0], greaterThan(h0));
+      expect(m.holdRelease(0), isTrue);
+      expect(m.shells.length, 1);
+      expect(m.shells.first.owner, 0);
+      // one live shell per player: second release without new shell slot fails
+      expect(m.holdRelease(0), isFalse);
+      expect(m.shells.length, 1);
+    });
+
+    test('shell ricochets off the border wall', () {
+      final m = TankBattleMatch(playerCount: 2, random: Random(1));
+      // aim player 0 directly at the left wall
+      m.headings[0] = pi;
+      expect(m.holdRelease(0), isTrue);
+      final shell = m.shells.first;
+      final dx0 = shell.dx;
+      var bounced = false;
+      for (var t = 0; t < 200 && !bounced; t++) {
+        m.tick();
+        if (shell.dx != dx0) bounced = true;
+      }
+      expect(bounced, isTrue);
+      expect(shell.bounces, greaterThan(0));
+    });
+
+    test('one hit destroys a tank; last tank standing wins', () {
+      final m = TankBattleMatch(playerCount: 2, random: Random(9));
+      // teleport a shell right next to player 1 aimed at them
+      m.shells.add(TankShell2(m.xs[1] - 0.02, m.ys[1], 1, 0, 0));
+      m.tick();
+      expect(m.alive[1], isFalse);
+      expect(m.aliveCount, 1);
+      expect(m.winner, 0);
+      expect(m.isOver, isTrue);
+    });
+
+    test('obstacles block shells (bounce) and tanks (grind around)', () {
+      final m = TankBattleMatch(playerCount: 2, random: Random(2));
+      // fire into the arena center from each side; shells must not tunnel
+      m.headings[0] = 0; // toward +x
+      expect(m.holdRelease(0), isTrue);
+      for (var t = 0; t < 400; t++) {
+        m.tick();
+        for (final s in m.shells) {
+          for (final o in m.arena.obstacles) {
+            final inside = s.x > o.x + 0.01 &&
+                s.x < o.x + o.w - 0.01 &&
+                s.y > o.y + 0.01 &&
+                s.y < o.y + o.h - 0.01;
+            expect(inside, isFalse, reason: 'shell tunneled into obstacle');
+          }
+        }
+      }
+    });
+
+    test('deterministic with the same seed', () {
+      final a = TankBattleMatch(playerCount: 4, random: Random(42));
+      final b = TankBattleMatch(playerCount: 4, random: Random(42));
+      expect(a.arena.obstacles.length, b.arena.obstacles.length);
+      a.holdStart(0);
+      b.holdStart(0);
+      for (var t = 0; t < 25; t++) {
+        a.tick();
+        b.tick();
+      }
+      a.holdRelease(0);
+      b.holdRelease(0);
+      for (var t = 0; t < 75; t++) {
+        a.tick();
+        b.tick();
+      }
+      expect(a.xs, b.xs);
+      expect(a.ys, b.ys);
+      expect(a.headings, b.headings);
+      expect(a.shells.length, b.shells.length);
+      expect(a.alive, b.alive);
+    });
   });
 }

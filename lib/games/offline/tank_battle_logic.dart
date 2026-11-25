@@ -1,139 +1,216 @@
 import 'dart:math';
 
-/// Pure logic for Shla Tank Battle (دبابات الشلة), kept separate from the
-/// widget so it can be unit-tested without pumping frames.
+/// Pure logic for Shla Tank Battle (دبابات الشلة), rebuilt 2026-11-25 to
+/// match the actual reference mechanics (grounded from Stickman Party Tanks
+/// gameplay write-ups): tanks auto-drive forward, HOLDING your one button
+/// steers (rotates) your tank, RELEASING fires one shell. Shells ricochet
+/// off walls and obstacles. One hit destroys a tank; last tank standing
+/// wins the round.
 ///
-/// 2-4 tanks sit fixed at the arena edges. Each turret sweeps back and
-/// forth on its own; a player taps ONE button to fire a shell along the
-/// current aim. A shell that reaches another tank scores a point. First
-/// to [targetScore] points wins.
+/// Kept separate from the widget so it can be unit-tested without pumping
+/// frames. Fully deterministic with a seeded [Random].
+class TankArena {
+  const TankArena(this.obstacles);
+
+  /// Obstacle rectangles in unit-square coordinates (x, y, w, h).
+  final List<({double x, double y, double w, double h})> obstacles;
+
+  /// Small fixed map rotation (reference cycles arenas; we pick by seed).
+  static const List<TankArena> maps = [
+    TankArena([
+      (x: 0.40, y: 0.40, w: 0.20, h: 0.20), // central block
+    ]),
+    TankArena([
+      (x: 0.20, y: 0.20, w: 0.12, h: 0.12),
+      (x: 0.68, y: 0.20, w: 0.12, h: 0.12),
+      (x: 0.68, y: 0.68, w: 0.12, h: 0.12),
+      (x: 0.20, y: 0.68, w: 0.12, h: 0.12),
+    ]),
+    TankArena([
+      (x: 0.44, y: 0.15, w: 0.12, h: 0.28), // plus-sign
+      (x: 0.44, y: 0.57, w: 0.12, h: 0.28),
+      (x: 0.15, y: 0.44, w: 0.28, h: 0.12),
+      (x: 0.57, y: 0.44, w: 0.28, h: 0.12),
+    ]),
+  ];
+}
+
+class TankShell2 {
+  TankShell2(this.x, this.y, this.dx, this.dy, this.owner);
+  double x, y, dx, dy;
+  final int owner;
+  int bounces = 0;
+  static const int maxBounces = 3;
+}
+
 class TankBattleMatch {
   TankBattleMatch({
     required this.playerCount,
-    this.targetScore = 5,
-    this.cooldownTicks = 6,
     Random? random,
   })  : assert(playerCount >= 2 && playerCount <= 4),
         _random = random ?? Random() {
+    arena = TankArena.maps[_random.nextInt(TankArena.maps.length)];
     for (var p = 0; p < playerCount; p++) {
-      scores.add(0);
-      cooldowns.add(0);
-      // stagger sweep phases so players are not in sync
-      _aims.add(_aimMin + (_aimMax - _aimMin) * p / playerCount);
-      _aimDirs.add(p.isEven ? 1 : -1);
-    }
-    // small deterministic jitter from the injected RNG for variety
-    for (var p = 0; p < playerCount; p++) {
-      _aims[p] += (_random.nextDouble() - 0.5) * 0.05;
+      alive.add(true);
+      holding.add(false);
+      // corner spawns, headings toward center
+      final (sx, sy, h) = _spawns[p];
+      xs.add(sx);
+      ys.add(sy);
+      headings.add(h);
     }
   }
 
   final int playerCount;
-  final int targetScore;
-  final int cooldownTicks;
   final Random _random;
+  late final TankArena arena;
 
-  /// Tank anchor points in normalized arena coordinates (0..1), one per
-  /// player: bottom, top, left, right.
-  static const List<Point<double>> anchors = [
-    Point(0.5, 0.92),
-    Point(0.5, 0.08),
-    Point(0.08, 0.5),
-    Point(0.92, 0.5),
+  static const List<(double, double, double)> _spawns = [
+    (0.08, 0.08, pi / 4), // top-left -> down-right
+    (0.92, 0.08, 3 * pi / 4),
+    (0.92, 0.92, 5 * pi / 4),
+    (0.08, 0.92, 7 * pi / 4),
   ];
 
-  /// Base direction each anchor fires from, in radians (pointing inward).
-  static const List<double> baseAngles = [
-    -pi / 2, // bottom fires up
-    pi / 2, // top fires down
-    0, // left fires right
-    pi, // right fires left
-  ];
+  static const double tankRadius = 0.045;
+  static const double speed = 0.0035; // per tick
+  static const double turnRate = pi / 60; // per held tick
+  static const double shellSpeed = 0.012;
+  static const double shellRadius = 0.012;
+  static const int maxTicks = 60 * 30; // ~30s safety at 60ms ticks
 
-  static const double _aimMin = -0.6; // sweep half-range around base angle
-  static const double _aimMax = 0.6;
-  static const double sweepStep = 0.035; // radians per tick
-  static const double shellSpeed = 0.03; // arena fraction per tick
-  static const double tankRadius = 0.05;
+  final List<bool> alive = [];
+  final List<bool> holding = [];
+  final List<double> xs = [];
+  final List<double> ys = [];
+  final List<double> headings = [];
+  final List<TankShell2> shells = [];
 
-  final List<int> scores = [];
-  final List<int> cooldowns = [];
-  final List<double> _aims = [];
-  final List<int> _aimDirs = [];
-
-  /// Live shells: (x, y, dx, dy, owner).
-  final List<({double x, double y, double dx, double dy, int owner})> shells =
-      [];
+  /// Ticks since [player]'s tank was destroyed (for explosion animation);
+  /// null while alive.
+  final List<int?> destroyedAt = [];
 
   int tickCount = 0;
   int? winner;
-  bool get isOver => winner != null;
 
-  /// Current absolute aim angle for [player] (base + sweeping offset).
-  double aimAngle(int player) => baseAngles[player] + _aims[player];
+  int get aliveCount => alive.where((a) => a).length;
+  bool get isOver => winner != null || aliveCount <= 1 || tickCount >= maxTicks;
 
-  /// Fire a shell for [player] if their cooldown is ready. Returns true
-  /// when a shell was actually launched.
-  bool fire(int player) {
-    if (isOver || cooldowns[player] > 0) return false;
-    final a = aimAngle(player);
-    final anchor = anchors[player];
-    shells.add((
-      x: anchor.x + cos(a) * tankRadius,
-      y: anchor.y + sin(a) * tankRadius,
-      dx: cos(a) * shellSpeed,
-      dy: sin(a) * shellSpeed,
-      owner: player,
+  bool _inObstacle(double x, double y, double pad) {
+    for (final o in arena.obstacles) {
+      if (x >= o.x - pad && x <= o.x + o.w + pad &&
+          y >= o.y - pad && y <= o.y + o.h + pad) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Hold the button: [player]'s tank steers (rotates) while held.
+  void holdStart(int player) {
+    if (isOver || !alive[player]) return;
+    holding[player] = true;
+  }
+
+  /// Release the button: fires one shell if [player] is alive and has no
+  /// live shell on the field (one shell at a time, like the reference).
+  bool holdRelease(int player) {
+    if (isOver || !alive[player]) return false;
+    holding[player] = false;
+    if (shells.any((s) => s.owner == player)) return false;
+    final h = headings[player];
+    shells.add(TankShell2(
+      xs[player] + cos(h) * tankRadius * 1.4,
+      ys[player] + sin(h) * tankRadius * 1.4,
+      cos(h),
+      sin(h),
+      player,
     ));
-    cooldowns[player] = cooldownTicks;
     return true;
   }
 
-  /// Advance one tick: sweep turrets, move shells, resolve hits.
+  void _destroy(int p) {
+    alive[p] = false;
+    destroyedAt.add(tickCount);
+    // remove that player's shell so a re-round stays clean
+    shells.removeWhere((s) => !alive[s.owner] && s.owner == p && false);
+    if (aliveCount == 1) {
+      winner = alive.indexOf(true);
+    }
+  }
+
   void tick() {
     if (isOver) return;
     tickCount++;
+
+    // tanks: steer while held, always drive forward, slide on obstacles
     for (var p = 0; p < playerCount; p++) {
-      if (cooldowns[p] > 0) cooldowns[p]--;
-      _aims[p] += sweepStep * _aimDirs[p];
-      if (_aims[p] > _aimMax) {
-        _aims[p] = _aimMax;
-        _aimDirs[p] = -1;
-      } else if (_aims[p] < _aimMin) {
-        _aims[p] = _aimMin;
-        _aimDirs[p] = 1;
+      if (!alive[p]) continue;
+      if (holding[p]) headings[p] += turnRate;
+      final h = headings[p];
+      var nx = xs[p] + cos(h) * speed;
+      var ny = ys[p] + sin(h) * speed;
+      // border walls: turn the tank back inside (bounce heading)
+      if (nx < tankRadius || nx > 1 - tankRadius) {
+        headings[p] = pi - h;
+        nx = xs[p] + cos(headings[p]) * speed;
+      }
+      if (ny < tankRadius || ny > 1 - tankRadius) {
+        headings[p] = -headings[p];
+        ny = ys[p] + sin(headings[p]) * speed;
+      }
+      // obstacles: stop at the edge (slide blocked)
+      if (_inObstacle(nx, ny, tankRadius * 0.8)) {
+        headings[p] += turnRate * 2; // grind around the block
+      } else {
+        xs[p] = nx.clamp(tankRadius, 1 - tankRadius);
+        ys[p] = ny.clamp(tankRadius, 1 - tankRadius);
       }
     }
-    final dead = <int>{};
-    for (var i = 0; i < shells.length; i++) {
-      final s = shells[i];
-      final nx = s.x + s.dx;
-      final ny = s.y + s.dy;
-      if (nx < 0 || nx > 1 || ny < 0 || ny > 1) {
-        dead.add(i);
+
+    // shells: move, ricochet off walls/obstacles, expire after maxBounces
+    for (final s in List.of(shells)) {
+      var nx = s.x + s.dx * shellSpeed;
+      var ny = s.y + s.dy * shellSpeed;
+      var bounced = false;
+      if (nx < shellRadius || nx > 1 - shellRadius) {
+        s.dx = -s.dx;
+        bounced = true;
+      }
+      if (ny < shellRadius || ny > 1 - shellRadius) {
+        s.dy = -s.dy;
+        bounced = true;
+      }
+      if (_inObstacle(nx, ny, shellRadius)) {
+        // reflect on the axis with deeper penetration
+        final ox = s.x + s.dx * shellSpeed;
+        if (_inObstacle(ox, s.y, shellRadius)) s.dx = -s.dx;
+        final oy = s.y + s.dy * shellSpeed;
+        if (_inObstacle(s.x, oy, shellRadius)) s.dy = -s.dy;
+        bounced = true;
+      }
+      if (bounced) s.bounces++;
+      if (s.bounces > TankShell2.maxBounces) {
+        shells.remove(s);
         continue;
       }
+      s.x += s.dx * shellSpeed;
+      s.y += s.dy * shellSpeed;
+
+      // hits: one shell destroys one tank (your own ricochet can kill you)
       for (var p = 0; p < playerCount; p++) {
-        if (p == s.owner) continue;
-        final a = anchors[p];
-        final d = sqrt(pow(nx - a.x, 2) + pow(ny - a.y, 2));
-        if (d <= tankRadius) {
-          scores[s.owner]++;
-          dead.add(i);
-          if (scores[s.owner] >= targetScore) winner = s.owner;
+        if (!alive[p]) continue;
+        final d = sqrt(pow(xs[p] - s.x, 2) + pow(ys[p] - s.y, 2));
+        if (d < tankRadius + shellRadius) {
+          shells.remove(s);
+          _destroy(p);
           break;
         }
       }
-      shells[i] = (
-        x: nx,
-        y: ny,
-        dx: s.dx,
-        dy: s.dy,
-        owner: s.owner,
-      );
     }
-    if (dead.isNotEmpty) {
-      shells.removeWhere((s) => dead.contains(shells.indexOf(s)));
+
+    if (aliveCount == 1 && winner == null) {
+      winner = alive.indexOf(true);
     }
   }
 }

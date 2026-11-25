@@ -10,7 +10,8 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import 'tank_battle_logic.dart';
 
-/// دبابات الشلة: 2-4 tanks on one phone, one fire button per player.
+/// دبابات الشلة: reference-faithful one-button tanks.
+/// Hold your button to steer, release to fire. One hit kills.
 class TankBattleGame extends StatefulWidget {
   const TankBattleGame({super.key, this.randomSeed});
 
@@ -30,6 +31,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
   _TankPhase _phase = _TankPhase.pickPlayers;
   late TankBattleMatch _match;
   Timer? _ticker;
+  String _banner = '';
 
   static const List<Color> _colors = [
     FunkyColors.coral,
@@ -49,12 +51,12 @@ class _TankBattleGameState extends State<TankBattleGame> {
     setState(() {
       _match = TankBattleMatch(
         playerCount: players,
-        random:
-            widget.randomSeed != null ? Random(widget.randomSeed!) : null,
+        random: widget.randomSeed != null ? Random(widget.randomSeed!) : null,
       );
+      _banner = 'دوس مطوّل عشان تلفّ.. وسيب عشان تضرب! 🎯';
       _phase = _TankPhase.playing;
     });
-    _ticker = Timer.periodic(const Duration(milliseconds: 90), (_) {
+    _ticker = Timer.periodic(const Duration(milliseconds: 60), (_) {
       if (!mounted || _phase != _TankPhase.playing) return;
       setState(() {
         _match.tick();
@@ -63,6 +65,40 @@ class _TankBattleGameState extends State<TankBattleGame> {
           _phase = _TankPhase.over;
         }
       });
+    });
+  }
+
+  void _holdStart(int i) {
+    if (_phase != _TankPhase.playing) return;
+    setState(() => _match.holdStart(i));
+  }
+
+  void _holdEnd(int i) {
+    if (_phase != _TankPhase.playing) return;
+    final fired = _match.holdRelease(i);
+    setState(() {
+      _banner = fired ? 'لاعب ${i + 1} ضرب! 💥' : _banner;
+      if (_match.isOver) {
+        _ticker?.cancel();
+        _phase = _TankPhase.over;
+      }
+    });
+  }
+
+
+  /// Test hook: jump straight to the over screen with [winner] as victor.
+  @visibleForTesting
+  void debugForceWin(int winner) {
+    _ticker?.cancel();
+    setState(() {
+      for (var p = 0; p < _match.playerCount; p++) {
+        if (p != winner && _match.alive[p]) {
+          _match.alive[p] = false;
+          _match.destroyedAt.add(_match.tickCount);
+        }
+      }
+      _match.winner = winner;
+      _phase = _TankPhase.over;
     });
   }
 
@@ -102,46 +138,76 @@ class _TankBattleGameState extends State<TankBattleGame> {
     );
   }
 
-  Widget _scorePill(int i) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: _colors[i].withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: _colors[i]),
-      ),
-      child: Text(
-        'لاعب ${i + 1}: ${_match.scores[i]}',
-        style: GoogleFonts.cairo(
-          fontSize: 13,
-          fontWeight: FontWeight.w800,
-          color: Colors.white,
-        ).copyWith(fontFamilyFallback: _emojiFallback),
-      ),
+  Widget _statusChip(int i) {
+    final aliveNow = _match.alive[i];
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: aliveNow
+                ? _colors[i].withValues(alpha: 0.35)
+                : Colors.white10,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: aliveNow ? _colors[i] : Colors.white24,
+              width: 2,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              aliveNow ? '🛡' : '💥',
+              style: const TextStyle(fontSize: 18)
+                  .copyWith(fontFamilyFallback: _emojiFallback),
+            ),
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          'لاعب ${i + 1}',
+          style: GoogleFonts.cairo(
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            color: aliveNow ? Colors.white : Colors.white38,
+          ).copyWith(fontFamilyFallback: _emojiFallback),
+        ),
+      ],
     );
   }
 
-  Widget _fireButton(int i) {
-    final active = _phase == _TankPhase.playing && _match.cooldowns[i] == 0;
+  Widget _holdButton(int i) {
+    final active = _phase == _TankPhase.playing && _match.alive[i];
+    final held = active && _match.holding[i];
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: FilledButton(
-          style: FilledButton.styleFrom(
-            backgroundColor: _colors[i],
-            disabledBackgroundColor: _colors[i].withValues(alpha: 0.15),
+        child: GestureDetector(
+          onTapDown: active ? (_) => _holdStart(i) : null,
+          onTapUp: active ? (_) => _holdEnd(i) : null,
+          onTapCancel: active ? () => _holdEnd(i) : null,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 120),
             padding: const EdgeInsets.symmetric(vertical: 14),
-          ),
-          onPressed: _phase == _TankPhase.playing
-              ? () => setState(() => _match.fire(i))
-              : null,
-          child: Text(
-            active ? 'لاعب ${i + 1} 🎯' : 'لاعب ${i + 1} ...',
-            style: GoogleFonts.cairo(
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-              color: Colors.black87,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
+            decoration: BoxDecoration(
+              color: !active
+                  ? _colors[i].withValues(alpha: 0.15)
+                  : held
+                      ? Colors.white
+                      : _colors[i],
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Center(
+              child: Text(
+                'لاعب ${i + 1} 🎯',
+                style: GoogleFonts.cairo(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: held ? _colors[i] : Colors.black87,
+                ).copyWith(fontFamilyFallback: _emojiFallback),
+              ),
+            ),
           ),
         ),
       ),
@@ -152,12 +218,22 @@ class _TankBattleGameState extends State<TankBattleGame> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        VictoryFriends(winnerName: 'لاعب ${_match.winner! + 1}'),
+        if (_match.winner != null)
+          VictoryFriends(winnerName: 'لاعب ${_match.winner! + 1}')
+        else
+          Text(
+            'مفيش ناجي! الكل اتدمر 💥',
+            style: GoogleFonts.cairo(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+            ).copyWith(fontFamilyFallback: _emojiFallback),
+          ),
         const SizedBox(height: 16),
         FilledButton(
           onPressed: () => setState(() => _phase = _TankPhase.pickPlayers),
           child: Text(
-            'العبوا تاني 💥',
+            'العبوا تاني 🎯',
             style: GoogleFonts.cairo(
               fontSize: 18,
               fontWeight: FontWeight.w800,
@@ -174,7 +250,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
       return GameIntroWidget(
         title: 'دبابات الشلة',
         description:
-            '٢-٤ لاعبين على نفس الموبايل. المدفع بيلف لوحده وانت بتحدد لحظة الضرب بزرار واحد. أصيب دبابات صحابك واجمع ٥ نقط قبلهم 💥',
+            '٢-٤ دبابات في ساحة واحدة. دبابتك ماشية لوحدها: دوس مطوّل على زرارك عشان تلفّ بيها، وسيب الزرار عشان تضرب قذيفة. القذيفة بترتد من الحيطان، وضربة واحدة تدمّر أي دبابة.. حتى دبابتك! آخر دبابة عايشة تكسب 🎯',
         icon: '💥',
         onStart: () => setState(() => _showIntro = false),
       );
@@ -189,26 +265,38 @@ class _TankBattleGameState extends State<TankBattleGame> {
             : Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 6,
-                      alignment: WrapAlignment.center,
+                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        for (var i = 0; i < players; i++) _scorePill(i)
+                        for (var i = 0; i < players; i++) _statusChip(i)
                       ],
                     ),
                   ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    child: Text(
+                      _banner,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.cairo(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ).copyWith(fontFamilyFallback: _emojiFallback),
+                    ),
+                  ),
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
+                    child: Center(
                       child: _phase == _TankPhase.over
-                          ? Center(child: _buildOver())
-                          : LayoutBuilder(
-                              builder: (context, constraints) => CustomPaint(
-                                size: Size(constraints.maxWidth,
-                                    constraints.maxHeight),
-                                painter: _TankPainter(_match, _colors),
+                          ? _buildOver()
+                          : Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: CustomPaint(
+                                  painter: _TankPainter(_match, _colors),
+                                ),
                               ),
                             ),
                     ),
@@ -216,9 +304,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
                     child: Row(
-                      children: [
-                        for (var i = 0; i < players; i++) _fireButton(i)
-                      ],
+                      children: [for (var i = 0; i < players; i++) _holdButton(i)],
                     ),
                   ),
                 ],
@@ -236,40 +322,66 @@ class _TankPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final side = min(size.width, size.height);
-    final ox = (size.width - side) / 2;
-    final oy = (size.height - side) / 2;
-    Offset at(double x, double y) => Offset(ox + x * side, oy + y * side);
+    final w = size.width;
+    Offset at(double x, double y) => Offset(x * w, y * w);
 
-    final bg = Paint()..color = const Color(0xFF0D1030);
+    // field
     canvas.drawRRect(
-      RRect.fromRectAndRadius(
-          Rect.fromLTWH(ox, oy, side, side), const Radius.circular(12)),
-      bg,
+      RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(16)),
+      Paint()..color = const Color(0xFF16301E),
     );
-
-    // ground detail: grid dots + faint craters
-    final dot = Paint()..color = Colors.white.withValues(alpha: 0.05);
-    for (var gy = 0.1; gy < 1; gy += 0.1) {
-      for (var gx = 0.1; gx < 1; gx += 0.1) {
-        canvas.drawCircle(at(gx, gy), side * 0.004, dot);
+    // grid dots
+    final dot = Paint()..color = Colors.white.withValues(alpha: 0.06);
+    for (var gy = 0.08; gy < 1; gy += 0.08) {
+      for (var gx = 0.08; gx < 1; gx += 0.08) {
+        canvas.drawCircle(at(gx, gy), w * 0.004, dot);
       }
     }
+    // walls border
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(16)),
+      Paint()
+        ..color = const Color(0xFF3E5A44)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = w * 0.012,
+    );
 
-    // tanks: tracks, hull, turret, barrel
+    // obstacles: sand-colored blocks with darker rim
+    for (final o in match.arena.obstacles) {
+      final rect = Rect.fromLTWH(
+          o.x * w, o.y * w, o.w * w, o.h * w);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, Radius.circular(w * 0.015)),
+        Paint()..color = const Color(0xFF8A6B3D),
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect.deflate(w * 0.008), Radius.circular(w * 0.01)),
+        Paint()..color = const Color(0xFFA8844E),
+      );
+    }
+
+    // tanks (destroyed: scorch mark)
     for (var p = 0; p < match.playerCount; p++) {
-      final a = TankBattleMatch.anchors[p];
-      final c = at(a.x, a.y);
-      final r = TankBattleMatch.tankRadius * side;
+      final c = at(match.xs[p], match.ys[p]);
+      final r = TankBattleMatch.tankRadius * w;
       final col = colors[p];
+      if (!match.alive[p]) {
+        canvas.drawCircle(c, r * 0.9,
+            Paint()..color = Colors.black.withValues(alpha: 0.55));
+        canvas.drawCircle(
+            c,
+            r * 0.9,
+            Paint()
+              ..color = const Color(0xFF5A4A3A)
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2);
+        continue;
+      }
       final dark = Color.lerp(col, Colors.black, 0.45)!;
       final light = Color.lerp(col, Colors.white, 0.25)!;
-      final aim = match.aimAngle(p);
-
       canvas.save();
       canvas.translate(c.dx, c.dy);
-      canvas.rotate(aim);
-      // tracks
+      canvas.rotate(match.headings[p]);
       for (final ty in [-r * 0.62, r * 0.32]) {
         canvas.drawRRect(
           RRect.fromRectAndRadius(
@@ -278,15 +390,7 @@ class _TankPainter extends CustomPainter {
           ),
           Paint()..color = dark,
         );
-        for (var wx = -r * 0.85; wx <= r * 0.55; wx += r * 0.35) {
-          canvas.drawCircle(
-            Offset(wx, ty + r * 0.15),
-            r * 0.08,
-            Paint()..color = Colors.white24,
-          );
-        }
       }
-      // hull
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(-r * 0.95, -r * 0.45, r * 1.5, r * 0.9),
@@ -301,14 +405,14 @@ class _TankPainter extends CustomPainter {
         ),
         Paint()..color = light.withValues(alpha: 0.5),
       );
-      // turret dome
       canvas.drawCircle(Offset(-r * 0.1, 0), r * 0.42, Paint()..color = col);
       canvas.drawCircle(
-          Offset(-r * 0.1, 0), r * 0.42, Paint()
-        ..color = dark
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = r * 0.08);
-      // barrel
+          Offset(-r * 0.1, 0),
+          r * 0.42,
+          Paint()
+            ..color = dark
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = r * 0.08);
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(r * 0.15, -r * 0.11, r * 1.05, r * 0.22),
@@ -318,20 +422,32 @@ class _TankPainter extends CustomPainter {
       );
       canvas.drawCircle(Offset(r * 1.2, 0), r * 0.14, Paint()..color = dark);
       canvas.restore();
+      // holding ring: shows this player is steering
+      if (match.holding[p]) {
+        canvas.drawCircle(
+            c,
+            r * 1.5,
+            Paint()
+              ..color = Colors.white.withValues(alpha: 0.5)
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2.5);
+      }
     }
 
-    // shells with motion trails
+    // shells with trails
     for (final s in match.shells) {
       final pos = at(s.x, s.y);
-      final trail = Paint()
-        ..color = FunkyColors.amber.withValues(alpha: 0.5)
-        ..strokeWidth = side * 0.008
-        ..strokeCap = StrokeCap.round;
-      canvas.drawLine(pos, pos - Offset(s.dx, s.dy) * side * 6, trail);
+      canvas.drawLine(
+        pos,
+        pos - Offset(s.dx, s.dy) * w * 0.05,
+        Paint()
+          ..color = FunkyColors.amber.withValues(alpha: 0.5)
+          ..strokeWidth = w * 0.008
+          ..strokeCap = StrokeCap.round,
+      );
+      canvas.drawCircle(pos, w * 0.014, Paint()..color = FunkyColors.amber);
       canvas.drawCircle(
-          pos, side * 0.014, Paint()..color = FunkyColors.amber);
-      canvas.drawCircle(
-          pos, side * 0.007, Paint()..color = const Color(0xFFFFF3C0));
+          pos, w * 0.007, Paint()..color = const Color(0xFFFFF3C0));
     }
   }
 
