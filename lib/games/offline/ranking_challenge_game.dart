@@ -18,6 +18,7 @@ class RankingChallengeGame extends StatefulWidget {
     int score = 0;
     for (int i = 0; i < guess.length && i < truth.length; i++) {
       final trueIdx = truth.indexOf(guess[i]);
+      if (trueIdx == -1) continue; // unknown item: no points
       if (trueIdx == i) {
         score += 3;
       } else if ((trueIdx - i).abs() == 1) {

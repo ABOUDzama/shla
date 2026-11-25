@@ -33,8 +33,17 @@ class BusCompleteGame extends StatefulWidget {
     return w;
   }
 
+  /// Comparison form: normalize + drop a leading definite article "ال"
+  /// (plain alef only, so همزة-قطع words like ألعاب/ألم are untouched).
+  /// "البحرين" must count for letter ب, and equal "بحرين" when deduplicating.
+  static String normalizeForCompare(String word) {
+    final raw = word.trim().replaceAll(RegExp(r'[\u064B-\u0652\u0640]'), '');
+    final stripped = raw.startsWith('ال') && raw.length > 3 ? raw.substring(2) : raw;
+    return normalize(stripped);
+  }
+
   static bool startsWithLetter(String word, String letter) {
-    final w = normalize(word);
+    final w = normalizeForCompare(word);
     return w.isNotEmpty && w[0] == letter;
   }
 
@@ -52,7 +61,7 @@ class BusCompleteGame extends StatefulWidget {
       final normalizedByPlayer = <String, String>{};
       for (final p in players) {
         final raw = answers[p]?[cat] ?? '';
-        final norm = normalize(raw).toLowerCase();
+        final norm = normalizeForCompare(raw).toLowerCase();
         normalizedByPlayer[p] = norm;
         if (norm.isNotEmpty && startsWithLetter(raw, letter)) {
           counts[norm] = (counts[norm] ?? 0) + 1;
