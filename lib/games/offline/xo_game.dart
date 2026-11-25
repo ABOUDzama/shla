@@ -6,6 +6,8 @@ import '../../services/score_service.dart';
 import '../../services/socket_service.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
+import '../../screens/settings_screen.dart';
 
 class TicTacToeGame extends StatefulWidget {
   final bool online;
@@ -26,6 +28,9 @@ class TicTacToeGame extends StatefulWidget {
 }
 
 class _TicTacToeGameState extends State<TicTacToeGame> {
+  static const Color _xColor = Color(0xFFFF8A5C); // coral
+  static const Color _oColor = Color(0xFF4D8DFF); // sky
+
   List<String> board = List.filled(9, '');
   bool isXTurn = true;
   String? winner;
@@ -142,6 +147,22 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
     }
   }
 
+  Widget _chromeButton({required IconData icon, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          border: Border.all(color: FlatColors.border, width: 2),
+        ),
+        child: Icon(icon, size: 20, color: FlatColors.ink),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
@@ -159,142 +180,156 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
       );
     }
 
-    return OfflineGameScaffold(
-      title: '🎯 إكس أو',
-      backgroundColor: FunkyColors.mint,
-      showAi: false,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home, color: Colors.white70),
-          onPressed: () => setState(() => _showIntro = true),
-        ),
-      ],
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-            // Chalk Message
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 40),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white24, width: 2),
-                borderRadius: BorderRadius.circular(4),
+    // Interior in the approved flat/cream home language (trial: X/O only).
+    return Scaffold(
+      backgroundColor: FlatColors.bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+              child: Row(
+                children: [
+                  _chromeButton(
+                    icon: Icons.settings,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => const SettingsScreen()),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text('إكس أو', style: FlatDecor.title(size: 24)),
+                    ),
+                  ),
+                  _chromeButton(
+                    icon: Icons.home_rounded,
+                    onTap: () => setState(() => _showIntro = true),
+                  ),
+                ],
               ),
-              child: Center(
-                child: Text(
-                  winner != null
-                      ? 'الفائز: $winner ✨'
-                      : isDraw
-                      ? 'تعادل! 🤝'
-                      : widget.online
-                      ? ((widget.isHost && isXTurn) ||
-                                (!widget.isHost && !isXTurn)
-                            ? 'دورك'
-                            : 'دور ${widget.opponentName ?? 'المنافس'}')
-                      : 'دور الـ ${isXTurn ? 'X' : 'O'}',
-                  style: GoogleFonts.cairo(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white.withValues(alpha: 0.95),
-
-                  ).copyWith(fontFamilyFallback: FunkyText.emojiFallback),
-                ),
+            ),
+            const SizedBox(height: 18),
+            // Turn / result card
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: FlatDecor.card(radius: 18),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (winner == null && !isDraw)
+                    Container(
+                      width: 14,
+                      height: 14,
+                      margin: const EdgeInsets.only(left: 8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isXTurn ? _xColor : _oColor,
+                      ),
+                    ),
+                  Text(
+                    winner != null
+                        ? 'الفائز: $winner ✨'
+                        : isDraw
+                        ? 'تعادل! 🤝'
+                        : widget.online
+                        ? ((widget.isHost && isXTurn) ||
+                                  (!widget.isHost && !isXTurn)
+                              ? 'دورك'
+                              : 'دور ${widget.opponentName ?? 'المنافس'}')
+                        : 'دور الـ ${isXTurn ? 'X' : 'O'}',
+                    style: FlatDecor.title(
+                      size: 20,
+                      color: winner != null
+                          ? (winner == 'X' ? _xColor : _oColor)
+                          : FlatColors.ink,
+                    ),
+                  ),
+                ],
               ),
             ).animate().fadeIn().slideY(begin: -0.2, end: 0),
-
-            const SizedBox(height: 50),
-
-            // The Board
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Stack(
-                  children: [
-                    // Chalk Lines (the grid)
-                    CustomPaint(
-                      size: Size.infinite,
-                      painter: ChalkGridPainter(),
-                    ),
-                    // Cells
-                    GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+            const SizedBox(height: 24),
+            // Board on a flat white card
+            Expanded(
+              child: Center(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.all(18),
+                  decoration: FlatDecor.card(radius: 28),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Stack(
+                      children: [
+                        const CustomPaint(
+                          size: Size.infinite,
+                          painter: FlatGridPainter(),
+                        ),
+                        GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
                           ),
-                      itemCount: 9,
-                      itemBuilder: (context, index) {
-                        final value = board[index];
-                        return GestureDetector(
-                          onTap: () => _handleTap(index),
-                          child: Container(
-                            color: Colors.transparent,
-                            child: Center(
-                              child: value == ''
-                                  ? null
-                                  : Text(
-                                      value,
-                                      style: GoogleFonts.permanentMarker(
-                                        fontSize: 70,
-                                        color: Colors.white.withValues(
-                                          alpha: 0.9,
-                                        ),
-                                        shadows: [
-                                          Shadow(
-                                            color: Colors.white.withValues(
-                                              alpha: 0.3,
-                                            ),
-                                            blurRadius: 5,
-                                            offset: const Offset(2, 2),
+                          itemCount: 9,
+                          itemBuilder: (context, index) {
+                            final value = board[index];
+                            return GestureDetector(
+                              onTap: () => _handleTap(index),
+                              child: Container(
+                                color: Colors.transparent,
+                                child: Center(
+                                  child: value == ''
+                                      ? null
+                                      : Text(
+                                          value,
+                                          style: GoogleFonts.cairo(
+                                            fontSize: 64,
+                                            fontWeight: FontWeight.w900,
+                                            height: 1,
+                                            color: value == 'X'
+                                                ? _xColor
+                                                : _oColor,
                                           ),
-                                        ],
-                                      ),
-                                    ).animate().fadeIn().scale(
-                                      begin: const Offset(0.5, 0.5),
-                                    ),
-                            ),
-                          ),
-                        );
-                      },
+                                        ).animate().fadeIn().scale(
+                                            begin: const Offset(0.5, 0.5),
+                                          ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        if (winningLine != null)
+                          CustomPaint(
+                            size: Size.infinite,
+                            painter: FlatWinLinePainter(winningLine!),
+                          ).animate().fadeIn(duration: 400.ms),
+                      ],
                     ),
-                    // Winning Line
-                    if (winningLine != null)
-                      CustomPaint(
-                        size: Size.infinite,
-                        painter: WinLinePainter(winningLine!),
-                      ).animate().fadeIn(duration: 400.ms),
-                  ],
+                  ),
                 ),
               ),
             ),
-
-            const SizedBox(height: 40),
-
             if (winner != null || isDraw)
-              TextButton.icon(
-                onPressed: _resetGame,
-                icon: const Icon(
-                  Icons.cleaning_services_rounded,
-                  color: Colors.white70,
-                ),
-                label: Text(
-                  'امسح الصبورة',
-                  style: GoogleFonts.cairo(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 26, top: 8),
+                child: GestureDetector(
+                  onTap: _resetGame,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 36, vertical: 14),
+                    decoration: FlatDecor.button(_xColor, radius: 18),
+                    child: Text(
+                      'العبوا تاني 🎯',
+                      style: FlatDecor.title(size: 18, color: Colors.white),
+                    ),
                   ),
-                ),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 15,
-                  ),
-                  side: const BorderSide(color: Colors.white38),
-                ),
-              ).animate().fadeIn().scale(),
-        ],
+                ).animate().fadeIn().scale(),
+              )
+            else
+              const SizedBox(height: 26),
+          ],
+        ),
       ),
     );
   }
@@ -374,3 +409,49 @@ class WinLinePainter extends CustomPainter {
 }
 
 
+
+
+/// Flat grid: soft ink rounded lines on the white card.
+class FlatGridPainter extends CustomPainter {
+  const FlatGridPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = FlatColors.ink.withValues(alpha: 0.14)
+      ..strokeWidth = 6
+      ..strokeCap = StrokeCap.round;
+    final w = size.width;
+    final h = size.height;
+    for (var i = 1; i < 3; i++) {
+      canvas.drawLine(
+          Offset(w * i / 3, 8), Offset(w * i / 3, h - 8), paint);
+      canvas.drawLine(
+          Offset(8, h * i / 3), Offset(w - 8, h * i / 3), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Flat win line: chunky amber rounded stroke.
+class FlatWinLinePainter extends CustomPainter {
+  final List<int> line;
+  const FlatWinLinePainter(this.line);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFFFC233)
+      ..strokeWidth = 10
+      ..strokeCap = StrokeCap.round;
+    Offset center(int i) => Offset(
+        (i % 3) * size.width / 3 + size.width / 6,
+        (i ~/ 3) * size.height / 3 + size.height / 6);
+    canvas.drawLine(center(line.first), center(line.last), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
