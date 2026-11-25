@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/results_service.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
@@ -117,6 +118,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
           final winnerIndex = winner == 'X' ? 0 : 1;
           if (winnerIndex < scoreService.players.length) {
             scoreService.addScore(scoreService.players[winnerIndex].name, 10);
+            ResultsService.instance.recordWin(game: 'إكس أو', winner: scoreService.players[winnerIndex].name, players: scoreService.players.map((p) => p.name).toList());
           }
         }
         return;

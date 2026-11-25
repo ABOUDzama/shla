@@ -314,7 +314,7 @@ class _CatchGameState extends State<CatchGame>
                 children: [
                   _buildScoreBar(),
                   if (_match.matchWinner != null)
-                    VictoryFriends(
+                    VictoryFriends(gameTitle: 'اقطفها', 
                         winnerName: 'لاعب ${_match.matchWinner! + 1}'),
                   Expanded(child: _buildRing()),
                   Text(

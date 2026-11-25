@@ -2,14 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/flat_theme.dart';
+import '../services/results_service.dart';
 
 /// Light victory celebration: the Shla friends cheer the match winner.
 /// Shown only on match-over screens — never during gameplay.
-class VictoryFriends extends StatelessWidget {
+class VictoryFriends extends StatefulWidget {
   /// Winner display name, e.g. 'لاعب 2' or a saved friend's name.
   final String winnerName;
 
-  const VictoryFriends({super.key, required this.winnerName});
+  /// When set, the win is recorded once in the الترتيب history.
+  final String? gameTitle;
+
+  const VictoryFriends({super.key, required this.winnerName, this.gameTitle});
+
+  @override
+  State<VictoryFriends> createState() => _VictoryFriendsState();
+}
+
+class _VictoryFriendsState extends State<VictoryFriends> {
+  @override
+  void initState() {
+    super.initState();
+    final g = widget.gameTitle;
+    if (g != null) {
+      ResultsService.instance.recordWin(game: g, winner: widget.winnerName);
+    }
+  }
+
 
   static const _friends = [
     'assets/avatars/card_blue.png',
@@ -55,7 +74,7 @@ class VictoryFriends extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          '$winnerName كسب! 🎉',
+          '${widget.winnerName} كسب! 🎉',
           style: flatCairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,

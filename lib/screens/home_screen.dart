@@ -1,3 +1,4 @@
+import 'leaderboard_screen.dart';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -151,6 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: _tab == 1
                   ? const ShelltyScreen(embedded: true)
+                  : _tab == 3
+                  ? const LeaderboardScreen(key: ValueKey('leaderboard'))
                   : _tab == 2
                       ? const ArcadeSectionScreen(embedded: true)
                       : SafeArea(
@@ -335,6 +338,16 @@ class _HomeScreenState extends State<HomeScreen> {
             if (_tab != 2) setState(() => _tab = 2);
           },
         ),
+        const SizedBox(width: 10),
+        _navCard(
+          label: 'الترتيب',
+          emoji: '🏆',
+          color: const Color(0xFF8B7CFF),
+          active: _tab == 3,
+          onTap: () {
+            if (_tab != 3) setState(() => _tab = 3);
+          },
+        ),
       ],
     );
   }
@@ -379,14 +392,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 2),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 2),
+                        horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
-                      label,
-                      style: FlatDecor.title(size: 12),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        style: FlatDecor.title(size: 12),
+                      ),
                     ),
                   ),
                 ],

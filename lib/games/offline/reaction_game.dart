@@ -224,7 +224,7 @@ class _ReactionGameState extends State<ReactionGame> {
                 ),
         ),
         if (_phase == _Phase.matchOver)
-          VictoryFriends(winnerName: 'لاعب ${_match.matchWinner! + 1}'),
+          VictoryFriends(gameTitle: 'أسرع رد فعل', winnerName: 'لاعب ${_match.matchWinner! + 1}'),
         Container(
           width: double.infinity,
           margin: const EdgeInsets.fromLTRB(12, 4, 12, 12),

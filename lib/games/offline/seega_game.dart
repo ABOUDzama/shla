@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/results_service.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../services/score_service.dart';
@@ -155,6 +156,7 @@ class _SeegaGameState extends State<SeegaGame> {
           final winnerIndex = board[line[0]] == 1 ? 0 : 1;
           if (winnerIndex < scoreService.players.length) {
             scoreService.addScore(scoreService.players[winnerIndex].name, 10);
+            ResultsService.instance.recordWin(game: 'سيجا', winner: scoreService.players[winnerIndex].name, players: scoreService.players.map((p) => p.name).toList());
           }
         }
         return;

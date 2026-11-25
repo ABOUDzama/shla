@@ -220,7 +220,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        VictoryFriends(winnerName: 'لاعب ${_match.winner! + 1}'),
+        VictoryFriends(gameTitle: 'شد الحبل', winnerName: 'لاعب ${_match.winner! + 1}'),
         const SizedBox(height: 16),
         FilledButton(
           onPressed: () => setState(() => _phase = _TugPhase.pickPlayers),

@@ -336,7 +336,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
             : Column(
                 children: [
                   if (_phase == _RacePhase.matchOver)
-                    VictoryFriends(
+                    VictoryFriends(gameTitle: 'سباق الدوس', 
                         winnerName: 'لاعب ${_match.matchWinner! + 1}'),
                   Padding(
                     padding: const EdgeInsets.all(10),

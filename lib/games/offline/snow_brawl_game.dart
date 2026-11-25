@@ -238,7 +238,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        VictoryFriends(winnerName: 'لاعب ${_match.winner! + 1}'),
+        VictoryFriends(gameTitle: 'معركة التلج', winnerName: 'لاعب ${_match.winner! + 1}'),
         const SizedBox(height: 16),
         FilledButton(
           onPressed: () => setState(() => _phase = _SnowPhase.pickPlayers),

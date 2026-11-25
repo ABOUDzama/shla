@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/results_service.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../services/score_service.dart';
@@ -254,6 +255,7 @@ class _GobbletGameState extends State<GobbletGame> {
         final winnerIndex = winnerPlayer - 1;
         if (winnerIndex >= 0 && winnerIndex < scoreService.players.length) {
           scoreService.addScore(scoreService.players[winnerIndex].name, 10);
+            ResultsService.instance.recordWin(game: 'جوبلت', winner: scoreService.players[winnerIndex].name, players: scoreService.players.map((p) => p.name).toList());
         }
       }
     }

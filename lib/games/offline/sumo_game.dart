@@ -291,7 +291,7 @@ class _SumoGameState extends State<SumoGame> {
             _buildRing(),
             _buildZone(0),
             if (_phase == _SumoPhase.over && _match.winner != null)
-              VictoryFriends(winnerName: 'لاعب ${_match.winner! + 1}'),
+              VictoryFriends(gameTitle: 'سومو الشلة', winnerName: 'لاعب ${_match.winner! + 1}'),
             if (_phase == _SumoPhase.over)
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),

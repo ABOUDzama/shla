@@ -183,7 +183,7 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (w != null)
-          VictoryFriends(winnerName: 'لاعب ${w + 1}')
+          VictoryFriends(gameTitle: 'لمّ الفلوس', winnerName: 'لاعب ${w + 1}')
         else
           Text(
             'تعادل! الكل لمّ نفس الفلوس 🪙',

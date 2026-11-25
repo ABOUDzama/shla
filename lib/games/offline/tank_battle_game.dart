@@ -252,7 +252,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
             ).copyWith(fontFamilyFallback: _emojiFallback),
           )
         else if (_match.winner != null)
-          VictoryFriends(
+          VictoryFriends(gameTitle: 'دبابات الشلة', 
               winnerName: _match.winner! < _humans
                   ? 'لاعب ${_match.winner! + 1}'
                   : 'بوت ${_match.winner! + 1}')

@@ -162,7 +162,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (w != null && w >= 0)
-          VictoryFriends(winnerName: 'لاعب ${w + 1}')
+          VictoryFriends(gameTitle: 'حية الشلة', winnerName: 'لاعب ${w + 1}')
         else
           Text(
             'تعادل! الكل وقع في بعض 😅',

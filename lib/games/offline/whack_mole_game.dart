@@ -216,7 +216,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (w != null)
-          VictoryFriends(winnerName: 'لاعب ${w + 1}')
+          VictoryFriends(gameTitle: 'اضرب الخلد', winnerName: 'لاعب ${w + 1}')
         else
           Text(
             'تعادل! الكل ضرب نفس العدد 🔨',

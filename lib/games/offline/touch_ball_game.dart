@@ -319,7 +319,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
             : Column(
                 children: [
                   if (_phase == _BallPhase.matchOver)
-                    VictoryFriends(
+                    VictoryFriends(gameTitle: 'كورة اللمسة', 
                         winnerName: 'لاعب ${_match.matchWinner! + 1}'),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
