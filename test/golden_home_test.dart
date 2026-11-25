@@ -167,4 +167,42 @@ Future<void> warmGoogleFonts(WidgetTester tester) async {
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
+
+  testWidgets('goldens: ١٢٣٤ arcade section full lobby', (tester) async {
+    tester.view.physicalSize = const Size(412, 1500);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    await warmGoogleFonts(tester);
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: HomeScreen(),
+        ),
+      ),
+    );
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 500));
+    }
+    await tester.tap(find.text('١٢٣٤'));
+    await tester.pump();
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+    final homeCtx = tester.element(find.byType(HomeScreen));
+    await tester.runAsync(() async {
+      for (final path in ArcadeSectionScreen.covers.values) {
+        await precacheImage(AssetImage(path), homeCtx);
+      }
+    });
+    await tester.pump();
+    await expectLater(
+      find.byType(HomeScreen),
+      matchesGoldenFile('goldens/home_arcade_full.png'),
+    );
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
 }

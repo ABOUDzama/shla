@@ -14,4 +14,4 @@ Pages viewed in cloud browser (lease released, outcome success/found on play.goo
 playstickmanparty.com/all-stickman-party-mini-games/ (fan), 1-2-3-4-player-games1.apk.cafe (aggregator), xworld.biz/en-US/products/1249, apkpure.com/2-3-4-player-mini-games/com.ction.playergames, appbrain.com/app/1234-player-games-3d-offline/player4.mini.multiplayer.four.party.players, gamebrain.co/game/1234-player-games-3doffline, appgoblin.info/developers/Byte+Tale+Coders. Dark Halo catalog unknown; Byte Tale "1234 Player Games: Stickman" identity screenshot-only (/downloads/image-b983895b.jpg).
 
 ## Art direction (2026-11-25)
-Original illustrated covers hand-drawn vector-style (PIL, 512x512, assets/covers/). One scene per game matched to real mechanics. Never copy reference assets. Done: snake_arena, reaction, tug_of_war, tank_battle, catch, sumo.
+Original illustrated covers hand-drawn vector-style (PIL, 512x512, assets/covers/). One scene per game matched to real mechanics. Never copy reference assets. Done (all 10 arcade games): snake_arena, reaction, tug_of_war, tank_battle, catch, sumo, snow_brawl, coin_grab, tap_race, touch_ball. Lobby has no placeholder covers.

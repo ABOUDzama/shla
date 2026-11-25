@@ -41,6 +41,7 @@ import '../games/offline/snake_arena_game.dart';
 import '../games/offline/tank_battle_game.dart';
 import '../games/offline/tug_of_war_game.dart';
 import '../games/offline/snow_brawl_game.dart';
+import '../games/offline/coin_grab_game.dart';
 import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
@@ -340,6 +341,15 @@ class GameRegistry {
       icon: Icons.ac_unit,
       color: FunkyColors.sky,
       screen: SnowBrawlGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'لمّ الفلوس',
+      description: 'دراعك بيلف.. دوس في اللحظة الصح ولمّ أكتر فلوس قبل ما الكوم يخلص!',
+      icon: Icons.monetization_on,
+      color: FunkyColors.amber,
+      screen: CoinGrabGame(),
       badge: 'جديد',
       arcade1234: true,
     ),

@@ -9,6 +9,7 @@ import 'package:shella/games/offline/snake_arena_game.dart';
 import 'package:shella/games/offline/tank_battle_game.dart';
 import 'package:shella/games/offline/tug_of_war_game.dart';
 import 'package:shella/games/offline/snow_brawl_game.dart';
+import 'package:shella/games/offline/coin_grab_game.dart';
 import 'package:shella/games/offline/sumo_game.dart';
 import 'package:shella/games/offline/tap_race_game.dart';
 import 'package:shella/games/offline/touch_ball_game.dart';
@@ -213,6 +214,20 @@ void main() {
       await tester.pump(const Duration(milliseconds: 250));
     }
     await snap(tester, 'snow_brawl_live_4p');
+    await settleDown(tester);
+  });
+  testWidgets('proof: coin grab live 4p', (tester) async {
+    await prep(tester, const CoinGrabGame(randomSeed: 7));
+    await tester.tap(find.text('4 لاعبين'));
+    await tester.pump();
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 250));
+    }
+    await tester.tap(find.text('لاعب 1 🪙'));
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 250));
+    }
+    await snap(tester, 'coin_grab_live_4p');
     await settleDown(tester);
   });
 }
