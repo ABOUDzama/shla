@@ -248,27 +248,90 @@ class _TankPainter extends CustomPainter {
       bg,
     );
 
-    // tanks
+    // ground detail: grid dots + faint craters
+    final dot = Paint()..color = Colors.white.withValues(alpha: 0.05);
+    for (var gy = 0.1; gy < 1; gy += 0.1) {
+      for (var gx = 0.1; gx < 1; gx += 0.1) {
+        canvas.drawCircle(at(gx, gy), side * 0.004, dot);
+      }
+    }
+
+    // tanks: tracks, hull, turret, barrel
     for (var p = 0; p < match.playerCount; p++) {
       final a = TankBattleMatch.anchors[p];
       final c = at(a.x, a.y);
       final r = TankBattleMatch.tankRadius * side;
-      final body = Paint()..color = colors[p];
-      canvas.drawCircle(c, r, body);
-      // turret line showing current aim
+      final col = colors[p];
+      final dark = Color.lerp(col, Colors.black, 0.45)!;
+      final light = Color.lerp(col, Colors.white, 0.25)!;
       final aim = match.aimAngle(p);
-      final barrel = Paint()
-        ..color = Colors.white
-        ..strokeWidth = r * 0.35
-        ..strokeCap = StrokeCap.round;
-      canvas.drawLine(
-          c, c + Offset(cos(aim), sin(aim)) * r * 1.6, barrel);
+
+      canvas.save();
+      canvas.translate(c.dx, c.dy);
+      canvas.rotate(aim);
+      // tracks
+      for (final ty in [-r * 0.62, r * 0.32]) {
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(-r * 1.05, ty, r * 1.7, r * 0.3),
+            Radius.circular(r * 0.15),
+          ),
+          Paint()..color = dark,
+        );
+        for (var wx = -r * 0.85; wx <= r * 0.55; wx += r * 0.35) {
+          canvas.drawCircle(
+            Offset(wx, ty + r * 0.15),
+            r * 0.08,
+            Paint()..color = Colors.white24,
+          );
+        }
+      }
+      // hull
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(-r * 0.95, -r * 0.45, r * 1.5, r * 0.9),
+          Radius.circular(r * 0.2),
+        ),
+        Paint()..color = col,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(-r * 0.95, -r * 0.45, r * 0.5, r * 0.9),
+          Radius.circular(r * 0.2),
+        ),
+        Paint()..color = light.withValues(alpha: 0.5),
+      );
+      // turret dome
+      canvas.drawCircle(Offset(-r * 0.1, 0), r * 0.42, Paint()..color = col);
+      canvas.drawCircle(
+          Offset(-r * 0.1, 0), r * 0.42, Paint()
+        ..color = dark
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = r * 0.08);
+      // barrel
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(r * 0.15, -r * 0.11, r * 1.05, r * 0.22),
+          Radius.circular(r * 0.08),
+        ),
+        Paint()..color = dark,
+      );
+      canvas.drawCircle(Offset(r * 1.2, 0), r * 0.14, Paint()..color = dark);
+      canvas.restore();
     }
 
-    // shells
-    final shellPaint = Paint()..color = FunkyColors.amber;
+    // shells with motion trails
     for (final s in match.shells) {
-      canvas.drawCircle(at(s.x, s.y), side * 0.012, shellPaint);
+      final pos = at(s.x, s.y);
+      final trail = Paint()
+        ..color = FunkyColors.amber.withValues(alpha: 0.5)
+        ..strokeWidth = side * 0.008
+        ..strokeCap = StrokeCap.round;
+      canvas.drawLine(pos, pos - Offset(s.dx, s.dy) * side * 6, trail);
+      canvas.drawCircle(
+          pos, side * 0.014, Paint()..color = FunkyColors.amber);
+      canvas.drawCircle(
+          pos, side * 0.007, Paint()..color = const Color(0xFFFFF3C0));
     }
   }
 

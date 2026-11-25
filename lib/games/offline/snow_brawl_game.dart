@@ -299,7 +299,20 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
                   Expanded(
                     child: _phase == _SnowPhase.over
                         ? Center(child: _buildOver())
-                        : const SizedBox.shrink(),
+                        : Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: CustomPaint(
+                                  painter: _SnowFieldPainter(
+                                    match: _match,
+                                    colors: _colors,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
@@ -314,4 +327,135 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
       ),
     );
   }
+}
+
+class _SnowFieldPainter extends CustomPainter {
+  _SnowFieldPainter({required this.match, required this.colors});
+
+  final SnowBrawlMatch match;
+  final List<Color> colors;
+
+  static const List<Offset> _forts = [
+    Offset(0.14, 0.14),
+    Offset(0.86, 0.14),
+    Offset(0.86, 0.86),
+    Offset(0.14, 0.86),
+  ];
+
+  void _fort(Canvas canvas, Offset c, double s, Color col, bool alive) {
+    final body = alive ? col : const Color(0xFF3A3550);
+    final dark = Color.lerp(body, Colors.black, 0.35)!;
+    final w = s * 0.9;
+    // main tower
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(c.dx - w / 2, c.dy - w * 0.55, w, w * 0.9),
+        Radius.circular(w * 0.08),
+      ),
+      Paint()..color = body,
+    );
+    // battlements
+    for (var k = -1; k <= 1; k++) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+            c.dx + k * w * 0.36 - w * 0.11, c.dy - w * 0.78, w * 0.22, w * 0.26),
+        Paint()..color = body,
+      );
+    }
+    // snow cap
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(c.dx - w * 0.58, c.dy - w * 0.86, w * 1.16, w * 0.14),
+        Radius.circular(w * 0.07),
+      ),
+      Paint()..color = Colors.white.withValues(alpha: alive ? 0.95 : 0.3),
+    );
+    // gate
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(c.dx - w * 0.14, c.dy - w * 0.02, w * 0.28, w * 0.37),
+        Radius.circular(w * 0.1),
+      ),
+      Paint()..color = dark,
+    );
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    Offset at(double x, double y) => Offset(x * w, y * w);
+
+    // sky
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(20)),
+      Paint()..color = const Color(0xFF101C38),
+    );
+    // snow ground
+    final ground = Path()
+      ..moveTo(0, w * 0.62)
+      ..quadraticBezierTo(w * 0.25, w * 0.56, w * 0.5, w * 0.62)
+      ..quadraticBezierTo(w * 0.75, w * 0.68, w, w * 0.6)
+      ..lineTo(w, w)
+      ..lineTo(0, w)
+      ..close();
+    canvas.drawPath(ground, Paint()..color = const Color(0xFFDDE8F4));
+    canvas.drawPath(
+      ground,
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.35)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
+
+    // falling flakes (position varies with tick for motion)
+    final flake = Paint()..color = Colors.white.withValues(alpha: 0.5);
+    for (var i = 0; i < 22; i++) {
+      final fx = ((i * 0.173 + 0.05) % 1.0) * w;
+      final fy = (((i * 0.311 + match.tickCount * 0.004) % 1.0)) * w * 0.58;
+      canvas.drawCircle(Offset(fx, fy), 1.6 + (i % 3), flake);
+    }
+
+    // forts
+    for (var p = 0; p < match.playerCount; p++) {
+      _fort(canvas, at(_forts[p].dx, _forts[p].dy), w * 0.12, colors[p],
+          match.alive(p));
+    }
+
+    // aim arcs: each alive player lobs toward their current target
+    for (var p = 0; p < match.playerCount; p++) {
+      if (!match.alive(p)) continue;
+      final t = match.targetOf(p);
+      if (t == p) continue;
+      final from = at(_forts[p].dx, _forts[p].dy - 0.1);
+      final to = at(_forts[t].dx, _forts[t].dy - 0.08);
+      final mid = Offset((from.dx + to.dx) / 2,
+          min(from.dy, to.dy) - w * 0.16);
+      final arc = Path()
+        ..moveTo(from.dx, from.dy)
+        ..quadraticBezierTo(mid.dx, mid.dy, to.dx, to.dy);
+      canvas.drawPath(
+        arc,
+        Paint()
+          ..color = colors[p].withValues(alpha: 0.45)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5,
+      );
+      // snowball riding the arc at the power-meter phase
+      final ball = Paint()..color = Colors.white;
+      final bx = from.dx + (to.dx - from.dx) * match.phase;
+      final t2 = match.phase;
+      final by = (1 - t2) * (1 - t2) * from.dy +
+          2 * (1 - t2) * t2 * mid.dy +
+          t2 * t2 * to.dy;
+      canvas.drawCircle(Offset(bx, by), w * 0.018, ball);
+      canvas.drawCircle(Offset(bx, by), w * 0.018,
+          Paint()
+            ..color = const Color(0xFFB8CCe0)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.5);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SnowFieldPainter oldDelegate) => true;
 }

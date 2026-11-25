@@ -315,7 +315,19 @@ class _TugPainter extends CustomPainter {
       bg,
     );
 
-    // anchors at the four edges with player colors
+    // home ring at the center
+    canvas.drawCircle(
+        center,
+        side * 0.06,
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.12)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = side * 0.008);
+
+    final knot = Offset(center.dx + match.kx * side * 0.42,
+        center.dy + match.ky * side * 0.42);
+
+    // anchors at the four edges: cartoon arm + fist gripping a twisted rope
     const anchors = [
       Offset(0.06, 0.5),
       Offset(0.94, 0.5),
@@ -325,22 +337,74 @@ class _TugPainter extends CustomPainter {
     for (var p = 0; p < match.playerCount; p++) {
       final a = anchors[p];
       final c = Offset(ox + a.dx * side, oy + a.dy * side);
+      final col = colors[p];
+      final dark = Color.lerp(col, Colors.black, 0.4)!;
+
+      // twisted rope from fist to knot
+      final ropePaint = Paint()
+        ..color = const Color(0xFFDEB878)
+        ..strokeWidth = side * 0.022
+        ..strokeCap = StrokeCap.round;
+      canvas.drawLine(c, knot, ropePaint);
+      // rope twist marks
+      final dir = (knot - c);
+      final len = dir.distance;
+      if (len > 0) {
+        final unit = dir / len;
+        final perp = Offset(-unit.dy, unit.dx);
+        final twist = Paint()
+          ..color = const Color(0xFFBE965A)
+          ..strokeWidth = side * 0.006
+          ..strokeCap = StrokeCap.round;
+        for (var t = side * 0.06; t < len - side * 0.05; t += side * 0.045) {
+          final m = c + unit * t;
+          canvas.drawLine(
+              m - perp * side * 0.011 + unit * side * 0.008,
+              m + perp * side * 0.011 - unit * side * 0.008,
+              twist);
+        }
+      }
+
+      // arm: capsule sleeve in player color pointing at the knot
+      final inward = (knot - c);
+      final u = inward.distance > 0 ? inward / inward.distance : Offset.zero;
+      final elbow = c - u * side * 0.02;
+      final fist = c + u * side * 0.05;
+      canvas.drawLine(
+          elbow,
+          fist,
+          Paint()
+            ..color = col
+            ..strokeWidth = side * 0.05
+            ..strokeCap = StrokeCap.round);
+      // fist on the rope
+      canvas.drawCircle(fist, side * 0.038, Paint()..color = col);
       canvas.drawCircle(
-          c, side * 0.045, Paint()..color = colors[p].withValues(alpha: 0.9));
+          fist,
+          side * 0.038,
+          Paint()
+            ..color = dark
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = side * 0.007);
+      // knuckle lines
+      for (var k = -1; k <= 1; k++) {
+        final kp = fist + Offset(-u.dy, u.dx) * (k * side * 0.016);
+        canvas.drawCircle(kp + u * side * 0.018, side * 0.008,
+            Paint()..color = dark.withValues(alpha: 0.7));
+      }
     }
 
-    // rope from center to knot
-    final knot = Offset(center.dx + match.kx * side * 0.42,
-        center.dy + match.ky * side * 0.42);
-    final rope = Paint()
-      ..color = FunkyColors.amber
-      ..strokeWidth = side * 0.015
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(center, knot, rope);
-    canvas.drawCircle(center, side * 0.012, Paint()..color = Colors.white24);
-    canvas.drawCircle(knot, side * 0.035, Paint()..color = FunkyColors.amber);
+    // knot
+    canvas.drawCircle(knot, side * 0.038, Paint()..color = FunkyColors.amber);
     canvas.drawCircle(
-        knot, side * 0.02, Paint()..color = FunkyColors.magenta);
+        knot,
+        side * 0.038,
+        Paint()
+          ..color = FunkyColors.magenta
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = side * 0.008);
+    canvas.drawCircle(
+        knot, side * 0.012, Paint()..color = const Color(0xFFFFF3C0));
   }
 
   @override

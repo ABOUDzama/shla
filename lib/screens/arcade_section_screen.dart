@@ -25,6 +25,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'شد الحبل': [2, 3, 4],
     'معركة التلج': [2, 3, 4],
     'لمّ الفلوس': [2, 3, 4],
+    'اضرب الخلد': [2, 3, 4],
     'سومو الشلة': [2],
     'اقطفها': [2, 3, 4],
     'سباق الدوس': [2, 3, 4],
@@ -45,6 +46,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'لمّ الفلوس': 'assets/covers/coin_grab.png',
     'سباق الدوس': 'assets/covers/tap_race.png',
     'كورة اللمسة': 'assets/covers/touch_ball.png',
+    'اضرب الخلد': 'assets/covers/whack_mole.png',
   };
 
   static const Map<String, String> _emoji = {
@@ -54,6 +56,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'شد الحبل': '💪',
     'معركة التلج': '❄',
     'لمّ الفلوس': '🪙',
+    'اضرب الخلد': '🔨',
     'سومو الشلة': '🤼',
     'اقطفها': '🐟',
     'سباق الدوس': '👟',

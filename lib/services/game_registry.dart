@@ -42,6 +42,7 @@ import '../games/offline/tank_battle_game.dart';
 import '../games/offline/tug_of_war_game.dart';
 import '../games/offline/snow_brawl_game.dart';
 import '../games/offline/coin_grab_game.dart';
+import '../games/offline/whack_mole_game.dart';
 import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
@@ -341,6 +342,15 @@ class GameRegistry {
       icon: Icons.ac_unit,
       color: FunkyColors.sky,
       screen: SnowBrawlGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'اضرب الخلد',
+      description: 'الخلد بيطلع وينزل بسرعة.. اضربه في مربعك قبل ما يهرب واجمع أكتر نقط!',
+      icon: Icons.grid_on,
+      color: FunkyColors.lime,
+      screen: WhackMoleGame(),
       badge: 'جديد',
       arcade1234: true,
     ),

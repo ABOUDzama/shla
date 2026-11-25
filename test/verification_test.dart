@@ -246,6 +246,7 @@ void main() {
       'شد الحبل',
       'معركة التلج',
       'لمّ الفلوس',
+      'اضرب الخلد',
       'سومو الشلة',
       'اقطفها',
       'سباق الدوس',
@@ -263,6 +264,12 @@ void main() {
     expect(find.text('٢ بس'), findsOneWidget);
 
     // game-first: tapping a card opens the game, its own picker asks count
+    await tester.scrollUntilVisible(
+      find.text('شد الحبل'),
+      -250,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('شد الحبل'));
     for (var i = 0; i < 3; i++) {
       await tester.pump(const Duration(milliseconds: 500));

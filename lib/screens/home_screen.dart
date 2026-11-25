@@ -37,6 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
     'جوبلت': '🥤',
     'لعبة الأسئلة': '❓',
     'قنبلة الحروف': '💣',
+    'معركة التلج': '❄',
+    'لمّ الفلوس': '🪙',
+    'اضرب الخلد': '🔨',
     'تحدي اللمس': '👆',
     'تحدي التوازن': '⚖',
     'تحدي الـ ٥ ثواني': '⏱',
@@ -132,7 +135,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final games = GameRegistry.games;
+    // User instruction (2026-11-25): 1234 arcade games live exclusively in
+    // the ١٢٣٤ section, never duplicated in the main الألعاب grid.
+    final games =
+        GameRegistry.games.where((g) => g.arcade1234 != true).toList();
 
     return Scaffold(
       backgroundColor: FlatColors.bg,
@@ -303,20 +309,29 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Deep-violet floating bar; each tab lights up in its own bright color.
+  /// Redesigned 2026-11-25 after the user rejected the white pill.
   Widget _buildBottomNav() {
     return Container(
-      height: 60,
+      height: 62,
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: FlatColors.ink,
         borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: FlatColors.border, width: 2),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x552B2140),
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
         children: [
           _modePill(
             label: 'الألعاب',
             icon: Icons.grid_view_rounded,
+            activeColor: const Color(0xFFFF8A5C),
             active: _tab == 0,
             onTap: () {
               if (_tab != 0) setState(() => _tab = 0);
@@ -325,6 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _modePill(
             label: 'شلتي',
             icon: Icons.groups_rounded,
+            activeColor: const Color(0xFF35C99E),
             active: _tab == 1,
             onTap: () {
               if (_tab != 1) setState(() => _tab = 1);
@@ -333,6 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _modePill(
             label: '١٢٣٤',
             icon: Icons.sports_esports_rounded,
+            activeColor: const Color(0xFFFFC233),
             active: _tab == 2,
             onTap: () {
               if (_tab != 2) setState(() => _tab = 2);
@@ -346,6 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _modePill({
     required String label,
     required IconData icon,
+    required Color activeColor,
     required bool active,
     required VoidCallback onTap,
   }) {
@@ -355,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           decoration: BoxDecoration(
-            color: active ? FlatColors.ink : Colors.transparent,
+            color: active ? activeColor : Colors.transparent,
             borderRadius: BorderRadius.circular(32),
           ),
           child: Row(
@@ -364,14 +382,14 @@ class _HomeScreenState extends State<HomeScreen> {
               Icon(
                 icon,
                 size: 18,
-                color: active ? Colors.white : FlatColors.ink,
+                color: active ? FlatColors.ink : Colors.white70,
               ),
               const SizedBox(width: 6),
               Text(
                 label,
                 style: FlatDecor.title(
                   size: 13,
-                  color: active ? Colors.white : FlatColors.ink,
+                  color: active ? FlatColors.ink : Colors.white70,
                 ),
               ),
             ],

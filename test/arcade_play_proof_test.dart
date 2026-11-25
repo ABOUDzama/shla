@@ -10,6 +10,7 @@ import 'package:shella/games/offline/tank_battle_game.dart';
 import 'package:shella/games/offline/tug_of_war_game.dart';
 import 'package:shella/games/offline/snow_brawl_game.dart';
 import 'package:shella/games/offline/coin_grab_game.dart';
+import 'package:shella/games/offline/whack_mole_game.dart';
 import 'package:shella/games/offline/sumo_game.dart';
 import 'package:shella/games/offline/tap_race_game.dart';
 import 'package:shella/games/offline/touch_ball_game.dart';
@@ -228,6 +229,21 @@ void main() {
       await tester.pump(const Duration(milliseconds: 250));
     }
     await snap(tester, 'coin_grab_live_4p');
+    await settleDown(tester);
+  });
+  testWidgets('proof: whack mole live 4p', (tester) async {
+    await prep(tester, const WhackMoleGame(randomSeed: 7));
+    await tester.tap(find.text('4 لاعبين'));
+    await tester.pump();
+    // let a few moles pop
+    for (var i = 0; i < 14; i++) {
+      await tester.pump(const Duration(milliseconds: 250));
+    }
+    await tester.tap(find.byKey(const Key('mole_grid_0')));
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 250));
+    }
+    await snap(tester, 'whack_mole_live_4p');
     await settleDown(tester);
   });
 }
