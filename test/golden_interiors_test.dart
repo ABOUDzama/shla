@@ -42,10 +42,10 @@ void main() {
       await loader.load();
     }
     // Emoji coverage so emoji-heavy interiors render real glyphs.
-    final emojiBytes = await File(
-      Platform.environment['HOME']! +
-          '/sdk/flutter/engine/src/flutter/txt/third_party/fonts/NotoColorEmoji.ttf',
-    ).readAsBytes();
+    // Current Noto Color Emoji (the SDK-bundled copy is years old and lacks
+    // Emoji 5+ glyphs like 🧠/🧩; modern Android devices ship the new one).
+    final emojiBytes =
+        await File('test/fonts_NotoColorEmoji.ttf').readAsBytes();
     final emojiLoader = FontLoader('Noto Color Emoji')
       ..addFont(Future.value(ByteData.sublistView(emojiBytes)));
     await emojiLoader.load();
