@@ -311,29 +311,186 @@ class _MafiaGameState extends State<MafiaGame> {
   }
 
   // ---- Deal ----
+  // Preview of the reference-backed visual direction (WePlay/Triple Agent):
+  // dominant full-frame role reveal keyed to role color, huge hero emoji,
+  // avatar chip, chunky controls, deal progress pill.
+
+  (Color, String, String) _roleVisual(String role) {
+    switch (role) {
+      case MafiaGame.mafia:
+        return (FunkyColors.coral, '🔫', 'مافيا');
+      case MafiaGame.doctor:
+        return (FunkyColors.mint, '🩺', 'الدكتور');
+      case MafiaGame.detective:
+        return (FunkyColors.sky, '🕵', 'المحقق');
+      default:
+        return (FunkyColors.violet, '🧑', 'من المدنيين');
+    }
+  }
 
   Widget _buildDeal() {
     final name = _names[_dealIndex];
-    return _passAndPlayCard(
-      phaseLabel: 'توزيع الأدوار 🤫',
-      playerName: name,
-      secret: _roleLabel(_roles[name]!),
-      secretHint: 'افتكر دورك كويس.. ومتوريهوش لحد!',
-      nextLabel: _dealIndex + 1 < _names.length
-          ? 'اللاعب اللي بعده'
-          : 'ابدأ الليل 🌙',
-      onNext: () {
-        if (_dealIndex + 1 < _names.length) {
-          setState(() {
-            _dealIndex++;
-            _cardRevealed = false;
-          });
-        } else {
-          setState(() => _dealIndex++);
-        }
-      },
-      revealed: _cardRevealed,
-      onReveal: () => setState(() => _cardRevealed = true),
+    final (accent, heroEmoji, roleTitle) = _roleVisual(_roles[name]!);
+    final isLast = _dealIndex + 1 >= _names.length;
+    return Container(
+      // Full-bleed background keyed to the revealed role color.
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: _cardRevealed
+              ? [accent.withValues(alpha: 0.55), FunkyColors.bgDeep]
+              : [FunkyColors.bgMid, FunkyColors.bgDeep],
+        ),
+        borderRadius: BorderRadius.circular(28),
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Progress pill: deal 2 of 6.
+          Center(
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: FunkyDecor.pill(FunkyColors.violet),
+              child: Text(
+                'الدور ${_dealIndex + 1} من ${_names.length} 🤫',
+                style: GoogleFonts.cairo(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Avatar chip with the player initial.
+          Center(
+            child: Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                gradient: FunkyDecor.accentGradient(accent),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: accent.withValues(alpha: 0.5),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  name.characters.first,
+                  style: GoogleFonts.cairo(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.cairo(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: Center(
+              child: _cardRevealed
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(heroEmoji, style: const TextStyle(fontSize: 84))
+                            .animate()
+                            .scale(
+                                duration: 350.ms,
+                                curve: Curves.elasticOut),
+                        const SizedBox(height: 12),
+                        Text(
+                          roleTitle,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.cairo(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ).copyWith(
+                              fontFamilyFallback: const [
+                                'Noto Color Emoji'
+                              ]),
+                        ).animate().fadeIn(duration: 250.ms),
+                        const SizedBox(height: 8),
+                        Text(
+                          'افتكر دورك كويس.. ومتوريهوش لحد!',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.cairo(
+                              fontSize: 13, color: Colors.white60),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('🤫', style: TextStyle(fontSize: 64)),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 24),
+                          child: FunkyButton(
+                            label: 'شوف دورك يا $name',
+                            accent: accent,
+                            icon: Icons.visibility_rounded,
+                            onPressed: () =>
+                                setState(() => _cardRevealed = true),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'بس $name اللي يشوف!',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.cairo(
+                              fontSize: 13, color: Colors.white60),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          FunkyButton(
+            label: _cardRevealed
+                ? (isLast ? 'ابدأ الليل 🌙' : 'اللاعب اللي بعده')
+                : 'استنى.. متبصش 👀',
+            accent: _cardRevealed ? FunkyColors.mint : accent,
+            icon: _cardRevealed
+                ? Icons.arrow_forward_rounded
+                : Icons.block,
+            onPressed: _cardRevealed
+                ? () {
+                    if (!isLast) {
+                      setState(() {
+                        _dealIndex++;
+                        _cardRevealed = false;
+                      });
+                    } else {
+                      setState(() => _dealIndex++);
+                    }
+                  }
+                : null,
+          ),
+        ],
+      ),
     );
   }
 
@@ -740,109 +897,4 @@ class _MafiaGameState extends State<MafiaGame> {
     );
   }
 
-  // ---- Shared pass-and-play card ----
-
-  Widget _passAndPlayCard({
-    required String phaseLabel,
-    required String playerName,
-    required String secret,
-    required String secretHint,
-    required String nextLabel,
-    required VoidCallback onNext,
-    required bool revealed,
-    required VoidCallback onReveal,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          phaseLabel,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
-            fontSize: 20,
-            fontWeight: FontWeight.w900,
-            color: Colors.white,
-          ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
-        ),
-        const SizedBox(height: 20),
-        Expanded(
-          child: Container(
-            decoration: FunkyDecor.glowCard(FunkyColors.coral, radius: 26),
-            child: Center(
-              child: revealed
-                  ? Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            playerName,
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.cairo(
-                              fontSize: 18,
-                              color: Colors.white70,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            secret,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
-                              fontSize: 34,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                            ).copyWith(
-                                fontFamilyFallback: const [
-                                  'Noto Color Emoji'
-                                ]),
-                          ).animate().scale(duration: 300.ms),
-                          const SizedBox(height: 12),
-                          Text(
-                            secretHint,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
-                                fontSize: 13, color: Colors.white60),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('🤫', style: TextStyle(fontSize: 56)),
-                        const SizedBox(height: 16),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          child: FunkyButton(
-                            label: 'شوف دورك يا $playerName',
-                            accent: FunkyColors.coral,
-                            icon: Icons.visibility_rounded,
-                            onPressed: onReveal,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'بس $playerName اللي يشوف!',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.cairo(
-                              fontSize: 13, color: Colors.white60),
-                        ),
-                      ],
-                    ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-        FunkyButton(
-          label: revealed ? nextLabel : 'استنى.. متبصش 👀',
-          accent: revealed ? FunkyColors.mint : FunkyColors.coral,
-          icon: revealed ? Icons.arrow_forward_rounded : Icons.block,
-          onPressed: revealed ? onNext : null,
-        ),
-      ],
-    );
-  }
 }
