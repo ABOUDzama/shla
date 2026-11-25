@@ -231,7 +231,7 @@ class _MemoryGameState extends State<MemoryGame> {
                         size: 14,
                         color: i == _turn
                             ? currentAccent
-                            : FlatColors.ink.withValues(alpha: 0.55),
+                            : FlatColors.ink.withValues(alpha: 0.75),
                       ),
                     ),
                   ),

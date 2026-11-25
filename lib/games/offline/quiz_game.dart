@@ -450,8 +450,7 @@ class _QuizGameState extends State<QuizGame> {
                               'انقر لرؤية الإجابة 💡',
                               style: GoogleFonts.cairo(
                                 fontSize: 15,
-                                fontStyle: FontStyle.italic,
-                                color: FlatColors.tilePastels[3],
+                                color: FlatColors.ink.withValues(alpha: 0.75),
                                 fontWeight: FontWeight.bold,
                               ).copyWith(
                                   fontFamilyFallback:
@@ -528,7 +527,7 @@ class _QuizGameState extends State<QuizGame> {
                           Text(
                             'لاعبين ${_players.length}',
                             style: GoogleFonts.cairo(
-                              color: FlatColors.ink.withValues(alpha: 0.55),
+                              color: FlatColors.ink.withValues(alpha: 0.75),
                               fontSize: 12,
                             ),
                           ),
