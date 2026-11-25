@@ -78,6 +78,15 @@ void main() {
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 400));
     }
+    // QA: the last game ticket must scroll fully clear of the floating
+    // offline/online switch at the bottom.
+    final lastGame = find.text('إيموجي إيه؟');
+    expect(lastGame, findsOneWidget);
+    final lastRect = tester.getRect(lastGame);
+    final switchRect = tester.getRect(find.text('أونلاين'));
+    expect(lastRect.bottom, lessThan(switchRect.top),
+        reason: 'last ticket hidden behind mode switch: '
+            'last=$lastRect switch=$switchRect');
     await expectLater(
       find.byType(HomeScreen),
       matchesGoldenFile('goldens/home_screen_new_games.png'),

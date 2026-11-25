@@ -8,11 +8,11 @@ import 'package:google_fonts/google_fonts.dart';
 class FunkyColors {
   FunkyColors._();
 
-  // Base: deep space purple (dark enough to keep text readable).
-  static const Color bgDeep = Color(0xFF160A2E);
-  static const Color bgMid = Color(0xFF2A1454);
-  static const Color card = Color(0xFF2D1B4E);
-  static const Color cardLight = Color(0xFF3D2666);
+  // Base: near-black indigo (dark enough to keep text readable).
+  static const Color bgDeep = Color(0xFF0B0820);
+  static const Color bgMid = Color(0xFF1A1140);
+  static const Color card = Color(0xFF231640);
+  static const Color cardLight = Color(0xFF32205C);
 
   // Vivid accents.
   static const Color magenta = Color(0xFFFF2D92);
@@ -88,27 +88,35 @@ class FunkyText {
 class FunkyDecor {
   FunkyDecor._();
 
-  /// A glowing rounded card lifted off the background with an accent tint.
+  /// A glowing rounded card lifted off the background: accent wash from
+  /// the bottom, a bright top sheen, and a two-tone accent edge.
   static BoxDecoration glowCard(Color accent,
-      {double radius = 24, double alpha = 0.16}) {
+      {double radius = 26, double alpha = 0.22}) {
     return BoxDecoration(
       color: FunkyColors.card,
       borderRadius: BorderRadius.circular(radius),
-      border: Border.all(color: accent.withValues(alpha: 0.65), width: 1.6),
+      border: Border.all(color: accent.withValues(alpha: 0.75), width: 1.8),
       boxShadow: [
         BoxShadow(
-          color: accent.withValues(alpha: 0.35),
-          blurRadius: 24,
-          spreadRadius: -4,
-          offset: const Offset(0, 10),
+          color: accent.withValues(alpha: 0.40),
+          blurRadius: 26,
+          spreadRadius: -6,
+          offset: const Offset(0, 12),
+        ),
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.35),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
         ),
       ],
       gradient: LinearGradient(
-        begin: Alignment.topRight,
-        end: Alignment.bottomLeft,
+        begin: Alignment.bottomRight,
+        end: Alignment.topLeft,
+        stops: const [0.0, 0.55, 1.0],
         colors: [
           accent.withValues(alpha: alpha),
           FunkyColors.card,
+          Colors.white.withValues(alpha: 0.07),
         ],
       ),
     );
@@ -160,16 +168,16 @@ class FunkyBackground extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            top: -80,
-            right: -60,
-            child: _GlowBlob(color: accent, size: 260),
+            top: -70,
+            left: -60,
+            child: _GlowBlob(color: accent, size: 280),
           ),
           Positioned(
-            bottom: -100,
-            left: -70,
+            bottom: -110,
+            right: -70,
             child: _GlowBlob(
               color: FunkyDecor.accentGradient(accent).colors.last,
-              size: 300,
+              size: 320,
             ),
           ),
           if (child != null) Positioned.fill(child: child!),
@@ -230,12 +238,21 @@ class FunkyButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           gradient: gradient,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.38),
+            width: 1.3,
+          ),
           boxShadow: [
             BoxShadow(
-              color: accent.withValues(alpha: 0.45),
-              blurRadius: 18,
+              color: accent.withValues(alpha: 0.55),
+              blurRadius: 20,
               offset: const Offset(0, 8),
+            ),
+            BoxShadow(
+              color: accent.withValues(alpha: 0.9),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -243,7 +260,7 @@ class FunkyButton extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: onPressed,
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(22),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
               child: Row(

@@ -30,21 +30,37 @@ class OfflineGameScaffold extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerRight,
-              end: Alignment.centerLeft,
-              colors: [
-                FunkyColors.bgDeep.withValues(alpha: 0.92),
-                backgroundColor.withValues(alpha: 0.85),
-              ],
-            ),
-            border: Border(
-              bottom: BorderSide(
-                color: backgroundColor.withValues(alpha: 0.8),
-                width: 2,
+        // Floating bubble header: a rounded accent-edged bar that hovers
+        // over the background instead of the old full-width gradient strip.
+        flexibleSpace: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              gradient: LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: [
+                  backgroundColor.withValues(alpha: 0.80),
+                  FunkyColors.card.withValues(alpha: 0.92),
+                ],
               ),
+              border: Border.all(
+                color: backgroundColor.withValues(alpha: 0.95),
+                width: 1.6,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: backgroundColor.withValues(alpha: 0.45),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.35),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
           ),
         ),
@@ -53,9 +69,14 @@ class OfflineGameScaffold extends StatelessWidget {
           textAlign: TextAlign.center,
           style: GoogleFonts.cairo(
             fontWeight: FontWeight.w900,
-            fontSize: 18, // Reduced from 22
-
+            fontSize: 19,
             color: Colors.white,
+            shadows: [
+              Shadow(
+                color: backgroundColor.withValues(alpha: 0.9),
+                blurRadius: 10,
+              ),
+            ],
           ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -65,12 +86,10 @@ class OfflineGameScaffold extends StatelessWidget {
         centerTitle: true,
         actions: [
           if (SettingsService.isAiEnabled && showAi)
-            IconButton(
-                  icon: const Icon(
-                    Icons.auto_awesome,
-                    color: Colors.blueAccent,
-                  ),
-                  onPressed: onAiRefresh ?? () {},
+            _HeaderIconButton(
+                  icon: Icons.auto_awesome,
+                  accent: backgroundColor,
+                  onTap: onAiRefresh ?? () {},
                 )
                 .animate(onPlay: (c) => c.repeat(reverse: true))
                 .shimmer(duration: 3.seconds, color: Colors.white30)
@@ -80,16 +99,17 @@ class OfflineGameScaffold extends StatelessWidget {
                   duration: 2.seconds,
                 ),
           ...?actions,
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
+          _HeaderIconButton(
+            icon: Icons.settings_rounded,
+            accent: backgroundColor,
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
             },
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
         ],
       ),
       body: FunkyBackground(
@@ -97,6 +117,40 @@ class OfflineGameScaffold extends StatelessWidget {
         child: SafeArea(child: body),
       ),
       floatingActionButton: floatingActionButton,
+    );
+  }
+}
+
+/// Small filled-circle icon button for the bubble header; the dark filled
+/// chip keeps the icon readable on any accent color (contrast fix).
+class _HeaderIconButton extends StatelessWidget {
+  final IconData icon;
+  final Color accent;
+  final VoidCallback onTap;
+
+  const _HeaderIconButton({
+    required this.icon,
+    required this.accent,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: FunkyColors.bgDeep.withValues(alpha: 0.75),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.35),
+            width: 1.2,
+          ),
+        ),
+        child: Icon(icon, size: 20, color: Colors.white),
+      ),
     );
   }
 }

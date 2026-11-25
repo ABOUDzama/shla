@@ -16,6 +16,7 @@ import 'package:shella/games/offline/quiz_game.dart';
 import 'package:shella/games/offline/xo_game.dart';
 import 'package:shella/games/offline/bus_complete_game.dart';
 import 'package:shella/games/offline/who_am_i_game.dart';
+import 'package:shella/screens/settings_screen.dart';
 
 /// Small-screen (360x640) overflow sweep: drives each interior into gameplay
 /// and fails on any unconsumed exception (RenderFlex overflow, layout asserts).
@@ -298,6 +299,30 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'who_am_i_lobby');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: player selection restyle', (tester) async {
+    await pumpSmall(tester, const MemoryGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Select two players, including the long name, to show selected state.
+    await tapIf(tester, find.text('عبدالرحمن النقراشي الطويل'));
+    await tapIf(tester, find.text('أحمد'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'player_selection');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: settings restyle', (tester) async {
+    await pumpSmall(tester, const SettingsScreen());
+    await flushFontCallbacks(tester);
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'settings');
     expectNoOverflow(tester);
   });
 }

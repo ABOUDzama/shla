@@ -208,6 +208,8 @@ class _MemoryGameState extends State<MemoryGame> {
                     decoration: FunkyDecor.pill(currentAccent),
                     child: Text(
                       'دور: ${_players[_turn]['name']}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: FunkyText.title(size: 16, color: Colors.white),
                     ),
                   ),
@@ -218,13 +220,18 @@ class _MemoryGameState extends State<MemoryGame> {
                 spacing: 8,
                 children: List.generate(
                   _players.length,
-                  (i) => Text(
-                    '${_players[i]['name']}: ${_players[i]['score']}',
-                    style: FunkyText.body(
-                      size: 14,
-                      color: i == _turn
-                          ? currentAccent
-                          : Colors.white.withOpacity(0.6),
+                  (i) => ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 150),
+                    child: Text(
+                      '${_players[i]['name']}: ${_players[i]['score']}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: FunkyText.body(
+                        size: 14,
+                        color: i == _turn
+                            ? currentAccent
+                            : Colors.white.withOpacity(0.6),
+                      ),
                     ),
                   ),
                 ),
