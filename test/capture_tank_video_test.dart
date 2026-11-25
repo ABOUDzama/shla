@@ -46,8 +46,10 @@ void main() {
     Future<void> snapFrame() async {
       final boundary = boundaryKey.currentContext!.findRenderObject()!
           as RenderRepaintBoundary;
-      final ui.Image image = await boundary.toImage(pixelRatio: 0.5);
-      final data = await image.toByteData(format: ui.ImageByteFormat.png);
+      final ui.Image image = (await tester
+          .runAsync(() => boundary.toImage(pixelRatio: 0.8)))!;
+      final data = await tester
+          .runAsync(() => image.toByteData(format: ui.ImageByteFormat.png));
       File('${outDir.path}/frame_${frame.toString().padLeft(4, '0')}.png')
           .writeAsBytesSync(data!.buffer.asUint8List());
       frame++;
