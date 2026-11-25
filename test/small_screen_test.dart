@@ -17,6 +17,7 @@ import 'package:shella/games/offline/xo_game.dart';
 import 'package:shella/games/offline/bus_complete_game.dart';
 import 'package:shella/games/offline/who_am_i_game.dart';
 import 'package:shella/screens/settings_screen.dart';
+import 'package:shella/screens/profile_screen.dart';
 
 /// Small-screen (360x640) overflow sweep: drives each interior into gameplay
 /// and fails on any unconsumed exception (RenderFlex overflow, layout asserts).
@@ -308,10 +309,50 @@ void main() {
     await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
-    // Select two players, including the long name, to show selected state.
-    await tapIf(tester, find.text('عبدالرحمن النقراشي الطويل'));
-    await tapIf(tester, find.text('أحمد'));
+    // Let the tiles' entrance animations fully finish before measuring or
+    // tapping; ensureVisible mid-animation can nudge the scroll offset.
+    await fixedPumps(tester, 6);
+
+    // Select the first two players: both visible on initial entry, so the
+    // capture shows the screen as a user first sees it, no scroll offset.
+    await tester.tap(find.text('أحمد'), warnIfMissed: false);
     await fixedPumps(tester);
+    await tester.tap(find.text('منى'), warnIfMissed: false);
+    await fixedPumps(tester);
+
+    // Regression: the list must be at offset zero on initial entry and the
+    // first player card fully visible (no clipped top edge).
+    final scrollable = tester.state<ScrollableState>(find
+        .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
+        .first);
+    expect(scrollable.position.pixels, 0.0,
+        reason: 'selection list scrolled on initial entry');
+    final listRect = tester.getRect(find.byType(ListView));
+    Rect firstCardRect() => tester.getRect(find.byType(ListTile).first);
+    expect(firstCardRect().top, greaterThanOrEqualTo(listRect.top - 0.5),
+        reason: 'first player card clipped at top on initial entry');
+    expect(firstCardRect().bottom, lessThanOrEqualTo(listRect.bottom + 0.5),
+        reason: 'first player card overflows list viewport');
+    final fullHeight = firstCardRect().height;
+    expect(fullHeight, greaterThan(48),
+        reason: 'player card unexpectedly short');
+
+    // Scrolling must clip gracefully and return to a fully-visible first
+    // card. Programmatic round-trip keeps this deterministic; a gesture
+    // drag leaves BouncingScrollPhysics mid-spring and races the asserts.
+    scrollable.position.jumpTo(300.0);
+    await fixedPumps(tester);
+    expect(scrollable.position.pixels, 300.0,
+        reason: 'selection list did not scroll');
+    scrollable.position.jumpTo(0.0);
+    await fixedPumps(tester);
+    expect(scrollable.position.pixels, 0.0,
+        reason: 'selection list did not settle back to top');
+    expect(firstCardRect().top, greaterThanOrEqualTo(listRect.top - 0.5),
+        reason: 'first player card clipped at top after scrolling back');
+    expect(firstCardRect().height, moreOrLessEquals(fullHeight, epsilon: 1),
+        reason: 'first player card height changed after scroll round-trip');
+
     await flushFontCallbacks(tester);
     await capture360(tester, 'player_selection');
     expectNoOverflow(tester);
@@ -323,6 +364,15 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'settings');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: profile restyle', (tester) async {
+    await pumpSmall(tester, const ProfileScreen());
+    await flushFontCallbacks(tester);
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'profile');
     expectNoOverflow(tester);
   });
 }
