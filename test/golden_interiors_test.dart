@@ -264,6 +264,13 @@ void main() {
       await tester.tap(find.text('بدء اللعبة'));
       await fixedPumps(tester);
     }
+    // Who-am-I shows its intro card after selection; start into gameplay.
+    final startBtn = find.text('ابدأ اللعبة 🚀');
+    if (startBtn.evaluate().isNotEmpty) {
+      await tester.tap(startBtn);
+      await fixedPumps(tester);
+    }
+    tester.takeException();
     await capture(tester, 'interior_who_am_i');
   });
 }
