@@ -505,6 +505,14 @@ void main() {
     await tester.drag(listView, const Offset(0, -600));
     await fixedPumps(tester);
     final fabRect = tester.getRect(find.text('⚡').last);
+    // The scroll viewport itself ends above the picker, so no content can
+    // be hidden behind it at ANY scroll position (initial included).
+    final viewportRect =
+        tester.getRect(find.byType(SingleChildScrollView).first);
+    expect(viewportRect.bottom, lessThanOrEqualTo(fabRect.top),
+        reason: 'room scroll viewport reaches behind the emoji picker: '
+            'viewport=$viewportRect fab=$fabRect');
+    // Belt and braces: at scroll end the last text is also above the picker.
     final lastText = tester.getRect(find.text('🎮 ستظهر الألعاب بعد انضمام لاعب آخر'));
     expect(lastText.bottom, lessThan(fabRect.top),
         reason: 'room bottom text hidden behind emoji picker: '

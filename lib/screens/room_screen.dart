@@ -597,7 +597,13 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                     ),
                     _buildHeader(),
                     Expanded(
-                      child: SingleChildScrollView(
+                      // Bottom inset keeps the scroll viewport above the
+                      // floating emoji picker (bottom: 20, ~64px tall), so
+                      // no content is ever hidden behind it at any scroll
+                      // position, not only when scrolled to the end.
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 100),
+                        child: SingleChildScrollView(
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
@@ -863,6 +869,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                             const SizedBox(height: 110),
                           ],
                         ),
+                      ),
                       ),
                     ),
                   ],
