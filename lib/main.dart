@@ -148,8 +148,8 @@ class _MyAppState extends State<MyApp> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
             ),
-            elevation: 8,
-            shadowColor: FunkyColors.magenta.withAlpha(150),
+            elevation: 0,
+            shadowColor: Colors.transparent,
           ),
         ),
         snackBarTheme: SnackBarThemeData(
@@ -157,7 +157,7 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: FunkyColors.cardLight,
           contentTextStyle: GoogleFonts.cairo(color: Colors.white, fontSize: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          elevation: 10,
+          elevation: 0,
         ),
       ),
       home: const HomeScreen(),

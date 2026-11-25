@@ -516,7 +516,7 @@ class _OddOneOutState extends State<OddOneOut> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              style: ElevatedButton.styleFrom(
+                              style: ElevatedButton.styleFrom(elevation: 0, 
                                 backgroundColor: Colors.white,
                                 foregroundColor: FlatColors.ink,
                                 padding: const EdgeInsets.symmetric(
@@ -570,7 +570,7 @@ class _OddOneOutState extends State<OddOneOut> {
                         onPressed: _restartGame,
                         icon: const Icon(Icons.play_arrow),
                         label: Text('حاول تاني'),
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(elevation: 0, 
                           backgroundColor: FlatColors.tilePastels[4],
                           foregroundColor: FlatColors.ink,
                           padding: const EdgeInsets.symmetric(

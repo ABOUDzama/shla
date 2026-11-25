@@ -248,7 +248,7 @@ class _GobbletGameOnlineState extends State<GobbletGameOnline> {
                 'roomCode': widget.roomCode,
               });
             },
-            style: ElevatedButton.styleFrom(
+            style: ElevatedButton.styleFrom(elevation: 0, 
               backgroundColor: Colors.orange,
               foregroundColor: Colors.white,
             ),

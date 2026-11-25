@@ -762,7 +762,7 @@ class _TruthOrDareGameState extends State<TruthOrDareGame> {
                               fontSize: 17,
                             ),
                           ),
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(elevation: 0, 
                             backgroundColor: Colors.white,
                             foregroundColor: FlatColors.ink,
                             padding: const EdgeInsets.symmetric(vertical: 15),

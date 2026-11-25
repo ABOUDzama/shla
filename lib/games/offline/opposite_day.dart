@@ -608,7 +608,7 @@ class _OppositeDayState extends State<OppositeDay> {
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(elevation: 0, 
                         backgroundColor: Colors.white,
                         foregroundColor: FunkyColors.card,
                         padding: const EdgeInsets.symmetric(
@@ -756,13 +756,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                 color: Colors.grey.shade300,
                                 width: 2,
                               ),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 10,
-                                  offset: Offset(0, 5),
-                                ),
-                              ],
+                              
                             ),
                             child: Column(
                               children: [
@@ -855,7 +849,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                style: ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(elevation: 0, 
                                   backgroundColor: Colors.white,
                                   foregroundColor: Colors.green.shade700,
                                   padding: const EdgeInsets.symmetric(
@@ -878,7 +872,7 @@ class _OppositeDayState extends State<OppositeDay> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                style: ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(elevation: 0, 
                                   backgroundColor: FlatColors.mafia,
                                   foregroundColor: Colors.white,
                                   padding: const EdgeInsets.symmetric(
@@ -944,7 +938,7 @@ class _OppositeDayState extends State<OppositeDay> {
                           const SizedBox(height: 50),
                           ElevatedButton(
                             onPressed: _nextPlayer,
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(elevation: 0, 
                               backgroundColor: Colors.white,
                               foregroundColor: FunkyColors.card,
                               padding: const EdgeInsets.symmetric(

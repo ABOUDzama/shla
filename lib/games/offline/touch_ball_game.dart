@@ -373,11 +373,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                                             _zoneColors[_match.owner ?? 0],
                                         border: Border.all(
                                             color: Colors.white, width: 3),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                              blurRadius: 12,
-                                              color: Colors.black38),
-                                        ],
+                                        
                                       ),
                                       child: Center(
                                         child: Text(

@@ -74,7 +74,7 @@ class GameResultOverlay extends StatelessWidget {
                         fontSize: 17,
                       ),
                     ),
-                    style: ElevatedButton.styleFrom(
+                    style: ElevatedButton.styleFrom(elevation: 0, 
                       backgroundColor:
                           isWin ? FunkyColors.magenta : FunkyColors.cardLight,
                       foregroundColor: Colors.white,

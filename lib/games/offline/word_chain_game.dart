@@ -709,7 +709,7 @@ class _WordChainGameState extends State<WordChainGame> {
                             fontWeight: FontWeight.w900,
                           ),
                         ),
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(elevation: 0, 
                           backgroundColor: FlatColors.mintDark,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -979,7 +979,7 @@ class _WordChainGameState extends State<WordChainGame> {
                               fontSize: 16,
                             ),
                           ),
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(elevation: 0, 
                             backgroundColor: FlatColors.mintDark,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
@@ -1002,7 +1002,7 @@ class _WordChainGameState extends State<WordChainGame> {
                               fontSize: 16,
                             ),
                           ),
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(elevation: 0, 
                             backgroundColor: FlatColors.mintDark,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(

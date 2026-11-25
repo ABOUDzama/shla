@@ -718,7 +718,7 @@ class _TickTockBoomState extends State<TickTockBoom>
                   children: [
                     ElevatedButton(
                       onPressed: resetGame,
-                      style: ElevatedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(elevation: 0, 
                         backgroundColor: Colors.white.withValues(alpha: 0.15),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(

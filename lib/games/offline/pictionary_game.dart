@@ -545,9 +545,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    boxShadow: const [
-                      BoxShadow(color: Colors.black38, blurRadius: 10),
-                    ],
+                    
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
@@ -671,7 +669,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       fontSize: 15,
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(
+                  style: ElevatedButton.styleFrom(elevation: 0, 
                     backgroundColor: Colors.greenAccent.shade700,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -729,9 +727,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black26, blurRadius: 10),
-                  ],
+                  
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
@@ -786,7 +782,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                style: ElevatedButton.styleFrom(
+                style: ElevatedButton.styleFrom(elevation: 0, 
                   backgroundColor: Colors.amberAccent,
                   foregroundColor: Colors.black87,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -921,7 +917,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                                 fontSize: 16,
                               ),
                             ),
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(elevation: 0, 
                               backgroundColor: Colors.green.shade600,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 18),
@@ -944,7 +940,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                                 fontSize: 16,
                               ),
                             ),
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(elevation: 0, 
                               backgroundColor: Colors.red.shade600,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 18),

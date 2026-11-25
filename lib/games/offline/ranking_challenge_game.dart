@@ -213,10 +213,10 @@ class _RankingChallengeGameState extends State<RankingChallengeGame> {
           Text('عدد الجولات', style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15)),
           const SizedBox(height: 8),
           SegmentedButton<int>(
-            segments: const [
-              ButtonSegment(value: 3, label: Text('3')),
-              ButtonSegment(value: 5, label: Text('5')),
-              ButtonSegment(value: 7, label: Text('7')),
+            segments: [
+              ButtonSegment(value: 3, label: Text('3', style: flatCairo(fontWeight: FontWeight.bold))),
+              ButtonSegment(value: 5, label: Text('5', style: flatCairo(fontWeight: FontWeight.bold))),
+              ButtonSegment(value: 7, label: Text('7', style: flatCairo(fontWeight: FontWeight.bold))),
             ],
             selected: {_totalRounds},
             onSelectionChanged: (s) => setState(() => _totalRounds = s.first),

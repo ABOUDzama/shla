@@ -33,6 +33,7 @@ import 'package:shella/games/offline/word_story_game.dart';
 import 'package:shella/games/offline/ranking_challenge_game.dart';
 import 'package:shella/games/offline/odd_one_out.dart';
 import 'package:shella/games/offline/tick_tock_boom.dart';
+import 'package:shella/games/offline/reverse_quiz.dart';
 import 'package:shella/games/offline/would_rather_game.dart';
 import 'package:shella/games/offline/never_have_i_game.dart';
 import 'package:shella/games/offline/undercover_game.dart';
@@ -362,6 +363,22 @@ void main() {
     await tapIf(tester, find.text('ابدأ'));
     await fixedPumps(tester);
     await capture360(tester, 'tick_tock_boom');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: reverse quiz gameplay', (tester) async {
+    await pumpSmall(tester, const ReverseQuiz());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('أحمد'));
+    await tapIf(tester, find.text('منى'));
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'reverse_quiz');
     expectNoOverflow(tester);
   });
 

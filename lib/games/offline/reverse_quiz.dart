@@ -623,7 +623,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
         backgroundColor: FunkyColors.mint,
         showAi: false,
         body: const Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: FlatColors.ink),
         ),
       );
     }
@@ -650,14 +650,14 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                   style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'اللعبة محتاجة تركيز وسرعة بديهة!\nالتايمر 15 ثانية! خمن السؤال أو خد تلميح ⏳',
                   textAlign: TextAlign.center,
-                  style: flatCairo(fontSize: 15, color: Colors.white70),
+                  style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.75)),
                 ),
                 const SizedBox(height: 50),
                 ElevatedButton.icon(
@@ -699,9 +699,9 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(elevation: 0, 
                         backgroundColor: Colors.white,
-                        foregroundColor: FunkyColors.card,
+                        foregroundColor: FlatColors.ink,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 20,
@@ -744,15 +744,6 @@ class _ReverseQuizState extends State<ReverseQuiz> {
       backgroundColor: FunkyColors.violet,
       showAi: false,
       onAiRefresh: _generateAiContent,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.home),
-          onPressed: () => setState(() {
-            _timer?.cancel();
-            _setupDone = false;
-          }),
-        ),
-      ],
       body: SafeArea(
         child: Column(
           children: [
@@ -775,16 +766,8 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: isActive ? Colors.white : Colors.white10,
+                      color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.55),
                       borderRadius: BorderRadius.circular(25),
-                      boxShadow: isActive
-                          ? [
-                              BoxShadow(
-                                color: Colors.white.withValues(alpha: 0.3),
-                                blurRadius: 15,
-                              ),
-                            ]
-                          : null,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -794,7 +777,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                           style: flatCairo(
                             color: isActive
                                 ? FunkyColors.card
-                                : Colors.white70,
+                                : FlatColors.ink.withValues(alpha: 0.75),
                             fontWeight: isActive
                                 ? FontWeight.w900
                                 : FontWeight.bold,
@@ -805,7 +788,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                           style: flatCairo(
                             color: isActive
                                 ? FunkyColors.card.withValues(alpha: 0.7)
-                                : Colors.white38,
+                                : FlatColors.ink.withValues(alpha: 0.5),
                             fontSize: 12,
                           ),
                         ),
@@ -831,7 +814,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                             style: flatCairo(
                               fontSize: 28,
                               fontWeight: FontWeight.w900,
-                              color: Colors.yellowAccent,
+                              color: FlatColors.ink,
                             ),
                           ).animate().fadeIn().scale(),
                           const SizedBox(height: 30),
@@ -839,7 +822,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                 onPressed: generateNew,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  foregroundColor: FunkyColors.card,
+                                  foregroundColor: FlatColors.ink,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 50,
                                     vertical: 20,
@@ -876,9 +859,9 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                     value: _secondsLeft / 15,
                                     strokeWidth: 8,
                                     color: _secondsLeft <= 5
-                                        ? Colors.redAccent
-                                        : Colors.yellowAccent,
-                                    backgroundColor: Colors.white12,
+                                        ? FlatColors.mafia
+                                        : FlatColors.ink,
+                                    backgroundColor: Colors.white,
                                   ),
                                 ),
                                 Text(
@@ -887,8 +870,8 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                         fontSize: 40,
                                         fontWeight: FontWeight.w900,
                                         color: _secondsLeft <= 5
-                                            ? Colors.redAccent
-                                            : Colors.white,
+                                            ? FlatColors.mafia
+                                            : FlatColors.ink,
                                       ),
                                     )
                                     .animate(key: ValueKey(_secondsLeft))
@@ -930,9 +913,9 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                 ),
                               ),
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.yellowAccent,
+                                foregroundColor: FlatColors.ink,
                                 side: const BorderSide(
-                                  color: Colors.yellowAccent,
+                                  color: FlatColors.ink,
                                 ),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
@@ -954,9 +937,9 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              style: ElevatedButton.styleFrom(
+                              style: ElevatedButton.styleFrom(elevation: 0, 
                                 backgroundColor: Colors.white,
-                                foregroundColor: Colors.teal.shade900,
+                                foregroundColor: FlatColors.ink,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 30,
                                   vertical: 15,
@@ -983,9 +966,9 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  style: ElevatedButton.styleFrom(
+                                  style: ElevatedButton.styleFrom(elevation: 0, 
                                     backgroundColor: Colors.white,
-                                    foregroundColor: Colors.green.shade700,
+                                    foregroundColor: FlatColors.mintDark,
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 20,
                                       vertical: 15,
@@ -1006,7 +989,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  style: ElevatedButton.styleFrom(
+                                  style: ElevatedButton.styleFrom(elevation: 0, 
                                     backgroundColor: Colors.black26,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
@@ -1030,15 +1013,15 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 30,
-                                  color: Colors.yellowAccent,
+                                  color: FlatColors.ink,
                                 ),
                               ).animate().shake(),
                             const SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: _nextPlayer,
-                              style: ElevatedButton.styleFrom(
+                              style: ElevatedButton.styleFrom(elevation: 0, 
                                 backgroundColor: Colors.white,
-                                foregroundColor: FunkyColors.card,
+                                foregroundColor: FlatColors.ink,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 50,
                                   vertical: 20,
@@ -1077,13 +1060,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 15,
-            offset: Offset(0, 8),
-          ),
-        ],
+        
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1098,7 +1075,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
                 style: flatCairo(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.cyan.shade800,
+                  color: FlatColors.ink,
                 ),
               ),
             ],
@@ -1130,13 +1107,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
           color: Colors.cyanAccent.withValues(alpha: 0.5),
           width: 3,
         ),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black45,
-            blurRadius: 15,
-            offset: Offset(0, 8),
-          ),
-        ],
+        
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1144,14 +1115,14 @@ class _ReverseQuizState extends State<ReverseQuiz> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.help_outline, color: Colors.white70),
+              Icon(Icons.help_outline, color: FlatColors.ink.withValues(alpha: 0.75)),
               const SizedBox(width: 8),
               Text(
                 'السؤال كان:',
                 style: flatCairo(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white70,
+                  color: FlatColors.ink.withValues(alpha: 0.75),
                 ),
               ),
             ],
@@ -1161,7 +1132,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
             question['question'] ?? '',
             style: flatCairo(
               fontSize: 26,
-              color: Colors.yellowAccent,
+              color: FlatColors.ink,
               fontWeight: FontWeight.w900,
             ),
             textAlign: TextAlign.center,

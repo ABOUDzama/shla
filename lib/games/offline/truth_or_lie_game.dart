@@ -365,7 +365,7 @@ class _TruthOrLieGameState extends State<TruthOrLieGame> {
                       onPressed: _nextQuestion,
                       icon: const Icon(Icons.arrow_forward_rounded),
                       label: const Text('اللي بعده'),
-                      style: ElevatedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(elevation: 0, 
                         backgroundColor: FlatColors.tilePastels[0],
                         foregroundColor: FlatColors.ink,
                         padding: const EdgeInsets.symmetric(

@@ -561,7 +561,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                style: ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(elevation: 0, 
                                   backgroundColor: Colors.amberAccent,
                                   foregroundColor: Colors.black87,
                                   padding: const EdgeInsets.symmetric(
@@ -584,7 +584,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                style: ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(elevation: 0, 
                                   backgroundColor: Colors.white,
                                   foregroundColor: FunkyColors.violet,
                                   padding: const EdgeInsets.symmetric(
@@ -625,7 +625,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                       fontSize: 13,
                                     ),
                                   ),
-                                  style: ElevatedButton.styleFrom(
+                                  style: ElevatedButton.styleFrom(elevation: 0, 
                                     backgroundColor: Colors.green,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
@@ -651,7 +651,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  style: ElevatedButton.styleFrom(
+                                  style: ElevatedButton.styleFrom(elevation: 0, 
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
@@ -676,7 +676,7 @@ class _WhoAmIGameState extends State<WhoAmIGame> {
                                 fontSize: 18,
                               ),
                             ),
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(elevation: 0, 
                               backgroundColor: Colors.amberAccent,
                               foregroundColor: Colors.black87,
                               padding: const EdgeInsets.symmetric(

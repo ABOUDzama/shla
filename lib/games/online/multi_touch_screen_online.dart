@@ -190,7 +190,7 @@ class _MultiTouchScreenOnlineState extends State<MultiTouchScreenOnline> {
                         padding: const EdgeInsets.only(top: 30),
                         child: ElevatedButton(
                           onPressed: _emitStart,
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(elevation: 0, 
                             backgroundColor: Colors.greenAccent,
                             foregroundColor: Colors.black,
                             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),

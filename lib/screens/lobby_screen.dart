@@ -597,7 +597,7 @@ class _LobbyScreenState extends State<LobbyScreen>
           ),
           ElevatedButton(
             onPressed: _rejoinRoom,
-            style: ElevatedButton.styleFrom(
+            style: ElevatedButton.styleFrom(elevation: 0, 
               backgroundColor: FunkyColors.mint,
               foregroundColor: FunkyColors.bgDeep,
               shape: RoundedRectangleBorder(

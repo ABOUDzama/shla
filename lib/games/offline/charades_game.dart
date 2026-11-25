@@ -740,7 +740,7 @@ class _CharadesGameState extends State<CharadesGame> {
                             fontWeight: FontWeight.w900,
                           ),
                         ),
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(elevation: 0, 
                           backgroundColor: FlatColors.tilePastels[1],
                           foregroundColor: FlatColors.ink,
                           padding: const EdgeInsets.symmetric(
@@ -968,7 +968,7 @@ class _CharadesGameState extends State<CharadesGame> {
                               fontSize: 16,
                             ),
                           ),
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(elevation: 0, 
                             backgroundColor: FlatColors.tilePastels[1],
                             foregroundColor: FlatColors.ink,
                             padding: const EdgeInsets.symmetric(
@@ -991,7 +991,7 @@ class _CharadesGameState extends State<CharadesGame> {
                               fontSize: 16,
                             ),
                           ),
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(elevation: 0, 
                             backgroundColor: FlatColors.tilePastels[1],
                             foregroundColor: FlatColors.ink,
                             padding: const EdgeInsets.symmetric(

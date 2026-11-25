@@ -375,7 +375,7 @@ class _SeegaGameState extends State<SeegaGame> {
             if (winner != null)
               ElevatedButton(
                 onPressed: _resetGame,
-                style: ElevatedButton.styleFrom(
+                style: ElevatedButton.styleFrom(elevation: 0, 
                   backgroundColor: FunkyColors.orange,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(

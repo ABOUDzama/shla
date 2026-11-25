@@ -313,7 +313,7 @@ class _BalanceGameState extends State<BalanceGame> {
                     children: [
                       ElevatedButton.icon(
                         onPressed: resetGame,
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(elevation: 0, 
                           backgroundColor: Colors.white12,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -330,7 +330,7 @@ class _BalanceGameState extends State<BalanceGame> {
                       const SizedBox(width: 16),
                       ElevatedButton.icon(
                         onPressed: startGame,
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(elevation: 0, 
                           backgroundColor: Colors.tealAccent,
                           foregroundColor: Colors.black,
                           padding: const EdgeInsets.symmetric(

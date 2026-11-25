@@ -287,7 +287,7 @@ class _GobbletGameState extends State<GobbletGame> {
                 });
               }
             },
-            style: ElevatedButton.styleFrom(
+            style: ElevatedButton.styleFrom(elevation: 0, 
               backgroundColor: Colors.orange,
               foregroundColor: Colors.white,
             ),
@@ -429,13 +429,7 @@ class _GobbletGameState extends State<GobbletGame> {
             color: isSelected ? Colors.yellowAccent : Colors.orange.shade300,
             width: isSelected ? 4 : 2,
           ),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 2,
-              offset: Offset(0, 2),
-            ),
-          ],
+          
         ),
         child: Center(
           child: topPiece != null
@@ -562,13 +556,7 @@ class _GobbletGameState extends State<GobbletGame> {
               decoration: BoxDecoration(
                 color: Colors.orange.shade400,
                 borderRadius: BorderRadius.circular(24),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    offset: Offset(0, 10),
-                  ),
-                ],
+                
               ),
               child: AspectRatio(
                 aspectRatio: 1,

@@ -707,7 +707,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(elevation: 0, 
                         backgroundColor: Colors.white,
                         foregroundColor: FlatColors.ink,
                         padding: const EdgeInsets.symmetric(
@@ -934,7 +934,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                style: ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(elevation: 0, 
                                   backgroundColor: Colors.white,
                                   foregroundColor: Colors.green.shade700,
                                   padding: const EdgeInsets.symmetric(
@@ -957,7 +957,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                style: ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(elevation: 0, 
                                   backgroundColor: Colors.white,
                                   foregroundColor: FlatColors.ink,
                                   padding: const EdgeInsets.symmetric(
@@ -1005,7 +1005,7 @@ class _FirstLetterGameState extends State<FirstLetterGame> {
                           const SizedBox(height: 50),
                           ElevatedButton(
                             onPressed: _nextPlayer,
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(elevation: 0, 
                               backgroundColor: Colors.white,
                               foregroundColor: FlatColors.ink,
                               padding: const EdgeInsets.symmetric(
