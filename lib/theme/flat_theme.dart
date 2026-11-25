@@ -26,9 +26,9 @@ class FlatColors {
     Color(0xFFFF6FA5), // pink
   ];
 
-  /// Darker mint for success text on light backgrounds (3.4:1 on white;
+  /// Darker mint for success text on light backgrounds (5.4:1 on white;
   /// the pastel mint itself is only 2.1:1).
-  static const Color mintDark = Color(0xFF1F9E77);
+  static const Color mintDark = Color(0xFF17795A);
 
   // Role/phase solids.
   static const Color mafia = Color(0xFFFF5A5A);
@@ -73,11 +73,21 @@ class FlatDecor {
         border: Border.all(color: FlatColors.border, width: 2),
       );
 
-  /// Readable text color on a pastel/solid fill: white only where the fill
-  /// is dark enough for >=3:1 (violet, sky, mafia red); ink otherwise
-  /// (mint, coral, amber, pink all fail with white).
-  static Color textOn(Color bg) =>
-      bg.computeLuminance() > 0.32 ? FlatColors.ink : Colors.white;
+  /// Readable text color on a solid fill: whichever of ink/white has the
+  /// higher WCAG contrast against the fill. On every flat pastel ink wins
+  /// (worst case 4.6:1 on violet), so small button labels always pass 4.5:1;
+  /// white only appears on genuinely dark fills (e.g. ink itself).
+  static Color textOn(Color bg) {
+    double cr(Color a, Color b) {
+      final la = a.computeLuminance(), lb = b.computeLuminance();
+      final hi = la > lb ? la : lb, lo = la > lb ? lb : la;
+      return (hi + 0.05) / (lo + 0.05);
+    }
+
+    return cr(FlatColors.ink, bg) >= cr(Colors.white, bg)
+        ? FlatColors.ink
+        : Colors.white;
+  }
 
   static TextStyle title({double size = 22, Color color = FlatColors.ink}) =>
       GoogleFonts.cairo(

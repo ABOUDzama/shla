@@ -114,7 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 style: FlatDecor.body(
                                   size: 12.5,
                                   color:
-                                      FlatColors.ink.withValues(alpha: 0.6),
+                                      FlatColors.ink.withValues(alpha: 0.75),
                                 ),
                               ),
                             ],
@@ -176,7 +176,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitle,
                   style: FlatDecor.body(
                     size: 12.5,
-                    color: FlatColors.ink.withValues(alpha: 0.6),
+                    color: FlatColors.ink.withValues(alpha: 0.75),
                   ),
                 ),
               ],

@@ -22,6 +22,8 @@ import 'package:shella/games/offline/password_game.dart';
 import 'package:shella/games/offline/spy_game.dart';
 import 'package:shella/games/offline/proverb_game.dart';
 import 'package:shella/games/offline/who_said_game.dart';
+import 'package:shella/games/offline/would_rather_game.dart';
+import 'package:shella/games/offline/never_have_i_game.dart';
 import 'package:shella/games/offline/undercover_game.dart';
 import 'package:shella/games/offline/mafia_game.dart';
 import 'package:shella/widgets/flat_home_preview.dart';
@@ -188,6 +190,38 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'most_likely');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: would rather', (tester) async {
+    await pumpSmall(tester, const WouldRatherGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('أحمد'));
+    await tapIf(tester, find.text('منى'));
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'would_rather');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: never have i', (tester) async {
+    await pumpSmall(tester, const NeverHaveIGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('أحمد'));
+    await tapIf(tester, find.text('منى'));
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'never_have_i');
     expectNoOverflow(tester);
   });
 

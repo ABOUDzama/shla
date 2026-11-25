@@ -257,7 +257,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                   style: GoogleFonts.cairo(color: FlatColors.ink),
                   decoration: InputDecoration(
                     hintText: 'اسم اللاعب',
-                    hintStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.45)),
+                    hintStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.7)),
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
@@ -448,7 +448,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: c,
-                      labelStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.6)),
+                      labelStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75)),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -589,7 +589,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                     Text(
                       '+$pts',
                       style: GoogleFonts.cairo(
-                        color: pts == 10 ? FlatColors.mintDark : (pts == 5 ? const Color(0xFFB07800) : FlatColors.ink.withValues(alpha: 0.45)),
+                        color: pts == 10 ? FlatColors.mintDark : (pts == 5 ? const Color(0xFF8A5A00) : FlatColors.ink.withValues(alpha: 0.7)),
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
                       ),

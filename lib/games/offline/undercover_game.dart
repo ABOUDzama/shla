@@ -597,7 +597,7 @@ class _UndercoverGameState extends State<UndercoverGame> {
               ),
               decoration: InputDecoration(
                 hintText: 'كلمة المدنيين...',
-                hintStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.45)),
+                hintStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.7)),
                 filled: true,
                 fillColor: FlatColors.bg,
                 border: OutlineInputBorder(
