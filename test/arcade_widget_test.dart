@@ -16,35 +16,13 @@ Future<void> pumpUntil(
   var elapsed = 0;
   while (elapsed < maxMillis) {
     if (finder.evaluate().isNotEmpty) return;
-    await pumpSafe(tester, Duration(milliseconds: stepMillis));
+    await tester.pump(Duration(milliseconds: stepMillis));
     elapsed += stepMillis;
   }
   throw TestFailure('finder not found after ${maxMillis}ms: $finder');
 }
 
 
-/// Pumps one frame and swallows only the known google_fonts async
-/// font-registration paint race (TextPainter debugSize assert). Any other
-/// exception is rethrown. A repaint frame follows the swallowed race.
-Future<void> pumpSafe(WidgetTester tester, [Duration? duration]) async {
-  await tester.pump(duration);
-  final leftovers = <Object>[];
-  Object? e = tester.takeException();
-  while (e != null) {
-    leftovers.add(e);
-    e = tester.takeException();
-  }
-  if (leftovers.isNotEmpty) {
-    // ignore: avoid_print
-    print('PUMPSAFE-UNEXPECTED: $leftovers');
-    throw leftovers.first;
-  }
-}
-
-
-/// Ends a test cleanly: unmounts the game so flutter_animate stops mounting
-/// new zero-delay restart timers, then pumps so the last pending zero timer
-/// fires before the binding's teardown invariant check.
 Future<void> settleDown(WidgetTester tester) async {
   await tester.pumpWidget(const SizedBox.shrink());
   // zero-duration fake timers only fire when fake time advances
@@ -81,7 +59,7 @@ Future<void> warmGoogleFonts(WidgetTester tester) async {
 Future<void> startFromIntro(WidgetTester tester) async {
   await pumpUntil(tester, find.textContaining('ابدأ اللعبة'));
   await tester.tap(find.textContaining('ابدأ اللعبة'));
-  await pumpSafe(tester);
+  await tester.pump();
 }
 
 void main() {
@@ -129,34 +107,34 @@ void main() {
       await flushFontCallbacks(tester);
       await startFromIntro(tester);
       await tester.tap(find.text('2'));
-      await pumpSafe(tester);
+      await tester.pump();
 
       // false start while waiting
       expect(find.textContaining('استنى'), findsOneWidget);
       await tester.tap(find.text('لاعب 1'));
-      await pumpSafe(tester);
+      await tester.pump();
       expect(find.textContaining('بدري'), findsOneWidget);
       expect(find.text('0 / 5'), findsWidgets); // never below zero
 
       // re-arms automatically after 1.5s
-      await pumpSafe(tester, const Duration(milliseconds: 1600));
+      await tester.pump(const Duration(milliseconds: 1600));
       expect(find.textContaining('استنى'), findsOneWidget);
 
       // win 5 rounds as player 1 (bottom zone)
       for (var round = 0; round < 5; round++) {
         await pumpUntil(tester, find.text('دوس!'), maxMillis: 6000);
         await tester.tap(find.text('لاعب 1'));
-        await pumpSafe(tester);
+        await tester.pump();
         if (round < 4) {
           expect(find.textContaining('الأسرع'), findsOneWidget);
-          await pumpSafe(tester, const Duration(milliseconds: 1600));
+          await tester.pump(const Duration(milliseconds: 1600));
         }
       }
       expect(find.textContaining('كسب الماتش'), findsOneWidget);
 
       // replay returns to picker (no timers pending in picker state)
       await tester.tap(find.text('العب تاني'));
-      await pumpSafe(tester);
+      await tester.pump();
       expect(find.text('كام لاعب؟'), findsOneWidget);
       await flushFontCallbacks(tester);
       await settleDown(tester);
@@ -178,15 +156,15 @@ void main() {
       await flushFontCallbacks(tester);
       await startFromIntro(tester);
       await tester.tap(find.text('4'));
-      await pumpSafe(tester);
+      await tester.pump();
       for (final label in ['لاعب 1', 'لاعب 2', 'لاعب 3', 'لاعب 4']) {
         expect(find.text(label), findsOneWidget);
       }
       await tester.tap(find.text('لاعب 4'));
-      await pumpSafe(tester);
+      await tester.pump();
       expect(find.textContaining('لاعب 4 دوس بدري'), findsOneWidget);
       // let the 1.5s re-arm timer fire so no timer is pending at teardown
-      await pumpSafe(tester, const Duration(milliseconds: 1600));
+      await tester.pump(const Duration(milliseconds: 1600));
       await flushFontCallbacks(tester);
       await settleDown(tester);
     });
@@ -209,11 +187,11 @@ void main() {
       await flushFontCallbacks(tester);
       await startFromIntro(tester);
       await tester.tap(find.text('2 لاعبين'));
-      await pumpSafe(tester);
+      await tester.pump();
 
       // taps during countdown are ignored by logic; reach sprint
       await tester.tap(find.text('لاعب 1'));
-      await pumpSafe(tester, const Duration(milliseconds: 3500));
+      await tester.pump(const Duration(milliseconds: 3500));
       expect(find.textContaining('دوسوا'), findsOneWidget);
 
       for (var round = 0; round < 3; round++) {
@@ -224,13 +202,13 @@ void main() {
           await tester.tap(find.text('لاعب 2'), warnIfMissed: false);
         }
         // 5-second sprint elapses, then round result shows
-        await pumpSafe(tester, const Duration(milliseconds: 5500));
-        await pumpSafe(tester); // settle frame for the result banner
+        await tester.pump(const Duration(milliseconds: 5500));
+        await tester.pump(); // settle frame for the result banner
         if (round < 2) {
           expect(find.textContaining('كسب الجولة'), findsOneWidget);
           expect(find.textContaining('لاعب 1 كسب الجولة'), findsOneWidget);
           await tester.tap(find.text('الجولة الجاية'));
-          await pumpSafe(tester, const Duration(milliseconds: 3500));
+          await tester.pump(const Duration(milliseconds: 3500));
           expect(find.textContaining('دوسوا'), findsOneWidget);
         }
       }
@@ -257,7 +235,7 @@ void main() {
       await flushFontCallbacks(tester);
       await startFromIntro(tester);
       await tester.tap(find.text('4 لاعبين'));
-      await pumpSafe(tester, const Duration(milliseconds: 3500));
+      await tester.pump(const Duration(milliseconds: 3500));
       expect(find.textContaining('دوسوا'), findsOneWidget);
       for (final label in ['لاعب 1', 'لاعب 2', 'لاعب 3', 'لاعب 4']) {
         expect(find.text(label), findsOneWidget);
@@ -265,7 +243,7 @@ void main() {
       for (var i = 0; i < 3; i++) {
         await tester.tap(find.text('لاعب 4'), warnIfMissed: false);
       }
-      await pumpSafe(tester, const Duration(milliseconds: 5500));
+      await tester.pump(const Duration(milliseconds: 5500));
       await tester.pump(); // settle frame for the result banner
       expect(find.textContaining('لاعب 4 كسب الجولة'), findsOneWidget);
       await flushFontCallbacks(tester);
