@@ -1004,7 +1004,7 @@ void main() {
       await tapText(tester, 'OPEN');
       await flushFontCallbacks(tester);
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
-      final back = find.byType(BackButton);
+      final back = find.byIcon(Icons.home_rounded); // flat chrome home pops to caller
       expect(back, findsOneWidget);
       await tester.tap(back, warnIfMissed: false);
       await fixedPumps(tester, 8);
@@ -1332,7 +1332,7 @@ void main() {
       await tapText(tester, 'OPEN');
       await flushFontCallbacks(tester);
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
-      final back = find.byType(BackButton);
+      final back = find.byIcon(Icons.home_rounded); // flat chrome home pops to caller
       expect(back, findsOneWidget);
       await tester.tap(back, warnIfMissed: false);
       await fixedPumps(tester, 8);
