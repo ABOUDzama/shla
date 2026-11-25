@@ -153,10 +153,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   // Aesthetic shapes or Neon pattern
-                                  const Center(
-                                        child: Text(
-                                          '👾',
-                                          style: TextStyle(fontSize: 100),
+                                  Center(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(24),
+                                          child: Image.asset(
+                                            'assets/icon.png',
+                                            width: 96,
+                                            height: 96,
+                                          ),
                                         ),
                                       )
                                       .animate(

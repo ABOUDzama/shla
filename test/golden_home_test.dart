@@ -50,6 +50,14 @@ void main() {
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 500));
     }
+    // Decode asset images (real async) so the header logo appears in goldens.
+    await tester.runAsync(() async {
+      await precacheImage(
+        const AssetImage('assets/icon.png'),
+        tester.element(find.byType(HomeScreen)),
+      );
+    });
+    await tester.pump();
     await expectLater(
       find.byType(HomeScreen),
       matchesGoldenFile('goldens/home_screen.png'),
