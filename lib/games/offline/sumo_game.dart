@@ -72,6 +72,10 @@ class SumoGame extends StatefulWidget {
 
 class _SumoGameState extends State<SumoGame> {
   bool _showIntro = true;
+  /// Entrance fade runs once; flutter_animate restarts effects on every
+  /// rebuild (new effect instances), which made the whole screen re-fade
+  /// on every tap during play.
+  bool _entranceFaded = false;
   late SumoMatch _match;
   _SumoPhase _phase = _SumoPhase.countdown;
   int _countdown = 3;
@@ -277,7 +281,7 @@ class _SumoGameState extends State<SumoGame> {
         },
       );
     }
-    return OfflineGameScaffold(
+    final scaffold = OfflineGameScaffold(
       title: 'سومو الشلة',
       backgroundColor: FunkyColors.coral,
       body: SafeArea(
@@ -302,6 +306,9 @@ class _SumoGameState extends State<SumoGame> {
           ],
         ),
       ),
-    ).animate().fadeIn(duration: 300.ms);
+    );
+    if (_entranceFaded) return scaffold;
+    _entranceFaded = true;
+    return scaffold.animate().fadeIn(duration: 300.ms);
   }
 }

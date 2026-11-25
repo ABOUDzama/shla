@@ -83,6 +83,10 @@ class CatchGame extends StatefulWidget {
 class _CatchGameState extends State<CatchGame>
     with SingleTickerProviderStateMixin {
   bool _showIntro = true;
+  /// Entrance fade runs once; flutter_animate restarts effects on every
+  /// rebuild (new effect instances), which made the whole screen re-fade
+  /// on every tap during play.
+  bool _entranceFaded = false;
   _CatchPhase _phase = _CatchPhase.picking;
   late CatchMatch _match;
   late AnimationController _spin;
@@ -298,7 +302,7 @@ class _CatchGameState extends State<CatchGame>
         onStart: () => setState(() => _showIntro = false),
       );
     }
-    return OfflineGameScaffold(
+    final scaffold = OfflineGameScaffold(
       title: 'اقطفها',
       backgroundColor: FunkyColors.sky,
       body: SafeArea(
@@ -341,7 +345,10 @@ class _CatchGameState extends State<CatchGame>
                 ],
               ),
       ),
-    ).animate().fadeIn(duration: 300.ms);
+    );
+    if (_entranceFaded) return scaffold;
+    _entranceFaded = true;
+    return scaffold.animate().fadeIn(duration: 300.ms);
   }
 }
 

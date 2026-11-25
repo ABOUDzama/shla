@@ -61,6 +61,10 @@ enum _Phase { pickPlayers, waiting, green, resolved, matchOver }
 
 class _ReactionGameState extends State<ReactionGame> {
   bool _showIntro = true;
+  /// Entrance fade runs once; flutter_animate restarts effects on every
+  /// rebuild (new effect instances), which made the whole screen re-fade
+  /// on every tap during play.
+  bool _entranceFaded = false;
   _Phase _phase = _Phase.pickPlayers;
   late ReactionMatch _match;
   Timer? _greenTimer;
@@ -311,12 +315,15 @@ class _ReactionGameState extends State<ReactionGame> {
         onStart: () => setState(() => _showIntro = false),
       );
     }
-    return OfflineGameScaffold(
+    final scaffold = OfflineGameScaffold(
       title: 'أسرع رد فعل',
       backgroundColor: FunkyColors.amber,
       body: SafeArea(
         child: _phase == _Phase.pickPlayers ? _buildPicker() : _buildArena(),
       ),
-    ).animate().fadeIn(duration: 300.ms);
+    );
+    if (_entranceFaded) return scaffold;
+    _entranceFaded = true;
+    return scaffold.animate().fadeIn(duration: 300.ms);
   }
 }

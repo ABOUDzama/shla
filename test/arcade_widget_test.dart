@@ -174,6 +174,42 @@ void main() {
   });
 
   group('سباق الدوس widget', () {
+    testWidgets('sprint tap counts match input exactly', (tester) async {
+      tester.view.physicalSize = const Size(412, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await warmGoogleFonts(tester);
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: TapRaceGame(),
+        ),
+      ));
+      await flushFontCallbacks(tester);
+      await startFromIntro(tester);
+      await tester.tap(find.text('2 لاعبين'));
+      await tester.pump(const Duration(milliseconds: 3500));
+      expect(find.textContaining('دوسوا'), findsOneWidget);
+
+      // 4 taps with a frame after each must show exactly 4
+      for (var i = 0; i < 4; i++) {
+        await tester.tap(find.text('لاعب 1'));
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(find.text('4'), findsOneWidget);
+
+      // 3 rapid taps without frames between must show exactly 3
+      for (var i = 0; i < 3; i++) {
+        await tester.tap(find.text('لاعب 2'), warnIfMissed: false);
+      }
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text('3'), findsOneWidget);
+      await flushFontCallbacks(tester);
+      await settleDown(tester);
+    });
+
+
     testWidgets('2p: countdown, sprint taps, rounds, match win',
         (tester) async {
       tester.view.physicalSize = const Size(412, 900);
