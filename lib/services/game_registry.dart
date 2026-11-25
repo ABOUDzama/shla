@@ -23,6 +23,10 @@ import '../games/offline/truth_or_lie_game.dart';
 import '../games/offline/ranking_challenge_game.dart';
 
 import '../games/offline/bus_complete_game.dart';
+import '../games/offline/most_likely_game.dart';
+import '../games/offline/taboo_game.dart';
+import '../games/offline/memory_game.dart';
+import '../games/offline/emoji_guess_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -168,6 +172,38 @@ class GameRegistry {
       icon: Icons.directions_bus_rounded,
       color: FunkyColors.amber,
       screen: BusCompleteGame(),
+    ),
+    GameModel(
+      title: 'مين فينا؟',
+      description: 'مين أكتر واحد في الشلة ممكن يعمل كده؟ صوّتوا!',
+      icon: Icons.how_to_vote_rounded,
+      color: FunkyColors.lime,
+      screen: MostLikelyGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'كلمات ممنوعة',
+      description: 'وصّف الكلمة من غير ما تقول الممنوع!',
+      icon: Icons.block_rounded,
+      color: FunkyColors.coral,
+      screen: TabooGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'ذاكرة الشلة',
+      description: 'افتح كارتين متشابهين واجمع أكتر أزواج!',
+      icon: Icons.psychology_rounded,
+      color: FunkyColors.sky,
+      screen: MemoryGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'إيموجي إيه؟',
+      description: 'خمّن الكلمة أو الموقف من الإيموجي بس!',
+      icon: Icons.emoji_emotions_rounded,
+      color: FunkyColors.amber,
+      screen: EmojiGuessGame(),
+      badge: 'جديد',
     ),
   ];
 }

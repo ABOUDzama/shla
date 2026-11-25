@@ -111,6 +111,22 @@ class FunkyDecor {
     );
   }
 
+  /// A small vivid pill chip (badges, tags, timers).
+  static BoxDecoration pill(Color accent) {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(999),
+      gradient: accentGradient(accent),
+      boxShadow: [
+        BoxShadow(
+          color: accent.withValues(alpha: 0.4),
+          blurRadius: 12,
+          spreadRadius: -3,
+          offset: const Offset(0, 6),
+        ),
+      ],
+    );
+  }
+
   /// A two-stop vivid gradient derived from one accent.
   static LinearGradient accentGradient(Color accent) {
     final hsl = HSLColor.fromColor(accent);

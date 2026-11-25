@@ -757,7 +757,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'إكس أو',
                                     emoji: '❌⭕',
-                                    color: const Color(0xFF3B82F6),
+                                    color: FunkyColors.mint,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('xo')
                                         : null,
@@ -765,7 +765,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'سيجَا',
                                     emoji: '♟️',
-                                    color: const Color(0xFFF59E0B),
+                                    color: FunkyColors.orange,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('seega')
                                         : null,
@@ -781,7 +781,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'خمس ثواني',
                                     emoji: '⏱️',
-                                    color: const Color(0xFFAD1457),
+                                    color: FunkyColors.magenta,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('five_seconds')
                                         : null,
@@ -789,7 +789,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'ارسم وخمّن',
                                     emoji: '🎨',
-                                    color: const Color(0xFF0D47A1),
+                                    color: FunkyColors.sky,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('pictionary')
                                         : null,
@@ -797,7 +797,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'حقيقة أم جرأة',
                                     emoji: '😈',
-                                    color: const Color(0xFFD32F2F),
+                                    color: FunkyColors.magenta,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('truth_or_dare')
                                         : null,
@@ -805,7 +805,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'تحدي التعريف',
                                     emoji: '⏱️',
-                                    color: const Color(0xFF004D40),
+                                    color: FunkyColors.lime,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('word_chain')
                                         : null,
@@ -813,7 +813,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'أول حرف',
                                     emoji: '🔤',
-                                    color: const Color(0xFFE64A19),
+                                    color: FunkyColors.orange,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('first_letter')
                                         : null,
@@ -821,7 +821,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'قنبلة الحروف',
                                     emoji: '💣',
-                                    color: const Color(0xFFC62828),
+                                    color: FunkyColors.coral,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('tick_tock_boom')
                                         : null,
@@ -829,7 +829,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'تحدي الأسئلة',
                                     emoji: '🧠',
-                                    color: const Color(0xFF2563EB),
+                                    color: FunkyColors.amber,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('quiz')
                                         : null,
@@ -837,7 +837,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'مين أنا؟',
                                     emoji: '🎭',
-                                    color: const Color(0xFF7E22CE),
+                                    color: FunkyColors.sky,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('who_am_i')
                                         : null,
@@ -845,7 +845,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'تحدي الترتيب',
                                     emoji: '🎯',
-                                    color: const Color(0xFF4A148C),
+                                    color: FunkyColors.coral,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('ranking_challenge')
                                         : null,
@@ -853,7 +853,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'أتوبيس كومبليت',
                                     emoji: '🚌',
-                                    color: const Color(0xFFF59E0B),
+                                    color: FunkyColors.amber,
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('bus_complete')
                                         : null,
