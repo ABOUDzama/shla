@@ -69,6 +69,20 @@ void main() {
       matchesGoldenFile('goldens/home_screen.png'),
     );
 
+    // Mid-grid: batch-2 illustrated tiles (تحدي التوازن .. عكس العكاس).
+    final scMid = find.byType(Scrollable).first;
+    for (var i = 0; i < 3; i++) {
+      await tester.drag(scMid, const Offset(0, -350));
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+    await expectLater(
+      find.byType(HomeScreen),
+      matchesGoldenFile('goldens/home_screen_mid.png'),
+    );
+
     // Scroll to the end: the two new games carry the جديد badge.
     final scrollable = find.byType(Scrollable).first;
     for (var i = 0; i < 12; i++) {
