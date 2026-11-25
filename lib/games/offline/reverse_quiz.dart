@@ -740,7 +740,7 @@ class _ReverseQuizState extends State<ReverseQuiz> {
 
     return OfflineGameScaffold(
       title: '🔄 الأسئلة المعكوسة',
-      backgroundColor: Colors.blueGrey,
+      backgroundColor: FunkyColors.violet,
       showAi: false,
       onAiRefresh: _generateAiContent,
       actions: [

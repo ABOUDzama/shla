@@ -8,6 +8,7 @@ import '../../services/socket_service.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../offline/bus_complete_game.dart';
+import '../../theme/funky_theme.dart';
 
 /// Online أتوبيس كومبليت: host drives rounds over the generic game_move
 /// relay; every client scores identically from the collected answers.
@@ -217,7 +218,7 @@ class _BusCompleteGameOnlineState extends State<BusCompleteGameOnline> {
   Widget build(BuildContext context) {
     return BaseGameScaffold(
       title: 'أتوبيس كومبليت 🚌',
-      backgroundColor: Colors.orange,
+      backgroundColor: FunkyColors.coral,
       roomCode: widget.roomCode,
       playerName: widget.playerName,
       body: switch (_phase) {

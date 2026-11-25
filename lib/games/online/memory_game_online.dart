@@ -44,6 +44,7 @@ class _MemoryGameOnlineState extends State<MemoryGameOnline> {
   int _turn = 0;
   bool _busy = false;
   final Map<String, int> _scores = {};
+  Timer? _flipBackTimer;
 
   List<String> get _playerNames => (widget.roomPlayers ?? const [])
       .map((p) => (p['name'] ?? 'لاعب').toString())
@@ -62,6 +63,7 @@ class _MemoryGameOnlineState extends State<MemoryGameOnline> {
 
   @override
   void dispose() {
+    _flipBackTimer?.cancel();
     SocketService().socket.off('game_move', _onMove);
     super.dispose();
   }
@@ -125,7 +127,8 @@ class _MemoryGameOnlineState extends State<MemoryGameOnline> {
       } else {
         _busy = true;
         AudioService.playClick();
-        Timer(const Duration(milliseconds: 900), () {
+        _flipBackTimer?.cancel();
+        _flipBackTimer = Timer(const Duration(milliseconds: 900), () {
           if (!mounted) return;
           setState(() {
             _turn++;

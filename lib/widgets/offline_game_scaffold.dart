@@ -56,7 +56,7 @@ class OfflineGameScaffold extends StatelessWidget {
             fontSize: 18, // Reduced from 22
 
             color: Colors.white,
-          ),
+          ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

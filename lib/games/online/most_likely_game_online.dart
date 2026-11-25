@@ -189,7 +189,7 @@ class _MostLikelyGameOnlineState extends State<MostLikelyGameOnline> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('🫵', style: TextStyle(fontSize: 64))
+            const Text('👉', style: TextStyle(fontSize: 64))
                 .animate(onPlay: (c) => c.repeat(reverse: true))
                 .scale(begin: const Offset(1, 1), end: const Offset(1.15, 1.15), duration: 900.ms),
             const SizedBox(height: 12),

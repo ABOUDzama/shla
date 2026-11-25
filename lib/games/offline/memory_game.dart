@@ -31,6 +31,7 @@ class _MemoryGameState extends State<MemoryGame> {
   int? _firstPick;
   int _turn = 0;
   bool _busy = false;
+  Timer? _flipBackTimer;
 
   static const int pairCount = 8; // 4x4 board
 
@@ -70,7 +71,8 @@ class _MemoryGameState extends State<MemoryGame> {
     } else {
       _busy = true;
       AudioService.playClick();
-      Timer(const Duration(milliseconds: 900), () {
+      _flipBackTimer?.cancel();
+      _flipBackTimer = Timer(const Duration(milliseconds: 900), () {
         if (!mounted) return;
         setState(() {
           _revealed[first] = false;
@@ -80,6 +82,12 @@ class _MemoryGameState extends State<MemoryGame> {
         });
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _flipBackTimer?.cancel();
+    super.dispose();
   }
 
   bool get _done => _started && _matched.every((m) => m);

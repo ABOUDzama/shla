@@ -161,7 +161,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> {
 
     return OfflineGameScaffold(
       title: '🎯 إكس أو',
-      backgroundColor: Colors.blueGrey,
+      backgroundColor: FunkyColors.mint,
       showAi: false,
       actions: [
         IconButton(

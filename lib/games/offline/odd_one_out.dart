@@ -281,7 +281,7 @@ class _OddOneOutState extends State<OddOneOut> {
     if (isLoadingData || questions.isEmpty) {
       return OfflineGameScaffold(
         title: '🎯 طلع الغريب',
-        backgroundColor: Colors.amber.shade900,
+        backgroundColor: FunkyColors.amber,
         showAi: false,
         body: const Center(
           child: CircularProgressIndicator(color: Colors.white),
@@ -294,7 +294,7 @@ class _OddOneOutState extends State<OddOneOut> {
 
     return OfflineGameScaffold(
       title: '🎯 طلع الغريب',
-      backgroundColor: Colors.indigo,
+      backgroundColor: FunkyColors.amber,
       onAiRefresh: _generateAiContent,
       actions: [
         IconButton(

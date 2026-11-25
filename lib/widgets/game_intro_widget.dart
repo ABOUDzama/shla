@@ -69,7 +69,7 @@ class GameIntroWidget extends StatelessWidget {
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
                           color: Colors.white,
-                        ),
+                        ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
                       ).animate().fadeIn(delay: 200.ms),
                       const SizedBox(height: 16),
                       Text(
@@ -78,7 +78,7 @@ class GameIntroWidget extends StatelessWidget {
                           fontSize: 18,
                           height: 1.5,
                           color: Colors.white.withValues(alpha: 0.8),
-                        ),
+                        ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
                         textAlign: TextAlign.center,
                       ).animate().fadeIn(delay: 400.ms),
                     ],

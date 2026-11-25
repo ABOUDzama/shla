@@ -56,13 +56,17 @@ class FunkyColors {
 class FunkyText {
   FunkyText._();
 
+  /// Explicit emoji fallback so emoji inside Cairo-styled strings resolve
+  /// everywhere (Android ships 'Noto Color Emoji' system-wide).
+  static const List<String> emojiFallback = ['Noto Color Emoji'];
+
   static TextStyle headline({double size = 26, Color color = Colors.white}) =>
       GoogleFonts.cairo(
         fontSize: size,
         fontWeight: FontWeight.w900,
         color: color,
         height: 1.2,
-      );
+      ).copyWith(fontFamilyFallback: emojiFallback);
 
   static TextStyle title({double size = 18, Color color = Colors.white}) =>
       GoogleFonts.cairo(
@@ -70,7 +74,7 @@ class FunkyText {
         fontWeight: FontWeight.w800,
         color: color,
         height: 1.25,
-      );
+      ).copyWith(fontFamilyFallback: emojiFallback);
 
   static TextStyle body({double size = 15, Color color = Colors.white}) =>
       GoogleFonts.cairo(
@@ -78,7 +82,7 @@ class FunkyText {
         fontWeight: FontWeight.w600,
         color: color,
         height: 1.5,
-      );
+      ).copyWith(fontFamilyFallback: emojiFallback);
 }
 
 class FunkyDecor {

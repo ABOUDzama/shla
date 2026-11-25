@@ -200,7 +200,7 @@ class _SeegaGameState extends State<SeegaGame> {
 
     return OfflineGameScaffold(
       title: '🎮 السيجة',
-      backgroundColor: Colors.brown,
+      backgroundColor: FunkyColors.orange,
       showAi: false,
       actions: [
         IconButton(

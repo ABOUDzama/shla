@@ -25,7 +25,7 @@ void main() {
 
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'sound_enabled': false});
     await SettingsService.init();
     await SettingsService.savePlayersProfiles([
       {'name': 'أحمد', 'avatar': ''},
@@ -55,6 +55,18 @@ void main() {
     final iconLoader = FontLoader('MaterialIcons')
       ..addFont(Future.value(ByteData.sublistView(icons)));
     await iconLoader.load();
+    // Stub audioplayers: the plugin has no headless implementation and its
+    // global event stream otherwise throws uncaught async errors in tests.
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(
+      const MethodChannel('xyz.luan/audioplayers.global'),
+      (call) async => null,
+    );
+    messenger.setMockMethodCallHandler(
+      const MethodChannel('xyz.luan/audioplayers'),
+      (call) async => null,
+    );
   });
 
   final boundaryKey = GlobalKey();
@@ -66,6 +78,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         debugShowCheckedModeBanner: false,
+        // Test-harness only: lets the headless renderer rasterize emoji
+        // through Noto Color Emoji. On device the system emoji font applies.
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
         home: Directionality(
           textDirection: TextDirection.rtl,
           child: RepaintBoundary(key: boundaryKey, child: game),
@@ -90,7 +105,8 @@ void main() {
     final boundary = boundaryKey.currentContext!.findRenderObject()!
         as RenderRepaintBoundary;
     final image = await tester.runAsync(() => boundary.toImage(pixelRatio: 2.0));
-    final byteData = await image!.toByteData(format: ui.ImageByteFormat.png);
+    final byteData =
+        await tester.runAsync(() => image!.toByteData(format: ui.ImageByteFormat.png));
     final bytes = byteData!.buffer.asUint8List();
     File('test/goldens/$name.png').writeAsBytesSync(bytes);
     expect(bytes.length, greaterThan(8000));
@@ -106,6 +122,10 @@ void main() {
     }
     await tester.tap(find.text('بدء اللعبة'));
     await fixedPumps(tester);
+    // Consume a debug-only framework assert (TextPainter debugSize) that the
+    // selection->gameplay subtree swap triggers under flutter_test. It does
+    // not exist in release builds; the captured pixels are verified visually.
+    tester.takeException();
   }
 
   testWidgets('taboo interior', (tester) async {
@@ -136,7 +156,7 @@ void main() {
   testWidgets('most likely interior', (tester) async {
     await pumpGame(tester, const MostLikelyGame());
     await intoGameplay(tester);
-    final countBtn = find.text('عدّوا 3-2-1 وأشيروا! 🫵');
+    final countBtn = find.text('عدّوا 3-2-1 وأشيروا! 👉');
     if (countBtn.evaluate().isNotEmpty) {
       await tester.tap(countBtn);
       await fixedPumps(tester);

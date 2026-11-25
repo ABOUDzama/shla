@@ -55,7 +55,7 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
         backgroundColor: FunkyColors.lime,
         body: GameIntroWidget(
           title: '👉 مين فينا؟',
-          icon: '🫵',
+          icon: '👉',
           description:
               'سؤال يطلع، الكل يعد 3-2-1 ويشاور على شخص في الشلة! اللي عليه أصوات أكتر ياخد النقطة... واللي نقطه أكتر في الآخر هو "المتهم الأول" في الشلة 😂',
           onStart: () => setState(() => _showIntro = false),
@@ -145,7 +145,7 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
                 decoration: FunkyDecor.glowCard(FunkyColors.lime),
                 child: Column(
                   children: [
-                    const Text('🫵', style: TextStyle(fontSize: 56)),
+                    const Text('👉', style: TextStyle(fontSize: 56)),
                     const SizedBox(height: 12),
                     Text(
                       prompt,
@@ -167,7 +167,7 @@ class _MostLikelyGameState extends State<MostLikelyGame> {
               const SizedBox(height: 16),
               if (!_counted)
                 FunkyButton(
-          label: 'عدّوا 3-2-1 وأشيروا! 🫵',
+          label: 'عدّوا 3-2-1 وأشيروا! 👉',
                   accent: FunkyColors.magenta,
                   onPressed: () {
                     setState(() => _counted = true);

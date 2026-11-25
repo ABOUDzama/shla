@@ -221,7 +221,7 @@ class _FiveSecondsGameState extends State<FiveSecondsGame> {
     final currentQuestion = questions[currentQuestionIndex];
     return OfflineGameScaffold(
       title: '⏱️ تحدي الـ ٥ ثواني',
-      backgroundColor: Colors.deepOrange,
+      backgroundColor: FunkyColors.pink,
       showAi: false,
       actions: [
         IconButton(

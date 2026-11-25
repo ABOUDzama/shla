@@ -265,7 +265,7 @@ class _BaseGameScaffoldState extends State<BaseGameScaffold> {
             fontWeight: FontWeight.bold,
             fontSize: 16,
             color: Colors.white,
-          ),
+          ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
         ),
         actions: [
           if (SettingsService.isAiEnabled && widget.showAi)
@@ -467,7 +467,7 @@ class _BaseGameScaffoldState extends State<BaseGameScaffold> {
                                         fontWeight: FontWeight.w900,
                                         color: Colors.white,
 
-                                      ),
+                                      ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -478,7 +478,7 @@ class _BaseGameScaffoldState extends State<BaseGameScaffold> {
                                         color: Colors.white.withOpacity(0.9),
                                         height: 1.1,
                                         fontWeight: FontWeight.w500,
-                                      ),
+                                      ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
