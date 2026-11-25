@@ -3,7 +3,6 @@ import '../../screens/global_player_selection_screen.dart';
 import 'dart:math';
 import 'dart:async';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../services/raw_data_manager.dart';
 import '../../widgets/premium_loading_indicator.dart';
@@ -97,7 +96,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('تم توليد مفردات جديدة بالذكاء الاصطناعي! ✨'),
-              backgroundColor: Colors.green,
+              backgroundColor: FlatColors.mintDark,
             ),
           );
         }
@@ -107,7 +106,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('فشل توليد محتوى AI: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: FlatColors.mafia,
           ),
         );
       }
@@ -383,7 +382,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
     if (!_started) {
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
-        backgroundColor: FunkyColors.sky,
+        backgroundColor: FlatColors.bg,
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -399,17 +398,21 @@ class _PictionaryGameState extends State<PictionaryGame> {
                   style: flatCairo(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ).animate().fadeIn(),
                 const SizedBox(height: 8),
                 Text(
                   'واحد يرسم والباقي يخمّن!\nمين أسرع واحد هيعرف الكلمة؟ 🎨',
                   textAlign: TextAlign.center,
-                  style: flatCairo(fontSize: 15, color: Colors.white70),
+                  style: flatCairo(fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.7)),
                 ),
                 const SizedBox(height: 50),
-                ElevatedButton.icon(
+                FunkyButton(
+                      accent: FunkyColors.sky,
+                      icon: Icons.people_alt,
+                      label: 'اختار شلتك وابدأ!',
+                      fontSize: 22,
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -435,27 +438,6 @@ class _PictionaryGameState extends State<PictionaryGame> {
                           ),
                         );
                       },
-                      icon: const Icon(Icons.people_alt, size: 28),
-                      label: Text(
-                        'اختار شلتك وابدأ!',
-                        style: flatCairo(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightBlueAccent.shade700,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 20,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        elevation: 0,
-                        shadowColor: Colors.transparent,
-                      ),
                     )
                     .animate(onPlay: (c) => c.repeat(reverse: true))
                     .scale(
@@ -474,19 +456,8 @@ class _PictionaryGameState extends State<PictionaryGame> {
     if (_drawing && _currentWord != null) {
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
-        backgroundColor: FunkyColors.sky,
+        backgroundColor: FlatColors.bg,
         onAiRefresh: _generateAiContent,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.home, color: Colors.white70),
-            onPressed: () {
-              setState(() {
-                _started = false;
-                _players.clear();
-              });
-            },
-          ),
-        ],
         body: SafeArea(
           child: Column(
             children: [
@@ -501,25 +472,21 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     horizontal: 16,
                     vertical: 10,
                   ),
-                  decoration: BoxDecoration(
-                    color: Colors.greenAccent.shade700.withAlpha(50),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Colors.greenAccent),
-                  ),
+                  decoration: FlatDecor.card(radius: 14),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         '🎨 $_drawerName يرسم',
                         style: flatCairo(
-                          color: Colors.white,
+                          color: FlatColors.mintDark,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         'الكلمة: ${_currentWord!['word']} (الرسام بس)',
                         style: flatCairo(
-                          color: Colors.amberAccent,
+                          color: FlatColors.ink,
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
                         ),
@@ -534,7 +501,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Text(
                   'الفئة: ${_currentWord!['category']}',
-                  style: flatCairo(color: Colors.white70, fontSize: 13),
+                  style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.6), fontSize: 13),
                 ),
               ),
 
@@ -542,11 +509,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
               Expanded(
                 child: Container(
                   margin: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    
-                  ),
+                  decoration: FlatDecor.card(radius: 20),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: GestureDetector(
@@ -603,8 +566,8 @@ class _PictionaryGameState extends State<PictionaryGame> {
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: _selectedColor == color
-                                  ? Colors.white
-                                  : Colors.white30,
+                                  ? FlatColors.ink
+                                  : FlatColors.border,
                               width: 3,
                             ),
                           ),
@@ -617,13 +580,13 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.red.withAlpha(40),
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.red),
+                          border: Border.all(color: FlatColors.mafia, width: 2),
                         ),
                         child: const Icon(
                           Icons.delete_outline,
-                          color: Colors.red,
+                          color: FlatColors.mafia,
                           size: 22,
                         ),
                       ),
@@ -640,7 +603,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                   children: [
                     const Icon(
                       Icons.line_weight,
-                      color: Colors.white54,
+                      color: FlatColors.ink,
                       size: 18,
                     ),
                     Expanded(
@@ -649,7 +612,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                         min: 2,
                         max: 25,
                         onChanged: (v) => setState(() => _strokeWidth = v),
-                        activeColor: Colors.lightBlueAccent,
+                        activeColor: FlatColors.detective,
                       ),
                     ),
                   ],
@@ -669,8 +632,8 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       fontSize: 15,
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(elevation: 0, 
-                    backgroundColor: Colors.greenAccent.shade700,
+                  style: ElevatedButton.styleFrom(elevation: 0,
+                    backgroundColor: FlatColors.mintDark,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     minimumSize: const Size(double.infinity, 50),
@@ -690,20 +653,14 @@ class _PictionaryGameState extends State<PictionaryGame> {
     if (_guessing) {
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
-        backgroundColor: FunkyColors.sky,
+        backgroundColor: FlatColors.bg,
         body: Column(
           children: [
             Container(
               width: double.infinity,
               margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [FunkyColors.amber, FunkyColors.orange],
-                ),
-                borderRadius: BorderRadius.circular(16),
-                
-              ),
+              decoration: FlatDecor.tile(FlatColors.day, radius: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -714,7 +671,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     style: flatCairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
-                      color: Colors.black87,
+                      color: FlatColors.ink,
                     ),
                   ),
                 ],
@@ -724,11 +681,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
               flex: 3,
               child: Container(
                 margin: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  
-                ),
+                decoration: FlatDecor.card(radius: 20),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: LayoutBuilder(
@@ -754,12 +707,16 @@ class _PictionaryGameState extends State<PictionaryGame> {
                 ),
                 decoration: InputDecoration(
                   hintText: 'اكتب تخمينك هنا...',
-                  hintStyle: flatCairo(color: Colors.grey),
+                  hintStyle: flatCairo(color: FlatColors.ink.withValues(alpha: 0.4)),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
+                    borderSide: const BorderSide(color: FlatColors.border, width: 2),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(color: FlatColors.border, width: 2),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -782,9 +739,9 @@ class _PictionaryGameState extends State<PictionaryGame> {
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                style: ElevatedButton.styleFrom(elevation: 0, 
-                  backgroundColor: Colors.amberAccent,
-                  foregroundColor: Colors.black87,
+                style: ElevatedButton.styleFrom(elevation: 0,
+                  backgroundColor: FlatColors.day,
+                  foregroundColor: FlatColors.ink,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   minimumSize: const Size(double.infinity, 52),
                   shape: RoundedRectangleBorder(
@@ -801,9 +758,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
     if (_showResult) {
       final isCorrect = _guessCorrect == true;
       final drawerName = _drawerName;
-      Color bgColor = _guessCorrect == null
-          ? FunkyColors.sky // neutral accent while drawer decides
-          : (isCorrect ? FunkyColors.mint : FunkyColors.coral);
+      const Color bgColor = FlatColors.bg; // flat: cream everywhere
       return OfflineGameScaffold(
         title: '🎨 ارسم وخمّن',
         backgroundColor: bgColor,
@@ -825,7 +780,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       'دي للراسم ($drawerName)',
                       style: flatCairo(
                         fontSize: 20,
-                        color: Colors.white70,
+                        color: FlatColors.ink,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -834,7 +789,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       'الفئة: ${_currentWord!['category']}',
                       style: flatCairo(
                         fontSize: 14,
-                        color: Colors.white54,
+                        color: FlatColors.ink.withValues(alpha: 0.6),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -842,7 +797,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       'الكلمة الصحيحة:',
                       style: flatCairo(
                         fontSize: 15,
-                        color: Colors.white60,
+                        color: FlatColors.ink.withValues(alpha: 0.6),
                       ),
                     ),
                     Container(
@@ -851,17 +806,13 @@ class _PictionaryGameState extends State<PictionaryGame> {
                         horizontal: 24,
                         vertical: 12,
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.amberAccent.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.amberAccent),
-                      ),
+                      decoration: FlatDecor.tile(FlatColors.day, radius: 16),
                       child: Text(
                         _currentWord!['word']!,
                         style: flatCairo(
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
-                          color: Colors.amberAccent,
+                          color: FlatColors.ink,
                         ),
                       ),
                     ),
@@ -870,7 +821,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       'إجابة $_guesserName:',
                       style: flatCairo(
                         fontSize: 15,
-                        color: Colors.white60,
+                        color: FlatColors.ink.withValues(alpha: 0.6),
                       ),
                     ),
                     Container(
@@ -879,17 +830,13 @@ class _PictionaryGameState extends State<PictionaryGame> {
                         horizontal: 24,
                         vertical: 12,
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white30),
-                      ),
+                      decoration: FlatDecor.card(radius: 16),
                       child: Text(
                         _guessText,
                         style: flatCairo(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: FlatColors.ink,
                         ),
                       ),
                     ),
@@ -899,7 +846,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       style: flatCairo(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white,
+                        color: FlatColors.ink,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -917,8 +864,8 @@ class _PictionaryGameState extends State<PictionaryGame> {
                                 fontSize: 16,
                               ),
                             ),
-                            style: ElevatedButton.styleFrom(elevation: 0, 
-                              backgroundColor: Colors.green.shade600,
+                            style: ElevatedButton.styleFrom(elevation: 0,
+                              backgroundColor: FlatColors.mintDark,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 18),
                               shape: RoundedRectangleBorder(
@@ -940,8 +887,8 @@ class _PictionaryGameState extends State<PictionaryGame> {
                                 fontSize: 16,
                               ),
                             ),
-                            style: ElevatedButton.styleFrom(elevation: 0, 
-                              backgroundColor: Colors.red.shade600,
+                            style: ElevatedButton.styleFrom(elevation: 0,
+                              backgroundColor: FlatColors.mafia,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 18),
                               shape: RoundedRectangleBorder(
@@ -964,7 +911,7 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       style: flatCairo(
                         fontSize: 30,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white,
+                        color: isCorrect ? FlatColors.mintDark : FlatColors.mafia,
                       ),
                     ).animate().fadeIn(),
                     const SizedBox(height: 12),
@@ -972,17 +919,14 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       'الكلمة: ${_currentWord!['word']}',
                       style: flatCairo(
                         fontSize: 20,
-                        color: Colors.white70,
+                        color: FlatColors.ink.withValues(alpha: 0.7),
                       ),
                     ),
                     if (_players.isNotEmpty) ...[
                       const SizedBox(height: 20),
                       Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(20),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                        decoration: FlatDecor.card(radius: 16),
                         child: Wrap(
                           spacing: 20,
                           alignment: WrapAlignment.center,
@@ -994,14 +938,14 @@ class _PictionaryGameState extends State<PictionaryGame> {
                                     Text(
                                       p['name'],
                                       style: flatCairo(
-                                        color: Colors.white,
+                                        color: FlatColors.ink,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     Text(
                                       '${p['score']} نقطة',
                                       style: flatCairo(
-                                        color: Colors.white70,
+                                        color: FlatColors.ink.withValues(alpha: 0.7),
                                         fontSize: 12,
                                       ),
                                     ),
@@ -1013,28 +957,12 @@ class _PictionaryGameState extends State<PictionaryGame> {
                       ),
                     ],
                     const SizedBox(height: 40),
-                    ElevatedButton.icon(
+                    FunkyButton(
                       onPressed: _nextRound,
-                      icon: const Icon(Icons.play_arrow, size: 24),
-                      label: Text(
-                        'دور جديد 🎨',
-                        style: flatCairo(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black87,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 0,
-                      ),
+                      icon: Icons.play_arrow,
+                      label: 'دور جديد 🎨',
+                      accent: FunkyColors.violet,
+                      fontSize: 20,
                     ),
                   ],
                 ],
@@ -1047,11 +975,12 @@ class _PictionaryGameState extends State<PictionaryGame> {
 
     return OfflineGameScaffold(
       title: '🎨 ارسم وخمّن',
-      backgroundColor: FunkyColors.sky,
+      backgroundColor: FlatColors.bg,
       body: Center(
-        child: ElevatedButton(
+        child: FunkyButton(
           onPressed: _pickWord,
-          child: Text('ابدأ', style: flatCairo()),
+          label: 'ابدأ',
+          accent: FunkyColors.sky,
         ),
       ),
     );

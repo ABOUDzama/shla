@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
@@ -259,7 +258,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
         const SizedBox(height: 14),
         Expanded(
           child: Container(
-            decoration: FunkyDecor.glowCard(FunkyColors.violet, radius: 26),
+            decoration: FlatDecor.card(radius: 26),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -338,7 +337,7 @@ class _CodeNamesGameState extends State<CodeNamesGame> {
           controller: _clueController,
           textAlign: TextAlign.center,
           style: flatCairo(
-              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              fontSize: 18, fontWeight: FontWeight.bold, color: FlatColors.ink),
           decoration: InputDecoration(
             hintText: 'التلميح..',
             hintStyle: flatCairo(color: FlatColors.ink.withValues(alpha: 0.5), fontSize: 15),

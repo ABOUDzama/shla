@@ -1,21 +1,21 @@
 # Shla flat-rollout state (updated 2026-11-25 23:28 EET)
 
-HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:04:44; keep remote current at batch boundaries). Coverage: 28/45 interiors.
+HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:04:44; keep remote current at batch boundaries). Coverage: 29/45 interiors.
 
 ## Flat rollout coverage (user-approved direction: XO trial 21:32 "حلو اوي يلا عمم التعديل ع كل الالعاب")
 - Stage 1 (commit e13ff72): shared OfflineGameScaffold header + GameIntroWidget flat for ALL 45 games. Settings screen flat (commit with contrast pass).
-- Stage 2 bodies DONE (28/45): xo (approved trial), quiz, memory, taboo, most_likely, spy, undercover, who_said, emoji_guess, password, proverb, mafia (all phases), bus_complete, would_rather, never_have_i, opposite_day, truth_or_lie, truth_or_dare, five_seconds, charades, word_chain, first_letter, word_story, ranking_challenge, odd_one_out, tick_tock_boom, reverse_quiz, code_names.
+- Stage 2 bodies DONE (28/45): xo (approved trial), quiz, memory, taboo, most_likely, spy, undercover, who_said, emoji_guess, password, proverb, mafia (all phases), bus_complete, would_rather, never_have_i, opposite_day, truth_or_lie, truth_or_dare, five_seconds, charades, word_chain, first_letter, word_story, ranking_challenge, odd_one_out, tick_tock_boom, reverse_quiz, code_names (+ gate/keymap/board phase captures, glowCard + invisible clue-text fixed), pictionary (drawing phase captured).
 - Shared GlobalPlayerSelectionScreen (player picker) flat: cream bg, white tiles, pastel avatar circles, mintDark checks (batch7).
 - Shared FunkyButton now flat (solid + darker bottom edge), used by 14 games.
 - Contrast pass 1: quiz reveal hint + scoreboard small text ink75; memory scoreboard ink75.
 - Contrast pass 2 (commit b1e4d74, rendered-pixel verified): FlatDecor.textOn(bg) picks ink vs white by fill luminance (>0.32 -> ink). White text now only on violet/sky/mafia (>=3:1); ink on mint/coral/amber/pink (>=4.6:1). FlatColors.mintDark 1F9E77 (3.4:1 on white) for success text on light bg. Quiz neon +/- buttons flattened. Taboo pills -> flat tags. would_rather/never_have_i now have small360 goldens, pixel-viewed OK. Contrast floor raised to 4.5:1 for small text (parent 22:31): textOn = max-contrast ink/white, ink wins on all pastels; mintDark 17795A 5.4:1; ink alpha floor 0.7.
 
 ## Stage 2 bodies REMAINING (~17)
-- Word/party: who_am_i (accents only), pictionary, seega, gobblet, multi_touch.
+- Word/party: who_am_i (accents only), seega, gobblet, multi_touch.
 - Arcade custom-painted interiors: reaction, tap_race, tug_of_war, sumo, snake_arena, whack_mole, coin_grab, catch, touch_ball, snow_brawl, tank_battle (tank UI mostly done in v4, check).
 
 ## Verification status
-- Suites green at batch7: small_screen 38/38 (code_names test added); golden_interiors 8/8, arcade_play_proof 11/11, game_interaction 28/28 (28 pre-elevation-sweep, rerun pending).
+- Suites green at batch7: small_screen 39/39 (code_names test added); golden_interiors 8/8, arcade_play_proof 11/11, game_interaction 28/28 (28 pre-elevation-sweep, rerun pending).
 - Every converted game's golden pixel-viewed (combos in /downloads/stage2_batch*.png).
 - Regenerated goldens != visual acceptance; pixels viewed per batch.
 
