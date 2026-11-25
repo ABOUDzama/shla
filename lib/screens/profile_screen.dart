@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+import '../services/avatar_service.dart';
+import '../widgets/avatar_picker_sheet.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../services/settings_service.dart';
 import '../services/haptic_service.dart';
@@ -29,63 +30,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _pickAvatar() async {
     if (_isPickingImage) return;
-
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      backgroundColor: FunkyColors.card,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 8),
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.white24,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 16),
-          ListTile(
-            leading: const Icon(Icons.photo_library_outlined, color: Colors.white70),
-            title: Text('المعرض', style: GoogleFonts.cairo(color: Colors.white)),
-            onTap: () => Navigator.pop(context, ImageSource.gallery),
-          ),
-          ListTile(
-            leading: const Icon(Icons.camera_alt_outlined, color: Colors.white70),
-            title: Text('الكاميرا', style: GoogleFonts.cairo(color: Colors.white)),
-            onTap: () => Navigator.pop(context, ImageSource.camera),
-          ),
-          const SizedBox(height: 24),
-        ],
-      ),
-    );
-
-    if (source == null) return;
-
-    setState(() => _isPickingImage = true);
-
-    try {
-      final picker = ImagePicker();
-      final image = await picker.pickImage(
-        source: source,
-        maxWidth: 512,
-        maxHeight: 512,
-        imageQuality: 75,
-      );
-
-      if (image != null) {
-        final bytes = await image.readAsBytes();
-        setState(() {
-          _avatarBase64 = base64Encode(bytes);
-        });
-        HapticService.lightImpact();
-      }
-    } finally {
-      if (mounted) setState(() => _isPickingImage = false);
+    final value = await showAvatarPickerSheet(context);
+    if (value != null && mounted) {
+      setState(() => _avatarBase64 = value);
+      HapticService.lightImpact();
     }
   }
 
@@ -203,9 +151,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           padding: const EdgeInsets.all(4),
                           child: ClipOval(
-                            child: _avatarBase64 != null
-                                ? Image.memory(
-                                    base64Decode(_avatarBase64!),
+                            child: AvatarService.providerFor(_avatarBase64) != null
+                                ? Image(
+                                    image: AvatarService.providerFor(
+                                        _avatarBase64)!,
                                     fit: BoxFit.cover,
                                   )
                                 : Container(

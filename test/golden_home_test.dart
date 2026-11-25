@@ -97,9 +97,9 @@ void main() {
     final lastGame = find.text('إيموجي إيه؟');
     expect(lastGame, findsOneWidget);
     final lastRect = tester.getRect(lastGame);
-    final switchRect = tester.getRect(find.text('أونلاين'));
+    final switchRect = tester.getRect(find.text('شلتي'));
     expect(lastRect.bottom, lessThan(switchRect.top),
-        reason: 'last ticket hidden behind mode switch: '
+        reason: 'last ticket hidden behind bottom nav: '
             'last=$lastRect switch=$switchRect');
     await expectLater(
       find.byType(HomeScreen),

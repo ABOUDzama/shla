@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/offline_game_scaffold.dart';
+import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
 
@@ -314,6 +315,9 @@ class _TouchBallGameState extends State<TouchBallGame> {
             ? _buildPicker()
             : Column(
                 children: [
+                  if (_phase == _BallPhase.matchOver)
+                    VictoryFriends(
+                        winnerName: 'لاعب ${_match.matchWinner! + 1}'),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
                     child: Row(

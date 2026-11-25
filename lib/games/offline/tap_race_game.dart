@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
+import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
 
@@ -333,6 +334,9 @@ class _TapRaceGameState extends State<TapRaceGame> {
             ? _buildPicker()
             : Column(
                 children: [
+                  if (_phase == _RacePhase.matchOver)
+                    VictoryFriends(
+                        winnerName: 'لاعب ${_match.matchWinner! + 1}'),
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Container(

@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:image_picker/image_picker.dart';
+import '../services/avatar_service.dart';
+import '../widgets/avatar_picker_sheet.dart';
 import '../services/settings_service.dart';
 import '../services/score_service.dart';
 import '../theme/funky_theme.dart';
@@ -49,60 +50,9 @@ class _GlobalPlayerSelectionScreenState
 
   Future<void> _pickTempAvatar() async {
     if (_isPickingImage) return;
-    
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      backgroundColor: FunkyColors.card,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 8),
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.white24,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 16),
-          ListTile(
-            leading: const Icon(Icons.photo_library_outlined, color: Colors.white70),
-            title: Text('المعرض', style: GoogleFonts.cairo(color: Colors.white)),
-            onTap: () => Navigator.pop(context, ImageSource.gallery),
-          ),
-          ListTile(
-            leading: const Icon(Icons.camera_alt_outlined, color: Colors.white70),
-            title: Text('الكاميرا', style: GoogleFonts.cairo(color: Colors.white)),
-            onTap: () => Navigator.pop(context, ImageSource.camera),
-          ),
-          const SizedBox(height: 24),
-        ],
-      ),
-    );
-
-    if (source == null) return;
-    
-    _isPickingImage = true;
-    try {
-      final picker = ImagePicker();
-      final picked = await picker.pickImage(
-        source: source,
-        maxWidth: 200,
-        maxHeight: 200,
-        imageQuality: 70,
-      );
-      if (picked != null && mounted) {
-        final bytes = await picked.readAsBytes();
-        setState(() {
-          _tempAvatarBase64 = base64Encode(bytes);
-        });
-      }
-    } finally {
-      _isPickingImage = false;
+    final value = await showAvatarPickerSheet(context);
+    if (value != null && mounted) {
+      setState(() => _tempAvatarBase64 = value);
     }
   }
 
@@ -241,6 +191,24 @@ class _GlobalPlayerSelectionScreenState
                 ),
                 const SizedBox(height: 26),
 
+                SizedBox(
+                  height: 72,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      for (final f in [
+                        'assets/avatars_2d/friend2.png',
+                        'assets/avatars_2d/friend1.png',
+                        'assets/avatars_2d/friend3.png',
+                      ])
+                        Align(
+                          widthFactor: 0.62,
+                          child: Image.asset(f, height: 70),
+                        ),
+                    ],
+                  ),
+                ),
                 Center(
                   child: Text(
                     'مين هيلعب؟ 🎮',
@@ -289,10 +257,13 @@ class _GlobalPlayerSelectionScreenState
                               width: 1.4,
                             ),
                           ),
-                          child: _tempAvatarBase64 != null
+                          child: AvatarService.providerFor(
+                                      _tempAvatarBase64) !=
+                                  null
                               ? ClipOval(
-                                  child: Image.memory(
-                                      base64Decode(_tempAvatarBase64!),
+                                  child: Image(
+                                      image: AvatarService.providerFor(
+                                          _tempAvatarBase64)!,
                                       fit: BoxFit.cover))
                               : const Icon(Icons.camera_alt_outlined,
                                   color: Colors.white70, size: 22),
@@ -414,10 +385,14 @@ class _GlobalPlayerSelectionScreenState
                                         width: 1.6,
                                       ),
                                     ),
-                                    child: avatar != null && avatar.isNotEmpty
+                                    child: AvatarService.providerFor(
+                                                avatar) !=
+                                            null
                                         ? ClipOval(
-                                            child: Image.memory(
-                                                base64Decode(avatar),
+                                            child: Image(
+                                                image:
+                                                    AvatarService.providerFor(
+                                                        avatar)!,
                                                 fit: BoxFit.cover))
                                         : Center(
                                             child: Text(

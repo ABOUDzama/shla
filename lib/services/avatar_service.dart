@@ -1,0 +1,32 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+
+/// Built-in avatar artwork for الشلة: original 2D character portraits derived
+/// from Shla's own cover art (friend cutouts, alpha-cleaned, head-cropped onto
+/// pastel circles). Stored as asset paths; a profile's `avatar` field holds
+/// either `asset:<path>` for one of these or a base64 photo string.
+class AvatarService {
+  static const List<String> builtInAvatars = [
+    'assets/avatars/avatar_girl.png',
+    'assets/avatars/avatar_boy_green.png',
+    'assets/avatars/avatar_boy_blue.png',
+  ];
+
+  static const String assetPrefix = 'asset:';
+
+  static bool isBuiltIn(String avatar) => avatar.startsWith(assetPrefix);
+
+  /// Resolves a stored avatar value to an [ImageProvider], or null when the
+  /// value is empty (callers show their placeholder icon then).
+  static ImageProvider? providerFor(String? avatar) {
+    if (avatar == null || avatar.isEmpty) return null;
+    if (isBuiltIn(avatar)) {
+      return AssetImage(avatar.substring(assetPrefix.length));
+    }
+    try {
+      return MemoryImage(base64Decode(avatar));
+    } catch (_) {
+      return null;
+    }
+  }
+}

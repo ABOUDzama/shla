@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
+import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
 
@@ -285,6 +286,8 @@ class _SumoGameState extends State<SumoGame> {
             _buildZone(1),
             _buildRing(),
             _buildZone(0),
+            if (_phase == _SumoPhase.over && _match.winner != null)
+              VictoryFriends(winnerName: 'لاعب ${_match.winner! + 1}'),
             if (_phase == _SumoPhase.over)
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),

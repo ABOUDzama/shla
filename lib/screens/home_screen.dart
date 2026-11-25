@@ -4,13 +4,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../services/avatar_service.dart';
 import '../services/settings_service.dart';
 import '../services/game_registry.dart';
 import '../models/game_model.dart';
 import '../theme/flat_theme.dart';
-import 'lobby_screen.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
+import 'shellty_screen.dart';
 
 /// Home — flat/cartoon direction (user-approved WePlay reference):
 /// light cream background, flat pastel game tiles with a big emoji
@@ -24,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isNavigating = false;
-  bool _isOnlineMode = false;
+  int _tab = 0; // 0 = الألعاب, 1 = شلتي
   final Random _rand = Random();
 
   /// Big emoji "character" per game tile (all verified against the bundled
@@ -139,16 +140,18 @@ class _HomeScreenState extends State<HomeScreen> {
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return FadeTransition(opacity: animation, child: child);
               },
-              child: _isOnlineMode
-                  ? const LobbyScreen(showBackButton: false)
+              child: _tab == 1
+                  ? const ShelltyScreen(embedded: true)
                   : SafeArea(
-                      key: const ValueKey('offline_feed'),
+                      key: const ValueKey('games_feed'),
                       child: ListView(
                         physics: const BouncingScrollPhysics(),
                         padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
                         children: [
                           _buildHeader(),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 10),
+                          _buildWelcomeFriends(),
+                          const SizedBox(height: 10),
                           _buildRandomCta(games),
                           const SizedBox(height: 18),
                           Align(
@@ -186,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
             left: 24,
             right: 24,
             bottom: 26,
-            child: _buildModeSwitch(),
+            child: _buildBottomNav(),
           ),
         ],
       ),
@@ -201,9 +204,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: CircleAvatar(
             radius: 18,
             backgroundColor: Colors.transparent,
-            backgroundImage: SettingsService.userAvatar != null
-                ? MemoryImage(base64Decode(SettingsService.userAvatar!))
-                : null,
+            backgroundImage:
+                AvatarService.providerFor(SettingsService.userAvatar),
             child: SettingsService.userAvatar == null
                 ? const Icon(Icons.person,
                     size: 20, color: FlatColors.ink)
@@ -227,6 +229,34 @@ class _HomeScreenState extends State<HomeScreen> {
               color: FlatColors.ink, size: 20),
         ),
       ],
+    );
+  }
+
+  /// Approved 2D character use: light welcome strip on the home feed.
+  Widget _buildWelcomeFriends() {
+    const friends = [
+      'assets/avatars_2d/friend2.png',
+      'assets/avatars_2d/friend1.png',
+      'assets/avatars_2d/friend3.png',
+    ];
+    return SizedBox(
+      height: 64,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              for (var i = 0; i < friends.length; i++)
+                Align(
+                  widthFactor: 0.62,
+                  child: Image.asset(friends[i], height: 62),
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -267,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildModeSwitch() {
+  Widget _buildBottomNav() {
     return Container(
       height: 60,
       padding: const EdgeInsets.all(6),
@@ -279,19 +309,19 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         children: [
           _modePill(
-            label: 'أوفلاين',
+            label: 'الألعاب',
             icon: Icons.grid_view_rounded,
-            active: !_isOnlineMode,
+            active: _tab == 0,
             onTap: () {
-              if (_isOnlineMode) setState(() => _isOnlineMode = false);
+              if (_tab != 0) setState(() => _tab = 0);
             },
           ),
           _modePill(
-            label: 'أونلاين',
-            icon: Icons.language_rounded,
-            active: _isOnlineMode,
+            label: 'شلتي',
+            icon: Icons.groups_rounded,
+            active: _tab == 1,
             onTap: () {
-              if (!_isOnlineMode) setState(() => _isOnlineMode = true);
+              if (_tab != 1) setState(() => _tab = 1);
             },
           ),
         ],

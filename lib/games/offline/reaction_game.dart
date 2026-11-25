@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
+import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
 
@@ -214,6 +215,8 @@ class _ReactionGameState extends State<ReactionGame> {
                   ],
                 ),
         ),
+        if (_phase == _Phase.matchOver)
+          VictoryFriends(winnerName: 'لاعب ${_match.matchWinner! + 1}'),
         Container(
           width: double.infinity,
           margin: const EdgeInsets.fromLTRB(12, 4, 12, 12),

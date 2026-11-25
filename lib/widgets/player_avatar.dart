@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../services/avatar_service.dart';
 import '../services/voice_chat_service.dart';
 import '../theme/funky_theme.dart';
 
@@ -44,18 +45,11 @@ class PlayerAvatar extends StatelessWidget {
     return _palettes[idx];
   }
 
-  Uint8List? _decodeAvatar() {
-    if (avatar == null || avatar!.isEmpty) return null;
-    try {
-      return base64Decode(avatar!);
-    } catch (_) {
-      return null;
-    }
-  }
+  ImageProvider? _avatarProvider() => AvatarService.providerFor(avatar);
 
   @override
   Widget build(BuildContext context) {
-    final bytes = _decodeAvatar();
+    final provider = _avatarProvider();
     final colors = _colors();
     final initial = name.trim().isEmpty ? '؟' : name.trim()[0];
 
@@ -70,12 +64,12 @@ class PlayerAvatar extends StatelessWidget {
           colors: colors,
         ),
         border: Border.all(color: Colors.white24, width: 1.5),
-        image: bytes != null
-            ? DecorationImage(image: MemoryImage(bytes), fit: BoxFit.cover)
+        image: provider != null
+            ? DecorationImage(image: provider, fit: BoxFit.cover)
             : null,
       ),
       alignment: Alignment.center,
-      child: bytes == null
+      child: provider == null
           ? Text(
               initial,
               style: GoogleFonts.cairo(

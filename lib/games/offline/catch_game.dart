@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
+import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
 
@@ -285,6 +286,9 @@ class _CatchGameState extends State<CatchGame>
             : Column(
                 children: [
                   _buildScoreBar(),
+                  if (_match.matchWinner != null)
+                    VictoryFriends(
+                        winnerName: 'لاعب ${_match.matchWinner! + 1}'),
                   Expanded(child: _buildRing()),
                   Text(
                     _banner,
