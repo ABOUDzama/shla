@@ -8,6 +8,7 @@ import 'package:shella/games/offline/mafia_game.dart';
 import 'package:shella/games/offline/would_rather_game.dart';
 import 'package:shella/games/offline/never_have_i_game.dart';
 import 'package:shella/games/offline/word_story_game.dart';
+import 'package:shella/games/offline/code_names_game.dart';
 
 void main() {
   group('RankingChallengeGame.scoreGuess', () {
@@ -312,6 +313,63 @@ void main() {
       expect(WordStoryGame.openers.length, greaterThanOrEqualTo(4));
       expect(WordStoryGame.openers.toSet().length,
           WordStoryGame.openers.length);
+    });
+  });
+
+  group('CodeNamesGame rules (grounded in official Codenames, Wikipedia)', () {
+    test('deal: 25 unique board words from the pool, key 9/8/7/1', () {
+      final (words, key) = CodeNamesGame.deal(Random(21), 'red');
+      expect(words.length, 25);
+      expect(words.toSet().length, 25);
+      expect(words.every(CodeNamesGame.wordPool.contains), isTrue);
+      expect(key.length, 25);
+      expect(key.where((c) => c == 'red').length, 9); // starter gets 9
+      expect(key.where((c) => c == 'blue').length, 8);
+      expect(key.where((c) => c == 'neutral').length, 7);
+      expect(key.where((c) => c == 'assassin').length, 1);
+      // Blue-start mirror.
+      final (w2, k2) = CodeNamesGame.deal(Random(7), 'blue');
+      expect(k2.where((c) => c == 'blue').length, 9);
+      expect(k2.where((c) => c == 'red').length, 8);
+      expect(w2.toSet().length, 25);
+    });
+    test('deal: deterministic per seed, different seeds differ', () {
+      final (w1, k1) = CodeNamesGame.deal(Random(21), 'red');
+      final (w2, k2) = CodeNamesGame.deal(Random(21), 'red');
+      final (w3, k3) = CodeNamesGame.deal(Random(22), 'red');
+      expect(w1, w2);
+      expect(k1, k2);
+      expect(w1, isNot(w3));
+    });
+    test('validateClue: empty, multi-word, and board words rejected', () {
+      final (words, _) = CodeNamesGame.deal(Random(21), 'red');
+      expect(CodeNamesGame.validateClue('   ', words), isNotNull);
+      expect(CodeNamesGame.validateClue('كلمتين مع بعض', words), isNotNull);
+      expect(CodeNamesGame.validateClue(words[3], words), isNotNull);
+      expect(CodeNamesGame.validateClue('  حاجة  ', words), isNull);
+    });
+    test('guessesAllowed: official rule number + 1', () {
+      expect(CodeNamesGame.guessesAllowed(1), 2);
+      expect(CodeNamesGame.guessesAllowed(4), 5);
+    });
+    test('winner: team with all agents revealed wins, regardless of turn',
+        () {
+      final (_, key) = CodeNamesGame.deal(Random(21), 'red');
+      expect(CodeNamesGame.winner(key, {}), isNull);
+      final redCells = {
+        for (var i = 0; i < 25; i++)
+          if (key[i] == 'red') i
+      };
+      // Partial reveal: nobody wins.
+      expect(CodeNamesGame.winner(key, redCells.take(8).toSet()), isNull);
+      // All 9 red cells revealed (even mid blue turn): red wins.
+      expect(CodeNamesGame.winner(key, redCells), 'red');
+      // Both fully revealed cannot happen in play; red checked first.
+      final blueCells = {
+        for (var i = 0; i < 25; i++)
+          if (key[i] == 'blue') i
+      };
+      expect(CodeNamesGame.winner(key, blueCells), 'blue');
     });
   });
 }

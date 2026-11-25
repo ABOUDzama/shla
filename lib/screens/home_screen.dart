@@ -63,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'لو خيروك': '🤔',
     'أنا عمري ما': '✋',
     'قصة كلمة بكلمة': '📖',
+    'الشيفرة': '🕵',
   };
 
   /// Original illustrated artwork per game: generated in-house for Shla
@@ -82,6 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
     'طلع الغريب': 'assets/tiles/odd_one.png',
     'أول حرف': 'assets/tiles/first_letter.png',
     'عكس العكاس': 'assets/tiles/opposite.png',
+    'قصة كلمة بكلمة': 'assets/tiles/story.png',
+    'الشيفرة': 'assets/tiles/code.png',
     'مافيا': 'assets/tiles/mafia.png',
     'لو خيروك': 'assets/tiles/would_rather.png',
     'أنا عمري ما': 'assets/tiles/never_have_i.png',

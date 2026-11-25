@@ -33,6 +33,7 @@ import '../games/offline/undercover_game.dart';
 import '../games/offline/mafia_game.dart';
 import '../games/offline/would_rather_game.dart';
 import '../games/offline/word_story_game.dart';
+import '../games/offline/code_names_game.dart';
 import '../games/offline/never_have_i_game.dart';
 import '../games/offline/proverb_game.dart';
 import '../games/offline/who_said_game.dart';
@@ -255,6 +256,14 @@ class GameRegistry {
       icon: Icons.menu_book_rounded,
       color: FunkyColors.mint,
       screen: WordStoryGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'الشيفرة',
+      description: 'فريقين وشبكة كلمات.. تلميح من كلمة واحدة وخد بالك من القاتل!',
+      icon: Icons.grid_on_rounded,
+      color: FunkyColors.violet,
+      screen: CodeNamesGame(),
       badge: 'جديد',
     ),
     GameModel(

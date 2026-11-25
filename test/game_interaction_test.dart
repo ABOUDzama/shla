@@ -22,6 +22,7 @@ import 'package:shella/games/offline/who_am_i_game.dart';
 import 'package:shella/games/offline/would_rather_game.dart';
 import 'package:shella/games/offline/never_have_i_game.dart';
 import 'package:shella/games/offline/word_story_game.dart';
+import 'package:shella/games/offline/code_names_game.dart';
 
 /// Interaction/state-transition tests: play each of the 4 new games through
 /// real taps and assert real state changes (round counters, turn rotation,
@@ -1113,6 +1114,230 @@ void main() {
 
       await tapText(tester, 'قصة جديدة');
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+    });
+  });
+
+  group('code names: key concealment, turn flow, assassin, win, replay', () {
+    const seed = 21;
+    (List<String>, List<String>) mirrorDeal() =>
+        CodeNamesGame.deal(Random(seed), 'red');
+
+    const redColor = Color(0xFFE0483E);
+    const blueColor = Color(0xFF3E7BFA);
+    const neutralColor = Color(0xFFB8A88A);
+    const assassinColor = Color(0xFF22242E);
+
+    List<Color?> gridColors(WidgetTester tester) {
+      final cells = find.descendant(
+          of: find.byType(GridView), matching: find.byType(Container));
+      return tester
+          .widgetList<Container>(cells)
+          .map((c) => (c.decoration! as BoxDecoration).color)
+          .toList();
+    }
+
+    Future<void> startMatch(WidgetTester tester) async {
+      // Tall surface so the lazy GridView builds all 25 cells.
+      tester.view.physicalSize = const Size(1080, 1920);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await pumpGame(tester, const CodeNamesGame(seed: seed));
+      await flushFontCallbacks(tester);
+      await tapText(tester, 'ابدأ اللعبة 🚀');
+      await pickPlayersAndStart(
+          tester, const ['أحمد', 'منى', 'كريم', 'سارة']);
+    }
+
+    Future<void> giveClue(WidgetTester tester, String clue, int count) async {
+      await tapText(tester, 'اكتب التلميح ✍');
+      await tester.enterText(find.byType(TextField), clue);
+      await fixedPumps(tester, 2);
+      if (count != 2) await tapText(tester, '$count');
+      await tapText(tester, 'اعرض التلميح للفريق');
+    }
+
+    testWidgets(
+        'gate conceals key; key map matches deal; clue entry hides grid; neutral guess swaps turn',
+        (tester) async {
+      final (words, key) = mirrorDeal();
+      await startMatch(tester);
+
+      // Red gate: no grid at all, only the spymaster's open button.
+      expect(find.text('الدور على الفريق الأحمر'), findsOneWidget);
+      expect(find.byType(GridView), findsNothing);
+      await tapText(tester, 'افتح الخريطة يا أحمد');
+
+      // Key map: every cell color matches the mirrored deal exactly.
+      expect(find.textContaining('الخريطة السرية'), findsOneWidget);
+      final colors = gridColors(tester);
+      expect(colors.length, 25);
+      for (var i = 0; i < 25; i++) {
+        final expected = key[i] == 'red'
+            ? redColor
+            : key[i] == 'blue'
+                ? blueColor
+                : key[i] == 'neutral'
+                    ? neutralColor
+                    : assassinColor;
+        expect(colors[i], expected, reason: 'cell $i (${words[i]})');
+      }
+
+      // A tap on the key map must not register a guess.
+      final tapIdx = key.indexOf('red');
+      await tester.tap(find.text(words[tapIdx]), warnIfMissed: false);
+      await fixedPumps(tester, 2);
+
+      // Clue entry: grid fully concealed (not built), key text gone.
+      await tapText(tester, 'اكتب التلميح ✍');
+      expect(find.byType(GridView), findsNothing);
+      expect(find.textContaining('الخريطة السرية'), findsNothing);
+
+      // Invalid clues blocked at entry (labeled house rule).
+      await tester.enterText(find.byType(TextField), words[0]);
+      await fixedPumps(tester, 2);
+      await tapText(tester, 'اعرض التلميح للفريق');
+      expect(
+          find.text('التلميح ميبقاش كلمة من اللوحة'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'كلمتين مع بعض');
+      await fixedPumps(tester, 2);
+      await tapText(tester, 'اعرض التلميح للفريق');
+      expect(find.text('التلميح كلمة واحدة بس'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'حاجة');
+      await fixedPumps(tester, 2);
+      await tapText(tester, 'اعرض التلميح للفريق');
+
+      // Public guessing: clue visible, grid words visible, NO key colors.
+      expect(find.textContaining('التلميح: حاجة (2)'), findsOneWidget);
+      expect(find.textContaining('فاضل 3 تخمينة'), findsOneWidget);
+      final pubColors = gridColors(tester);
+      expect(pubColors.length, 25);
+      expect(
+          pubColors
+              .where((c) =>
+                  c == redColor || c == blueColor || c == assassinColor)
+              .length,
+          0,
+          reason: 'no key colors may leak on the public grid');
+
+      // Correct red guess consumes one guess, turn stays red.
+      await tester.tap(find.text(words[tapIdx]), warnIfMissed: false);
+      await fixedPumps(tester);
+      expect(find.textContaining('فاضل 2 تخمينة'), findsOneWidget);
+
+      // Neutral guess ends the turn: blue gate, key concealed again.
+      final neutralIdx = key.indexOf('neutral');
+      await tester.tap(find.text(words[neutralIdx]), warnIfMissed: false);
+      await fixedPumps(tester);
+      expect(find.text('الدور على الفريق الأزرق'), findsOneWidget);
+      expect(find.byType(GridView), findsNothing);
+      expect(find.text('افتح الخريطة يا منى'), findsOneWidget);
+      expect(find.textContaining('التلميح: حاجة'), findsNothing);
+    });
+
+    testWidgets(
+        'assassin guess ends the game instantly for the guessing team; replay resets everything',
+        (tester) async {
+      final (words, key) = mirrorDeal();
+      await startMatch(tester);
+      await tapText(tester, 'افتح الخريطة يا أحمد');
+      await giveClue(tester, 'حاجة', 1);
+      expect(find.textContaining('فاضل 2 تخمينة'), findsOneWidget);
+      final assassinIdx = key.indexOf('assassin');
+      await tester.tap(find.text(words[assassinIdx]),
+          warnIfMissed: false);
+      await fixedPumps(tester);
+      // Red guessed the assassin: blue wins immediately.
+      expect(find.text('الفريق الأزرق كسب! 🎉'), findsOneWidget);
+      expect(find.text('منى، سارة'), findsOneWidget);
+      expect(find.byType(GridView), findsNothing);
+      // Replay: full reset to intro, no key or clue left visible.
+      await tapText(tester, 'العب تاني');
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+      expect(find.text('الخريطة السرية - أحمد بس! 🤫'), findsNothing);
+      expect(find.textContaining('التلميح: حاجة'), findsNothing);
+    });
+
+    testWidgets('revealing every red agent wins across turn swaps',
+        (tester) async {
+      final (words, key) = mirrorDeal();
+      final redIdxs = [
+        for (var i = 0; i < 25; i++)
+          if (key[i] == 'red') i
+      ];
+      expect(redIdxs.length, 9);
+      await startMatch(tester);
+
+      // Red turn 1: clue count 4 -> 5 guesses, tap 5 red cells.
+      await tapText(tester, 'افتح الخريطة يا أحمد');
+      await giveClue(tester, 'حاجة', 4);
+      for (var k = 0; k < 5; k++) {
+        await tester.tap(find.text(words[redIdxs[k]]),
+            warnIfMissed: false);
+        await fixedPumps(tester, 2);
+      }
+      // Guesses exhausted: turn swaps to the blue gate.
+      expect(find.text('افتح الخريطة يا منى'), findsOneWidget);
+
+      // Blue turn: clue 1, one correct blue guess, then a neutral.
+      await tapText(tester, 'افتح الخريطة يا منى');
+      await giveClue(tester, 'تانية', 1);
+      final blueIdx = key.indexOf('blue');
+      await tester.tap(find.text(words[blueIdx]), warnIfMissed: false);
+      await fixedPumps(tester, 2);
+      expect(find.textContaining('فاضل 1 تخمينة'), findsOneWidget);
+      final neutralIdx = key.indexOf('neutral');
+      await tester.tap(find.text(words[neutralIdx]),
+          warnIfMissed: false);
+      await fixedPumps(tester, 2);
+
+      // Red turn 2: clue 4, remaining 4 red cells -> red wins.
+      await tapText(tester, 'افتح الخريطة يا أحمد');
+      await giveClue(tester, 'الأخيرة', 4);
+      for (var k = 5; k < 9; k++) {
+        await tester.tap(find.text(words[redIdxs[k]]),
+            warnIfMissed: false);
+        await fixedPumps(tester, 2);
+      }
+      expect(find.text('الفريق الأحمر كسب! 🎉'), findsOneWidget);
+      expect(find.text('أحمد، كريم'), findsOneWidget);
+    });
+
+    testWidgets('back navigation from game pops to caller', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme:
+              ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+          home: Builder(
+            builder: (ctx) => Scaffold(
+              body: Center(
+                child: TextButton(
+                  onPressed: () => Navigator.of(ctx).push(
+                    MaterialPageRoute(
+                      builder: (_) => const Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: CodeNamesGame(seed: seed),
+                      ),
+                    ),
+                  ),
+                  child: const Text('OPEN'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await fixedPumps(tester);
+      await tapText(tester, 'OPEN');
+      await flushFontCallbacks(tester);
+      expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
+      final back = find.byType(BackButton);
+      expect(back, findsOneWidget);
+      await tester.tap(back, warnIfMissed: false);
+      await fixedPumps(tester, 8);
+      expect(find.byType(CodeNamesGame), findsNothing);
+      expect(find.text('OPEN'), findsOneWidget);
     });
   });
 }
