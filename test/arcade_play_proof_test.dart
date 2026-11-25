@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shella/games/offline/catch_game.dart';
 import 'package:shella/games/offline/reaction_game.dart';
 import 'package:shella/games/offline/snake_arena_game.dart';
+import 'package:shella/games/offline/tank_battle_game.dart';
 import 'package:shella/games/offline/sumo_game.dart';
 import 'package:shella/games/offline/tap_race_game.dart';
 import 'package:shella/games/offline/touch_ball_game.dart';
@@ -167,6 +168,21 @@ void main() {
     }
     expect(find.textContaining('لفّ'), findsWidgets);
     await snap(tester, 'snake_arena_live_4p');
+    await settleDown(tester);
+  });
+  testWidgets('proof: tank battle live 4p', (tester) async {
+    await prep(tester, const TankBattleGame(randomSeed: 7));
+    await tester.tap(find.text('4 لاعبين'));
+    await tester.pump();
+    // fire once per player, then advance deterministic ticks
+    for (var i = 1; i <= 4; i++) {
+      await tester.tap(find.text('لاعب $i 🎯'));
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 250));
+    }
+    await snap(tester, 'tank_battle_live_4p');
     await settleDown(tester);
   });
 }

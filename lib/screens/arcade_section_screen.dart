@@ -20,6 +20,7 @@ class ArcadeSectionScreen extends StatefulWidget {
   static const Map<String, List<int>> playerCounts = {
     'أسرع رد فعل': [2, 3, 4],
     'حية الشلة': [2, 3, 4],
+    'دبابات الشلة': [2, 3, 4],
     'سومو الشلة': [2],
     'اقطفها': [2, 3, 4],
     'سباق الدوس': [2, 3, 4],
@@ -29,6 +30,7 @@ class ArcadeSectionScreen extends StatefulWidget {
   static const Map<String, String> _emoji = {
     'أسرع رد فعل': '⚡',
     'حية الشلة': '🐍',
+    'دبابات الشلة': '💥',
     'سومو الشلة': '🤼',
     'اقطفها': '🐟',
     'سباق الدوس': '👟',

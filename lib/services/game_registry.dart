@@ -38,6 +38,7 @@ import '../games/offline/never_have_i_game.dart';
 import '../games/offline/proverb_game.dart';
 import '../games/offline/reaction_game.dart';
 import '../games/offline/snake_arena_game.dart';
+import '../games/offline/tank_battle_game.dart';
 import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
@@ -310,6 +311,15 @@ class GameRegistry {
       icon: Icons.turn_right,
       color: FunkyColors.mint,
       screen: SnakeArenaGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'دبابات الشلة',
+      description: 'المدفع بيلف لوحده.. دوس في اللحظة الصح وأصيب دبابات صحابك!',
+      icon: Icons.gps_fixed,
+      color: FunkyColors.orange,
+      screen: TankBattleGame(),
       badge: 'جديد',
       arcade1234: true,
     ),
