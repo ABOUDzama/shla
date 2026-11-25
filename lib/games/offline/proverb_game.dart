@@ -6,6 +6,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// أكمل المثل: the first half of an Egyptian proverb shows with 4 possible
 /// endings (the right one plus endings borrowed from other proverbs). A wrong
@@ -165,7 +166,7 @@ class _ProverbGameState extends State<ProverbGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -175,13 +176,13 @@ class _ProverbGameState extends State<ProverbGame> {
                     child: Text(
                       '${p['name']}: ${p['score']}',
                       style: GoogleFonts.cairo(
-                          fontSize: 18, color: Colors.white70),
+                          fontSize: 18, color: FlatColors.ink.withValues(alpha: 0.75)),
                     ),
                   ),
                 const SizedBox(height: 32),
                 FunkyButton(
                   label: 'العب تاني',
-                  accent: FunkyColors.pink,
+                  accent: FlatColors.tilePastels[5],
                   icon: Icons.refresh_rounded,
                   onPressed: () => setState(() {
                     _started = false;
@@ -213,7 +214,7 @@ class _ProverbGameState extends State<ProverbGame> {
             Text(
               'الجولة ${_roundsPlayed + 1} من $_totalRounds',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 14, color: Colors.white60),
+              style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
             ),
             const SizedBox(height: 8),
             Text(
@@ -224,20 +225,20 @@ class _ProverbGameState extends State<ProverbGame> {
               style: GoogleFonts.cairo(
                 fontSize: 20,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ),
             ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(20),
-              decoration: FunkyDecor.glowCard(FunkyColors.pink, radius: 24),
+              decoration: FlatDecor.card(radius: 24),
               child: Text(
                 proverb.start,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.cairo(
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: FlatColors.ink,
                 ),
               ),
             ).animate().fadeIn(duration: 250.ms),
@@ -250,7 +251,7 @@ class _ProverbGameState extends State<ProverbGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: FunkyColors.coral,
+                    color: FlatColors.mafia,
                   ),
                 ),
               ),
@@ -263,7 +264,7 @@ class _ProverbGameState extends State<ProverbGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: FunkyColors.mint,
+                    color: FlatColors.tilePastels[2],
                   ),
                 ),
               ),
@@ -278,8 +279,8 @@ class _ProverbGameState extends State<ProverbGame> {
                       child: FunkyButton(
                         label: option,
                         accent: roundOver && option == proverb.end
-                            ? FunkyColors.mint
-                            : FunkyColors.cyan,
+                            ? FlatColors.tilePastels[2]
+                            : FlatColors.tilePastels[1],
                         onPressed: roundOver ? () {} : () => _pick(option),
                       ),
                     ),
@@ -291,7 +292,7 @@ class _ProverbGameState extends State<ProverbGame> {
                 label: _roundsPlayed + 1 < _totalRounds
                     ? 'المثل اللي بعده'
                     : 'النتيجة النهائية',
-                accent: FunkyColors.pink,
+                accent: FlatColors.tilePastels[5],
                 icon: Icons.arrow_forward_rounded,
                 onPressed: _nextRound,
               ),

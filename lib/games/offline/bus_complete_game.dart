@@ -7,6 +7,7 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../services/audio_service.dart';
 import '../../services/haptic_service.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// أتوبيس كومبليت (لعبة الأتوبيس): letter + categories, fill fast, unique
 /// answers score double. Pass-and-play on one device.
@@ -244,7 +245,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
           Text(
             'حرف واحد.. وكل واحد يملى الفئات قبل الوقت!\nالإجابة المختلفة عن الكل بـ 10 نقط، والمكررة بـ 5.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(color: Colors.white70, fontSize: 14, height: 1.6),
+            style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 14, height: 1.6),
           ),
           const SizedBox(height: 20),
           Row(
@@ -253,12 +254,12 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                 child: TextField(
                   controller: _nameCtrl,
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.cairo(color: Colors.white),
+                  style: GoogleFonts.cairo(color: FlatColors.ink),
                   decoration: InputDecoration(
                     hintText: 'اسم اللاعب',
-                    hintStyle: GoogleFonts.cairo(color: Colors.white38),
+                    hintStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.45)),
                     filled: true,
-                    fillColor: Colors.white.withValues(alpha: 0.08),
+                    fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide.none,
@@ -282,9 +283,9 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
             children: [
               for (int i = 0; i < _players.length; i++)
                 Chip(
-                  label: Text(_players[i], style: GoogleFonts.cairo(color: Colors.white)),
+                  label: Text(_players[i], style: GoogleFonts.cairo(color: FlatColors.ink)),
                   backgroundColor: Colors.orange.withValues(alpha: 0.25),
-                  deleteIcon: const Icon(Icons.close, size: 18, color: Colors.white54),
+                  deleteIcon: Icon(Icons.close, size: 18, color: FlatColors.ink.withValues(alpha: 0.55)),
                   onDeleted: () => setState(() {
                     _totalScores.remove(_players[i]);
                     _players.removeAt(i);
@@ -294,7 +295,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
           ),
           const SizedBox(height: 20),
           Text('الفئات (اختار 4 على الأقل)',
-              style: GoogleFonts.cairo(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.bold)),
+              style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -311,16 +312,16 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                       _categories.remove(c);
                     }
                   }),
-                  selectedColor: Colors.orange.withValues(alpha: 0.5),
+                  selectedColor: FlatColors.tilePastels[4],
                   checkmarkColor: Colors.white,
                   labelStyle: TextStyle(
-                    color: _categories.contains(c) ? Colors.white : Colors.white60,
+                    color: _categories.contains(c) ? Colors.white : FlatColors.ink.withValues(alpha: 0.7),
                   ),
                 ),
             ],
           ),
           const SizedBox(height: 20),
-          Text('عدد الجولات', style: GoogleFonts.cairo(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.bold)),
+          Text('عدد الجولات', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           SegmentedButton<int>(
             segments: const [
@@ -353,9 +354,9 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('الجولة $_round / $_totalRounds',
-                style: GoogleFonts.cairo(color: Colors.white54, fontSize: 15)),
+                style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 15)),
             const SizedBox(height: 20),
-            Text('حرف الجولة:', style: GoogleFonts.cairo(color: Colors.white70, fontSize: 18)),
+            Text('حرف الجولة:', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 18)),
             const SizedBox(height: 8),
             Container(
               width: 110,
@@ -370,10 +371,10 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                   style: GoogleFonts.cairo(fontSize: 56, fontWeight: FontWeight.w900, color: Colors.orangeAccent)),
             ).animate().scale(begin: const Offset(0.5, 0.5)).fadeIn(),
             const SizedBox(height: 20),
-            Text('عدّي الموبايل لـ', style: GoogleFonts.cairo(color: Colors.white70, fontSize: 17)),
+            Text('عدّي الموبايل لـ', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 17)),
             Text(
               _players[_currentPlayer],
-              style: GoogleFonts.cairo(color: Colors.orangeAccent, fontSize: 32, fontWeight: FontWeight.w900),
+              style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 32, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -406,19 +407,19 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(_players[_currentPlayer],
-                    style: GoogleFonts.cairo(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                    style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 18, fontWeight: FontWeight.bold)),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
-                  color: urgent ? Colors.red.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.1),
+                  color: urgent ? Colors.red.withValues(alpha: 0.12) : Colors.white,
                   borderRadius: BorderRadius.circular(20),
-                  border: urgent ? Border.all(color: Colors.redAccent) : null,
+                  border: urgent ? Border.all(color: Colors.redAccent) : Border.all(color: FlatColors.border, width: 2),
                 ),
                 child: Text(
                   '$_timeLeft',
                   style: GoogleFonts.cairo(
-                    color: urgent ? Colors.redAccent : Colors.white,
+                    color: urgent ? Colors.redAccent : FlatColors.ink,
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                   ),
@@ -429,7 +430,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
         ),
         LinearProgressIndicator(
           value: _timeLeft / _turnSeconds,
-          backgroundColor: Colors.white12,
+          backgroundColor: FlatColors.border,
           color: urgent ? Colors.redAccent : Colors.orange,
           minHeight: 5,
         ),
@@ -443,13 +444,13 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                   child: TextField(
                     controller: _fieldCtrls[c],
                     textAlign: TextAlign.right,
-                    style: GoogleFonts.cairo(color: Colors.white, fontSize: 17),
+                    style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 17),
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: c,
-                      labelStyle: GoogleFonts.cairo(color: Colors.orange.shade200),
+                      labelStyle: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.6)),
                       filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.07),
+                      fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide.none,
@@ -489,7 +490,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
       child: Column(
         children: [
           Text('جولة حرف "$_letter"',
-              style: GoogleFonts.cairo(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
+              style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 20, fontWeight: FontWeight.w900)),
           const SizedBox(height: 12),
           for (final cat in cats)
             _categoryResult(cat, roundScores.keys.toList()),
@@ -508,11 +509,11 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Text(p, style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                          child: Text(p, style: GoogleFonts.cairo(color: FlatColors.ink, fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
-                        Text('+${roundScores[p]}', style: GoogleFonts.cairo(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
+                        Text('+${roundScores[p]}', style: GoogleFonts.cairo(color: FlatColors.doctor, fontWeight: FontWeight.bold)),
                         const SizedBox(width: 12),
-                        Text('المجموع: ${_totalScores[p]}', style: GoogleFonts.cairo(color: Colors.white54, fontSize: 13)),
+                        Text('المجموع: ${_totalScores[p]}', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.7), fontSize: 13)),
                       ],
                     ),
                   ),
@@ -551,13 +552,14 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: FlatColors.border, width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(cat, style: GoogleFonts.cairo(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 15)),
+          Text(cat, style: GoogleFonts.cairo(color: FlatColors.ink, fontWeight: FontWeight.bold, fontSize: 15)),
           const SizedBox(height: 6),
           for (final p in players)
             Builder(builder: (_) {
@@ -572,13 +574,13 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                   children: [
                     SizedBox(
                       width: 90,
-                      child: Text(p, style: GoogleFonts.cairo(color: Colors.white70, fontSize: 13), overflow: TextOverflow.ellipsis),
+                      child: Text(p, style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75), fontSize: 13), overflow: TextOverflow.ellipsis),
                     ),
                     Expanded(
                       child: Text(
                         raw.isEmpty ? '—' : raw,
                         style: GoogleFonts.cairo(
-                          color: valid ? Colors.white : Colors.red.shade300,
+                          color: valid ? FlatColors.ink : FlatColors.mafia,
                           fontSize: 14,
                           decoration: valid ? null : TextDecoration.lineThrough,
                         ),
@@ -587,7 +589,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                     Text(
                       '+$pts',
                       style: GoogleFonts.cairo(
-                        color: pts == 10 ? Colors.greenAccent : (pts == 5 ? Colors.amber : Colors.white38),
+                        color: pts == 10 ? FlatColors.doctor : (pts == 5 ? FlatColors.day : FlatColors.ink.withValues(alpha: 0.45)),
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
                       ),
@@ -615,7 +617,7 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
             const SizedBox(height: 12),
             Text(
               'الكابتن: ${sorted.first}! 🏆',
-              style: GoogleFonts.cairo(color: Colors.amber, fontSize: 24, fontWeight: FontWeight.w900),
+              style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 24, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 24),
             for (int i = 0; i < sorted.length; i++)
@@ -623,9 +625,9 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: i == 0 ? Colors.amber.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.07),
+                  color: i == 0 ? FlatColors.tilePastels[4].withValues(alpha: 0.18) : Colors.white,
                   borderRadius: BorderRadius.circular(14),
-                  border: i == 0 ? Border.all(color: Colors.amber.withValues(alpha: 0.5)) : null,
+                  border: Border.all(color: i == 0 ? FlatColors.tilePastels[4] : FlatColors.border, width: 2),
                 ),
                 child: Row(
                   children: [
@@ -633,9 +635,9 @@ class _BusCompleteGameState extends State<BusCompleteGame> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(sorted[i],
-                          style: GoogleFonts.cairo(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
+                          style: GoogleFonts.cairo(color: FlatColors.ink, fontSize: 17, fontWeight: FontWeight.bold)),
                     ),
-                    Text('${_totalScores[sorted[i]]} نقطة', style: GoogleFonts.cairo(color: Colors.white70)),
+                    Text('${_totalScores[sorted[i]]} نقطة', style: GoogleFonts.cairo(color: FlatColors.ink.withValues(alpha: 0.75))),
                   ],
                 ),
               ).animate().fadeIn(delay: (i * 120).ms).slideX(begin: 0.2),

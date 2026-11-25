@@ -6,6 +6,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// مافيا (Mafia/Werewolf): social deduction, pass-and-play, app is the
 /// moderator. Rules grounded in the classic game (Wikipedia: Mafia party
@@ -407,7 +408,7 @@ class _MafiaGameState extends State<MafiaGame> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 14, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: FlatColors.ink,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: _flatBorder, width: 2),
                   ),
@@ -500,7 +501,7 @@ class _MafiaGameState extends State<MafiaGame> {
                                 'افتكر دورك كويس.. ومتوريهوش لحد!',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.cairo(
-                                    fontSize: 13, color: Colors.white70),
+                                    fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.75)),
                               ),
                             ],
                           )
@@ -601,13 +602,13 @@ class _MafiaGameState extends State<MafiaGame> {
           Text(
             'الليل $_dayNumber 🌙',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(fontSize: 14, color: Colors.white60)
+            style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
                 .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
           const SizedBox(height: 20),
           Expanded(
             child: Container(
-              decoration: FunkyDecor.glowCard(FunkyColors.violet, radius: 26),
+              decoration: FlatDecor.card(radius: 26),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -630,7 +631,7 @@ class _MafiaGameState extends State<MafiaGame> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.cairo(
-                          fontSize: 13, color: Colors.white60),
+                          fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                     ),
                   ],
                 ),
@@ -648,13 +649,13 @@ class _MafiaGameState extends State<MafiaGame> {
           Text(
             'الليل $_dayNumber 🌙',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(fontSize: 14, color: Colors.white60)
+            style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
                 .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
           const SizedBox(height: 20),
           Expanded(
             child: Container(
-              decoration: FunkyDecor.glowCard(FunkyColors.violet, radius: 26),
+              decoration: FlatDecor.card(radius: 26),
               child: Center(
                 child: Text(
                   _investigateResult!,
@@ -662,7 +663,7 @@ class _MafiaGameState extends State<MafiaGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 34,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
                 ).animate().scale(duration: 300.ms),
               ),
@@ -694,7 +695,7 @@ class _MafiaGameState extends State<MafiaGame> {
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.cairo(fontSize: 14, color: Colors.white60)
+          style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
               .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
         ),
         const SizedBox(height: 8),
@@ -704,7 +705,7 @@ class _MafiaGameState extends State<MafiaGame> {
           style: GoogleFonts.cairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
-            color: Colors.white,
+            color: FlatColors.ink,
           ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
         ),
         const SizedBox(height: 16),
@@ -738,7 +739,7 @@ class _MafiaGameState extends State<MafiaGame> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 14),
                     decoration:
-                        FunkyDecor.glowCard(FunkyColors.violet, radius: 20),
+                        FlatDecor.card(radius: 20),
                     child: Text(
                       candidate,
                       textAlign: TextAlign.center,
@@ -747,7 +748,7 @@ class _MafiaGameState extends State<MafiaGame> {
                       style: GoogleFonts.cairo(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white,
+                        color: FlatColors.ink,
                       ),
                     ),
                   ),
@@ -770,13 +771,13 @@ class _MafiaGameState extends State<MafiaGame> {
           Text(
             'الصبح $_dayNumber ☀',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(fontSize: 14, color: Colors.white60)
+            style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
                 .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
           ),
           const SizedBox(height: 20),
           Expanded(
             child: Container(
-              decoration: FunkyDecor.glowCard(FunkyColors.amber, radius: 26),
+              decoration: FlatDecor.card(radius: 26),
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(20),
@@ -790,7 +791,7 @@ class _MafiaGameState extends State<MafiaGame> {
                     style: GoogleFonts.cairo(
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: FlatColors.ink,
                     ).copyWith(
                         fontFamilyFallback: const ['Noto Color Emoji']),
                   ),
@@ -802,7 +803,7 @@ class _MafiaGameState extends State<MafiaGame> {
           Text(
             'اتناقشوا.. وبعدين صوّتوا تشيلوا أكتر واحد مشكوك فيه',
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(fontSize: 14, color: Colors.white70),
+            style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.75)),
           ),
           const SizedBox(height: 12),
           FunkyButton(
@@ -832,7 +833,7 @@ class _MafiaGameState extends State<MafiaGame> {
         Text(
           'التصويت ⚖️',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(fontSize: 14, color: Colors.white60)
+          style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7))
               .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
         ),
         const SizedBox(height: 4),
@@ -842,7 +843,7 @@ class _MafiaGameState extends State<MafiaGame> {
           style: GoogleFonts.cairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,
-            color: Colors.white,
+            color: FlatColors.ink,
           ),
         ),
         const SizedBox(height: 16),
@@ -858,7 +859,7 @@ class _MafiaGameState extends State<MafiaGame> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20, vertical: 16),
                   decoration:
-                      FunkyDecor.glowCard(FunkyColors.coral, radius: 20),
+                      FlatDecor.card(radius: 20),
                   child: Text(
                     candidate,
                     textAlign: TextAlign.center,
@@ -867,7 +868,7 @@ class _MafiaGameState extends State<MafiaGame> {
                     style: GoogleFonts.cairo(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: FlatColors.ink,
                     ),
                   ),
                 ),
@@ -896,7 +897,7 @@ class _MafiaGameState extends State<MafiaGame> {
             Text(
               'المجموعة قررت! ⚖️',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 16, color: Colors.white70)
+              style: GoogleFonts.cairo(fontSize: 16, color: FlatColors.ink.withValues(alpha: 0.75))
                   .copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 12),
@@ -908,7 +909,7 @@ class _MafiaGameState extends State<MafiaGame> {
               style: GoogleFonts.cairo(
                 fontSize: 34,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ),
             ).animate().scale(duration: 300.ms),
             const SizedBox(height: 8),
@@ -918,7 +919,7 @@ class _MafiaGameState extends State<MafiaGame> {
               style: GoogleFonts.cairo(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: FlatColors.ink,
               ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 32),
@@ -955,7 +956,7 @@ class _MafiaGameState extends State<MafiaGame> {
               style: GoogleFonts.cairo(
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
             ),
             const SizedBox(height: 20),
@@ -967,7 +968,7 @@ class _MafiaGameState extends State<MafiaGame> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.cairo(
                     fontSize: 16,
-                    color: Colors.white70,
+                    color: FlatColors.ink.withValues(alpha: 0.75),
                   ).copyWith(
                       fontFamilyFallback: const ['Noto Color Emoji']),
                 ),

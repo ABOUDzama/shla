@@ -6,6 +6,7 @@ import '../../screens/global_player_selection_screen.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
+import '../../theme/flat_theme.dart';
 
 /// كلمة السر (Password): each round one player is the clue-giver. Only the
 /// clue-giver sees the secret word, says one-word clues out loud, and the
@@ -144,7 +145,7 @@ class _PasswordGameState extends State<PasswordGame> {
                   style: GoogleFonts.cairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -154,13 +155,13 @@ class _PasswordGameState extends State<PasswordGame> {
                     child: Text(
                       '${p['name']}: ${p['score']}',
                       style: GoogleFonts.cairo(
-                          fontSize: 18, color: Colors.white70),
+                          fontSize: 18, color: FlatColors.ink.withValues(alpha: 0.75)),
                     ),
                   ),
                 const SizedBox(height: 32),
                 FunkyButton(
                   label: 'العب تاني',
-                  accent: FunkyColors.amber,
+                  accent: FlatColors.tilePastels[4],
                   icon: Icons.refresh_rounded,
                   onPressed: () => setState(() {
                     _started = false;
@@ -189,7 +190,7 @@ class _PasswordGameState extends State<PasswordGame> {
             Text(
               'الجولة ${_roundsPlayed + 1} من $_totalRounds',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 14, color: Colors.white60),
+              style: GoogleFonts.cairo(fontSize: 14, color: FlatColors.ink.withValues(alpha: 0.7)),
             ),
             const SizedBox(height: 8),
             Text(
@@ -200,13 +201,13 @@ class _PasswordGameState extends State<PasswordGame> {
               style: GoogleFonts.cairo(
                 fontSize: 20,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
               ),
             ),
             const SizedBox(height: 20),
             Expanded(
               child: Container(
-                decoration: FunkyDecor.glowCard(FunkyColors.amber, radius: 26),
+                decoration: FlatDecor.card(radius: 26),
                 child: Center(
                   child: _wordRevealed
                       ? GestureDetector(
@@ -217,7 +218,7 @@ class _PasswordGameState extends State<PasswordGame> {
                             style: GoogleFonts.cairo(
                               fontSize: 44,
                               fontWeight: FontWeight.w900,
-                              color: Colors.white,
+                              color: FlatColors.ink,
                             ),
                           ).animate().scale(duration: 300.ms),
                         )
@@ -231,7 +232,7 @@ class _PasswordGameState extends State<PasswordGame> {
                                   const EdgeInsets.symmetric(horizontal: 24),
                               child: FunkyButton(
                                 label: 'شوف الكلمة',
-                                accent: FunkyColors.amber,
+                                accent: FlatColors.tilePastels[4],
                                 icon: Icons.visibility_rounded,
                                 onPressed: () => setState(() {
                                   _wordRevealed = true;
@@ -245,7 +246,7 @@ class _PasswordGameState extends State<PasswordGame> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.cairo(
-                                  fontSize: 13, color: Colors.white60),
+                                  fontSize: 13, color: FlatColors.ink.withValues(alpha: 0.7)),
                             ),
                           ],
                         ),
@@ -255,7 +256,7 @@ class _PasswordGameState extends State<PasswordGame> {
             const SizedBox(height: 20),
             FunkyButton(
               label: 'خمنوها صح',
-              accent: FunkyColors.mint,
+              accent: FlatColors.tilePastels[2],
               icon: Icons.check_circle_rounded,
               onPressed:
                   _wordSeen ? () => _showGuesserPicker(context) : null,
@@ -263,7 +264,7 @@ class _PasswordGameState extends State<PasswordGame> {
             const SizedBox(height: 12),
             FunkyButton(
               label: 'محصلش تخمين',
-              accent: FunkyColors.coral,
+              accent: FlatColors.tilePastels[3],
               icon: Icons.skip_next_rounded,
               onPressed: _wordSeen ? _noGuess : null,
             ),
@@ -276,7 +277,7 @@ class _PasswordGameState extends State<PasswordGame> {
   void _showGuesserPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: FunkyColors.card,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -293,7 +294,7 @@ class _PasswordGameState extends State<PasswordGame> {
                 style: GoogleFonts.cairo(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: FlatColors.ink,
                 ),
               ),
               const SizedBox(height: 16),
@@ -303,7 +304,7 @@ class _PasswordGameState extends State<PasswordGame> {
                     padding: const EdgeInsets.only(bottom: 8),
                     child: FunkyButton(
                       label: p['name'] as String,
-                      accent: FunkyColors.cyan,
+                      accent: FlatColors.tilePastels[1],
                       onPressed: () {
                         Navigator.pop(sheetCtx);
                         _guessed(p['name'] as String);
