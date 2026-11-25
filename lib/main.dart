@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
+import 'screens/welcome_screen.dart';
 import 'services/settings_service.dart';
 import 'theme/funky_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -160,7 +161,14 @@ class _MyAppState extends State<MyApp> {
           elevation: 0,
         ),
       ),
-      home: const HomeScreen(),
+      home: SettingsService.userName.isEmpty
+          ? Builder(
+              builder: (ctx) => WelcomeScreen(
+                onDone: () => Navigator.pushReplacement(ctx,
+                    MaterialPageRoute(builder: (_) => const HomeScreen())),
+              ),
+            )
+          : const HomeScreen(),
     );
   }
 }

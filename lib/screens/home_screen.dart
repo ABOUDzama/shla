@@ -232,7 +232,9 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Text('شِلَّة', style: FlatDecor.title(size: 28)),
               Text(
-                'اختاروا لعبتكم وشعّلوا الدنيا 🎉',
+                SettingsService.userName.isEmpty
+                    ? 'اختاروا لعبتكم وشعّلوا الدنيا 🎉'
+                    : 'أهلاً يا ${SettingsService.userName} 👋',
                 style: FlatDecor.body(size: 12.5),
               ),
             ],

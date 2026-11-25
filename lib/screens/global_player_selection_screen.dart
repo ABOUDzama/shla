@@ -53,7 +53,49 @@ class _GlobalPlayerSelectionScreenState
   /// friends added/edited/deleted in شلتي while this screen sits in the
   /// navigation stack appear the moment the user returns to it.
   void _refreshRoster() {
-    _allSavedPlayers = SettingsService.getSavedPlayersProfiles();
+    final me = SettingsService.userName;
+    _allSavedPlayers = SettingsService.getSavedPlayersProfiles()
+        .where((p) => p['name'] != me)
+        .toList();
+    if (me.isNotEmpty) _selectedPlayerNames.add(me);
+  }
+
+  /// The profile owner: always first, always playing.
+  Widget _meRow() {
+    final me = SettingsService.userName;
+    final provider = AvatarService.providerFor(SettingsService.userAvatar);
+    return Container(
+      key: const ValueKey('me_row'),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: FlatColors.ink.withValues(alpha: 0.5), width: 2),
+      ),
+      child: Row(children: [
+        Container(
+          width: 46,
+          height: 46,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: FlatColors.ink.withValues(alpha: 0.5), width: 2),
+            image: provider == null
+                ? null
+                : DecorationImage(image: provider, fit: BoxFit.cover),
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Text('$me (أنت)',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.cairo(
+                  fontSize: 17, color: FlatColors.ink, fontWeight: FontWeight.bold)),
+        ),
+        const Icon(Icons.check_circle, color: FlatColors.mintDark, size: 24),
+      ]),
+    );
   }
 
   Future<void> _pickTempAvatar() async {
@@ -67,7 +109,8 @@ class _GlobalPlayerSelectionScreenState
   void _addPlayer() {
     final name = _playerCtrl.text.trim();
     if (name.isNotEmpty) {
-      bool exists = _allSavedPlayers.any((p) => p['name'] == name);
+      bool exists = name == SettingsService.userName ||
+          _allSavedPlayers.any((p) => p['name'] == name);
       if (!exists) {
         setState(() {
           final newPlayer = {'name': name, 'avatar': _tempAvatarBase64 ?? ''};
@@ -119,7 +162,12 @@ class _GlobalPlayerSelectionScreenState
   void _startGame() {
     if (_selectedPlayerNames.length >= widget.minPlayers) {
       final scoreService = ScoreService();
+      final me = SettingsService.userName;
       final selectedList = _selectedPlayerNames.toList();
+      if (me.isNotEmpty) {
+        selectedList.remove(me);
+        selectedList.insert(0, me);
+      }
 
       if (scoreService.players.isEmpty) {
         scoreService.setPlayers(selectedList);
@@ -324,19 +372,23 @@ class _GlobalPlayerSelectionScreenState
 
                 // Player list: ticket cards, selected = accent gradient edge
                 Expanded(
-                  child: _allSavedPlayers.isEmpty
-                      ? Center(
+                  child: ListView(
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      if (SettingsService.userName.isNotEmpty) _meRow(),
+                      if (_allSavedPlayers.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 24),
+                          child: Center(
                           child: Text(
                             'لا يوجد لاعبين مسجلين حالياً\nقم بإضافة أصدقائك للبدء',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.cairo(
                                 fontSize: 15, color: FlatColors.ink.withValues(alpha: 0.5)),
                           ).animate().fadeIn(),
-                        )
-                      : ListView.builder(
-                          itemCount: _allSavedPlayers.length,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
+                        ))
+                      else
+                        ...List.generate(_allSavedPlayers.length, (index) {
                             final player = _allSavedPlayers[index];
                             final name = player['name'] ?? '';
                             final avatar = player['avatar'];
@@ -426,8 +478,9 @@ class _GlobalPlayerSelectionScreenState
                                 .animate()
                                 .fadeIn(duration: 300.ms)
                                 .slideX(begin: 0.05, curve: Curves.easeOut);
-                          },
-                        ),
+                          }),
+                    ],
+                  ),
                 ),
 
                 // Start button
