@@ -632,7 +632,7 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'arc_coin_grab_a');
-    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
+    for (final label in ['4 لاعبين', '2 لاعبين']) {
       if (find.text(label).evaluate().isNotEmpty) {
         await tapIf(tester, find.text(label).first);
         break;

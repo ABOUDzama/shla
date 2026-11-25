@@ -9,34 +9,33 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import 'coin_grab_logic.dart';
 
-/// لمّ الفلوس: 2-4 players, rotating claw arms, tap to grab coins.
+/// لمّ الفلوس: 1-4 players, one claw pad per corner. The claw sweeps and
+/// stretches by itself; tap when its tip is on a coin.
 class CoinGrabGame extends StatefulWidget {
   const CoinGrabGame({super.key, this.randomSeed});
-
-  /// Fixed RNG seed for deterministic tests; null uses a live random source.
   final int? randomSeed;
 
   @override
   State<CoinGrabGame> createState() => _CoinGrabGameState();
 }
 
-enum _CoinPhase { pickPlayers, playing, over }
+enum _Phase { pickPlayers, pickBots, playing, over }
 
 class _CoinGrabGameState extends State<CoinGrabGame> {
   static const _emojiFallback = ['Noto Color Emoji'];
-
-  bool _showIntro = true;
-  _CoinPhase _phase = _CoinPhase.pickPlayers;
-  late CoinGrabMatch _match;
-  Timer? _ticker;
-  String _banner = '';
-
-  static const List<Color> _colors = [
+  static const _colors = [
     Color(0xFFFF8A5C),
     Color(0xFF4D8DFF),
     Color(0xFF35C99E),
     Color(0xFFFF6FA5),
   ];
+
+  bool _showIntro = true;
+  _Phase _phase = _Phase.pickPlayers;
+  late CoinGrabMatch _match;
+  Timer? _ticker;
+  int _humans = 2;
+  bool _practice = false;
 
   @override
   void dispose() {
@@ -44,168 +43,137 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
     super.dispose();
   }
 
-  void _startMatch(int players) {
+  void _start(int humans, bool withBots) {
     _ticker?.cancel();
+    _humans = humans;
+    _practice = humans == 1 && !withBots;
+    final seats = _practice ? 1 : (withBots ? 4 : humans);
+    final m = CoinGrabMatch(
+      seats: seats,
+      random: widget.randomSeed != null ? Random(widget.randomSeed!) : null,
+    );
+    for (var s = humans; s < seats; s++) {
+      m.botSeats.add(s);
+    }
     setState(() {
-      _match = CoinGrabMatch(
-        playerCount: players,
-        random: widget.randomSeed != null ? Random(widget.randomSeed!) : null,
-      );
-      _banner = 'دوس لما دراعك يعدي على فلوس! 🪙';
-      _phase = _CoinPhase.playing;
+      _match = m;
+      _phase = _Phase.playing;
     });
-    _ticker = Timer.periodic(const Duration(milliseconds: 60), (_) {
-      if (!mounted || _phase != _CoinPhase.playing) return;
+    _ticker = Timer.periodic(const Duration(milliseconds: 33), (_) {
+      if (!mounted || _phase != _Phase.playing) return;
       setState(() {
-        _match.tick();
-        if (_match.isOver) {
+        _match.step(0.033);
+        if (_match.over) {
           _ticker?.cancel();
-          _phase = _CoinPhase.over;
+          _phase = _Phase.over;
         }
       });
     });
   }
 
-  void _grab(int i) {
-    if (_phase != _CoinPhase.playing) return;
-    final got = _match.grab(i);
-    setState(() {
-      _banner = got > 0
-          ? 'لاعب ${i + 1} لمّ $got جنيه! 🪙'
-          : 'لاعب ${i + 1} مسك هوا 😅';
-      if (_match.isOver) {
-        _ticker?.cancel();
-        _phase = _CoinPhase.over;
-      }
-    });
-  }
+  @visibleForTesting
+  CoinGrabMatch get debugMatch => _match;
 
-  Widget _buildPicker() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+  TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>
+      flatCairo(fontSize: size, fontWeight: w, color: color ?? FlatColors.ink)
+          .copyWith(fontFamilyFallback: _emojiFallback);
+
+  Widget _bigChoice(String label, VoidCallback onTap) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: SizedBox(
+          width: 220,
+          child: FilledButton(
+              onPressed: onTap, child: Text(label, style: _t(18, color: Colors.white))),
+        ),
+      );
+
+  Widget _buildPicker() => Center(
+        child: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text('كام لاعب؟', style: _t(26)),
+            const SizedBox(height: 20),
+            _bigChoice('لاعب واحد', () {
+              _humans = 1;
+              setState(() => _phase = _Phase.pickBots);
+            }),
+            for (final n in [2, 3, 4])
+              _bigChoice('$n لاعبين', () {
+                _humans = n;
+                if (n == 4) {
+                  _start(4, false);
+                } else {
+                  setState(() => _phase = _Phase.pickBots);
+                }
+              }),
+          ]),
+        ),
+      );
+
+  Widget _buildBots() => Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('نضيف بوتات؟', style: _t(26)),
+          const SizedBox(height: 8),
           Text(
-            'كام لاعب؟',
-            style: flatCairo(
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
+            _humans == 1
+                ? 'من غير بوتات هتتدرب لوحدك وتشوف هتلمّ كام جنيه في دقيقة'
+                : 'البوتات بتكمّل لحد ٤ لاعبين',
+            style: _t(14, w: FontWeight.w600),
           ),
           const SizedBox(height: 20),
-          for (final n in [2, 3, 4])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: SizedBox(
-                width: 200,
-                child: FilledButton(
-                  onPressed: () => _startMatch(n),
-                  child: Text(
-                    '$n لاعبين',
-                    style: flatCairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ).copyWith(fontFamilyFallback: _emojiFallback),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+          _bigChoice('اه 🤖', () => _start(_humans, true)),
+          _bigChoice('لا', () => _start(_humans, false)),
+        ]),
+      );
 
-  Widget _scoreChip(int i) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 46,
-          height: 46,
-          decoration: BoxDecoration(
-            color: _colors[i].withValues(alpha: 0.35),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: _colors[i], width: 2),
-          ),
-          child: Center(
-            child: Text(
-              '${_match.scores[i]}',
-              style: flatCairo(
-                fontSize: 17,
-                fontWeight: FontWeight.w800,
-                color: FlatColors.ink,
-              ).copyWith(fontFamilyFallback: _emojiFallback),
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'لاعب ${i + 1}',
-          style: flatCairo(
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
-            color: FlatColors.ink,
-          ).copyWith(fontFamilyFallback: _emojiFallback),
-        ),
-      ],
-    );
-  }
+  Alignment _corner(int seat) => const [
+        Alignment.bottomLeft,
+        Alignment.topRight,
+        Alignment.bottomRight,
+        Alignment.topLeft,
+      ][seat];
 
-  Widget _grabButton(int i) {
-    final active = _phase == _CoinPhase.playing;
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: FilledButton(
-          style: FilledButton.styleFrom(
-            backgroundColor: _colors[i],
-            disabledBackgroundColor: _colors[i].withValues(alpha: 0.15),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-          ),
-          onPressed: active ? () => _grab(i) : null,
-          child: Text(
-            'لاعب ${i + 1} 🪙',
-            style: flatCairo(
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-              color: Colors.black87,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
-          ),
+  Widget _pad(int seat) {
+    final cd = _match.cooldown[seat] > 0;
+    return Listener(
+      key: ValueKey('pad_$seat'),
+      onPointerDown: (_) {
+        if (_phase == _Phase.playing) _match.grab(seat);
+      },
+      child: Container(
+        width: 62,
+        height: 62,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: _colors[seat].withValues(alpha: cd ? 0.45 : 0.95),
+          border: Border.all(color: FlatColors.ink, width: 2.5),
         ),
+        alignment: Alignment.center,
+        child: Text('${_match.scores[seat]}', style: _t(22, color: Colors.white)),
       ),
     );
   }
 
   Widget _buildOver() {
-    final w = _match.winner();
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (w != null)
-          VictoryFriends(gameTitle: 'لمّ الفلوس', winnerName: 'لاعب ${w + 1}')
-        else
-          Text(
-            'تعادل! الكل لمّ نفس الفلوس 🪙',
-            style: flatCairo(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
-          ),
-        const SizedBox(height: 16),
-        FilledButton(
-          onPressed: () => setState(() => _phase = _CoinPhase.pickPlayers),
-          child: Text(
-            'العبوا تاني 🪙',
-            style: flatCairo(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
-          ),
-        ),
-      ],
-    );
+    final w = _match.winner;
+    Widget head;
+    if (_practice) {
+      head = Text('لمّيت ${_match.scores[0]} جنيه (${_match.grabbed[0]} عملة) 👏',
+          textAlign: TextAlign.center, style: _t(20));
+    } else if (w == null) {
+      head = Text('تعادل! الكل لمّ نفس الفلوس', textAlign: TextAlign.center, style: _t(22));
+    } else if (w >= _humans) {
+      head = Text('البوتات كسبوا 🤖', style: _t(22));
+    } else {
+      head = VictoryFriends(gameTitle: 'لمّ الفلوس', winnerName: 'لاعب ${w + 1}');
+    }
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      head,
+      const SizedBox(height: 16),
+      FilledButton(
+        onPressed: () => setState(() => _phase = _Phase.pickPlayers),
+        child: Text('العبوا تاني', style: _t(18, color: Colors.white)),
+      ),
+    ]);
   }
 
   @override
@@ -214,137 +182,112 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
       return GameIntroWidget(
         title: 'لمّ الفلوس',
         description:
-            '٢-٤ لاعبين على نفس الموبايل. دراع كل لاعب بيلف حوالين القاعدة بتاعته.. دوس لما يعدي على عملة عشان تلمّها. الدهبية بعشرة! أغنى واحد لما الكوم يخلص يكسب 🪙',
+            'كل واحد معاه كلّاب في ركنه بيتحرك ويمدّ لوحده في الأرضية. دوس على زرارك لما طرف الكلّاب يبقى فوق عملة عشان تلمّها. الدهبية بعشرة والفضية بخمسة. معاكم دقيقة، أغنى واحد يكسب',
         icon: '🪙',
         onStart: () => setState(() => _showIntro = false),
       );
     }
-    final players = _phase == _CoinPhase.pickPlayers ? 0 : _match.playerCount;
     return OfflineGameScaffold(
       title: 'لمّ الفلوس',
       backgroundColor: FlatColors.bg,
       body: SafeArea(
-        child: _phase == _CoinPhase.pickPlayers
-            ? _buildPicker()
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        for (var i = 0; i < players; i++) _scoreChip(i)
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    child: Text(
-                      _banner,
-                      textAlign: TextAlign.center,
-                      style: flatCairo(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: FlatColors.ink,
-                      ).copyWith(fontFamilyFallback: _emojiFallback),
-                    ),
-                  ),
-                  Expanded(
-                    child: _phase == _CoinPhase.over
-                        ? Center(child: _buildOver())
-                        : Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: AspectRatio(
-                              aspectRatio: 1,
-                              child: CustomPaint(
-                                painter: _CoinArenaPainter(
-                                  match: _match,
-                                  colors: _colors,
-                                ),
-                              ),
-                            ),
-                          ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
-                    child: Row(
-                      children: [
-                        for (var i = 0; i < players; i++) _grabButton(i)
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+        child: switch (_phase) {
+          _Phase.pickPlayers => _buildPicker(),
+          _Phase.pickBots => _buildBots(),
+          _Phase.over => Center(child: _buildOver()),
+          _Phase.playing => LayoutBuilder(builder: (context, c) {
+              final h = c.maxHeight - 8;
+              final w = min(c.maxWidth - 8, h / CoinGrabMatch.arenaH);
+              final ph = w * CoinGrabMatch.arenaH;
+              return Center(
+                child: SizedBox(
+                  width: w,
+                  height: ph,
+                  child: Stack(children: [
+                    Positioned.fill(child: CustomPaint(painter: _CoinPainter(_match, _colors, _humans))),
+                    for (var s = 0; s < _humans; s++)
+                      Align(
+                        alignment: _corner(s),
+                        child: Padding(padding: const EdgeInsets.all(5), child: _pad(s)),
+                      ),
+                  ]),
+                ),
+              );
+            }),
+        },
       ),
     );
   }
 }
 
-class _CoinArenaPainter extends CustomPainter {
-  _CoinArenaPainter({required this.match, required this.colors});
-
-  final CoinGrabMatch match;
+class _CoinPainter extends CustomPainter {
+  _CoinPainter(this.m, this.colors, this.humans);
+  final CoinGrabMatch m;
   final List<Color> colors;
+  final int humans;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    Offset at(double x, double y) => Offset(x * w, y * w);
-
-    final bg = Paint()
-      ..color = FlatColors.tileWhite
-      ..style = PaintingStyle.fill;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(20)),
-      bg,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(20)),
-      Paint()
-        ..color = FlatColors.border
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 3,
-    );
-
+    final k = size.width;
+    final rr = RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(18));
+    canvas.drawRRect(rr, Paint()..color = FlatColors.tileWhite);
+    canvas.save();
+    canvas.clipRRect(rr);
     // coins
-    for (final c in match.coins) {
-      final center = at(c.x, c.y);
+    for (final c in m.coins) {
       final (fill, rim, r) = switch (c.value) {
-        10 => (const Color(0xFFFFD64A), const Color(0xFFB8860B), 11.0),
-        5 => (const Color(0xFFC0C8D8), const Color(0xFF7A8494), 9.0),
-        _ => (const Color(0xFFE8A05C), const Color(0xFF9C6633), 7.0),
+        10 => (const Color(0xFFFFD64A), const Color(0xFFB8860B), 14.0),
+        5 => (const Color(0xFFC0C8D8), const Color(0xFF7A8494), 12.0),
+        _ => (const Color(0xFFE8A05C), const Color(0xFF9C6633), 10.0),
       };
-      canvas.drawCircle(center, r, Paint()..color = rim);
-      canvas.drawCircle(center, r - 2, Paint()..color = fill);
+      final o = Offset(c.x * k, c.y * k);
+      canvas.drawCircle(o, r, Paint()..color = rim);
+      canvas.drawCircle(o, r - 2.5, Paint()..color = fill);
     }
-
-    // bases, arms, tips
-    for (var p = 0; p < match.playerCount; p++) {
-      final base = at(match.baseOf(p).x, match.baseOf(p).y);
-      final tip = at(match.armTipOf(p).x, match.armTipOf(p).y);
-      final col = colors[p];
-      canvas.drawCircle(
-        base,
-        CoinGrabMatch.armRadius * w,
-        Paint()
-          ..color = col.withValues(alpha: 0.10)
-          ..style = PaintingStyle.fill,
-      );
-      canvas.drawLine(
-        base,
-        tip,
-        Paint()
-          ..color = col
-          ..strokeWidth = 5
-          ..strokeCap = StrokeCap.round,
-      );
-      canvas.drawCircle(base, 10, Paint()..color = col);
-      canvas.drawCircle(tip, 9, Paint()..color = FlatColors.ink);
-      canvas.drawCircle(tip, 6, Paint()..color = col);
+    // claws
+    for (var i = 0; i < m.seats; i++) {
+      final b = CoinGrabMatch.bases[i];
+      final from = Offset(b[0] * k, b[1] * k);
+      final t = m.tip(i);
+      final to = Offset(t.x * k, t.y * k);
+      canvas.drawLine(from, to, Paint()..color = colors[i]..strokeWidth = 4..strokeCap = StrokeCap.round);
+      canvas.drawCircle(to, CoinGrabMatch.reach * k, Paint()..color = colors[i].withValues(alpha: 0.22));
+      canvas.drawCircle(to, CoinGrabMatch.reach * k, Paint()..color = colors[i]..style = PaintingStyle.stroke..strokeWidth = 2.5);
+      canvas.drawCircle(to, 5, Paint()..color = FlatColors.ink);
     }
+    final lg = m.lastGrab;
+    if (lg != null) {
+      final tp = TextPainter(
+        text: TextSpan(text: '+${lg.value}', style: flatCairo(fontSize: 20, fontWeight: FontWeight.w900, color: colors[lg.seat])),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(lg.x * k - tp.width / 2, lg.y * k - 30 - (0.6 - lg.ttl) * 30));
+    }
+    // clock
+    final clk = TextPainter(
+      text: TextSpan(text: '${m.timeLeft.ceil()}', style: flatCairo(fontSize: 22, fontWeight: FontWeight.w900, color: FlatColors.ink)),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    clk.paint(canvas, Offset((size.width - clk.width) / 2, 8));
+    // score pills in the middle of each side
+    for (var i = 0; i < m.seats; i++) {
+      final tp = TextPainter(
+        text: TextSpan(
+          text: 'لاعب ${i + 1}: ${m.scores[i]}',
+          style: flatCairo(fontSize: 14, fontWeight: FontWeight.w900, color: FlatColors.ink),
+        ),
+        textDirection: TextDirection.rtl,
+      )..layout();
+      final lx = CoinGrabMatch.bases[i][0] * k;
+      final ly = CoinGrabMatch.bases[i][1] * k;
+      final dx = lx < k / 2 ? 80.0 : size.width - 80 - tp.width;
+      final dy = ly < size.height / 2 ? 10.0 : size.height - 28.0;
+      tp.paint(canvas, Offset(dx, dy));
+    }
+    canvas.restore();
+    canvas.drawRRect(rr, Paint()..color = FlatColors.border..style = PaintingStyle.stroke..strokeWidth = 3);
   }
 
   @override
-  bool shouldRepaint(_CoinArenaPainter oldDelegate) => true;
+  bool shouldRepaint(covariant _CoinPainter old) => true;
 }

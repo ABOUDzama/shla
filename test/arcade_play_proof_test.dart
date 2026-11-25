@@ -231,7 +231,7 @@ void main() {
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 250));
     }
-    await tester.tap(find.text('لاعب 1 🪙'));
+    await tester.tap(find.byKey(const ValueKey('pad_0')));
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 250));
     }

@@ -1,86 +1,80 @@
 import 'dart:math';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shella/games/offline/coin_grab_logic.dart';
 
 void main() {
-  group('CoinGrabMatch', () {
-    test('2-4 players spawn a seeded pile and zeroed scores', () {
-      for (var n = 2; n <= 4; n++) {
-        final m = CoinGrabMatch(playerCount: n, random: Random(7));
-        expect(m.coins.length, 24);
-        expect(m.scores.length, n);
-        expect(m.scores.every((s) => s == 0), isTrue);
-        expect(m.isOver, isFalse);
-        expect(m.winner(), isNull);
+  test('every coin is reachable: perfect-timing taps always clear the pile', () {
+    for (var s = 0; s < 20; s++) {
+      final m = CoinGrabMatch(seats: 4, random: Random(s));
+      // grab every tick (infinite spam ignoring cooldown by resetting it)
+      for (var t = 0; t < 4000 && m.coins.isNotEmpty; t++) {
+        m.time += 0.02;
+        for (var p = 0; p < 4; p++) {
+          m.cooldown[p] = 0;
+          m.grab(p);
+        }
       }
-    });
+      expect(m.coins, isEmpty, reason: 'seed $s left ${m.coins.length}');
+    }
+  });
 
-    test('arms sweep each tick and stay on their radius', () {
-      final m = CoinGrabMatch(playerCount: 4, random: Random(3));
-      final before = List<double>.of(m.armAngles);
-      m.tick();
-      for (var p = 0; p < 4; p++) {
-        expect((m.armAngles[p] - before[p]).abs(), greaterThan(0));
-        final tip = m.armTipOf(p);
-        final b = m.baseOf(p);
-        final d = sqrt(pow(tip.x - b.x, 2) + pow(tip.y - b.y, 2));
-        expect(d, closeTo(CoinGrabMatch.armRadius, 1e-9));
-      }
-    });
-
-    test('grab collects a coin under the tip and scores its value', () {
-      final m = CoinGrabMatch(playerCount: 2, random: Random(11));
-      // place a coin exactly at the arm tip and grab it
-      final tip = m.armTipOf(0);
-      m.coins.add(CoinGrabCoin(tip.x, tip.y, 10));
-      final got = m.grab(0);
-      expect(got, 10);
-      expect(m.scores[0], 10);
-      expect(m.grabbed[0], 1);
-    });
-
-    test('grab misses when nothing is in reach', () {
-      final m = CoinGrabMatch(playerCount: 2, random: Random(5));
-      m.coins.clear();
-      m.coins.add(CoinGrabCoin(0.5, 0.5, 5));
-      expect(m.grab(0), 0);
-      expect(m.scores[0], 0);
-    });
-
-    test('game ends when the pile is empty; richest wins, tie gives null', () {
-      final m = CoinGrabMatch(playerCount: 2, random: Random(9));
-      m.coins.clear();
-      m.coins.add(CoinGrabCoin(m.armTipOf(0).x, m.armTipOf(0).y, 10));
-      m.coins.add(CoinGrabCoin(m.armTipOf(1).x, m.armTipOf(1).y, 5));
+  test('practice seat alone can also reach every coin', () {
+    final m = CoinGrabMatch(seats: 1, random: Random(4));
+    for (var t = 0; t < 8000 && m.coins.isNotEmpty; t++) {
+      m.time += 0.02;
+      m.cooldown[0] = 0;
       m.grab(0);
-      m.grab(1);
-      expect(m.isOver, isTrue);
-      expect(m.winner(), 0);
+    }
+    expect(m.coins, isEmpty);
+  });
 
-      final t = CoinGrabMatch(playerCount: 2, random: Random(9));
-      t.coins.clear();
-      t.coins.add(CoinGrabCoin(t.armTipOf(0).x, t.armTipOf(0).y, 10));
-      t.coins.add(CoinGrabCoin(t.armTipOf(1).x, t.armTipOf(1).y, 10));
-      t.grab(0);
-      t.grab(1);
-      expect(t.isOver, isTrue);
-      expect(t.winner(), isNull);
-    });
+  test('tap on a coin scores its value, tap on empty is a miss, cooldown blocks', () {
+    final m = CoinGrabMatch(seats: 2, random: Random(1));
+    final c = m.coins.first;
+    // find a time at which seat 0's tip is on that coin
+    double? hit;
+    for (var t = 0.0; t < 40; t += 0.005) {
+      final p = m.tipAt(0, t);
+      if (sqrt(pow(p.x - c.x, 2) + pow(p.y - c.y, 2)) < CoinGrabMatch.reach * 0.5) {
+        hit = t;
+        break;
+      }
+    }
+    expect(hit, isNotNull);
+    m.time = hit!;
+    expect(m.grab(0), c.value);
+    expect(m.scores[0], c.value);
+    expect(m.grab(0), -1, reason: 'cooldown');
+    expect(m.scores[1], 0);
+  });
 
-    test('deterministic with the same seed', () {
-      final a = CoinGrabMatch(playerCount: 4, random: Random(42));
-      final b = CoinGrabMatch(playerCount: 4, random: Random(42));
-      for (var i = 0; i < a.coins.length; i++) {
-        expect(a.coins[i].x, b.coins[i].x);
-        expect(a.coins[i].y, b.coins[i].y);
-        expect(a.coins[i].value, b.coins[i].value);
+  test('clock ends the match and richest wins, tie is null', () {
+    final m = CoinGrabMatch(seats: 2, random: Random(2));
+    m.scores[0] = 6;
+    m.scores[1] = 6;
+    m.time = CoinGrabMatch.matchSeconds;
+    expect(m.over, isTrue);
+    expect(m.winner, isNull);
+    m.scores[1] = 7;
+    expect(m.winner, 1);
+  });
+
+  test('practice has no winner', () {
+    final m = CoinGrabMatch(seats: 1, random: Random(2));
+    m.time = 61;
+    expect(m.winner, isNull);
+  });
+
+  test('bots grab on their own', () {
+    var total = 0;
+    for (var s = 0; s < 5; s++) {
+      final m = CoinGrabMatch(seats: 2, random: Random(s));
+      m.botSeats.addAll([0, 1]);
+      for (var t = 0; t < 1800; t++) {
+        m.step(0.033);
       }
-      for (var t = 0; t < 50; t++) {
-        a.tick();
-        b.tick();
-      }
-      expect(a.armAngles, b.armAngles);
-    });
+      total += m.grabbed[0] + m.grabbed[1];
+    }
+    expect(total, greaterThan(10));
   });
 }
