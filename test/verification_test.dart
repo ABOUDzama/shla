@@ -251,25 +251,23 @@ void main() {
       'اقطفها',
       'سباق الدوس',
       'كورة اللمسة',
+      'تحدّي الإيقاع',
     ]) {
-      await tester.scrollUntilVisible(
-        find.text(title),
-        250,
-        scrollable: find.byType(Scrollable).last,
-      );
-      await tester.pump(const Duration(milliseconds: 200));
+      // the grid lazy-builds: scroll in steps until the card is in the tree
+      for (var i = 0; i < 25 && find.text(title).evaluate().isEmpty; i++) {
+        await tester.drag(find.byType(Scrollable).last, const Offset(0, -250));
+        await tester.pump(const Duration(milliseconds: 200));
+      }
       expect(find.text(title), findsOneWidget, reason: title);
     }
     // sumo is 2-player only: single '٢ بس' chip
     expect(find.text('٢ بس'), findsOneWidget);
 
     // game-first: tapping a card opens the game, its own picker asks count
-    await tester.scrollUntilVisible(
-      find.text('شد الحبل'),
-      -250,
-      scrollable: find.byType(Scrollable).last,
-    );
-    await tester.pump(const Duration(milliseconds: 200));
+    for (var i = 0; i < 25 && find.text('شد الحبل').evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(Scrollable).last, const Offset(0, 250));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
     await tester.tap(find.text('شد الحبل'));
     for (var i = 0; i < 3; i++) {
       await tester.pump(const Duration(milliseconds: 500));

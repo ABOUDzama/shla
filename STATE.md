@@ -140,3 +140,9 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - touch_ball: restored whole-arena ball drift (spawn still in owner zone; wrong-zone penalty mechanic was silently killed by owner-zone clamp). play_touchball_live_4p golden regenerated + pixel-verified; proof recopied to /downloads/shla_review.
 - Legacy suite test/arcade_widget_test.dart (14 stale failures) DELETED after porting unique still-valid cases into dedicated suites: touch_ball wrong-zone penalty (drift-aware), tap_race countdown-ignore + exact tap counts + full match win + replay + 4p lanes, sumo 2p shove-out win + replay, reaction 4-human false start, four 3-player render checks (reaction/catch/tap_race/touch_ball).
 - All 5 touched suites green (27 tests). Full-suite rerun: one -1 failure seen in a killed partial run, not yet identified (was not in any touched suite).
+
+## Batch 23 (2026-11-26 ~03:35 EET): full-suite accounting, 3 stragglers fixed
+- soccer_widget golden soccer_win.png regenerated: still rendered the pre-crown victory (5809843 changed all VictoryFriends call sites; soccer's golden was never regenned). New render pixel-verified: crowns on seats 2+4 (winning team), same text/button otherwise. Soccer stays OUT of the registry (user-cancelled); code+tests kept.
+- verification_test '1234 tab': rhythm registration made the card grid lazy-build beyond the cache extent, so scrollUntilVisible hit StateError on unbuilt cards. Replaced with incremental drag loops; added تحدّي الإيقاع to the expected 1234 card list (now 12 cards).
+- new_games_test registry count: stale since 7696f76 (chicken added, count never bumped). Now asserts 49 games / 25 new-badge, containsAll adds جري الفراخ، سباق العربيات، أطعم الحمامة، تحدّي الإيقاع.
+- FULL SUITE GREEN: all 48 test files run and pass in chunks (~335 tests); capture_tank_video self-skips unless CAPTURE_VIDEO=1 (by design). flutter analyze: 0 errors.
