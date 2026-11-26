@@ -217,10 +217,12 @@ class _TouchBallGameState extends State<TouchBallGame> {
       _elapsed += 50;
       _x += _vx;
       _y += _vy;
-      final zr = _zoneRect(_match.owner ?? 0);
-      final minX = zr.left, minY = zr.top;
-      final maxX = (zr.right - 80).clamp(minX, 10000).toDouble();
-      final maxY = (zr.bottom - 80).clamp(minY, 10000).toDouble();
+      // The ball drifts across the whole arena: it spawns inside the
+      // owner's zone but can wander out, and a tap is judged by the zone it
+      // sits in when touched - that is the "only the owner may tap" tension.
+      const minX = 0.0, minY = 0.0;
+      final maxX = (_arenaW - 80).clamp(minX, 10000).toDouble();
+      final maxY = (_arenaH - 80).clamp(minY, 10000).toDouble();
       if (_x < minX) {
         _x = minX;
         _vx = -_vx;

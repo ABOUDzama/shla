@@ -259,7 +259,7 @@ class _RhythmGameState extends State<RhythmGame> {
         width: 240,
         child: FilledButton(
           onPressed: onTap,
-          child: Text(label, style: _t(18)),
+          child: Text(label, style: _t(18).copyWith(color: Colors.white)),
         ),
       ),
     );
@@ -548,7 +548,8 @@ class _RhythmGameState extends State<RhythmGame> {
           FilledButton(
             onPressed: () =>
                 setState(() => _phase = _RhythmPhase.pickPlayers),
-            child: Text('العبوا تاني 👏', style: _t(18)),
+            child:
+                Text('العبوا تاني 👏', style: _t(18).copyWith(color: Colors.white)),
           ),
         ],
       ),

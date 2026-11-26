@@ -167,7 +167,7 @@ void main() {
     await prep(tester, const TouchBallGame(randomSeed: 7));
     await tester.tap(find.text('4 لاعبين'));
     // lay the arena out first (device gets this frame ~16ms after the tap),
-    // then let the live ball drift inside the owner's zone
+    // then let the live ball drift across the arena
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 700));
     expect(find.textContaining('كورة لاعب'), findsWidgets);

@@ -153,4 +153,20 @@ void main() {
     expect(rec, isEmpty);
     await settle(tester);
   });
+
+
+  testWidgets('3 players ported: three pads render', (tester) async {
+    await open(tester);
+    await tester.tap(find.text('3 لاعبين'));
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.tap(find.text('لا'), warnIfMissed: false);
+    await tester.pump(const Duration(milliseconds: 50));
+    // the spinner wheel always has 4 fixed quadrants; 3 humans + no bots = 3 pads
+    expect((tester.state(find.byType(CatchGame)) as dynamic).debugBots, isEmpty);
+    expect(find.byKey(const ValueKey('pad_0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('pad_1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('pad_2')), findsOneWidget);
+    expect(find.byKey(const ValueKey('pad_3')), findsNothing);
+    await settle(tester);
+  });
 }

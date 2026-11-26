@@ -129,4 +129,28 @@ void main() {
     expect(find.textContaining('دوسة'), findsOneWidget);
     await settleDown(tester);
   });
+
+
+  testWidgets('2p ported: shove-out win then العبوا تاني returns to picker', (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.tap(find.text('لا'));
+    final st = tester.state(find.byType(SumoGame)) as dynamic;
+    await fightThroughCountdown(tester);
+    final pair = st.debugPair as List<int>;
+    expect(pair, [0, 1]);
+    for (var i = 0;
+        i < 60 && find.byKey(const ValueKey('sumo_zone_0')).evaluate().isNotEmpty;
+        i++) {
+      await tester.tap(find.byKey(const ValueKey('sumo_zone_0')), warnIfMissed: false);
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    // 2p has a single deciding fight: the win goes straight to the over screen
+    expect(find.text('العبوا تاني 🤼'), findsOneWidget);
+    await tester.tap(find.text('العبوا تاني 🤼'));
+    await tester.pump();
+    expect(find.text('كام لاعب؟'), findsOneWidget);
+    await settleDown(tester);
+  });
 }

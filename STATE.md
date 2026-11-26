@@ -134,3 +134,9 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - pubspec: added record ^6.1.1 -> pubspec.lock CHANGED (first dependency change since env check; lock no longer byte-identical to the 3.50.1 baseline by design).
 - KNOWN PRE-EXISTING DEBT: test/arcade_widget_test.dart (old combined suite, last touched in 1929a7f before the reworks) has 14 stale failures at HEAD (reaction/tap_race/sumo/catch/touch_ball expecting pre-rework text like 'دوسوا'); the dedicated per-game suites are the current ones and are green. Decide: delete the stale file or port remaining unique cases.
 - interiors golden test writes captures every run (line 130) - pass = render/no-overflow, not pixel equality. 5 interior PNGs refreshed as current-state captures for the review package.
+
+## Batch 22 (2026-11-26 ~03:20 EET)
+- Rhythm mode-choice buttons: white text on purple fill (contrast gate from Main); small360_arc_rhythm_a/b regenerated, b pixel-verified.
+- touch_ball: restored whole-arena ball drift (spawn still in owner zone; wrong-zone penalty mechanic was silently killed by owner-zone clamp). play_touchball_live_4p golden regenerated + pixel-verified; proof recopied to /downloads/shla_review.
+- Legacy suite test/arcade_widget_test.dart (14 stale failures) DELETED after porting unique still-valid cases into dedicated suites: touch_ball wrong-zone penalty (drift-aware), tap_race countdown-ignore + exact tap counts + full match win + replay + 4p lanes, sumo 2p shove-out win + replay, reaction 4-human false start, four 3-player render checks (reaction/catch/tap_race/touch_ball).
+- All 5 touched suites green (27 tests). Full-suite rerun: one -1 failure seen in a killed partial run, not yet identified (was not in any touched suite).

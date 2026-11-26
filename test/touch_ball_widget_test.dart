@@ -91,6 +91,64 @@ void main() {
     await settleDown(tester);
   });
 
+  testWidgets('touch ball: 2p wrong-zone tap is penalized (ported from legacy suite)',
+      (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('لا'));
+    await tester.pump();
+    final ball = find.byKey(const Key('touch_ball'));
+
+    /// Owner index parsed from the round banner 'كورة لاعب N!'.
+    int? owner() {
+      final f = find.textContaining('كورة لاعب');
+      if (f.evaluate().isEmpty) return null;
+      final data = (tester.widget(f.first) as Text).data ?? '';
+      final m = RegExp(r'كورة لاعب (\d)').firstMatch(data);
+      return m == null ? null : int.parse(m.group(1)!) - 1;
+    }
+
+    /// In 2p the zones are top/bottom halves (seat 0 = top).
+    int ballZone() {
+      final stack =
+          find.ancestor(of: ball, matching: find.byType(Stack));
+      final arena = tester.getRect(stack.first);
+      final c = tester.getCenter(ball);
+      return c.dy < arena.center.dy ? 0 : 1;
+    }
+
+    // The ball spawns in its owner's half but drifts; within a few rounds it
+    // must cross into the other half, and a tap there belongs to no owner.
+    var tapped = false;
+    for (var round = 0; round < 12 && !tapped; round++) {
+      var waited = 0;
+      while (ball.evaluate().isEmpty && waited < 80) {
+        await tester.pump(const Duration(milliseconds: 100));
+        waited++;
+      }
+      var steps = 0;
+      while (ball.evaluate().isNotEmpty &&
+          (owner() == null || ballZone() == owner()) &&
+          steps < 60) {
+        await tester.pump(const Duration(milliseconds: 50));
+        steps++;
+      }
+      if (ball.evaluate().isNotEmpty &&
+          owner() != null &&
+          ballZone() != owner()) {
+        await tester.tap(ball);
+        await tester.pump();
+        tapped = true;
+      }
+    }
+    expect(tapped, isTrue,
+        reason: 'a ball must drift out of the owner zone within 12 rounds');
+    expect(find.textContaining('لمس كورة مش بتاعته'), findsOneWidget);
+    expect((state(tester).debugMatch.scores as List).every((s) => (s as num) <= 0), isTrue);
+    await settleDown(tester);
+  });
+
   testWidgets('touch ball: solo practice - every ball is yours, tap to 5', (tester) async {
     await boot(tester);
     await tester.tap(find.text('لاعب واحد'));
@@ -110,6 +168,20 @@ void main() {
     expect(m.matchWinner, 0);
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.textContaining('تدريب كامل'), findsOneWidget);
+    await settleDown(tester);
+  });
+
+
+  testWidgets('touch ball: 3p no bots starts with three zones', (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('3 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('لا'));
+    await tester.pump();
+    final m = state(tester).debugMatch;
+    expect(m.players, 3);
+    expect(m.scores.length, 3);
+    expect(state(tester).debugBotSeats, isEmpty);
     await settleDown(tester);
   });
 }

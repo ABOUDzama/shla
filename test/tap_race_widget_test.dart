@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/games/offline/tap_race_game.dart';
 import 'package:shella/services/results_service.dart';
+import 'package:shella/widgets/victory_friends.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -84,6 +85,90 @@ void main() {
     }
     final bots = (tester.state(find.byType(TapRaceGame)) as dynamic).debugBots as Set<int>;
     expect(bots, isEmpty);
+    await settle(tester);
+  });
+
+
+  testWidgets('2p ported: countdown ignores taps, exact sprint counts, rounds, match win, replay',
+      (tester) async {
+    await open(tester);
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.tap(find.text('لا'), warnIfMissed: false);
+    await tester.pump(const Duration(milliseconds: 100));
+    // countdown phase: taps must not count
+    await tester.tap(find.byKey(const ValueKey('lane_0')), warnIfMissed: false);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(m(tester).taps[0], 0);
+    // sprint: exact counts shown on the lane
+    for (var i = 0; i < 30 && find.byKey(const ValueKey('clock')).evaluate().isEmpty; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    for (var i = 0; i < 4; i++) {
+      await tester.tap(find.byKey(const ValueKey('lane_0')));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    expect(m(tester).taps[0], 4);
+    expect(find.text('4'), findsWidgets);
+    for (var i = 0; i < 3; i++) {
+      await tester.tap(find.byKey(const ValueKey('lane_1')));
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(m(tester).taps[1], 3);
+    // player 1 wins three rounds -> match over -> replay back to the picker
+    for (var round = 1; round <= 3; round++) {
+      for (var i = 0;
+          i < 40 && find.text('ماتش جديد').evaluate().isEmpty && find.text('الجولة الجاية').evaluate().isEmpty;
+          i++) {
+        await tester.pump(const Duration(milliseconds: 500));
+      }
+      if (find.text('ماتش جديد').evaluate().isNotEmpty) break;
+      await tester.tap(find.text('الجولة الجاية'));
+      await tester.pump(const Duration(milliseconds: 100));
+      for (var i = 0; i < 30 && find.byKey(const ValueKey('clock')).evaluate().isEmpty; i++) {
+        await tester.pump(const Duration(milliseconds: 200));
+      }
+      for (var i = 0; i < 8; i++) {
+        await tester.tap(find.byKey(const ValueKey('lane_0')));
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+    }
+    expect(find.text('ماتش جديد'), findsOneWidget);
+    expect(find.byType(VictoryFriends), findsOneWidget);
+    await tester.tap(find.text('ماتش جديد'));
+    await tester.pump();
+    expect(find.text('كام لاعب؟'), findsOneWidget);
+    await settle(tester);
+  });
+
+  testWidgets('4p ported: four lanes render and count per lane', (tester) async {
+    await open(tester);
+    await tester.tap(find.text('4 لاعبين'));
+    for (var i = 0; i < 30 && find.byKey(const ValueKey('clock')).evaluate().isEmpty; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    expect(find.byKey(const ValueKey('lane_0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('lane_1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('lane_2')), findsOneWidget);
+    expect(find.byKey(const ValueKey('lane_3')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('lane_3')));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(m(tester).taps[3], 1);
+    expect(m(tester).taps[0], 0);
+    await settle(tester);
+  });
+
+
+  testWidgets('3p ported: three lanes render without bots', (tester) async {
+    await open(tester);
+    await tester.tap(find.text('3 لاعبين'));
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.tap(find.text('لا'));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(m(tester).players, 3);
+    expect(find.byKey(const ValueKey('lane_0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('lane_1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('lane_2')), findsOneWidget);
     await settle(tester);
   });
 }

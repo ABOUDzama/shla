@@ -150,4 +150,36 @@ void main() {
     await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/reaction_practice.png'));
     await settle(tester);
   });
+
+
+  testWidgets('4 humans ported: four zones render, early tap is a false start', (tester) async {
+    await open(tester);
+    await tester.tap(find.text('4 لاعبين'));
+    await tester.pump(const Duration(milliseconds: 100));
+    final match = m(tester);
+    expect(match.playerCount, 4);
+    expect(find.byKey(const ValueKey('zone_0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('zone_1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('zone_2')), findsOneWidget);
+    expect(find.byKey(const ValueKey('zone_3')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('zone_1')));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(match.scores.every((s) => s == 0), isTrue);
+    expect(find.textContaining('بدري'), findsOneWidget);
+    await settle(tester);
+  });
+
+
+  testWidgets('3 players ported: three zones render', (tester) async {
+    await open(tester);
+    await tester.tap(find.text('3 لاعبين'));
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.tap(find.text('لا'));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(m(tester).playerCount, 3);
+    expect(find.byKey(const ValueKey('zone_0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('zone_1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('zone_2')), findsOneWidget);
+    await settle(tester);
+  });
 }
