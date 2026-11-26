@@ -64,6 +64,7 @@ import '../games/offline/ludo_game.dart';
 import '../games/offline/touch_ball_game.dart';
 import '../games/offline/rhythm_game.dart';
 import '../games/offline/who_said_game.dart';
+import '../games/offline/heads_up_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -230,6 +231,14 @@ class GameRegistry {
       screen: MemoryGame(),
     ),
     GameModel(
+      title: 'خمّنها',
+      description: 'الموبايل على جبهتك والشلة توصفلك.. خمّن قبل الوقت!',
+      icon: Icons.phonelink_ring,
+      color: FunkyColors.sky,
+      screen: HeadsUpGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
       title: 'مين قالها؟',
       description: 'إجابة سرية والشلة تخمن صاحبها!',
       icon: Icons.record_voice_over_rounded,
@@ -287,7 +296,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'الشيفرة',
-      description: 'فريقين وشبكة كلمات.. تلميح من كلمة واحدة وخد بالك من القاتل!',
+      description:
+          'فريقين وشبكة كلمات.. تلميح من كلمة واحدة وخد بالك من القاتل!',
       icon: Icons.grid_on_rounded,
       color: FunkyColors.violet,
       screen: CodeNamesGame(),
@@ -318,7 +328,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'أسرع رد فعل',
-      description: 'الشاشة تقلب خضرا واللي يدوس الأول يكسب! دوس بدري = خصم نقطة',
+      description:
+          'الشاشة تقلب خضرا واللي يدوس الأول يكسب! دوس بدري = خصم نقطة',
       icon: Icons.bolt,
       color: FunkyColors.lime,
       screen: ReactionGame(),
@@ -345,7 +356,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'شد الحبل',
-      description: 'دوس في اللحظة الصح لما المؤشر يبقى في النص واشدد الحبل لناحيتك!',
+      description:
+          'دوس في اللحظة الصح لما المؤشر يبقى في النص واشدد الحبل لناحيتك!',
       icon: Icons.front_hand,
       color: FunkyColors.amber,
       screen: TugOfWarGame(),
@@ -354,7 +366,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'معركة التلج',
-      description: 'ارمي كور التلج على أصحابك واجمع أكتر نقط قبل ما الوقت يخلص!',
+      description:
+          'ارمي كور التلج على أصحابك واجمع أكتر نقط قبل ما الوقت يخلص!',
       icon: Icons.ac_unit,
       color: FunkyColors.sky,
       screen: SnowBrawlGame(),
@@ -363,7 +376,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'اضرب الخلد',
-      description: 'الخلد بيطلع وينزل بسرعة.. اضربه في مربعك قبل ما يهرب واجمع أكتر نقط!',
+      description:
+          'الخلد بيطلع وينزل بسرعة.. اضربه في مربعك قبل ما يهرب واجمع أكتر نقط!',
       icon: Icons.grid_on,
       color: FunkyColors.lime,
       screen: WhackMoleGame(),
@@ -372,7 +386,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'جري الفراخ',
-      description: 'اقلب الجاذبية بدوسة واحدة وانط فوق الحفر! آخر فرخة واقفة تكسب',
+      description:
+          'اقلب الجاذبية بدوسة واحدة وانط فوق الحفر! آخر فرخة واقفة تكسب',
       icon: Icons.flutter_dash,
       color: FunkyColors.amber,
       screen: ChickenRunGame(),
@@ -381,7 +396,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'سباق العربيات',
-      description: 'حلبة من فوق وتلات لفات! لفّ بالأسهم اللي في ركنك وخلّي عربيتك على الأسفلت',
+      description:
+          'حلبة من فوق وتلات لفات! لفّ بالأسهم اللي في ركنك وخلّي عربيتك على الأسفلت',
       icon: Icons.directions_car,
       color: FunkyColors.sky,
       screen: CarRaceGame(),
@@ -390,7 +406,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'ميكرو ريسرز',
-      description: 'سباق ميني بزرار واحد! بدّل بين ٣ حارات واهرب من الصناديق والزيت ولمّ البطاريات لحد خط النهاية',
+      description:
+          'سباق ميني بزرار واحد! بدّل بين ٣ حارات واهرب من الصناديق والزيت ولمّ البطاريات لحد خط النهاية',
       icon: Icons.speed,
       color: FunkyColors.orange,
       screen: MicroRacersGame(),
@@ -399,7 +416,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'فليك الشلة',
-      description: 'كورة بالأزارير! اسحب قرصك ورا وسيبه يتفلّك على الكورة، وأول واحد يسجّل ٣ جوون يكسب',
+      description:
+          'كورة بالأزارير! اسحب قرصك ورا وسيبه يتفلّك على الكورة، وأول واحد يسجّل ٣ جوون يكسب',
       icon: Icons.sports_soccer,
       color: FunkyColors.mint,
       screen: FlickSoccerGame(),
@@ -408,7 +426,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'جري الجون',
-      description: 'زرار واحد: سيبه يلفّ ودوسّه يجري! خبط الكورة في جون الخصم وأول واحد يوصل ٣ يكسب',
+      description:
+          'زرار واحد: سيبه يلفّ ودوسّه يجري! خبط الكورة في جون الخصم وأول واحد يوصل ٣ يكسب',
       icon: Icons.directions_run,
       color: FunkyColors.lime,
       screen: GoalRushGame(),
@@ -417,7 +436,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'أطعم الحمامة',
-      description: 'مقلاع في ركنك وحمامة جعانة! دوس في الوقت الصح وأطعمها فتافيت العيش',
+      description:
+          'مقلاع في ركنك وحمامة جعانة! دوس في الوقت الصح وأطعمها فتافيت العيش',
       icon: Icons.flutter_dash,
       color: FunkyColors.sky,
       screen: PigeonGame(),
@@ -426,7 +446,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'لمّ الفلوس',
-      description: 'دراعك بيلف.. دوس في اللحظة الصح ولمّ أكتر فلوس قبل ما الكوم يخلص!',
+      description:
+          'دراعك بيلف.. دوس في اللحظة الصح ولمّ أكتر فلوس قبل ما الكوم يخلص!',
       icon: Icons.monetization_on,
       color: FunkyColors.amber,
       screen: CoinGrabGame(),
@@ -480,7 +501,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'لودو الشلة',
-      description: 'لودو كلاسيك: طلّع أحجارك بـ٦، كُل اللي يقابلك، وأول واحد يدخل الأربعة البيت يكسب!',
+      description:
+          'لودو كلاسيك: طلّع أحجارك بـ٦، كُل اللي يقابلك، وأول واحد يدخل الأربعة البيت يكسب!',
       icon: Icons.casino,
       color: FunkyColors.lime,
       screen: const LudoGameScreen(),
@@ -489,7 +511,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'تمساح الشلة',
-      description: 'دوس على ضرسة من ضروس التمساح.. واحدة فيهم موجوعة! اللي يقضمه يطلع خاسر وآخر واحد عايش يكسب 🐊',
+      description:
+          'دوس على ضرسة من ضروس التمساح.. واحدة فيهم موجوعة! اللي يقضمه يطلع خاسر وآخر واحد عايش يكسب 🐊',
       icon: Icons.cruelty_free,
       color: FunkyColors.mint,
       screen: const CrocGameScreen(),
@@ -498,7 +521,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'فلابي الشلة',
-      description: 'دوس عشان الفرخة ترفع وتعدي من فتحات المواسير.. كل واحد رحلة واللي يعدي أكتر يكسب 🐤',
+      description:
+          'دوس عشان الفرخة ترفع وتعدي من فتحات المواسير.. كل واحد رحلة واللي يعدي أكتر يكسب 🐤',
       icon: Icons.flutter_dash,
       color: FunkyColors.sky,
       screen: const FlappyGameScreen(),
@@ -507,7 +531,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'جولف الشلة',
-      description: '٣ حفر ميني جولف بالتناوب.. اسحب من الكورة وصوّب، وأقل ضربات يكسب ⛳',
+      description:
+          '٣ حفر ميني جولف بالتناوب.. اسحب من الكورة وصوّب، وأقل ضربات يكسب ⛳',
       icon: Icons.golf_course,
       color: FunkyColors.mint,
       screen: const MiniGolfGameScreen(),
@@ -516,7 +541,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'سباق العوائق',
-      description: 'اجري واقفز فوق الحواجز! نفس المضمار للكل بالتناوب.. أسرع واحد يخلّص يكسب 🏃',
+      description:
+          'اجري واقفز فوق الحواجز! نفس المضمار للكل بالتناوب.. أسرع واحد يخلّص يكسب 🏃',
       icon: Icons.directions_run,
       color: FunkyColors.amber,
       screen: const ObstacleGameScreen(),
@@ -525,7 +551,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'تصويب الشلة',
-      description: 'بلالين بتطير وانت تفرقعها! ١٢ بالونة لكل واحد بالتناوب.. اللي يفرقع أكتر يكسب 🎈',
+      description:
+          'بلالين بتطير وانت تفرقعها! ١٢ بالونة لكل واحد بالتناوب.. اللي يفرقع أكتر يكسب 🎈',
       icon: Icons.sports_esports,
       color: FunkyColors.coral,
       screen: const BallShootGameScreen(),
@@ -534,7 +561,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'حرب البطاريق',
-      description: 'مبارزة كرات تلج فوق جبل الجليد! اسحب من البطريق وصوّب.. أول واحد يصيب التاني يكسب 🐧',
+      description:
+          'مبارزة كرات تلج فوق جبل الجليد! اسحب من البطريق وصوّب.. أول واحد يصيب التاني يكسب 🐧',
       icon: Icons.ac_unit,
       color: FunkyColors.cyan,
       screen: const PenguinsGameScreen(),
@@ -543,7 +571,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'وحش المدار',
-      description: 'الوحش بيلف حوالين كوكبه والنيازك نازلة! دوس تنط بين المدارين.. اللي يعيش أطول يكسب 👾',
+      description:
+          'الوحش بيلف حوالين كوكبه والنيازك نازلة! دوس تنط بين المدارين.. اللي يعيش أطول يكسب 👾',
       icon: Icons.public,
       color: FunkyColors.violet,
       screen: const OrbitGameScreen(),
@@ -552,7 +581,8 @@ class GameRegistry {
     ),
     GameModel(
       title: 'كوالا الفضاء',
-      description: 'الكوالا في سفينته والنيازك نازلة! السفينة بتلف لوحدها وانت تضرب ليزر.. اللي يدمّر أكتر يكسب 🐨',
+      description:
+          'الكوالا في سفينته والنيازك نازلة! السفينة بتلف لوحدها وانت تضرب ليزر.. اللي يدمّر أكتر يكسب 🐨',
       icon: Icons.rocket_launch,
       color: FunkyColors.violet,
       screen: const KoalaGameScreen(),

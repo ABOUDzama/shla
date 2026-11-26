@@ -43,6 +43,7 @@ import 'package:shella/games/offline/opposite_day.dart';
 import 'package:shella/games/offline/truth_or_lie_game.dart';
 import 'package:shella/games/offline/truth_or_dare_game.dart';
 import 'package:shella/games/offline/five_seconds_game.dart';
+import 'package:shella/games/offline/heads_up_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -91,20 +92,27 @@ void main() {
       {'name': 'دينا', 'avatar': ''},
     ]);
     for (final name in [
-      'Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold', 'Black'
+      'Regular',
+      'Medium',
+      'SemiBold',
+      'Bold',
+      'ExtraBold',
+      'Black',
     ]) {
       final bytes = await File('assets/fonts/Cairo-$name.ttf').readAsBytes();
       final loader = FontLoader('Cairo')
         ..addFont(Future.value(ByteData.sublistView(bytes)));
       await loader.load();
     }
-    final emojiBytes =
-        await File('test/fonts_NotoColorEmoji.ttf').readAsBytes();
+    final emojiBytes = await File(
+      'test/fonts_NotoColorEmoji.ttf',
+    ).readAsBytes();
     final emojiLoader = FontLoader('Noto Color Emoji')
       ..addFont(Future.value(ByteData.sublistView(emojiBytes)));
     await emojiLoader.load();
-    final pmBytes =
-        await File('test/fonts_PermanentMarker-Regular.ttf').readAsBytes();
+    final pmBytes = await File(
+      'test/fonts_PermanentMarker-Regular.ttf',
+    ).readAsBytes();
     final pmLoader = FontLoader('Permanent Marker')
       ..addFont(Future.value(ByteData.sublistView(pmBytes)));
     await pmLoader.load();
@@ -128,6 +136,14 @@ void main() {
     messenger.setMockMethodCallHandler(
       const MethodChannel('dev.fluttercommunity.plus/connectivity'),
       (call) async => <String>['none'],
+    );
+    messenger.setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/sensors/method'),
+      (call) async => null,
+    );
+    messenger.setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/sensors/accelerometer'),
+      (call) async => null,
     );
   });
 
@@ -153,7 +169,9 @@ void main() {
   /// RelayoutWhenSystemFontsChange transient callback fires inside the test
   /// instead of after teardown (known flutter_test artifact).
   Future<void> flushFontCallbacks(WidgetTester tester) async {
-    await tester.runAsync(() => Future.delayed(const Duration(milliseconds: 500)));
+    await tester.runAsync(
+      () => Future.delayed(const Duration(milliseconds: 500)),
+    );
     await tester.pump();
   }
 
@@ -183,19 +201,26 @@ void main() {
   /// Rasterizes the current 360x640 screen to test/goldens/small360_<name>.png
   /// so reports carry pixel proof, not only zero-overflow assertions.
   Future<void> capture360(WidgetTester tester, String name) async {
-    await tester.runAsync(() => Future.delayed(const Duration(milliseconds: 400)));
+    await tester.runAsync(
+      () => Future.delayed(const Duration(milliseconds: 400)),
+    );
     await fixedPumps(tester, 2);
     final scaffoldFind = find.byType(Scaffold);
     if (scaffoldFind.evaluate().isNotEmpty) {
-      ScaffoldMessenger.of(tester.element(scaffoldFind.first))
-          .hideCurrentSnackBar();
+      ScaffoldMessenger.of(
+        tester.element(scaffoldFind.first),
+      ).hideCurrentSnackBar();
       await fixedPumps(tester, 1);
     }
-    final boundary = boundaryKey.currentContext!.findRenderObject()!
-        as RenderRepaintBoundary;
-    final image = await tester.runAsync(() => boundary.toImage(pixelRatio: 2.0));
-    final byteData = await tester
-        .runAsync(() => image!.toByteData(format: ui.ImageByteFormat.png));
+    final boundary =
+        boundaryKey.currentContext!.findRenderObject()!
+            as RenderRepaintBoundary;
+    final image = await tester.runAsync(
+      () => boundary.toImage(pixelRatio: 2.0),
+    );
+    final byteData = await tester.runAsync(
+      () => image!.toByteData(format: ui.ImageByteFormat.png),
+    );
     final bytes = byteData!.buffer.asUint8List();
     File('test/goldens/small360_$name.png').writeAsBytesSync(bytes);
     expect(bytes.length, greaterThan(8000));
@@ -210,8 +235,9 @@ void main() {
     while ((e = tester.takeException()) != null) {
       seen.add(e.toString());
     }
-    final overflows =
-        seen.where((m) => m.contains('overflowed') || m.contains('RenderFlex'));
+    final overflows = seen.where(
+      (m) => m.contains('overflowed') || m.contains('RenderFlex'),
+    );
     expect(overflows, isEmpty, reason: seen.join('\n---\n'));
   }
 
@@ -297,6 +323,44 @@ void main() {
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'five_seconds');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: heads up flow', (tester) async {
+    await pumpSmall(tester, const HeadsUpGame());
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'heads_up_intro');
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'heads_up_setup');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.text('اختار شلتك وابدأ!'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('أحمد'));
+    await tapIf(tester, find.text('منى'));
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'heads_up_pass');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.text('يلا نبدأ!'));
+    // 3-2-1 countdown, then the guessing screen (60s turn timer).
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'heads_up_guess');
+    expectNoOverflow(tester);
+    // Let the 60s turn elapse so the periodic timer is cancelled and the
+    // turn summary shows.
+    for (var i = 0; i < 61; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'heads_up_summary');
     expectNoOverflow(tester);
   });
 
@@ -471,7 +535,10 @@ void main() {
     await flushFontCallbacks(tester);
     // real turns: place red and blue stones on the board
     for (final cell in [0, 1, 3, 4]) {
-      await tester.tap(find.byKey(ValueKey('seega_cell_$cell')), warnIfMissed: false);
+      await tester.tap(
+        find.byKey(ValueKey('seega_cell_$cell')),
+        warnIfMissed: false,
+      );
       await fixedPumps(tester, 2);
     }
     await capture360(tester, 'seega_mid');
@@ -757,11 +824,17 @@ void main() {
 
   testWidgets('small screen: victory friends', (tester) async {
     await pumpSmall(
-        tester, const Scaffold(body: Center(child: VictoryFriends(winnerName: 'لاعب 2'))));
+      tester,
+      const Scaffold(
+        body: Center(child: VictoryFriends(winnerName: 'لاعب 2')),
+      ),
+    );
     await tester.runAsync(() async {
       for (final a in ['blue', 'purple', 'yellow', 'hijab']) {
-        await precacheImage(AssetImage('assets/avatars/card_$a.png'),
-            tester.element(find.byType(Scaffold)));
+        await precacheImage(
+          AssetImage('assets/avatars/card_$a.png'),
+          tester.element(find.byType(Scaffold)),
+        );
       }
     });
     await fixedPumps(tester, 3);
@@ -822,7 +895,9 @@ void main() {
     await flushFontCallbacks(tester);
     await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
     final cells = find.descendant(
-        of: find.byType(GridView), matching: find.byType(GestureDetector));
+      of: find.byType(GridView),
+      matching: find.byType(GestureDetector),
+    );
     if (cells.evaluate().length == 9) {
       await tester.tap(cells.at(0), warnIfMissed: false);
       await fixedPumps(tester, 2);
@@ -853,8 +928,7 @@ void main() {
     expectNoOverflow(tester);
   });
 
-  testWidgets('small screen: memory 6 players (30-card board)',
-      (tester) async {
+  testWidgets('small screen: memory 6 players (30-card board)', (tester) async {
     await pumpSmall(tester, const MemoryGame());
     await flushFontCallbacks(tester);
     await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
@@ -869,13 +943,19 @@ void main() {
     expectNoOverflow(tester);
   });
 
-  testWidgets('small screen: memory 8 players (36-card board)',
-      (tester) async {
+  testWidgets('small screen: memory 8 players (36-card board)', (tester) async {
     await pumpSmall(tester, const MemoryGame());
     await flushFontCallbacks(tester);
     await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
     for (final name in [
-      'أحمد', 'منى', 'كريم', 'سارة', 'عمر', 'ليلى', 'حسن', 'دينا'
+      'أحمد',
+      'منى',
+      'كريم',
+      'سارة',
+      'عمر',
+      'ليلى',
+      'حسن',
+      'دينا',
     ]) {
       await tapIf(tester, find.text(name));
     }
@@ -931,36 +1011,65 @@ void main() {
 
     // Regression: the list must be at offset zero on initial entry and the
     // first player card fully visible (no clipped top edge).
-    final scrollable = tester.state<ScrollableState>(find
-        .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
-        .first);
-    expect(scrollable.position.pixels, 0.0,
-        reason: 'selection list scrolled on initial entry');
+    final scrollable = tester.state<ScrollableState>(
+      find
+          .descendant(
+            of: find.byType(ListView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    expect(
+      scrollable.position.pixels,
+      0.0,
+      reason: 'selection list scrolled on initial entry',
+    );
     final listRect = tester.getRect(find.byType(ListView));
     Rect firstCardRect() => tester.getRect(find.byType(ListTile).first);
-    expect(firstCardRect().top, greaterThanOrEqualTo(listRect.top - 0.5),
-        reason: 'first player card clipped at top on initial entry');
-    expect(firstCardRect().bottom, lessThanOrEqualTo(listRect.bottom + 0.5),
-        reason: 'first player card overflows list viewport');
+    expect(
+      firstCardRect().top,
+      greaterThanOrEqualTo(listRect.top - 0.5),
+      reason: 'first player card clipped at top on initial entry',
+    );
+    expect(
+      firstCardRect().bottom,
+      lessThanOrEqualTo(listRect.bottom + 0.5),
+      reason: 'first player card overflows list viewport',
+    );
     final fullHeight = firstCardRect().height;
-    expect(fullHeight, greaterThan(48),
-        reason: 'player card unexpectedly short');
+    expect(
+      fullHeight,
+      greaterThan(48),
+      reason: 'player card unexpectedly short',
+    );
 
     // Scrolling must clip gracefully and return to a fully-visible first
     // card. Programmatic round-trip keeps this deterministic; a gesture
     // drag leaves BouncingScrollPhysics mid-spring and races the asserts.
     scrollable.position.jumpTo(300.0);
     await fixedPumps(tester);
-    expect(scrollable.position.pixels, 300.0,
-        reason: 'selection list did not scroll');
+    expect(
+      scrollable.position.pixels,
+      300.0,
+      reason: 'selection list did not scroll',
+    );
     scrollable.position.jumpTo(0.0);
     await fixedPumps(tester);
-    expect(scrollable.position.pixels, 0.0,
-        reason: 'selection list did not settle back to top');
-    expect(firstCardRect().top, greaterThanOrEqualTo(listRect.top - 0.5),
-        reason: 'first player card clipped at top after scrolling back');
-    expect(firstCardRect().height, moreOrLessEquals(fullHeight, epsilon: 1),
-        reason: 'first player card height changed after scroll round-trip');
+    expect(
+      scrollable.position.pixels,
+      0.0,
+      reason: 'selection list did not settle back to top',
+    );
+    expect(
+      firstCardRect().top,
+      greaterThanOrEqualTo(listRect.top - 0.5),
+      reason: 'first player card clipped at top after scrolling back',
+    );
+    expect(
+      firstCardRect().height,
+      moreOrLessEquals(fullHeight, epsilon: 1),
+      reason: 'first player card height changed after scroll round-trip',
+    );
 
     await flushFontCallbacks(tester);
     await capture360(tester, 'player_selection');
@@ -1103,16 +1212,27 @@ void main() {
     final fabRect = tester.getRect(find.text('⚡').last);
     // The scroll viewport itself ends above the picker, so no content can
     // be hidden behind it at ANY scroll position (initial included).
-    final viewportRect =
-        tester.getRect(find.byType(SingleChildScrollView).first);
-    expect(viewportRect.bottom, lessThanOrEqualTo(fabRect.top),
-        reason: 'room scroll viewport reaches behind the emoji picker: '
-            'viewport=$viewportRect fab=$fabRect');
+    final viewportRect = tester.getRect(
+      find.byType(SingleChildScrollView).first,
+    );
+    expect(
+      viewportRect.bottom,
+      lessThanOrEqualTo(fabRect.top),
+      reason:
+          'room scroll viewport reaches behind the emoji picker: '
+          'viewport=$viewportRect fab=$fabRect',
+    );
     // Belt and braces: at scroll end the last text is also above the picker.
-    final lastText = tester.getRect(find.text('🎮 ستظهر الألعاب بعد انضمام لاعب آخر'));
-    expect(lastText.bottom, lessThan(fabRect.top),
-        reason: 'room bottom text hidden behind emoji picker: '
-            'last=$lastText fab=$fabRect');
+    final lastText = tester.getRect(
+      find.text('🎮 ستظهر الألعاب بعد انضمام لاعب آخر'),
+    );
+    expect(
+      lastText.bottom,
+      lessThan(fabRect.top),
+      reason:
+          'room bottom text hidden behind emoji picker: '
+          'last=$lastText fab=$fabRect',
+    );
   });
 
   testWidgets('small screen: undercover deal card', (tester) async {
@@ -1156,8 +1276,9 @@ void main() {
     expectNoOverflow(tester);
   });
 
-  testWidgets('small screen: flat home direction prototype (harness only)',
-      (tester) async {
+  testWidgets('small screen: flat home direction prototype (harness only)', (
+    tester,
+  ) async {
     await pumpSmall(tester, const FlatHomePreview());
     await flushFontCallbacks(tester);
     await fixedPumps(tester);
@@ -1191,9 +1312,9 @@ void main() {
         height: 900,
         child: Material(
           child: ChatWidget(
-          roomCode: '12345',
-          playerName: 'أحمد',
-          initialMessages: SocketService().chatMessages,
+            roomCode: '12345',
+            playerName: 'أحمد',
+            initialMessages: SocketService().chatMessages,
           ),
         ),
       ),
@@ -1218,5 +1339,4 @@ void main() {
     await capture360(tester, 'scoreboard');
     expectNoOverflow(tester);
   });
-
 }

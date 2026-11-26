@@ -28,7 +28,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isNavigating = false;
-  int _tab = 0; // 0 = الألعاب, 1 = شلتي, 2 = ألعاب ١٢٣٤, 3 = الترتيب, 4 = الكأس, 5 = أونلاين
+  int _tab =
+      0; // 0 = الألعاب, 1 = شلتي, 2 = ألعاب ١٢٣٤, 3 = الترتيب, 4 = الكأس, 5 = أونلاين
   final Random _rand = Random();
 
   /// Big emoji "character" per game tile (all verified against the bundled
@@ -50,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'أول حرف': '🔤',
     'عكس العكاس': '🔄',
     'مين أنا؟': '🎭',
+    'خمّنها': '🤔',
     'سلسلة الكلمات': '⛓',
     'صراحة ولا جرأة': '😈',
     'ارسم وخمّن': '✏',
@@ -139,8 +141,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     // User instruction (2026-11-25): 1234 arcade games live exclusively in
     // the ١٢٣٤ section, never duplicated in the main الألعاب grid.
-    final games =
-        GameRegistry.games.where((g) => g.arcade1234 != true).toList();
+    final games = GameRegistry.games
+        .where((g) => g.arcade1234 != true)
+        .toList();
 
     return Scaffold(
       backgroundColor: FlatColors.bg,
@@ -156,21 +159,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? const Padding(
                       padding: EdgeInsets.only(bottom: 127),
                       child: LobbyScreen(
-                          key: ValueKey('online_tab'),
-                          showBackButton: false),
+                        key: ValueKey('online_tab'),
+                        showBackButton: false,
+                      ),
                     )
                   : _tab == 1
                   ? const ShelltyScreen(embedded: true)
                   : _tab == 3
                   ? const LeaderboardScreen(key: ValueKey('leaderboard'))
                   : _tab == 4
-                      ? const CupScreen(
-                          key: ValueKey('cup_tab'), embedded: true)
-                      : _tab == 2
-                          ? ArcadeSectionScreen(
-                              embedded: true,
-                              onOpenCup: () => setState(() => _tab = 4))
-                      : SafeArea(
+                  ? const CupScreen(key: ValueKey('cup_tab'), embedded: true)
+                  : _tab == 2
+                  ? ArcadeSectionScreen(
+                      embedded: true,
+                      onOpenCup: () => setState(() => _tab = 4),
+                    )
+                  : SafeArea(
                       key: const ValueKey('games_feed'),
                       child: ListView(
                         physics: const BouncingScrollPhysics(),
@@ -184,8 +188,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(height: 18),
                           Align(
                             alignment: Alignment.centerRight,
-                            child: Text('كل الألعاب 🎮',
-                                style: FlatDecor.title(size: 18)),
+                            child: Text(
+                              'كل الألعاب 🎮',
+                              style: FlatDecor.title(size: 18),
+                            ),
                           ),
                           const SizedBox(height: 12),
                           GridView.count(
@@ -201,8 +207,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   game: games[i],
                                   emoji: _gameEmoji[games[i].title] ?? '🎮',
                                   art: _gameArt[games[i].title],
-                                  color: FlatColors.tilePastels[
-                                      i % FlatColors.tilePastels.length],
+                                  color:
+                                      FlatColors.tilePastels[i %
+                                          FlatColors.tilePastels.length],
                                   onTap: () =>
                                       _handleNavigation(games[i].screen),
                                 ),
@@ -236,11 +243,11 @@ class _HomeScreenState extends State<HomeScreen> {
           child: CircleAvatar(
             radius: 18,
             backgroundColor: Colors.transparent,
-            backgroundImage:
-                AvatarService.providerFor(SettingsService.userAvatar),
+            backgroundImage: AvatarService.providerFor(
+              SettingsService.userAvatar,
+            ),
             child: SettingsService.userAvatar == null
-                ? const Icon(Icons.person,
-                    size: 20, color: FlatColors.ink)
+                ? const Icon(Icons.person, size: 20, color: FlatColors.ink)
                 : null,
           ),
         ),
@@ -259,8 +266,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         _FlatRoundButton(
           onTap: () => _handleNavigation(const SettingsScreen()),
-          child: const Icon(Icons.settings_rounded,
-              color: FlatColors.ink, size: 20),
+          child: const Icon(
+            Icons.settings_rounded,
+            color: FlatColors.ink,
+            size: 20,
+          ),
         ),
       ],
     );
@@ -280,8 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildRandomCta(List<GameModel> games) {
     return GestureDetector(
-      onTap: () =>
-          _handleNavigation(games[_rand.nextInt(games.length)].screen),
+      onTap: () => _handleNavigation(games[_rand.nextInt(games.length)].screen),
       child: Container(
         decoration: FlatDecor.button(FlatColors.day, radius: 20),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
@@ -301,14 +310,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Text(
                     'دوس وهنختارلكوا لعبة عشوائية',
-                    style:
-                        FlatDecor.body(size: 12, color: Colors.white),
+                    style: FlatDecor.body(size: 12, color: Colors.white),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_back_rounded,
-                color: Colors.white, size: 24),
+            const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 24),
           ],
         ),
       ),
@@ -400,50 +407,51 @@ class _HomeScreenState extends State<HomeScreen> {
           duration: const Duration(milliseconds: 200),
           scale: active ? 1.0 : 0.93,
           child: Container(
-              height: 76,
-              decoration: BoxDecoration(
-                color: active ? color : Color.lerp(color, Colors.white, 0.25),
-                borderRadius: BorderRadius.circular(20),
-                border: active
-                    ? Border.all(color: Colors.white, width: 3)
-                    : null,
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.45),
-                    blurRadius: active ? 14 : 6,
-                    offset: const Offset(0, 5),
+            height: 76,
+            decoration: BoxDecoration(
+              color: active ? color : Color.lerp(color, Colors.white, 0.25),
+              borderRadius: BorderRadius.circular(20),
+              border: active ? Border.all(color: Colors.white, width: 3) : null,
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.45),
+                  blurRadius: active ? 14 : 6,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  emoji,
+                  style: const TextStyle(
+                    fontSize: 24,
+                  ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+                ),
+                const SizedBox(height: 3),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
                   ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    emoji,
-                    style: const TextStyle(fontSize: 24).copyWith(
-                        fontFamilyFallback: const ['Noto Color Emoji']),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  const SizedBox(height: 3),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      style: FlatDecor.title(size: 14),
                     ),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        label,
-                        maxLines: 1,
-                        style: FlatDecor.title(size: 14),
-                      ),
-                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
+        ),
       ),
     );
   }
@@ -497,9 +505,7 @@ class _FlatGameTile extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(art!, fit: BoxFit.cover),
-          ),
+          Positioned.fill(child: Image.asset(art!, fit: BoxFit.cover)),
           Positioned(
             left: 8,
             right: 8,
@@ -529,10 +535,11 @@ class _FlatGameTile extends StatelessWidget {
                     const SizedBox(width: 6),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: FlatDecor.tag(),
-                      child:
-                          Text(game.badge!, style: FlatDecor.body(size: 10)),
+                      child: Text(game.badge!, style: FlatDecor.body(size: 10)),
                     ),
                   ],
                 ],
@@ -553,43 +560,45 @@ class _FlatGameTile extends StatelessWidget {
           .scale(begin: const Offset(0.96, 0.96), duration: 300.ms);
     }
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: FlatDecor.tile(color),
-        padding: const EdgeInsets.all(12),
-        child: Stack(
-          children: [
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(emoji, style: const TextStyle(fontSize: 48)),
-                  const SizedBox(height: 8),
-                  Text(
-                    game.title,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: FlatDecor.title(size: 16, color: Colors.white),
+          onTap: onTap,
+          child: Container(
+            decoration: FlatDecor.tile(color),
+            padding: const EdgeInsets.all(12),
+            child: Stack(
+              children: [
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(emoji, style: const TextStyle(fontSize: 48)),
+                      const SizedBox(height: 8),
+                      Text(
+                        game.title,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: FlatDecor.title(size: 16, color: Colors.white),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            if (game.badge != null)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                  decoration: FlatDecor.tag(),
-                  child: Text(game.badge!, style: FlatDecor.body(size: 11)),
                 ),
-              ),
-          ],
-        ),
-      ),
-    )
+                if (game.badge != null)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 3,
+                      ),
+                      decoration: FlatDecor.tag(),
+                      child: Text(game.badge!, style: FlatDecor.body(size: 11)),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        )
         .animate()
         .fadeIn(duration: 300.ms)
         .scale(begin: const Offset(0.96, 0.96), duration: 300.ms);
