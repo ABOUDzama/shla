@@ -53,6 +53,7 @@ import '../games/offline/croc_game.dart';
 import '../games/offline/flappy_game.dart';
 import '../games/offline/minigolf_game.dart';
 import '../games/offline/obstacle_game.dart';
+import '../games/offline/ballshoot_game.dart';
 import '../games/offline/ludo_game.dart';
 import '../games/offline/touch_ball_game.dart';
 import '../games/offline/rhythm_game.dart';
@@ -486,6 +487,15 @@ class GameRegistry {
       icon: Icons.directions_run,
       color: FunkyColors.amber,
       screen: const ObstacleGameScreen(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'تصويب الشلة',
+      description: 'بلالين بتطير وانت تفرقعها! ١٢ بالونة لكل واحد بالتناوب.. اللي يفرقع أكتر يكسب 🎈',
+      icon: Icons.sports_esports,
+      color: FunkyColors.coral,
+      screen: const BallShootGameScreen(),
       badge: 'جديد',
       arcade1234: true,
     ),
