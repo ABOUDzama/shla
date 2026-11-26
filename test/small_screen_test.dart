@@ -54,6 +54,7 @@ import 'package:shella/games/offline/three_rounds_game.dart';
 import 'package:shella/games/offline/fake_artist_game.dart';
 import 'package:shella/games/offline/pair_quiz_game.dart';
 import 'package:shella/games/offline/codenames_game.dart';
+import 'package:shella/games/offline/bluff_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -652,6 +653,60 @@ void main() {
     await fixedPumps(tester);
     // Next round starts with منى
     expect(find.text('دور منى'), findsOneWidget);
+  });
+
+  testWidgets('small screen: bluff flow', (tester) async {
+    await pumpSmall(tester, const BluffGame());
+    await flushFontCallbacks(tester);
+    await fixedPumps(tester, 8);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'bluff_intro');
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Roster ListView builds rows lazily: scroll each name into view.
+    final rosterScrollable = find
+        .ancestor(
+          of: find.byType(ListTile).first,
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    for (final name in ['أحمد', 'منى', 'كريم']) {
+      await tester.scrollUntilVisible(
+        find.text(name),
+        70,
+        scrollable: rosterScrollable,
+        maxScrolls: 30,
+      );
+      await fixedPumps(tester, 2);
+      await tester.tap(find.text(name).first, warnIfMissed: false);
+      await fixedPumps(tester);
+    }
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Photo shown to the whole group
+    await capture360(tester, 'bluff_show');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.text('شوفناها.. يلا نصوّت! 🤫'));
+    await fixedPumps(tester);
+    // Three secret votes
+    for (var i = 0; i < 3; i++) {
+      await tapIf(tester, find.textContaining('تمام، أنا'));
+      await fixedPumps(tester);
+      if (i == 0) {
+        await capture360(tester, 'bluff_vote');
+        expectNoOverflow(tester);
+      }
+      await tapIf(tester, find.text(i == 2 ? 'خدعة ❌' : 'حقيقي ✅'));
+      await fixedPumps(tester);
+    }
+    await flushFontCallbacks(tester);
+    // Reveal: answer + explanation + per-player results
+    await capture360(tester, 'bluff_reveal');
+    expectNoOverflow(tester);
+    expect(find.textContaining('الصورة'), findsWidgets);
   });
 
   testWidgets('small screen: codenames flow', (tester) async {

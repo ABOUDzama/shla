@@ -63,6 +63,7 @@ flutter:
     - assets/games/
     - assets/tiles/
     - assets/covers/
+    - assets/bluff/
     - assets/avatars/
     - assets/avatars_2d/
     - assets/sounds/

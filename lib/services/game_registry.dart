@@ -75,6 +75,7 @@ import '../games/offline/three_rounds_game.dart';
 import '../games/offline/fake_artist_game.dart';
 import '../games/offline/pair_quiz_game.dart';
 import '../games/offline/codenames_game.dart';
+import '../games/offline/bluff_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -246,6 +247,14 @@ class GameRegistry {
       icon: Icons.grid_on,
       color: FunkyColors.sky,
       screen: CodenamesGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'حقيقي ولا خدعة',
+      description: 'صورة قدام الشلة.. حقيقية ولا متلعبة؟ صوّتوا في سرية!',
+      icon: Icons.image_search,
+      color: FunkyColors.cyan,
+      screen: BluffGame(),
       badge: 'جديد',
     ),
     GameModel(

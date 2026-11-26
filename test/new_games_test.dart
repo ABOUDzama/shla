@@ -63,11 +63,11 @@ void main() {
 
   group('Registry', () {
     test('has 72 games and 48 new-badge games', () {
-      expect(GameRegistry.games.length, 72);
+      expect(GameRegistry.games.length, 73);
       final newOnes = GameRegistry.games
           .where((g) => g.badge == 'جديد')
           .toList();
-      expect(newOnes.length, 48);
+      expect(newOnes.length, 49);
       expect(
         newOnes.map((g) => g.title),
         containsAll(<String>[
