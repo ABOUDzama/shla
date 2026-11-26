@@ -73,6 +73,19 @@ class ArcadeSectionScreen extends StatefulWidget {
     'جري الفراخ': 'assets/covers/chicken_run.png',
     'سباق العربيات': 'assets/covers/car_race.png',
     'أطعم الحمامة': 'assets/covers/pigeon.png',
+    'ميكرو ريسرز': 'assets/covers/micro_racers.png',
+    'فليك الشلة': 'assets/covers/flick.png',
+    'جري الجون': 'assets/covers/goal_rush.png',
+    'تحدّي الإيقاع': 'assets/covers/rhythm.png',
+    'لودو الشلة': 'assets/covers/ludo.png',
+    'تمساح الشلة': 'assets/covers/crocodile.png',
+    'فلابي الشلة': 'assets/covers/flappy.png',
+    'جولف الشلة': 'assets/covers/golf.png',
+    'سباق العوائق': 'assets/covers/hurdles.png',
+    'تصويب الشلة': 'assets/covers/target.png',
+    'حرب البطاريق': 'assets/covers/penguins.png',
+    'وحش المدار': 'assets/covers/orbit_monster.png',
+    'كوالا الفضاء': 'assets/covers/space_koala.png',
   };
 
   /// Emoji fallback for a ١٢٣٤ game title (used by the cup screens too).
