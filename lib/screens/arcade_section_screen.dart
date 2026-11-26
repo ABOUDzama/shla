@@ -41,6 +41,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'جري الفراخ': [1, 2, 3, 4],
     'سباق العربيات': [1, 2, 3, 4],
     'أطعم الحمامة': [1, 2, 3, 4],
+    'لودو الشلة': [1, 2, 3, 4],
   };
 
   /// Original illustrated covers (drawn in-house). Cards with a cover show
@@ -82,6 +83,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'سباق العربيات': '🏎',
     'أطعم الحمامة': '🐦',
     'تحدي الإيقاع': '🥁',
+    'لودو الشلة': '🎲',
   };
 
   @override

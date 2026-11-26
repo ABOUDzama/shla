@@ -140,7 +140,8 @@ void main() {
     expect(startBtn2.onPressed, isNull);
 
     // Random mode enables it with no picks.
-    await tester.ensureVisible(find.text('عشوائية 🎲'));
+    await tester.dragUntilVisible(find.text('عشوائية 🎲'), find.byType(ListView),
+        const Offset(0, 200));
     await tester.pump();
     await tester.tap(find.text('عشوائية 🎲'), warnIfMissed: false);
     await tester.pump();

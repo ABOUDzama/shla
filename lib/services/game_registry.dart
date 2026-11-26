@@ -49,6 +49,7 @@ import '../games/offline/whack_mole_game.dart';
 import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
+import '../games/offline/ludo_game.dart';
 import '../games/offline/touch_ball_game.dart';
 import '../games/offline/rhythm_game.dart';
 import '../games/offline/who_said_game.dart';
@@ -436,6 +437,15 @@ class GameRegistry {
       icon: Icons.music_note,
       color: FunkyColors.violet,
       screen: const RhythmGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'لودو الشلة',
+      description: 'لودو كلاسيك: طلّع أحجارك بـ٦، كُل اللي يقابلك، وأول واحد يدخل الأربعة البيت يكسب!',
+      icon: Icons.casino,
+      color: FunkyColors.lime,
+      screen: const LudoGameScreen(),
       badge: 'جديد',
       arcade1234: true,
     ),
