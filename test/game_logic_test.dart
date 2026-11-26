@@ -188,8 +188,8 @@ void main() {
               UndercoverGame.normalizeGuess('قهوة'),
           isFalse);
     });
-    test('wordPairs: 18 pairs, distinct words within and across pairs', () {
-      expect(UndercoverGame.wordPairs.length, 18);
+    test('wordPairs: 34 pairs, distinct words within and across pairs', () {
+      expect(UndercoverGame.wordPairs.length, 34);
       final all = UndercoverGame.wordPairs.expand((p) => p).toList();
       expect(all.toSet().length, all.length);
       for (final p in UndercoverGame.wordPairs) {
