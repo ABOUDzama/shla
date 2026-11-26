@@ -64,6 +64,7 @@ flutter:
     - assets/tiles/
     - assets/covers/
     - assets/bluff/
+    - assets/aireal/
     - assets/avatars/
     - assets/avatars_2d/
     - assets/sounds/

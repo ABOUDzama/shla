@@ -76,6 +76,7 @@ import '../games/offline/fake_artist_game.dart';
 import '../games/offline/pair_quiz_game.dart';
 import '../games/offline/codenames_game.dart';
 import '../games/offline/bluff_game.dart';
+import '../games/offline/ai_real_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -255,6 +256,14 @@ class GameRegistry {
       icon: Icons.image_search,
       color: FunkyColors.cyan,
       screen: BluffGame(),
+      badge: 'جديد',
+    ),
+    GameModel(
+      title: 'حقيقي ولا AI',
+      description: 'الصورة دي حقيقية ولا متولدة بالذكاء الاصطناعي؟ صوّتوا!',
+      icon: Icons.smart_toy,
+      color: FunkyColors.violet,
+      screen: AiRealGame(),
       badge: 'جديد',
     ),
     GameModel(
