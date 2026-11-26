@@ -104,3 +104,8 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - معركة التلج: picker 1-4 -> bots yes/no; 1P+لا = practice: 10 throws at a target dummy (no fort damage), over shows أصبت X من 10, no record. Bots fill to 4 and self-throw near the needed power.
 - Per-side rotated controls (keys snow_throw_N); fort row labels بوت; practice banner differs (إصابة / رميت بعيد).
 - Tests: logic 6 + widget 8 pass (new: bots self-throw, solo practice 10 throws + over text). proof golden regenerated + pixel-viewed. small_screen snow passes.
+
+## Batch 16b (02:39) sumo rework
+- سومو الشلة: core 1v1 tap war kept; 3-4 seats run a mini bracket (semis -> final, bot-vs-bot matches resolve instantly with seeded RNG). Picker 1-4 -> bots yes/no (fill to 4); 1P+لا = practice vs training dummy (دمية تدريب), over shows tap count, no record.
+- Zones keyed sumo_zone_0/1, top rotated; bots can't be tapped. Over: dummy result / البوتات كسبوا البطولة / VictoryFriends champion.
+- Tests: SumoMatch logic 6 unchanged pass; new sumo_widget_test 4 pass (picker, 2p, bracket bots final is human-vs-bot, practice tap-count). proof golden regenerated + pixel-viewed (rotated top zone, off-center ring). small_screen sumo passes (bots screen shown after 2 لاعبين).

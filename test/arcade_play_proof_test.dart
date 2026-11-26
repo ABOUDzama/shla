@@ -114,6 +114,10 @@ void main() {
 
   testWidgets('proof: sumo mid-fight', (tester) async {
     await prep(tester, const SumoGame());
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('لا'));
+    await tester.pump();
     await tester.pump(const Duration(seconds: 3));
     await tester.pump();
     expect(find.textContaining('دووووس'), findsWidgets);
