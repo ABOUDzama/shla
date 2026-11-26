@@ -95,3 +95,7 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 
 ## Batch 15c (02:04) rotated whack tap coverage
 - whack widget test added: in 2p face-to-face, tapping the VISUAL position of an up mole in the rotated top grid (player 1) scores for player 1 only. 5/5 whack widget tests pass. The owed rotated-hole tap test is DONE.
+
+## Successor env note (02:07)
+- Fresh sandbox per agent: install Flutter 3.50.1 stable linux x64 (storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.50.1-stable.tar.xz -> ~/sdk/flutter). 3.50.1 is EXACT: `flutter pub get` leaves pubspec.lock byte-identical (3.38.x/3.41.x do NOT). Do not commit test/failures (gitignored now); small_screen capture360 rewrites PNGs every run - revert non-touched games' captures before committing.
+- Push: tools box vault write-file (GitHub PAT (fitnic)) -> workspace credential.helper push -> rm file.
