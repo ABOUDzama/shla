@@ -50,6 +50,7 @@ import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
 import '../games/offline/touch_ball_game.dart';
+import '../games/offline/rhythm_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../theme/funky_theme.dart';
 
@@ -426,6 +427,15 @@ class GameRegistry {
       icon: Icons.sports_soccer,
       color: FunkyColors.violet,
       screen: TouchBallGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'تحدّي الإيقاع',
+      description: 'اسمع الإيقاع وقلّده تصفيق 👏 أو دوس 👆.. أدق توقيت يكسب',
+      icon: Icons.music_note,
+      color: FunkyColors.violet,
+      screen: const RhythmGame(),
       badge: 'جديد',
       arcade1234: true,
     ),

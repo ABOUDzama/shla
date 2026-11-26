@@ -9,8 +9,14 @@ class AudioService {
   static final AudioPlayer _player = AudioPlayer();
   static bool _communicationMode = false;
 
+  /// Widget tests set this to skip platform sound calls entirely; the
+  /// audioplayers plugin is not registered there and its async event-channel
+  /// errors escape the try/catch below and fail the test.
+  static bool mutedForTests = false;
+
   static Future<void> _play(String file, {double volume = 1.0}) async {
     if (kIsWeb) return;
+    if (mutedForTests) return;
     if (_communicationMode) return;
     if (!SettingsService.isSoundEnabled) return;
     try {

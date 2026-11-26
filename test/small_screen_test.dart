@@ -32,6 +32,7 @@ import 'package:shella/games/offline/catch_game.dart';
 import 'package:shella/games/offline/touch_ball_game.dart';
 import 'package:shella/games/offline/snow_brawl_game.dart';
 import 'package:shella/games/offline/tank_battle_game.dart';
+import 'package:shella/games/offline/rhythm_game.dart';
 import 'package:shella/screens/settings_screen.dart';
 import 'package:shella/screens/profile_screen.dart';
 import 'package:shella/games/offline/password_game.dart';
@@ -719,6 +720,25 @@ void main() {
     await fixedPumps(tester, 4);
     await flushFontCallbacks(tester);
     await capture360(tester, 'arc_tank_battle_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade rhythm', (tester) async {
+    await pumpSmall(tester, const RhythmGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_rhythm_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_rhythm_b');
     expectNoOverflow(tester);
   });
 

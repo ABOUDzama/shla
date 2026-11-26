@@ -7,6 +7,8 @@ import 'package:shella/games/offline/catch_game.dart';
 import 'package:shella/games/offline/reaction_game.dart';
 import 'package:shella/games/offline/snake_arena_game.dart';
 import 'package:shella/games/offline/tank_battle_game.dart';
+import 'package:shella/games/offline/rhythm_game.dart';
+import 'package:shella/services/audio_service.dart';
 import 'package:shella/games/offline/tug_of_war_game.dart';
 import 'package:shella/games/offline/snow_brawl_game.dart';
 import 'package:shella/games/offline/coin_grab_game.dart';
@@ -204,6 +206,27 @@ void main() {
       await tester.pump(const Duration(milliseconds: 250));
     }
     await snap(tester, 'tank_battle_live_4p');
+    await settleDown(tester);
+  });
+  testWidgets('proof: rhythm tap listening', (tester) async {
+    AudioService.mutedForTests = true;
+    addTearDown(() => AudioService.mutedForTests = false);
+    await prep(tester, const RhythmGame(randomSeed: 7, maxLevels: 1));
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('دوس على الزرار 👆'));
+    await tester.pump();
+    await tester.tap(find.text('يلا ▶'));
+    await tester.pump();
+    // watch the pattern play out, then the listening phase starts
+    await tester.pump(const Duration(milliseconds: 3500));
+    expect(find.text('دورك! قلّد الإيقاع دلوقتي'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('rhythm_tap_pad')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('rhythm_tap_pad')));
+    // let the tap-flash timers settle before the snapshot
+    await tester.pump(const Duration(milliseconds: 150));
+    await snap(tester, 'rhythm_tap_listening');
     await settleDown(tester);
   });
   testWidgets('proof: tug of war live 4p', (tester) async {
