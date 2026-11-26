@@ -156,3 +156,9 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - Game tiles 1254²→640² + pngquant q60-85: assets/tiles 65MB→5.9MB. covers/avatars/avatars_2d pngquant'd too (4 covers kept original: catch, pigeon, snake_arena, touch_ball — quality floor). Total image assets ~82MB→~13.5MB. Originals backed up at /tmp/assets_orig (this sandbox only; git history also has them).
 - Visual QA: before/after contact sheets of all 33 tiles + 14 covers + 5 avatars_2d inspected, no visible artifacts at card scale.
 - 20 goldens regenerated (diffs only from new asset pixels), regenerated images inspected; full suite 369 tests green after regeneration.
+
+## Batch 26 — كأس الشلة cup mode (2026-11-26)
+- New: lib/services/cup_service.dart (ChangeNotifier, persisted cup_state_v1): N rounds over arcade games, listens to ResultsService for wins (1 point/win, bot win = no points, ties share the cup), dedupe by round id, replay/skip for abandoned rounds, restart-resume.
+- New screens: cup/cup_setup_screen.dart (3/5/7 rounds, random or manual game pick grid with covers) + cup/cup_screen.dart (round card, standings, rounds list, champion card reusing VictoryFriends, no-champion case).
+- Entry: golden cup banner on top of the ١٢٣٤ tab (arcade_section_screen.dart) with resume state; added emojiOf() + تحدي الإيقاع emoji.
+- Tests: cup_service_test (9) + cup_widget_test (5, 3 goldens inspected) — full suite green; home_arcade_section/full goldens regenerated for the banner and inspected.

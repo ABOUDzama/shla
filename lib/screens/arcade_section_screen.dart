@@ -3,8 +3,11 @@ import '../theme/flat_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/game_model.dart';
+import '../services/cup_service.dart';
 import '../services/game_registry.dart';
 import '../theme/funky_theme.dart';
+import 'cup/cup_screen.dart';
+import 'cup/cup_setup_screen.dart';
 
 /// ألعاب ١٢٣٤ lobby: a card grid of illustrated game covers.
 ///
@@ -56,6 +59,9 @@ class ArcadeSectionScreen extends StatefulWidget {
     'أطعم الحمامة': 'assets/covers/pigeon.png',
   };
 
+  /// Emoji fallback for a ١٢٣٤ game title (used by the cup screens too).
+  static String emojiOf(String title) => _emoji[title] ?? '🎮';
+
   static const Map<String, String> _emoji = {
     'أسرع رد فعل': '⚡',
     'حية الشلة': '🐍',
@@ -71,6 +77,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'جري الفراخ': '🐔',
     'سباق العربيات': '🏎',
     'أطعم الحمامة': '🐦',
+    'تحدي الإيقاع': '🥁',
   };
 
   @override
@@ -79,6 +86,14 @@ class ArcadeSectionScreen extends StatefulWidget {
 
 class _ArcadeSectionScreenState extends State<ArcadeSectionScreen> {
   static const _emojiFallback = ['Noto Color Emoji'];
+
+  @override
+  void initState() {
+    super.initState();
+    CupService.instance.restore().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +128,12 @@ class _ArcadeSectionScreenState extends State<ArcadeSectionScreen> {
                   color: FlatColors.ink.withValues(alpha: 0.75),
                 ).copyWith(fontFamilyFallback: _emojiFallback),
               ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+              child: _CupBanner(emojiFallback: _emojiFallback),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 14)),
@@ -299,6 +320,80 @@ class _ArcadeCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Golden كأس الشلة banner on top of the ١٢٣٤ tab: starts a new cup, or
+/// resumes the running one.
+class _CupBanner extends StatelessWidget {
+  final List<String> emojiFallback;
+  const _CupBanner({required this.emojiFallback});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: CupService.instance,
+      builder: (context, _) {
+        final cup = CupService.instance;
+        final running = cup.active && !cup.finished;
+        final label = running
+            ? 'الكأس شغال: الجولة ${cup.roundNumber} من ${cup.rounds} — كمّل 🏆'
+            : 'كأس الشلة 🏆';
+        final sub = running
+            ? 'ارجع كمّل البطولة من حيث وقفت'
+            : 'بطولة جولات من ألعاب ١٢٣٤ — كل فوز بنقطة، والأكتر نقاط ياخد الكأس';
+        return InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  running ? const CupScreen() : const CupSetupScreen(),
+            ),
+          ),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: FlatColors.tilePastels[4],
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Row(
+              children: [
+                const Text('🏆', style: TextStyle(fontSize: 36)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: GoogleFonts.cairo(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: FlatColors.ink,
+                        ).copyWith(fontFamilyFallback: emojiFallback),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        sub,
+                        style: GoogleFonts.cairo(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: FlatColors.ink.withValues(alpha: 0.75),
+                        ).copyWith(fontFamilyFallback: emojiFallback),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios_rounded,
+                    size: 16, color: FlatColors.ink),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
