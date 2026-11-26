@@ -183,7 +183,7 @@ class _CodenamesGameState extends State<CodenamesGame> {
             icon: '🕵️',
             description:
                 'اللعبة الأصلية Codenames!\n\n'
-                '🟥🟦 فريقين على لوحة 25 كلمة. لكل فريق قائد شايف المفتاح السري: مين عملاءكم ومين القاتل!\n'
+                '🔴🔵 فريقين على لوحة 25 كلمة. لكل فريق قائد شايف المفتاح السري: مين عملاءكم ومين القاتل!\n'
                 '🗣️ القائد يقول تلميح من كلمة واحدة + رقم ("بحر 3") بصوت عالي.\n'
                 '👆 الفريق يدوس على الكلمات: صح = كمّل (رقم + تخمينة زيادة)، غلط = الدور يروح.\n'
                 '☠️ اللي يلمس كلمة "القاتل" يخسر فوراً!\n\n'
@@ -366,15 +366,24 @@ class _CodenamesGameState extends State<CodenamesGame> {
         child: Column(
           children: [
             Text(
-              'المفتاح السري 🤫\n🔴 أحمر  🔵 أزرق  ⬜ محايد  ⬛ القاتل',
+              'المفتاح السري 🤫',
               textAlign: TextAlign.center,
               style: flatCairo(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 color: FlatColors.ink,
-                height: 1.6,
               ),
               textDirection: TextDirection.rtl,
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                _legendDot(const Color(0xFFE53935), 'أحمر'),
+                _legendDot(const Color(0xFF1E88E5), 'أزرق'),
+                _legendDot(const Color(0xFFD7CCC8), 'محايد'),
+                _legendDot(FlatColors.ink, 'القاتل'),
+              ],
             ),
             const SizedBox(height: 10),
             Expanded(child: _board(forSpymaster: true)),
@@ -639,6 +648,35 @@ class _CodenamesGameState extends State<CodenamesGame> {
   }
 
   // ---------------------------------------------------------------- bits
+
+  Widget _legendDot(Color color, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Row(
+        children: [
+          Container(
+            width: 14,
+            height: 14,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: FlatColors.ink, width: 1.5),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: flatCairo(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: FlatColors.ink,
+            ),
+            textDirection: TextDirection.rtl,
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _remainingStrip() {
     return Container(

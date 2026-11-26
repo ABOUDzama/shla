@@ -229,7 +229,7 @@ class _PsychGameState extends State<PsychGame> {
           title: '🤥 أقنعهم',
           icon: '🤥',
           description:
-              'سؤال معلومة غريبة، والإجابة الصح موجودة.. بس مخلوطة بإجاباتكم الكدب!\n\n✍️ كل واحد يكتب إجابة مزيفة في سرية (الموبايل بيلف عليكم).\n🗳️ بعدين الكل يصوّت على اللي شايفها الإجابة الصح.\n\n⭐ لو لقيت الصح = نقطتين. لو حد صدّق كدبتك = نقطة عن كل واحد.\nوالجولة الأخيرة نقاطها ×3!',
+              'سؤال معلومة غريبة، والإجابة الصح موجودة.. بس مخلوطة بإجاباتكم الكدب!\n\n✍️ كل واحد يكتب إجابة مزيفة في سرية (الموبايل بيلف عليكم).\n✅ بعدين الكل يصوّت على اللي شايفها الإجابة الصح.\n\n⭐ لو لقيت الصح = نقطتين. لو حد صدّق كدبتك = نقطة عن كل واحد.\nوالجولة الأخيرة نقاطها ×3!',
           onStart: () => setState(() => _showIntro = false),
         ),
       );
@@ -260,7 +260,7 @@ class _PsychGameState extends State<PsychGame> {
         return _buildLieInput();
       case _Phase.votePass:
         return _buildPassScreen(
-          title: '🗳️ مرحلة التصويت',
+          title: '✅ مرحلة التصويت',
           message: 'عدّي الموبايل لـ ${_players[_passIndex]['name']}',
           sub: 'هيختار اللي شايفه الإجابة الصح.. في سرية!',
           button: 'تمام، أنا ${_players[_passIndex]['name']}',
@@ -504,7 +504,7 @@ class _PsychGameState extends State<PsychGame> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _header(stage: '$voter، إيه الإجابة الصح؟ 🗳️'),
+              _header(stage: '$voter، إيه الإجابة الصح؟ ✅'),
               const SizedBox(height: 14),
               Expanded(
                 child: ListView.separated(

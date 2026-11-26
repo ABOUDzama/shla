@@ -201,7 +201,7 @@ class _GhostWordGameState extends State<GhostWordGame> {
         _loserReason = 'تحدّى وغلط.. الكلمة موجودة فعلًا 😅';
       } else {
         _roundLoser = _lastLetterPlayer;
-        _loserReason = 'كان بيهيّص! مفيش كلمة كده 🏴';
+        _loserReason = 'كان بيهيّص! مفيش كلمة كده 💀';
       }
       _endRound();
     });
@@ -248,7 +248,7 @@ class _GhostWordGameState extends State<GhostWordGame> {
           title: '👻 كلمة عالحبل',
           icon: '👻',
           description:
-              'لعبة الحروف الشهيرة!\n\n🔤 كل واحد يضيف حرف واحد على الكلمة اللي بتتكون.. بس خليها دايمًا بداية كلمة حقيقية!\n\n📕 اللي يكمّل كلمة (3 حروف أو أكتر) يخسر الجولة.\n🚩 شاكك إن اللي قبلك بيهيّص؟ تحدّاه! لو ماعندوش كلمة يخسر، ولو عنده إنت اللي تخسر.\n\n👻 الخسران بيجمع حروف "الشبح".. اللي يكملها يطير، وآخر واحد واقف يكسب!',
+              'لعبة الحروف الشهيرة!\n\n🔤 كل واحد يضيف حرف واحد على الكلمة اللي بتتكون.. بس خليها دايمًا بداية كلمة حقيقية!\n\n📕 اللي يكمّل كلمة (3 حروف أو أكتر) يخسر الجولة.\n⚡ شاكك إن اللي قبلك بيهيّص؟ تحدّاه! لو ماعندوش كلمة يخسر، ولو عنده إنت اللي تخسر.\n\n👻 الخسران بيجمع حروف "الشبح".. اللي يكملها يطير، وآخر واحد واقف يكسب!',
           onStart: () => setState(() => _showIntro = false),
         ),
       );
@@ -396,7 +396,7 @@ class _GhostWordGameState extends State<GhostWordGame> {
                         ),
                       ),
                       child: Text(
-                        'تحدي 🚩',
+                        'تحدي ⚡',
                         style: flatCairo(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
@@ -466,7 +466,7 @@ class _GhostWordGameState extends State<GhostWordGame> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                '🚩 تحدي!',
+                '⚡ تحدي!',
                 textAlign: TextAlign.center,
                 style: flatCairo(
                   fontSize: 24,

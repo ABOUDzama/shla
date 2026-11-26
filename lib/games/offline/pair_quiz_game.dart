@@ -428,7 +428,7 @@ class _PairQuizGameState extends State<PairQuizGame> {
         ..sort((a, b) => b.value.compareTo(a.value));
       final parts = best.first.key.split('|').map(int.parse).toList();
       duoText =
-          '💞 أقرب ثنائي: ${_players[parts[0]]} و ${_players[parts[1]]} (${best.first.value} تطابق)';
+          '❤ أقرب ثنائي: ${_players[parts[0]]} و ${_players[parts[1]]} (${best.first.value} تطابق)';
     }
 
     return _scaffold(
