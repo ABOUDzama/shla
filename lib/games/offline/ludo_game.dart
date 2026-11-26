@@ -290,40 +290,56 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
         _turnBar(current),
         const SizedBox(height: 6),
         Expanded(
-          child: Center(
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  border: Border.all(color: FlatColors.border, width: 2),
-                  boxShadow: [
-                    BoxShadow(
-                        color: FlatColors.ink.withValues(alpha: 0.06),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4)),
-                  ],
-                ),
-                padding: const EdgeInsets.all(6),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final cell = constraints.maxWidth / 15;
-                      return Stack(
-                        children: [
-                          ..._boardCells(cell),
-                          ..._yardDice(cell),
-                          ..._tokens(cell, legal),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Board centered with the dice OUTSIDE the square, one die at
+              // each seat's corner (Ludo King reference layout).
+              final side = min(constraints.maxWidth, constraints.maxHeight);
+              final dieSize = side * 0.13;
+              final boardSide = side - dieSize * 2.0;
+              final boardLeft = (constraints.maxWidth - boardSide) / 2;
+              final boardTop = (constraints.maxHeight - boardSide) / 2;
+              return Stack(
+                children: [
+                  Positioned(
+                    left: boardLeft,
+                    top: boardTop,
+                    width: boardSide,
+                    height: boardSide,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(color: FlatColors.border, width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                              color: FlatColors.ink.withValues(alpha: 0.06),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4)),
                         ],
-                      );
-                    },
+                      ),
+                      padding: const EdgeInsets.all(6),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: LayoutBuilder(
+                          builder: (context, bc) {
+                            final cell = bc.maxWidth / 15;
+                            return Stack(
+                              children: [
+                                ..._boardCells(cell),
+                                ..._tokens(cell, legal),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
+                  ..._cornerDice(constraints.maxWidth, constraints.maxHeight,
+                      boardLeft, boardTop, boardSide, dieSize),
+                ],
+              );
+            },
           ),
         ),
         if (_notice.isNotEmpty)
@@ -345,20 +361,32 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
     );
   }
 
-  /// One die per seat, in that seat's yard corner. The active seat's die is
-  /// full-size and colored; tapping it rolls (humans only). Bots' dice show
-  /// their rolled pips while they play.
-  List<Widget> _yardDice(double cell) {
-    const centers = [(2.5, 2.5), (2.5, 11.5), (11.5, 11.5), (11.5, 2.5)];
+  /// One die per seat, OUTSIDE the board square at that seat's corner
+  /// (reference Ludo layout). The active seat's die is full-size and
+  /// colored; tapping it rolls (humans only). Bots' dice show their rolled
+  /// pips while they play.
+  List<Widget> _cornerDice(double maxW, double maxH, double boardLeft,
+      double boardTop, double boardSide, double dieSize) {
+    // Corner anchors: p0 top-left, p1 top-right, p2 bottom-right, p3
+    // bottom-left; pushed diagonally outward from the board corners.
+    final anchors = [
+      (boardLeft - dieSize * 0.48, boardTop - dieSize * 0.48),
+      (boardLeft + boardSide + dieSize * 0.48, boardTop - dieSize * 0.48),
+      (boardLeft + boardSide + dieSize * 0.48,
+          boardTop + boardSide + dieSize * 0.48),
+      (boardLeft - dieSize * 0.48, boardTop + boardSide + dieSize * 0.48),
+    ];
     final widgets = <Widget>[];
     for (var p = 0; p < _game.playerCount; p++) {
       final active = p == _game.currentPlayer && !_game.isOver;
       final rolled = active ? _game.dice : null;
       final isBot = _game.isBot(p);
-      final size = cell * 2.0;
+      final size = dieSize;
+      final cx = anchors[p].$1.clamp(4.0 + size / 2, maxW - 4.0 - size / 2);
+      final cy = anchors[p].$2.clamp(4.0 + size / 2, maxH - 4.0 - size / 2);
       widgets.add(Positioned(
-        left: centers[p].$2 * cell - size / 2,
-        top: centers[p].$1 * cell - size / 2,
+        left: cx - size / 2,
+        top: cy - size / 2,
         width: size,
         height: size,
         child: GestureDetector(
