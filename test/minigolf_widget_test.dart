@@ -5,9 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/games/offline/minigolf_game.dart';
+import 'package:shella/services/audio_service.dart';
 import 'package:shella/services/settings_service.dart';
 
 void main() {
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;

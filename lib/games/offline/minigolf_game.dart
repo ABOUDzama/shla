@@ -319,36 +319,64 @@ void _startMatch(int humans, bool withBots) {
       onTap: isBot
           ? null
           : () => setState(() => _phase = _GolfPhase.play),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('حفرة ${_hole + 1} من ${_course.length}',
-                style: _t(15, color: FlatColors.ink.withValues(alpha: 0.6)),
-                textDirection: TextDirection.rtl),
-            const SizedBox(height: 10),
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: _colors[_seat].withValues(alpha: 0.16),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: _colors[_seat], width: 2),
-              ),
-              child: Text(
-                'دور ${_seatLabel(_seat)}${isBot ? ' 🤖' : ''}',
-                style: _t(22, w: FontWeight.w900, color: _colors[_seat]),
-                textDirection: TextDirection.rtl,
+      child: Column(
+        children: [
+          const SizedBox(height: 10),
+          Text('حفرة ${_hole + 1} من ${_course.length}',
+              style: _t(15, color: FlatColors.ink.withValues(alpha: 0.6)),
+              textDirection: TextDirection.rtl),
+          const SizedBox(height: 8),
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: _colors[_seat].withValues(alpha: 0.16),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: _colors[_seat], width: 2),
+            ),
+            child: Text(
+              'دور ${_seatLabel(_seat)}${isBot ? ' 🤖' : ''}',
+              style: _t(22, w: FontWeight.w900, color: _colors[_seat]),
+              textDirection: TextDirection.rtl,
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Course preview: the player sees the hole before the first swing.
+          Expanded(
+            child: IgnorePointer(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final previewScale = min(
+                      constraints.maxWidth / _h.worldWidth,
+                      constraints.maxHeight / _h.worldHeight);
+                  return Center(
+                    child: CustomPaint(
+                      size: Size(_h.worldWidth * previewScale,
+                          _h.worldHeight * previewScale),
+                      painter: _GolfPainter(
+                        hole: _h,
+                        felt: _felt,
+                        feltDark: _feltDark,
+                        wall: _wall,
+                        ballColor: _colors[_seat],
+                        aim: null,
+                        ink: FlatColors.ink,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 14),
-            Text(
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 14, top: 6),
+            child: Text(
               isBot ? 'البوت بيلعب…' : 'دوس للبدء 👆',
               style: _t(16, w: FontWeight.w900),
               textDirection: TextDirection.rtl,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
