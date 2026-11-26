@@ -368,32 +368,39 @@ class _CodenamesGameState extends State<CodenamesGame> {
                           textDirection: TextDirection.rtl,
                         ),
                         const SizedBox(height: 6),
-                        // Leader box
-                        Container(
-                          width: double.infinity,
-                          margin: EdgeInsets.only(
-                            left: t == 0 ? 5 : 0,
-                            right: t == 1 ? 5 : 0,
-                          ),
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: _teamColors[t].withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: _teamColors[t], width: 3),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                'القائد 🕵️',
-                                style: flatCairo(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w900,
-                                  color: _teamColors[t],
-                                ),
-                                textDirection: TextDirection.rtl,
+                        // Leader box (same height as the players box)
+                        Expanded(
+                          child: Container(
+                            width: double.infinity,
+                            margin: EdgeInsets.only(
+                              left: t == 0 ? 5 : 0,
+                              right: t == 1 ? 5 : 0,
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: _teamColors[t].withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: _teamColors[t],
+                                width: 3,
                               ),
-                              _playerChip(_spymasters[t]),
-                            ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'القائد 🕵️',
+                                  style: flatCairo(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                    color: _teamColors[t],
+                                  ),
+                                  textDirection: TextDirection.rtl,
+                                ),
+                                const SizedBox(height: 6),
+                                _playerChip(_spymasters[t]),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 8),
