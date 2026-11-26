@@ -110,10 +110,8 @@ void main() {
     TestGesture? g;
     for (var i = 0; i < 3000 && !match.over; i++) {
       final c = match.cars[0];
-      final th = _ang(c) + 0.32;
-      final tx = CarRaceMatch.cx + CarRaceMatch.a * _cos(th);
-      final ty = CarRaceMatch.cy + CarRaceMatch.b * _sin(th);
-      var d = _atan2(ty - c.y, tx - c.x) - c.heading;
+      final target = CarRaceMatch.centerlinePoint(_ang(c) + 0.32);
+      var d = _atan2(target.y - c.y, target.x - c.x) - c.heading;
       while (d > 3.14159) { d -= 6.28318; }
       while (d < -3.14159) { d += 6.28318; }
       final want = d.abs() < 0.08 ? 0 : (d > 0 ? 1 : -1);
@@ -164,7 +162,7 @@ void main() {
   });
 }
 
-double _ang(Car c) => _atan2((c.y - CarRaceMatch.cy) / CarRaceMatch.b, (c.x - CarRaceMatch.cx) / CarRaceMatch.a);
+double _ang(Car c) => _atan2(c.y - CarRaceMatch.cy, c.x - CarRaceMatch.cx);
 double _atan2(double y, double x) => _m.atan2(y, x);
 double _cos(double a) => _m.cos(a);
 double _sin(double a) => _m.sin(a);

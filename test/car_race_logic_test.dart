@@ -23,7 +23,7 @@ void main() {
   test('grass slows the car', () {
     final m = CarRaceMatch(seats: 1, random: Random(1));
     final c = m.cars[0];
-    c.x = 0.05; c.y = 0.05; c.speed = CarRaceMatch.maxSpeed; c.heading = 0;
+    c.x = 0.05; c.y = 0.05; c.speed = CarRaceMatch.maxSpeed; c.heading = pi; // pinned at the outer wall, stays on the sand
     for (var i = 0; i < 60; i++) { m.step(0.016, {}); }
     expect(c.speed, lessThan(CarRaceMatch.maxSpeed * 0.6));
   });

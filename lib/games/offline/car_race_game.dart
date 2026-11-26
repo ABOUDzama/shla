@@ -171,6 +171,26 @@ class _CarRaceGameState extends State<CarRaceGame> {
     );
   }
 
+  /// The seat's pad pair wrapped in a drift-charge ring: fills with the
+  /// seat color as charge builds, flashes full when a boost is ready.
+  Widget _padCluster(int seat) {
+    final e = seat < _match.cars.length ? _match.cars[seat].energy : 0.0;
+    return SizedBox(
+      width: 136,
+      height: 66,
+      child: CustomPaint(
+        painter: _ChargeRing(e, _colors[seat]),
+        child: Center(
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            _pad(seat, -1),
+            const SizedBox(width: 6),
+            _pad(seat, 1),
+          ]),
+        ),
+      ),
+    );
+  }
+
   Widget _buildOver() {
     final w = _match.winner;
     Widget head;
@@ -238,11 +258,7 @@ class _CarRaceGameState extends State<CarRaceGame> {
                         alignment: _corner(s),
                         child: Padding(
                           padding: const EdgeInsets.all(5),
-                          child: Row(mainAxisSize: MainAxisSize.min, children: [
-                            _pad(s, -1),
-                            const SizedBox(width: 6),
-                            _pad(s, 1),
-                          ]),
+                          child: _padCluster(s),
                         ),
                       ),
                   ]),
@@ -285,50 +301,156 @@ class _TrackPainter extends CustomPainter {
   final CarRaceMatch m;
   final List<Color> colors;
 
+  static const int _samples = 240;
+  List<Point<double>>? _center;
+
+  List<Point<double>> _centerline() {
+    if (_center != null) return _center!;
+    final pts = <Point<double>>[];
+    for (var i = 0; i < _samples; i++) {
+      final th = i * 2 * pi / _samples;
+      pts.add(CarRaceMatch.centerlinePoint(th));
+    }
+    _center = pts;
+    return pts;
+  }
+
+  Path _loop(List<Point<double>> center, double offset, double k) {
+    final path = Path();
+    for (var i = 0; i <= center.length; i++) {
+      final p0 = center[i % center.length];
+      // approximate normal: radial from the arena centre
+      final nx = p0.x - CarRaceMatch.cx, ny = p0.y - CarRaceMatch.cy;
+      final nl = sqrt(nx * nx + ny * ny);
+      final x = (p0.x + nx / nl * offset) * k;
+      final y = (p0.y + ny / nl * offset) * k;
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+    path.close();
+    return path;
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     final k = size.width;
-    final rr = RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(18));
-    canvas.drawRRect(rr, Paint()..color = const Color(0xFFE9D6A7)); // sand
-    canvas.save();
-    canvas.clipRRect(rr);
-    Path ring(double r) {
-      return Path()
-        ..addOval(Rect.fromCenter(
-          center: Offset(CarRaceMatch.cx * k, CarRaceMatch.cy * k),
-          width: 2 * CarRaceMatch.a * r * k,
-          height: 2 * CarRaceMatch.b * r * k,
-        ));
-    }
-    final outer = ring(1 + CarRaceMatch.band);
-    final inner = ring(1 - CarRaceMatch.band);
-    final asphalt = Path.combine(PathOperation.difference, outer, inner);
-    canvas.drawPath(asphalt, Paint()..color = const Color(0xFFC9A06C)); // packed dirt
-    canvas.drawPath(outer, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 3);
-    canvas.drawPath(inner, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 3);
-    // inner island
+    final center = _centerline();
+    final outer = _loop(center, CarRaceMatch.band, k);
+    final inner = _loop(center, -CarRaceMatch.band, k);
+    final mid = _loop(center, 0, k);
+
+    // full-bleed sand
+    canvas.drawRect(Offset.zero & size, Paint()..color = const Color(0xFFE9D6A7));
+
+    // infield island (lighter sand)
     canvas.drawPath(inner, Paint()..color = const Color(0xFFF2E3BB));
-    // dashed centre line
-    final center = ring(1);
-    for (final mt in center.computeMetrics()) {
-      var d = 0.0;
-      while (d < mt.length) {
-        canvas.drawPath(mt.extractPath(d, d + 8),
-            Paint()..color = Colors.white70..style = PaintingStyle.stroke..strokeWidth = 2);
-        d += 18;
+
+    // packed-dirt track ring
+    final ring = Path.combine(PathOperation.difference, outer, inner);
+    canvas.drawPath(ring, Paint()..color = const Color(0xFFC9A06C));
+
+    // curbs: alternating red/white blocks along both edges at the corners
+    final curbPaint = Paint()..style = PaintingStyle.fill;
+    const cornerCenters = [pi / 4, 3 * pi / 4, 5 * pi / 4, 7 * pi / 4];
+    const span = 0.34; // radians of corner covered by curbs
+    const segStep = 2 * pi / _samples;
+    for (final cc in cornerCenters) {
+      var segIndex = 0;
+      for (var th = cc - span; th < cc + span; th += segStep * 2) {
+        final i0 = ((th / (2 * pi)) * _samples).floor() % _samples;
+        final i1 = (i0 + 1) % _samples;
+        final i2 = (i0 + 2) % _samples;
+        for (final off in [CarRaceMatch.band, -CarRaceMatch.band]) {
+          final a = center[i0], b = center[i2];
+          Offset pt(Point<double> p) {
+            final nx = p.x - CarRaceMatch.cx, ny = p.y - CarRaceMatch.cy;
+            final nl = sqrt(nx * nx + ny * ny);
+            final ob = off - (off > 0 ? -0.012 : -0.012);
+            return Offset((p.x + nx / nl * ob) * k, (p.y + ny / nl * ob) * k);
+          }
+
+          final pa = pt(a), pb = pt(b);
+          final mx = (pa.dx + pb.dx) / 2, my = (pa.dy + pb.dy) / 2;
+          final dx = pb.dx - pa.dx, dy = pb.dy - pa.dy;
+          final len = sqrt(dx * dx + dy * dy);
+          final ux = -dy / len, uy = dx / len;
+          const curbW = 5.0;
+          final quad = Path()
+            ..moveTo(pa.dx + ux * curbW, pa.dy + uy * curbW)
+            ..lineTo(pb.dx + ux * curbW, pb.dy + uy * curbW)
+            ..lineTo(pb.dx - ux * curbW, pb.dy - uy * curbW)
+            ..lineTo(pa.dx - ux * curbW, pa.dy - uy * curbW)
+            ..close();
+          curbPaint.color = segIndex.isEven
+              ? const Color(0xFFEF3437)
+              : Colors.white;
+          canvas.drawPath(quad, curbPaint);
+        }
+        segIndex++;
       }
     }
-    // start / finish line across the asphalt on the right side
-    final sy = CarRaceMatch.cy * k;
-    final xIn = (CarRaceMatch.cx + CarRaceMatch.a * (1 - CarRaceMatch.band)) * k;
-    final xOut = (CarRaceMatch.cx + CarRaceMatch.a * (1 + CarRaceMatch.band)) * k;
-    final seg = (xOut - xIn) / 8;
-    for (var i = 0; i < 8; i++) {
-      canvas.drawRect(
-        Rect.fromLTWH(xIn + i * seg, sy - 3, seg, 6),
-        Paint()..color = i.isEven ? FlatColors.ink : Colors.white,
-      );
+
+    // white edge lines
+    canvas.drawPath(
+        outer,
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3);
+    canvas.drawPath(
+        inner,
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3);
+
+    // dashed centre line
+    for (final mt in mid.computeMetrics()) {
+      var d = 0.0;
+      while (d < mt.length) {
+        canvas.drawPath(
+            mt.extractPath(d, d + 9),
+            Paint()
+              ..color = Colors.white70
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2);
+        d += 20;
+      }
     }
+
+    // start / finish: checkered strip across the dirt at angle 0
+    final p0 = CarRaceMatch.centerlinePoint(0);
+    final n0x = p0.x - CarRaceMatch.cx, n0y = p0.y - CarRaceMatch.cy;
+    final nl = sqrt(n0x * n0x + n0y * n0y);
+    final ux = n0x / nl, uy = n0y / nl; // across the track
+    const rows = 2, cols = 8;
+    final stripW = 0.016, stripL = CarRaceMatch.band - 0.006;
+    for (var r = 0; r < rows; r++) {
+      for (var cc = 0; cc < cols; cc++) {
+        final along = (cc - cols / 2) * stripL * 2 / cols;
+        final off = (r - rows / 2) * stripW;
+        final px = p0.x + ux * (off + stripW / 2) + uy * along;
+        final py = p0.y + uy * (off + stripW / 2) - ux * along;
+        // build a small rotated rect
+        final rect = Rect.fromCenter(
+            center: Offset(px * k, py * k),
+            width: stripL * 2 / cols * k,
+            height: stripW * k);
+        canvas.save();
+        canvas.translate(px * k, py * k);
+        canvas.rotate(atan2(uy, ux));
+        canvas.translate(-px * k, -py * k);
+        canvas.drawRect(
+            rect,
+            Paint()
+              ..color = (r + cc).isEven ? FlatColors.ink : Colors.white);
+        canvas.restore();
+      }
+    }
+
     // drift tire marks
     final markPaint = Paint()
       ..color = const Color(0x55000000)
@@ -338,70 +460,124 @@ class _TrackPainter extends CustomPainter {
     for (var i = 0; i < m.cars.length; i++) {
       final trail = m.cars[i].driftTrail;
       if (trail.length < 2) continue;
-      final path = Path()
-        ..moveTo(trail.first.x * k, trail.first.y * k);
+      final path = Path()..moveTo(trail.first.x * k, trail.first.y * k);
       for (final pt in trail.skip(1)) {
         path.lineTo(pt.x * k, pt.y * k);
       }
       canvas.drawPath(path, markPaint);
     }
-    // cars
+
+    // cars: proper little rally cars (body, wheels, cockpit, wing)
     for (var i = 0; i < m.cars.length; i++) {
       final c = m.cars[i];
       canvas.save();
       canvas.translate(c.x * k, c.y * k);
-      canvas.rotate(c.heading);
-      final body = RRect.fromRectAndRadius(
-          Rect.fromCenter(center: Offset.zero, width: 30, height: 18), const Radius.circular(6));
-      canvas.drawRRect(body, Paint()..color = colors[i]);
-      canvas.drawRRect(body, Paint()..color = FlatColors.ink..style = PaintingStyle.stroke..strokeWidth = 2.2);
+      canvas.rotate(c.heading - c.slip * 0.4);
+      const L = 46.0, W = 24.0;
+      // shadow
       canvas.drawRRect(
-        RRect.fromRectAndRadius(Rect.fromLTWH(1, -6, 9, 12), const Radius.circular(3)),
-        Paint()..color = Colors.white,
+        RRect.fromRectAndRadius(
+            Rect.fromCenter(
+                center: const Offset(2, 3), width: L, height: W),
+            const Radius.circular(7)),
+        Paint()..color = Colors.black.withValues(alpha: 0.18),
+      );
+      // wheels
+      final wheel = Paint()..color = const Color(0xFF2B2B30);
+      for (final wx in [-L * 0.30, L * 0.30]) {
+        for (final wy in [-W / 2, W / 2 - 5]) {
+          canvas.drawRRect(
+            RRect.fromRectAndRadius(
+                Rect.fromLTWH(wx - 6, wy, 12, 5), const Radius.circular(2)),
+            wheel,
+          );
+        }
+      }
+      // body
+      final body = RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset.zero, width: L, height: W),
+          const Radius.circular(8));
+      canvas.drawRRect(body, Paint()..color = colors[i]);
+      canvas.drawRRect(
+          body,
+          Paint()
+            ..color = FlatColors.ink
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2.2);
+      // cockpit
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+            Rect.fromLTWH(-2, -7, 13, 14), const Radius.circular(4)),
+        Paint()..color = Colors.white.withValues(alpha: 0.92),
+      );
+      // rear wing
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+            Rect.fromLTWH(-L / 2 - 1, -9, 5, 18), const Radius.circular(2)),
+        Paint()..color = FlatColors.ink,
       );
       // boost flame
       if (m.boosting(i)) {
         canvas.drawOval(
-          Rect.fromCenter(
-              center: const Offset(-19, 0), width: 14, height: 8),
+          Rect.fromCenter(center: const Offset(-L / 2 - 8, 0), width: 16, height: 9),
           Paint()..color = const Color(0xFFFFC93C),
         );
       }
       canvas.restore();
     }
-    // lap counters in the arena centre, one per seat
+
+    // HUD in the infield: lap + drift charge per seat
     for (var i = 0; i < m.cars.length; i++) {
       final lap = min(m.laps, m.lapOf(i) + 1);
       final tp = TextPainter(
         text: TextSpan(
           text: '${PlayerNames.name(i)}: لفة $lap/${m.laps}',
-          style: flatCairo(fontSize: 15, fontWeight: FontWeight.w900, color: FlatColors.ink),
+          style: flatCairo(
+              fontSize: 15, fontWeight: FontWeight.w900, color: FlatColors.ink),
         ),
         textDirection: TextDirection.rtl,
       )..layout();
-      tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - 56 + i * 30));
-      // drift charge bar under the lap line (reference boost meter)
-      final barW = 70.0, barH = 5.0;
-      final bx = size.width / 2 - barW / 2;
-      final by = size.height / 2 - 56 + i * 30 + 21;
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, barW, barH),
-            const Radius.circular(3)),
-        Paint()..color = Colors.white.withValues(alpha: 0.6),
-      );
-      final e = m.cars[i].energy;
-      if (e > 0) {
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, barW * e, barH),
-              const Radius.circular(3)),
-          Paint()..color = colors[i],
-        );
-      }
+      final ty = size.height / 2 - 56 + i * 30;
+      tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, ty));
     }
-    canvas.restore();
-    canvas.drawRRect(rr, Paint()..color = FlatColors.border..style = PaintingStyle.stroke..strokeWidth = 3);
   }
 
   @override
   bool shouldRepaint(covariant _TrackPainter old) => true;
+}
+
+/// Thin ring behind a seat's pads showing the drift charge 0..1.
+class _ChargeRing extends CustomPainter {
+  const _ChargeRing(this.energy, this.color);
+
+  final double energy;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final track = Paint()
+      ..color = Colors.white.withValues(alpha: 0.55)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.5;
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(rect.deflate(1.5), const Radius.circular(33)),
+        track);
+    if (energy <= 0) return;
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.5
+      ..strokeCap = StrokeCap.round;
+    final path = Path()
+      ..addRRect(
+          RRect.fromRectAndRadius(rect.deflate(1.5), const Radius.circular(33)));
+    for (final mt in path.computeMetrics()) {
+      canvas.drawPath(mt.extractPath(0, mt.length * energy), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ChargeRing old) =>
+      old.energy != energy || old.color != color;
 }
