@@ -52,6 +52,7 @@ import '../games/offline/tap_race_game.dart';
 import '../games/offline/croc_game.dart';
 import '../games/offline/flappy_game.dart';
 import '../games/offline/minigolf_game.dart';
+import '../games/offline/obstacle_game.dart';
 import '../games/offline/ludo_game.dart';
 import '../games/offline/touch_ball_game.dart';
 import '../games/offline/rhythm_game.dart';
@@ -476,6 +477,15 @@ class GameRegistry {
       icon: Icons.golf_course,
       color: FunkyColors.mint,
       screen: const MiniGolfGameScreen(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'سباق العوائق',
+      description: 'اجري واقفز فوق الحواجز! نفس المضمار للكل بالتناوب.. أسرع واحد يخلّص يكسب 🏃',
+      icon: Icons.directions_run,
+      color: FunkyColors.amber,
+      screen: const ObstacleGameScreen(),
       badge: 'جديد',
       arcade1234: true,
     ),
