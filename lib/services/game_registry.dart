@@ -42,6 +42,7 @@ import '../games/offline/chicken_run_game.dart';
 import '../games/offline/car_race_game.dart';
 import '../games/offline/micro_racers_game.dart';
 import '../games/offline/flick_soccer_game.dart';
+import '../games/offline/goal_rush_game.dart';
 import '../games/offline/pigeon_game.dart';
 import '../games/offline/tank_battle_game.dart';
 import '../games/offline/tug_of_war_game.dart';
@@ -402,6 +403,15 @@ class GameRegistry {
       icon: Icons.sports_soccer,
       color: FunkyColors.mint,
       screen: FlickSoccerGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'جري الجون',
+      description: 'زرار واحد: سيبه يلفّ ودوسّه يجري! خبط الكورة في جون الخصم وأول واحد يوصل ٣ يكسب',
+      icon: Icons.directions_run,
+      color: FunkyColors.lime,
+      screen: GoalRushGame(),
       badge: 'جديد',
       arcade1234: true,
     ),
