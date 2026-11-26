@@ -164,7 +164,9 @@ void main() {
   testWidgets('proof: touch-ball live ball 4p', (tester) async {
     await prep(tester, const TouchBallGame(randomSeed: 7));
     await tester.tap(find.text('4 لاعبين'));
-    // wait for the ball to be live and drifting
+    // lay the arena out first (device gets this frame ~16ms after the tap),
+    // then let the live ball drift inside the owner's zone
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 700));
     expect(find.textContaining('كورة لاعب'), findsWidgets);
     await snap(tester, 'touchball_live_4p');

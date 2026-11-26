@@ -4,9 +4,11 @@ import 'dart:math';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../widgets/game_intro_widget.dart';
-import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
 
+/// كورة اللمسة: 1-4 players (+ optional bots); bots tap their own balls
+/// after a short human-like delay. Solo without bots is target practice.
+///
 /// Pure logic for كورة اللمسة (Shla-original same-phone moving target).
 ///
 /// Rules: 2-4 players share one phone. Each round a colored ball appears and
@@ -17,7 +19,7 @@ import '../../theme/flat_theme.dart';
 /// scores. First to [targetScore] points wins the match.
 class TouchBallMatch {
   TouchBallMatch({required this.players, this.targetScore = 5, Random? random})
-      : assert(players >= 2 && players <= 4),
+      : assert(players >= 1 && players <= 4),
         assert(targetScore >= 1),
         _random = random ?? Random();
 
@@ -89,7 +91,7 @@ class TouchBallMatch {
 // Widget
 // ---------------------------------------------------------------------------
 
-enum _BallPhase { pickPlayers, playing, matchOver }
+enum _BallPhase { pickPlayers, pickBots, playing, matchOver }
 
 class TouchBallGame extends StatefulWidget {
   const TouchBallGame({super.key, this.randomSeed});
@@ -108,6 +110,16 @@ class _TouchBallGameState extends State<TouchBallGame> {
   late final Random _random = widget.randomSeed != null ? Random(widget.randomSeed!) : Random();
   Timer? _ticker;
   Timer? _nextTimer;
+  Timer? _botTapTimer;
+  int _humans = 2;
+  bool _practice = false;
+  final Set<int> _botSeats = {};
+
+  @visibleForTesting
+  TouchBallMatch get debugMatch => _match;
+
+  @visibleForTesting
+  Set<int> get debugBotSeats => _botSeats;
   double _x = 0, _y = 0, _vx = 0, _vy = 0;
   double _arenaW = 1, _arenaH = 1;
   int _elapsed = 0;
@@ -124,52 +136,99 @@ class _TouchBallGameState extends State<TouchBallGame> {
   void dispose() {
     _ticker?.cancel();
     _nextTimer?.cancel();
+    _botTapTimer?.cancel();
     super.dispose();
   }
 
-  void _startMatch(int players) {
+  void _startMatch(int humans, bool withBots) {
     _ticker?.cancel();
     _nextTimer?.cancel();
+    _botTapTimer?.cancel();
+    _humans = humans;
+    _practice = humans == 1 && !withBots;
+    final seats = _practice ? 1 : (withBots ? 4 : humans);
+    _botSeats.clear();
+    for (var i = humans; i < seats && withBots; i++) {
+      _botSeats.add(i);
+    }
     setState(() {
-      _match = TouchBallMatch(players: players, random: _random);
+      _match = TouchBallMatch(players: seats, random: _random);
       _match.start();
       _phase = _BallPhase.playing;
     });
     _spawn();
   }
 
+  /// The screen rect owned by [player]: balls stay inside their owner's
+  /// zone so the owner can always reach their own ball (the core "only
+  /// the owner may tap" rule stays exactly the same).
+  Rect _zoneRect(int player) {
+    final w = _arenaW, h = _arenaH;
+    if (_match.players == 1) return Rect.fromLTWH(0, 0, w, h);
+    if (_match.players == 2) {
+      return player == 0 ? Rect.fromLTWH(0, 0, w, h / 2) : Rect.fromLTWH(0, h / 2, w, h / 2);
+    }
+    // RTL: seat 0 sits on the visual right, so raw x starts at w/2.
+    if (_match.players == 3) {
+      if (player == 0) return Rect.fromLTWH(w / 2, 0, w / 2, h / 2);
+      if (player == 1) return Rect.fromLTWH(0, 0, w / 2, h / 2);
+      return Rect.fromLTWH(0, h / 2, w, h / 2);
+    }
+    if (player == 0) return Rect.fromLTWH(w / 2, 0, w / 2, h / 2);
+    if (player == 1) return Rect.fromLTWH(0, 0, w / 2, h / 2);
+    if (player == 2) return Rect.fromLTWH(w / 2, h / 2, w / 2, h / 2);
+    return Rect.fromLTWH(0, h / 2, w / 2, h / 2);
+  }
+
   void _spawn() {
     _ticker?.cancel();
+    _botTapTimer?.cancel();
     final owner = _match.spawnBall();
+    if (_botSeats.contains(owner)) {
+      // bot owners tap their own ball after a short human-like delay
+      _botTapTimer = Timer(
+        Duration(milliseconds: 400 + _random.nextInt(600)),
+        () {
+          if (mounted && _match.ballLive && _phase == _BallPhase.playing) {
+            _tapAs(owner);
+          }
+        },
+      );
+    }
     setState(() {
       _elapsed = 0;
-      _x = 60 + _random.nextDouble() * (_arenaW - 160).clamp(1, 10000);
-      _y = 60 + _random.nextDouble() * (_arenaH - 160).clamp(1, 10000);
+      final zr = _zoneRect(owner);
+      _x = zr.left + 20 + _random.nextDouble() * (zr.width - 180).clamp(1, 10000);
+      _y = zr.top + 20 + _random.nextDouble() * (zr.height - 180).clamp(1, 10000);
       final angle = _random.nextDouble() * 2 * pi;
       const speed = 9.0;
       _vx = cos(angle) * speed;
       _vy = sin(angle) * speed;
-      _banner = 'كورة لاعب ${owner + 1}! هو بس اللي يلمسها ⚽';
+      _banner = 'كورة ${_botSeats.contains(owner) ? 'بوت' : 'لاعب'} ${owner + 1}! هو بس اللي يلمسها ⚽';
     });
     _ticker = Timer.periodic(const Duration(milliseconds: 50), (_) => _tick());
   }
 
   void _tick() {
-    if (!mounted || !_match.ballLive) return;
+    // Skip while the arena has never been laid out (first frame after the
+    // picker): with a 1x1 arena the clamps would wedge the ball at x=0.5.
+    if (!mounted || !_match.ballLive || _arenaW <= 1) return;
     setState(() {
       _elapsed += 50;
       _x += _vx;
       _y += _vy;
-      if (_x < 0) {
-        _x = 0;
+      final zr = _zoneRect(_match.owner ?? 0);
+      final minX = zr.left, minY = zr.top;
+      final maxX = (zr.right - 80).clamp(minX, 10000).toDouble();
+      final maxY = (zr.bottom - 80).clamp(minY, 10000).toDouble();
+      if (_x < minX) {
+        _x = minX;
         _vx = -_vx;
       }
-      if (_y < 0) {
-        _y = 0;
+      if (_y < minY) {
+        _y = minY;
         _vy = -_vy;
       }
-      final maxX = (_arenaW - 80).clamp(0, 10000).toDouble();
-      final maxY = (_arenaH - 80).clamp(0, 10000).toDouble();
       if (_x > maxX) {
         _x = maxX;
         _vx = -_vx;
@@ -187,26 +246,37 @@ class _TouchBallGameState extends State<TouchBallGame> {
   }
 
   int _zoneAt(double x, double y) {
+    if (_match.players == 1) return 0;
     final top = y < _arenaH / 2;
-    final left = x < _arenaW / 2;
+    // The zone grid renders RTL: seat 0 is the visual RIGHT half.
+    final right = x > _arenaW / 2;
     if (_match.players == 2) return top ? 0 : 1;
-    if (_match.players == 3) return top ? (left ? 0 : 1) : 2;
-    return top ? (left ? 0 : 1) : (left ? 2 : 3);
+    if (_match.players == 3) return top ? (right ? 0 : 1) : 2;
+    return top ? (right ? 0 : 1) : (right ? 2 : 3);
   }
 
   void _onBallTap() {
     if (!_match.ballLive || _phase != _BallPhase.playing) return;
     final zone = _zoneAt(_x + 40, _y + 40);
-    final good = _match.tapBall(zone);
+    if (_botSeats.contains(zone)) return; // bot zones tap themselves
+    _tapAs(zone);
+  }
+
+  void _tapAs(int player) {
+    if (!_match.ballLive || _phase != _BallPhase.playing) return;
+    final good = _match.tapBall(player);
     _ticker?.cancel();
+    _botTapTimer?.cancel();
     setState(() {
       if (_match.matchWinner != null) {
         _phase = _BallPhase.matchOver;
-        _banner = 'لاعب ${_match.matchWinner! + 1} كسب الماتش! 🏆';
+        _banner = _practice
+            ? 'خلصت التدريب! ⚽'
+            : '${_botSeats.contains(_match.matchWinner) ? 'بوت' : 'لاعب'} ${_match.matchWinner! + 1} كسب الماتش! 🏆';
       } else {
         _banner = good
-            ? 'لاعب ${zone + 1} لمسها في وقتها! ⚽'
-            : 'لاعب ${zone + 1} لمس كورة مش بتاعته! نقطة تتخصم 😬';
+            ? '${_botSeats.contains(player) ? 'بوت' : 'لاعب'} ${player + 1} لمسها في وقتها! ⚽'
+            : 'لاعب ${player + 1} لمس كورة مش بتاعته! نقطة تتخصم 😬';
       }
     });
     if (_match.matchWinner == null) _scheduleNext();
@@ -227,41 +297,55 @@ class _TouchBallGameState extends State<TouchBallGame> {
     return 1.0 - t * 0.7;
   }
 
-  Widget _buildPicker() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+  TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>
+      flatCairo(fontSize: size, fontWeight: w, color: color ?? FlatColors.ink)
+          .copyWith(fontFamilyFallback: const ['Noto Color Emoji']);
+
+  Widget _bigChoice(String label, VoidCallback onTap) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: SizedBox(
+          width: 220,
+          child: FilledButton(onPressed: onTap, child: Text(label, style: _t(18, color: Colors.white))),
+        ),
+      );
+
+  Widget _buildPicker() => Center(
+        child: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text('كام لاعب؟', style: _t(26)),
+            const SizedBox(height: 20),
+            _bigChoice('لاعب واحد', () {
+              _humans = 1;
+              setState(() => _phase = _BallPhase.pickBots);
+            }),
+            for (final n in [2, 3, 4])
+              _bigChoice('$n لاعبين', () {
+                _humans = n;
+                if (n == 4) {
+                  _startMatch(4, false);
+                } else {
+                  setState(() => _phase = _BallPhase.pickBots);
+                }
+              }),
+          ]),
+        ),
+      );
+
+  Widget _buildBots() => Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('نضيف بوتات؟', style: _t(26)),
+          const SizedBox(height: 8),
           Text(
-            'كام لاعب؟',
-            style: flatCairo(
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ),
+            _humans == 1
+                ? 'من غير بوتات هتتدرب: كل الكور بتاعتك، جمّع ٥ نقط'
+                : 'البوتات بتكمّل لحد ٤ لاعبين وبتلعب لوحدها',
+            style: _t(14, w: FontWeight.w600),
           ),
           const SizedBox(height: 20),
-          for (final n in [2, 3, 4])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: SizedBox(
-                width: 200,
-                child: FilledButton(
-                  onPressed: () => _startMatch(n),
-                  child: Text(
-                    '$n لاعبين',
-                    style: flatCairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+          _bigChoice('اه 🤖', () => _startMatch(_humans, true)),
+          _bigChoice('لا', () => _startMatch(_humans, false)),
+        ]),
+      );
 
   Widget _buildZoneBackground() {
     Widget cell(int p) => Expanded(
@@ -284,6 +368,9 @@ class _TouchBallGameState extends State<TouchBallGame> {
             ),
           ),
         );
+    if (_match.players == 1) {
+      return Column(children: [cell(0)]);
+    }
     if (_match.players == 2) {
       return Column(children: [cell(0), cell(1)]);
     }
@@ -305,7 +392,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
       return GameIntroWidget(
         title: 'كورة اللمسة',
         description:
-            '٢-٤ لاعبين على نفس الموبايل. كورة ملونة بتلف على الشاشة وبتصغّر.. اللون بيحدد صاحبها، وهو بس اللي يلمسها قبل ما تطير! لو حد تاني لمسها يتخصم منه نقطة. أول واحد يوصل ٥ نقط يكسب ⚽',
+            '١-٤ لاعبين على نفس الموبايل، وتقدر تضيف بوتات. كورة ملونة بتلف على الشاشة وبتصغّر.. اللون بيحدد صاحبها، وهو بس اللي يلمسها قبل ما تطير! لو حد تاني لمسها يتخصم منه نقطة. أول واحد يوصل ٥ نقط يكسب ⚽',
         icon: '⚽',
         onStart: () => setState(() => _showIntro = false),
       );
@@ -316,11 +403,26 @@ class _TouchBallGameState extends State<TouchBallGame> {
       body: SafeArea(
         child: _phase == _BallPhase.pickPlayers
             ? _buildPicker()
-            : Column(
+            : _phase == _BallPhase.pickBots
+                ? _buildBots()
+                : Column(
                 children: [
                   if (_phase == _BallPhase.matchOver)
-                    VictoryFriends(gameTitle: 'كورة اللمسة', 
-                        winnerName: 'لاعب ${_match.matchWinner! + 1}'),
+                    _practice
+                        ? Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Text(
+                              'جبت ${_match.scores[0]} نقط! تدريب كامل ⚽',
+                              style: _t(20),
+                            ),
+                          )
+                        : _botSeats.contains(_match.matchWinner)
+                            ? Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Text('البوتات كسبوا 🤖', style: _t(22)),
+                              )
+                            : VictoryFriends(gameTitle: 'كورة اللمسة',
+                                winnerName: 'لاعب ${_match.matchWinner! + 1}'),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
                     child: Row(
@@ -336,7 +438,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                               border: Border.all(color: _zoneColors[i]),
                             ),
                             child: Text(
-                              '${i + 1}: ${_match.scores[i]}',
+                              '${_botSeats.contains(i) ? '🤖 ' : ''}${i + 1}: ${_match.scores[i]}',
                               style: flatCairo(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w800,
@@ -360,6 +462,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                                 left: _x,
                                 top: _y,
                                 child: GestureDetector(
+                                  key: const Key('touch_ball'),
                                   onTap: _onBallTap,
                                   child: Transform.scale(
                                     scale: _ballScale,
@@ -417,9 +520,9 @@ class _TouchBallGameState extends State<TouchBallGame> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: FilledButton(
-                        onPressed: () => _startMatch(_match.players),
+                        onPressed: () => setState(() => _phase = _BallPhase.pickPlayers),
                         child: Text(
-                          'ماتش جديد',
+                          'العبوا تاني ⚽',
                           style:
                               flatCairo(fontWeight: FontWeight.w800),
                         ),
