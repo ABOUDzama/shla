@@ -682,7 +682,15 @@ void main() {
     tester.takeException();
     await fixedPumps(tester);
     await flushFontCallbacks(tester);
-    // Teams + spymasters
+    // Teams + spymasters: exercise the tap-to-swap move (first two chips
+    // swap boxes), then capture the four-box layout.
+    await tester.tap(find.text('منى'), warnIfMissed: false);
+    await fixedPumps(tester);
+    await tester.tap(find.text('أحمد'), warnIfMissed: false);
+    await fixedPumps(tester);
+    // Swap applied: Ahmed is now a spymaster, Mona a regular player.
+    expect(find.text('أحمد'), findsOneWidget);
+    expect(find.text('منى'), findsOneWidget);
     await capture360(tester, 'cn_teams');
     expectNoOverflow(tester);
     await tapIf(tester, find.text('سلّم الموبايل للقادة يشوفوا المفتاح 🔑'));

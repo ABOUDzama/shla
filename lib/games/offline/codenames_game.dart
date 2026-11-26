@@ -46,8 +46,9 @@ class _CodenamesGameState extends State<CodenamesGame> {
   final Random _rng = Random();
 
   List<String> _players = [];
-  List<List<int>> _teams = [[], []]; // player indices per team
-  final List<int> _spyIdx = [0, 0]; // spymaster pointer per team
+  List<List<int>> _teams = [[], []]; // REGULAR player indices per team
+  final List<int> _spymasters = [0, 0]; // spymaster player index per team
+  int? _selectedPlayer; // tapped player on the teams screen (move mode)
 
   List<String> _words = [];
   List<_CardKind> _kinds = [];
@@ -83,8 +84,10 @@ class _CodenamesGameState extends State<CodenamesGame> {
     for (var i = 0; i < idxs.length; i++) {
       _teams[i % 2].add(idxs[i]);
     }
-    _spyIdx[0] = 0;
-    _spyIdx[1] = 0;
+    // First member of each split becomes its spymaster (movable later).
+    _spymasters[0] = _teams[0].removeAt(0);
+    _spymasters[1] = _teams[1].removeAt(0);
+    _selectedPlayer = null;
     _setupBoard();
     AudioService.playClick();
     setState(() => _phase = _CPhase.teams);
@@ -107,7 +110,7 @@ class _CodenamesGameState extends State<CodenamesGame> {
     _clueNumber = null;
   }
 
-  int get _currentSpy => _teams[_currentTeam][_spyIdx[_currentTeam]];
+  int get _currentSpy => _spymasters[_currentTeam];
 
   void _pickClueNumber(int n) {
     _clueNumber = n;
@@ -226,6 +229,100 @@ class _CodenamesGameState extends State<CodenamesGame> {
     body: body,
   );
 
+  // ------------------------------------------------------ teams editing
+
+  ({int team, bool leader}) _locate(int p) {
+    for (var t = 0; t < 2; t++) {
+      if (_spymasters[t] == p) return (team: t, leader: true);
+      if (_teams[t].contains(p)) return (team: t, leader: false);
+    }
+    return (team: -1, leader: false);
+  }
+
+  void _removePlayer(int p) {
+    for (var t = 0; t < 2; t++) {
+      _teams[t].remove(p);
+    }
+  }
+
+  /// Swap two players' boxes exactly (regular<->leader, or across teams).
+  void _swapPlayers(int a, int b) {
+    final la = _locate(a);
+    final lb = _locate(b);
+    if (la.team < 0 || lb.team < 0) return;
+    _removePlayer(a);
+    _removePlayer(b);
+    if (la.leader) {
+      _spymasters[la.team] = b;
+    } else {
+      _teams[la.team].add(b);
+    }
+    if (lb.leader) {
+      _spymasters[lb.team] = a;
+    } else {
+      _teams[lb.team].add(a);
+    }
+  }
+
+  void _tapPlayer(int p) {
+    AudioService.playClick();
+    setState(() {
+      if (_selectedPlayer == null) {
+        _selectedPlayer = p;
+      } else if (_selectedPlayer == p) {
+        _selectedPlayer = null;
+      } else {
+        _swapPlayers(_selectedPlayer!, p);
+        _selectedPlayer = null;
+      }
+    });
+  }
+
+  /// Tap a regular-players box: move the selected REGULAR player into it.
+  void _tapRegularBox(int team) {
+    final sel = _selectedPlayer;
+    if (sel == null) return;
+    final l = _locate(sel);
+    if (l.team < 0 || l.leader) return; // leaders move only by swapping
+    AudioService.playClick();
+    setState(() {
+      _removePlayer(sel);
+      _teams[team].add(sel);
+      _selectedPlayer = null;
+    });
+  }
+
+  Widget _playerChip(int p) {
+    final selected = _selectedPlayer == p;
+    return GestureDetector(
+      onTap: () => _tapPlayer(p),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: selected
+              ? FunkyColors.amber.withValues(alpha: 0.35)
+              : Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: selected ? FunkyColors.amber : FlatColors.border,
+            width: selected ? 2.5 : 1.5,
+          ),
+        ),
+        child: Text(
+          _players[p],
+          textAlign: TextAlign.center,
+          style: flatCairo(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: FlatColors.ink,
+          ),
+          textDirection: TextDirection.rtl,
+        ),
+      ),
+    );
+  }
+
   Widget _buildTeams() {
     return _scaffold(
       Padding(
@@ -242,62 +339,108 @@ class _CodenamesGameState extends State<CodenamesGame> {
               ),
               textDirection: TextDirection.rtl,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 6),
+            Text(
+              'دوس على لاعب وبعدين على لاعب تاني يبدّلوا أماكنهم..\nأو دوس على خانة لعيبة تنقله ليها 👆',
+              textAlign: TextAlign.center,
+              style: flatCairo(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: FlatColors.ink,
+                height: 1.5,
+              ),
+              textDirection: TextDirection.rtl,
+            ),
+            const SizedBox(height: 10),
             Expanded(
               child: Row(
                 children: List.generate(2, (t) {
                   return Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(
-                        left: t == 0 ? 5 : 0,
-                        right: t == 1 ? 5 : 0,
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: _teamColors[t], width: 3),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            '${_teamEmojis[t]} فريق ${_teamNames[t]}',
-                            style: flatCairo(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w900,
-                              color: _teamColors[t],
-                            ),
-                            textDirection: TextDirection.rtl,
+                    child: Column(
+                      children: [
+                        Text(
+                          '${_teamEmojis[t]} فريق ${_teamNames[t]}',
+                          style: flatCairo(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            color: _teamColors[t],
                           ),
-                          const SizedBox(height: 8),
-                          Expanded(
-                            child: ListView(
-                              children: [
-                                for (var k = 0; k < _teams[t].length; k++)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 3,
+                          textDirection: TextDirection.rtl,
+                        ),
+                        const SizedBox(height: 6),
+                        // Leader box
+                        Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.only(
+                            left: t == 0 ? 5 : 0,
+                            right: t == 1 ? 5 : 0,
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: _teamColors[t].withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: _teamColors[t], width: 3),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                'القائد 🕵️',
+                                style: flatCairo(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w900,
+                                  color: _teamColors[t],
+                                ),
+                                textDirection: TextDirection.rtl,
+                              ),
+                              _playerChip(_spymasters[t]),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Regular players box
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _tapRegularBox(t),
+                            child: Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.only(
+                                left: t == 0 ? 5 : 0,
+                                right: t == 1 ? 5 : 0,
+                              ),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: _teamColors[t],
+                                  width: 3,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'اللعيبة',
+                                    style: flatCairo(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w900,
+                                      color: _teamColors[t],
                                     ),
-                                    child: Text(
-                                      k == _spyIdx[t]
-                                          ? '🕵️ ${_players[_teams[t][k]]} (القائد)'
-                                          : _players[_teams[t][k]],
-                                      textAlign: TextAlign.center,
-                                      style: flatCairo(
-                                        fontSize: 14,
-                                        fontWeight: k == _spyIdx[t]
-                                            ? FontWeight.w900
-                                            : FontWeight.w700,
-                                        color: FlatColors.ink,
-                                      ),
-                                      textDirection: TextDirection.rtl,
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                  Expanded(
+                                    child: ListView(
+                                      children: [
+                                        for (final p in _teams[t])
+                                          _playerChip(p),
+                                      ],
                                     ),
                                   ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 }),
@@ -318,7 +461,7 @@ class _CodenamesGameState extends State<CodenamesGame> {
   // Both spymasters view the SAME key privately (official: one shared key
   // card). Order: red spymaster first, then blue.
   Widget _buildKeyPass() {
-    final spy = _teams[_peekSpy][_spyIdx[_peekSpy]];
+    final spy = _spymasters[_peekSpy];
     return _scaffold(
       Center(
         child: Padding(
@@ -549,7 +692,7 @@ class _CodenamesGameState extends State<CodenamesGame> {
   }
 
   Widget _buildKeyPeekPass() {
-    final spy = _teams[_peekSpy][_spyIdx[_peekSpy]];
+    final spy = _spymasters[_peekSpy];
     return _scaffold(
       Center(
         child: Padding(
