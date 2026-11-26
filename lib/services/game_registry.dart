@@ -74,6 +74,7 @@ import '../games/offline/wink_murder_game.dart';
 import '../games/offline/three_rounds_game.dart';
 import '../games/offline/fake_artist_game.dart';
 import '../games/offline/pair_quiz_game.dart';
+import '../games/offline/codenames_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -238,6 +239,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'كود نيمز',
+      description: 'تلميح كلمة واحدة.. وفريقك يكشف العملاء قبل القاتل!',
+      icon: Icons.grid_on,
+      color: FunkyColors.sky,
+      screen: CodenamesGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'مين يعرف مين؟',

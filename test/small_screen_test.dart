@@ -53,6 +53,7 @@ import 'package:shella/games/offline/wink_murder_game.dart';
 import 'package:shella/games/offline/three_rounds_game.dart';
 import 'package:shella/games/offline/fake_artist_game.dart';
 import 'package:shella/games/offline/pair_quiz_game.dart';
+import 'package:shella/games/offline/codenames_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -651,6 +652,72 @@ void main() {
     await fixedPumps(tester);
     // Next round starts with منى
     expect(find.text('دور منى'), findsOneWidget);
+  });
+
+  testWidgets('small screen: codenames flow', (tester) async {
+    await pumpSmall(tester, const CodenamesGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Roster ListView builds rows lazily: scroll each name into view.
+    final rosterScrollable = find
+        .ancestor(
+          of: find.byType(ListTile).first,
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    for (final name in ['أحمد', 'منى', 'كريم', 'سارة']) {
+      await tester.scrollUntilVisible(
+        find.text(name),
+        70,
+        scrollable: rosterScrollable,
+        maxScrolls: 30,
+      );
+      await fixedPumps(tester, 2);
+      await tester.tap(find.text(name).first, warnIfMissed: false);
+      await fixedPumps(tester);
+    }
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Teams + spymasters
+    await capture360(tester, 'cn_teams');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.text('سلّم الموبايل للقادة يشوفوا المفتاح 🔑'));
+    await fixedPumps(tester);
+    // Red spymaster views the key, then blue spymaster
+    for (var i = 0; i < 2; i++) {
+      await tapIf(tester, find.text('تمام، أنا القائد 👀'));
+      await fixedPumps(tester);
+      await flushFontCallbacks(tester);
+      if (i == 0) {
+        await capture360(tester, 'cn_key');
+        expectNoOverflow(tester);
+      }
+      await tapIf(
+        tester,
+        find.text(i == 0 ? 'حفظته! عدّيها للقائد التاني ⏭️' : 'يلا نبدأ! 🚀'),
+      );
+      await fixedPumps(tester);
+    }
+    // Clue screen: pick number 2
+    await capture360(tester, 'cn_clue');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.byKey(const ValueKey('cn_clue_2')));
+    await fixedPumps(tester);
+    // Guessing: tap two cards
+    await capture360(tester, 'cn_board');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.byKey(const ValueKey('cn_card_0')));
+    await fixedPumps(tester);
+    await capture360(tester, 'cn_reveal1');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.byKey(const ValueKey('cn_card_7')));
+    await fixedPumps(tester);
+    await capture360(tester, 'cn_reveal2');
+    expectNoOverflow(tester);
   });
 
   testWidgets('small screen: pair quiz flow', (tester) async {
