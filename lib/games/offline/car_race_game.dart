@@ -379,11 +379,11 @@ class _TrackPainter extends CustomPainter {
         ),
         textDirection: TextDirection.rtl,
       )..layout();
-      tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - 40 + i * 22));
+      tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - 56 + i * 30));
       // drift charge bar under the lap line (reference boost meter)
       final barW = 70.0, barH = 5.0;
       final bx = size.width / 2 - barW / 2;
-      final by = size.height / 2 - 40 + i * 22 + 17;
+      final by = size.height / 2 - 56 + i * 30 + 21;
       canvas.drawRRect(
         RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, barW, barH),
             const Radius.circular(3)),
