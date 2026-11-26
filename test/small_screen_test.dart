@@ -45,6 +45,7 @@ import 'package:shella/games/offline/truth_or_dare_game.dart';
 import 'package:shella/games/offline/five_seconds_game.dart';
 import 'package:shella/games/offline/heads_up_game.dart';
 import 'package:shella/games/offline/psych_game.dart';
+import 'package:shella/games/offline/justone_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -431,6 +432,66 @@ void main() {
     await flushFontCallbacks(tester);
     await capture360(tester, 'psych_roundend');
     expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: just one flow', (tester) async {
+    await pumpSmall(tester, const JustOneGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    for (final name in ['أحمد', 'منى', 'كريم', 'سارة']) {
+      await tapIf(tester, find.text(name));
+    }
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Reveal screen -> show mystery word dialog -> confirm
+    await tapIf(tester, find.textContaining('إظهار الكلمة للكل'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('شفناها، يلا نكتب التلميحات'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'justone_cluepass');
+    expectNoOverflow(tester);
+    // Three clue writers (4 players -> guesser + 3 writers), two of them
+    // write the SAME clue to exercise the cancellation path.
+    final clueWriters = ['منى', 'كريم', 'سارة'];
+    final clueTexts = ['أسود', 'أسود', 'ليل'];
+    for (var i = 0; i < clueWriters.length; i++) {
+      await tapIf(tester, find.text('تمام، أنا ${clueWriters[i]}'));
+      await fixedPumps(tester);
+      await flushFontCallbacks(tester);
+      if (i == 0) {
+        await capture360(tester, 'justone_clue');
+        expectNoOverflow(tester);
+      }
+      await tester.enterText(find.byType(TextField), clueTexts[i]);
+      await fixedPumps(tester);
+      await tapIf(tester, find.text('ثبّت التلميح 🔒'));
+      await fixedPumps(tester);
+      await flushFontCallbacks(tester);
+    }
+    // Compare screen: duplicates cancelled (both "أسود" struck through).
+    await capture360(tester, 'justone_compare');
+    expectNoOverflow(tester);
+    expect(find.text('كل التلميحات اتلغت! 😱 الكارت ضاع'), findsNothing);
+    // Pass to guesser (أحمد) and make a wrong guess to check the flow.
+    await tapIf(tester, find.textContaining('عدّي الموبايل لـ'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'justone_guess');
+    expectNoOverflow(tester);
+    await tester.enterText(find.byType(TextField), 'تخمين غلط');
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('خمّن! 🎯'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'justone_turnend');
+    expectNoOverflow(tester);
+    expect(find.textContaining('غلط'), findsWidgets);
   });
 
   testWidgets('small screen: charades setup', (tester) async {

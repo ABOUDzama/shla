@@ -66,6 +66,7 @@ import '../games/offline/rhythm_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../games/offline/heads_up_game.dart';
 import '../games/offline/psych_game.dart';
+import '../games/offline/justone_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -230,6 +231,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'كلمة واحدة',
+      description: 'تلميحات بكلمة.. والمتشابه يتلغي! تعاونية ضد 13 كلمة',
+      icon: Icons.lightbulb_outline,
+      color: FunkyColors.amber,
+      screen: JustOneGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'أقنعهم',
