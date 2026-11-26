@@ -62,11 +62,11 @@ void main() {
   });
 
   group('Registry', () {
-    test('has 49 games and 25 new-badge games', () {
-      expect(GameRegistry.games.length, 49);
+    test('has 59 games and 35 new-badge games', () {
+      expect(GameRegistry.games.length, 59);
       final newOnes =
           GameRegistry.games.where((g) => g.badge == 'جديد').toList();
-      expect(newOnes.length, 25);
+      expect(newOnes.length, 35);
       expect(
           newOnes.map((g) => g.title),
           containsAll(<String>[
@@ -95,6 +95,16 @@ void main() {
             'سباق العربيات',
             'أطعم الحمامة',
             'تحدّي الإيقاع',
+            'لودو الشلة',
+            'تمساح الشلة',
+            'فلابي الشلة',
+            'جولف الشلة',
+            'سباق العوائق',
+            'تصويب الشلة',
+            'حرب البطاريق',
+            'وحش المدار',
+            'كوالا الفضاء',
+            'ميكرو ريسرز',
           ]));
     });
     test('game titles are unique', () {

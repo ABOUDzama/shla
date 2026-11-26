@@ -40,6 +40,7 @@ import '../games/offline/reaction_game.dart';
 import '../games/offline/snake_arena_game.dart';
 import '../games/offline/chicken_run_game.dart';
 import '../games/offline/car_race_game.dart';
+import '../games/offline/micro_racers_game.dart';
 import '../games/offline/pigeon_game.dart';
 import '../games/offline/tank_battle_game.dart';
 import '../games/offline/tug_of_war_game.dart';
@@ -382,6 +383,15 @@ class GameRegistry {
       icon: Icons.directions_car,
       color: FunkyColors.sky,
       screen: CarRaceGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'ميكرو ريسرز',
+      description: 'سباق ميني بزرار واحد! بدّل بين ٣ حارات واهرب من الصناديق والزيت ولمّ البطاريات لحد خط النهاية',
+      icon: Icons.speed,
+      color: FunkyColors.orange,
+      screen: MicroRacersGame(),
       badge: 'جديد',
       arcade1234: true,
     ),
