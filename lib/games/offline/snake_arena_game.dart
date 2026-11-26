@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'snake_arena_logic.dart';
 
 /// حية الشلة: 1-4 players (+ optional bots), each steers a snake with one
@@ -52,6 +53,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
   }
 
   void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
@@ -67,16 +69,50 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
       _match = m;
       _phase = _SnakePhase.playing;
     });
-    _ticker = Timer.periodic(const Duration(milliseconds: 220), (_) {
+    _startTicker();
+  }
+
+  /// Ticks faster as more food gets eaten: 220ms at the start, down to a
+  /// 140ms floor, so rounds stay readable early and tense late.
+  void _startTicker() {
+    _ticker?.cancel();
+    final totalScore = _match.score.fold(0, (a, b) => a + b);
+    final period = (220 - 10 * (totalScore ~/ 2)).clamp(140, 220);
+    _ticker = Timer.periodic(Duration(milliseconds: period), (_) {
       if (!mounted || _phase != _SnakePhase.playing) return;
+      final scoreBefore = List.of(_match.score);
+      final aliveBefore = List.of(_match.alive);
       setState(() {
         _match.tick();
+        for (var p = 0; p < _match.playerCount; p++) {
+          if (p >= _humans) continue;
+          if (_match.score[p] > scoreBefore[p]) ArcadeJuice.score();
+          if (aliveBefore[p] && !_match.alive[p]) ArcadeJuice.hit();
+        }
         if (_match.isOver) {
           _ticker?.cancel();
           _phase = _SnakePhase.over;
+          _juiceEnd();
+        } else if (_match.score.fold(0, (a, b) => a + b) != totalScore) {
+          _startTicker(); // adopt the new pace after anyone eats
         }
       });
     });
+  }
+
+  void _juiceEnd() {
+    if (_practice) {
+      ArcadeJuice.fail();
+      return;
+    }
+    final w = _match.winner;
+    if (w == null || w < 0) {
+      ArcadeJuice.fail();
+    } else if (_match.botSeats.contains(w)) {
+      ArcadeJuice.lose();
+    } else {
+      ArcadeJuice.win();
+    }
   }
 
   TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>

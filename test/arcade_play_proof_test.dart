@@ -72,6 +72,8 @@ Future<void> snap(WidgetTester tester, String name) async {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
 
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;

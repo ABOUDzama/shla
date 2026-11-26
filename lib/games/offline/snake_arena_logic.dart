@@ -12,8 +12,8 @@ typedef Cell = Point<int>;
 class SnakeArenaMatch {
   SnakeArenaMatch({
     required this.playerCount,
-    this.width = 16,
-    this.height = 24,
+    this.width = 14,
+    this.height = 20,
     Random? random,
   })  : assert(playerCount >= 1 && playerCount <= 4),
         _random = random ?? Random() {
@@ -60,13 +60,15 @@ class SnakeArenaMatch {
   void _spawnSnakes() {
     // Corner starts; bodies trail directly behind the head along -facing
     // so a first clockwise turn always heads safely along the edge.
+    // Everyone spawns facing along the TALL axis (14-15 clear cells ahead),
+    // so an unsteered snake lives long enough for its player to react.
     final starts = <List<Cell>>[
-      [Cell(4, 2), Cell(3, 2), Cell(2, 2)],
-      [Cell(width - 5, height - 3), Cell(width - 4, height - 3), Cell(width - 3, height - 3)],
-      [Cell(width - 3, 4), Cell(width - 3, 3), Cell(width - 3, 2)],
-      [Cell(2, height - 5), Cell(2, height - 4), Cell(2, height - 3)],
+      [Cell(2, 5), Cell(2, 4), Cell(2, 3), Cell(2, 2)],
+      [Cell(width - 3, height - 6), Cell(width - 3, height - 5), Cell(width - 3, height - 4), Cell(width - 3, height - 3)],
+      [Cell(width - 5, 5), Cell(width - 5, 4), Cell(width - 5, 3), Cell(width - 5, 2)],
+      [Cell(4, height - 6), Cell(4, height - 5), Cell(4, height - 4), Cell(4, height - 3)],
     ];
-    final facings = [1, 3, 2, 0]; // right, left, down, up
+    final facings = [2, 0, 2, 0]; // down, up, down, up
     for (var p = 0; p < playerCount; p++) {
       snakes.add(List.of(starts[p]));
       facing.add(facings[p]);
@@ -115,15 +117,42 @@ class SnakeArenaMatch {
       return (h.x + d.x - f.x).abs() + (h.y + d.y - f.y).abs();
     }
 
+    // Two-step lookahead: after moving one step in [dir], is any
+    // follow-up direction safe? If not, the move walks into a pocket.
+    bool pocketAhead(int dir) {
+      final d = dirs[dir];
+      final h = snakes[p].first;
+      final nx = h.x + d.x, ny = h.y + d.y;
+      bool blocked(int x, int y) {
+        if (x < 0 || y < 0 || x >= width || y >= height) return true;
+        for (var q = 0; q < playerCount; q++) {
+          if (!alive[q]) continue;
+          final body = snakes[q];
+          for (var i = 0; i < body.length - 1; i++) {
+            if (body[i].x == x && body[i].y == y) return true;
+          }
+        }
+        return false;
+      }
+
+      for (final turnBy in [0, 1, 3]) {
+        // 0 = keep straight, 1 = clockwise, 3 = counter-clockwise
+        final d2 = dirs[(dir + turnBy) % 4];
+        if (!blocked(nx + d2.x, ny + d2.y)) return false;
+      }
+      return true;
+    }
+
     final straight = facing[p];
     final turned = (straight + 1) % 4;
-    final straightDead = deadAhead(straight);
-    final turnDead = deadAhead(turned);
+    final straightDead = deadAhead(straight) || pocketAhead(straight);
+    final turnDead = deadAhead(turned) || pocketAhead(turned);
     if (straightDead) {
       if (!turnDead) _turnQueued[p] = true;
       return; // both fatal: accept fate, go straight
     }
-    if (!turnDead && food != null && foodDist(turned) < foodDist(straight)) {
+    if (turnDead) return; // keep straight: the turn walks into a pocket
+    if (food != null && foodDist(turned) < foodDist(straight)) {
       _turnQueued[p] = true;
     }
   }

@@ -11,7 +11,7 @@ void main() {
       expect(m.score, List.filled(n, 0));
       expect(m.food, isNotNull);
       for (final s in m.snakes) {
-        expect(s.length, 3);
+        expect(s.length, 4);
         for (final c in s) {
           expect(c.x, inInclusiveRange(0, m.width - 1));
           expect(c.y, inInclusiveRange(0, m.height - 1));
@@ -25,11 +25,11 @@ void main() {
     final before = m.snakes[0].first;
     m.turn(0);
     m.tick();
-    // player 0 started facing right; one turn sends it down
-    expect(m.snakes[0].first, Point(before.x, before.y + 1));
-    // no queued turn: keeps going down
+    // player 0 started facing down; one clockwise turn sends it left
+    expect(m.snakes[0].first, Point(before.x - 1, before.y));
+    // no queued turn: keeps going left
     m.tick();
-    expect(m.snakes[0].first, Point(before.x, before.y + 2));
+    expect(m.snakes[0].first, Point(before.x - 2, before.y));
   });
 
   test('wall collision eliminates; last snake alive wins', () {
@@ -46,9 +46,9 @@ void main() {
     final m = SnakeArenaMatch(playerCount: 2, random: Random(3));
     // place food directly ahead of player 0's head
     final h = m.snakes[0].first;
-    m.food = Point(h.x + 1, h.y);
+    m.food = Point(h.x, h.y + 1);
     m.tick();
-    expect(m.snakes[0].length, 4);
+    expect(m.snakes[0].length, 5);
     expect(m.score[0], 1);
   });
 
