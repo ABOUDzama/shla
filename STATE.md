@@ -114,3 +114,7 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - Picker 1-4 → bots yes/no ('اه 🤖'/'لا'); 4 humans skips bots question; 1P+لا = practice to 5 pts, no winner, no recordWin; bots fill seats >= humans and self-tap their own balls after a 400-1000ms delay; VictoryFriends only for human champions, 'البوتات كسبوا 🤖' for bot winners.
 - Gameplay fixes: balls now spawn and bounce strictly inside the owner's zone rect (owner can always reach own ball; "only owner may tap" rule unchanged); fixed RTL mirroring bug in _zoneAt/_zoneRect (seat 0 = visual right; ball color/zone attribution was mirrored, a real fun-killer); tick now skips while the arena has never been laid out (_arenaW <= 1) so the ball can't wedge at x=0.5 on the first frame after the picker.
 - Tests: touch_ball_widget_test.dart 4/4; proof golden play_touchball_live_4p regenerated and pixel-verified (ball "1" inside top-right orange zone 1); small_screen touch_ball pass.
+
+## Batch 18 (tank_battle verdict + touch_ball polish)
+- tank_battle: bot winner now shows 'البوتات كسبوا 🤖' instead of VictoryFriends with a bot name; human winners keep VictoryFriends. New widget test covers both verdicts (debugForceWin hook). Widget 6/6, proof live-4p pass, small_screen pass, logic 11/11.
+- touch_ball polish (Main feedback): static zone numerals faded to alpha 0.28 so the moving ball never obscures them; golden regenerated and pixel-verified (ball readable over zone numeral).

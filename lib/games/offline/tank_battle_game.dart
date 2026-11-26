@@ -251,11 +251,19 @@ class _TankBattleGameState extends State<TankBattleGame> {
               color: FlatColors.ink,
             ).copyWith(fontFamilyFallback: _emojiFallback),
           )
+        else if (_match.winner != null && _match.winner! < _humans)
+          VictoryFriends(
+              gameTitle: 'دبابات الشلة',
+              winnerName: 'لاعب ${_match.winner! + 1}')
         else if (_match.winner != null)
-          VictoryFriends(gameTitle: 'دبابات الشلة', 
-              winnerName: _match.winner! < _humans
-                  ? 'لاعب ${_match.winner! + 1}'
-                  : 'بوت ${_match.winner! + 1}')
+          Text(
+            'البوتات كسبوا 🤖',
+            style: flatCairo(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: FlatColors.ink,
+            ).copyWith(fontFamilyFallback: _emojiFallback),
+          )
         else
           Text(
             'مفيش ناجي! الكل اتدمر 💥',

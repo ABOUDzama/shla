@@ -362,7 +362,8 @@ class _TouchBallGameState extends State<TouchBallGame> {
                 style: flatCairo(
                   fontSize: 40,
                   fontWeight: FontWeight.w900,
-                  color: FlatColors.ink,
+                  // faded so the moving ball stays readable over it
+                  color: FlatColors.ink.withValues(alpha: 0.28),
                 ),
               ),
             ),

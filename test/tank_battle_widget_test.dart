@@ -164,4 +164,33 @@ void main() {
     expect(find.text('كام لاعب؟'), findsOneWidget);
     await settleDown(tester);
   });
+
+  testWidgets('bot winner gets bots banner; human winner gets VictoryFriends',
+      (tester) async {
+    await boot(tester);
+    await tester.tap(find.textContaining('ابدأ اللعبة'));
+    await tester.pump();
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('اه 🤖'));
+    await tester.pump();
+    expect(stateOf(tester).debugMatch.playerCount, 4);
+    // bot seat (index 3) wins: bots banner, no friend-victory flow
+    stateOf(tester).debugForceWin(3);
+    await tester.pump();
+    expect(find.text('البوتات كسبوا 🤖'), findsOneWidget);
+    expect(find.byType(VictoryFriends), findsNothing);
+    // rematch, then a human seat wins: VictoryFriends flow appears
+    await tester.tap(find.text('العبوا تاني 🎯'));
+    await tester.pump();
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('اه 🤖'));
+    await tester.pump();
+    stateOf(tester).debugForceWin(1);
+    await tester.pump();
+    expect(find.byType(VictoryFriends), findsOneWidget);
+    expect(find.text('البوتات كسبوا 🤖'), findsNothing);
+    await settleDown(tester);
+  });
 }
