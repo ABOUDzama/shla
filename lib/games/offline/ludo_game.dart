@@ -37,11 +37,14 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
   /// One-shot notice for the current roll ('رمى 6 ويلعب تاني!' وغيرها).
   String _notice = '';
 
+  /// Classic Ludo palette: red top-left, green top-right, yellow
+  /// bottom-right, blue bottom-left (reference board colors, drawn as
+  /// original flat art).
   static const List<Color> _colors = [
-    Color(0xFFFF8A5C),
-    Color(0xFF4D8DFF),
-    Color(0xFF35C99E),
-    Color(0xFFFF6FA5),
+    Color(0xFFEF3437),
+    Color(0xFF18A957),
+    Color(0xFFF7C500),
+    Color(0xFF1B96D3),
   ];
 
   String _seatLabel(int seat) =>
@@ -430,6 +433,24 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
           ),
         ),
       ));
+      // Seat name beside the die (reference player labels), pushed away
+      // from the board: above the top-corner dice, below the bottom ones.
+      final nameY = (p <= 1) ? cy - size * 1.15 : cy + size * 0.65;
+      widgets.add(Positioned(
+        left: (cx - size).clamp(2.0, maxW - size * 2 - 4),
+        top: nameY.clamp(2.0, maxH - 18),
+        width: size * 2,
+        child: Text(
+          _seatLabel(p),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textDirection: TextDirection.rtl,
+          style: _t(10,
+              w: FontWeight.w800,
+              color: active ? _colors[p] : FlatColors.ink.withValues(alpha: 0.55)),
+        ),
+      ));
     }
     return widgets;
   }
@@ -478,8 +499,7 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
 
   // ------------------------------------------------------------- board -----
 
-  Color _cellColor(int row, int col) {
-    // Yards
+  int? _yardOf(int row, int col) {
     const yardRows = [(0, 5), (0, 5), (9, 14), (9, 14)];
     const yardCols = [(0, 5), (9, 14), (9, 14), (0, 5)];
     for (var p = 0; p < 4; p++) {
@@ -487,41 +507,45 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
           row <= yardRows[p].$2 &&
           col >= yardCols[p].$1 &&
           col <= yardCols[p].$2) {
-        return _colors[p].withValues(alpha: 0.30);
+        return p;
       }
     }
-    // Home columns and ends
+    return null;
+  }
+
+  int? _startOwner(int row, int col) {
     for (var p = 0; p < 4; p++) {
-      if (_homeCol[p].contains((row, col))) {
-        return _colors[p].withValues(alpha: 0.45);
-      }
+      if (_path[(p * 13) % 52] == (row, col)) return p;
+    }
+    return null;
+  }
+
+  Color _cellColor(int row, int col) {
+    // Home columns and ends: fully colored, like the reference board.
+    for (var p = 0; p < 4; p++) {
+      if (_homeCol[p].contains((row, col))) return _colors[p];
       if (_homeEnd[p] == (row, col)) return _colors[p];
     }
-    // Player start squares
-    for (var p = 0; p < 4; p++) {
-      if (_path[(p * 13) % 52] == (row, col)) {
-        return _colors[p].withValues(alpha: 0.45);
-      }
-    }
+    // Player start squares: fully colored.
+    final start = _startOwner(row, col);
+    if (start != null) return _colors[start];
     return Colors.white;
   }
 
-  bool _isCenter(int row, int col) =>
-      row >= 6 && row <= 8 && col >= 6 && col <= 8;
 
   List<Widget> _boardCells(double cell) {
     final cells = <Widget>[];
     for (var row = 0; row < 15; row++) {
       for (var col = 0; col < 15; col++) {
-        final inYard = (row <= 5 || row >= 9) && (col <= 5 || col >= 9);
+        if (_yardOf(row, col) != null) continue; // yards drawn as overlays
         final onTrack = _path.contains((row, col));
-        final isHomeCol =
-            _homeCol.any((c) => c.contains((row, col)));
-        final isHomeEnd = _homeEnd.contains((row, col));
-        if (!inYard && !onTrack && !isHomeCol && !isHomeEnd && !_isCenter(row, col)) {
-          continue; // empty cross-arm gaps
-        }
-        final safe = onTrack && LudoGame.isSafeSquare(_path.indexOf((row, col)));
+        final isHomeCol = _homeCol.any((c) => c.contains((row, col)));
+        if (!onTrack && !isHomeCol) continue; // center drawn as overlay
+        final trackIndex = onTrack ? _path.indexOf((row, col)) : -1;
+        final start = _startOwner(row, col);
+        final safe = onTrack &&
+            start == null &&
+            LudoGame.isSafeSquare(trackIndex);
         cells.add(Positioned(
           left: col * cell,
           top: row * cell,
@@ -530,22 +554,76 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: _cellColor(row, col),
-              border: inYard
-                  ? null
-                  : Border.all(color: FlatColors.border, width: 0.6),
+              border: Border.all(color: FlatColors.border, width: 0.6),
             ),
             child: safe
                 ? Center(
-                    child: Text('⭐', style: TextStyle(fontSize: cell * 0.42, fontFamilyFallback: _emojiFallback)))
-                : _isCenter(row, col) && (row, col) == (7, 7)
+                    child: Text('⭐',
+                        style: TextStyle(
+                            fontSize: cell * 0.42,
+                            fontFamilyFallback: _emojiFallback)))
+                : start != null
                     ? Center(
-                        child:
-                            Text('🏆', style: TextStyle(fontSize: cell * 0.5, fontFamilyFallback: _emojiFallback)))
+                        child: Transform.rotate(
+                          angle: [pi / 2, pi, -pi / 2, 0.0][start],
+                          child: Icon(Icons.arrow_upward_rounded,
+                              color: Colors.white, size: cell * 0.5),
+                        ),
+                      )
                     : null,
           ),
         ));
       }
     }
+    // Yard overlays: saturated color block, white rounded inner square and
+    // the four token pads (reference Ludo layout, original art).
+    const yardOrigins = [(0, 0), (0, 9), (9, 9), (9, 0)];
+    for (var pl = 0; pl < 4; pl++) {
+      final (r0, c0) = yardOrigins[pl];
+      cells.add(Positioned(
+        left: c0 * cell,
+        top: r0 * cell,
+        width: cell * 6,
+        height: cell * 6,
+        child: Container(color: _colors[pl]),
+      ));
+      cells.add(Positioned(
+        left: (c0 + 1) * cell,
+        top: (r0 + 1) * cell,
+        width: cell * 4,
+        height: cell * 4,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(cell * 0.45),
+          ),
+        ),
+      ));
+      for (final (sr, sc) in _yardSpots[pl]) {
+        cells.add(Positioned(
+          left: (sc + 0.12) * cell,
+          top: (sr + 0.12) * cell,
+          width: cell * 0.76,
+          height: cell * 0.76,
+          child: Container(
+            decoration: BoxDecoration(
+              color: _colors[pl].withValues(alpha: 0.22),
+              shape: BoxShape.circle,
+              border: Border.all(color: _colors[pl], width: 2),
+            ),
+          ),
+        ));
+      }
+    }
+    // Center home: four colored triangles meeting in the middle (one per
+    // player, pointing at their home column).
+    cells.add(Positioned(
+      left: 6 * cell,
+      top: 6 * cell,
+      width: cell * 3,
+      height: cell * 3,
+      child: CustomPaint(painter: _LudoCenterPainter(_colors)),
+    ));
     return cells;
   }
 
@@ -566,8 +644,11 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
         } else {
           spot = _path[LudoGame.absoluteSquare(p, steps)!];
         }
-        final index = placed[spot] ?? 0;
-        placed[spot] = index + 1;
+        // Yard pads hold one token each: center it on the pad. Track cells
+        // can stack, so fan those into the cell corners.
+        final inYard = steps == LudoGame.yard;
+        final index = inYard ? -1 : (placed[spot] ?? 0);
+        if (!inYard) placed[spot] = index + 1;
         final isMovable =
             p == _game.currentPlayer && legal.contains(t) && !_currentIsBot;
         widgets.add(_tokenWidget(cell, spot, index, _colors[p], isMovable,
@@ -586,7 +667,7 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
       const Offset(0.28, 0.72),
       const Offset(0.72, 0.72),
     ];
-    final o = offsets[stackIndex % 4];
+    final o = stackIndex < 0 ? const Offset(0.5, 0.5) : offsets[stackIndex % 4];
     final size = cell * 0.66;
     return Positioned(
       left: (spot.$2 + o.dx) * cell - size / 2,
@@ -724,4 +805,50 @@ class _DiceFace extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The four colored home triangles at the board center (left = player 0,
+/// top = player 1, right = player 2, bottom = player 3), matching the home
+/// column that meets each one. Original flat art of the classic layout.
+class _LudoCenterPainter extends CustomPainter {
+  const _LudoCenterPainter(this.colors);
+
+  final List<Color> colors;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final center = Offset(w / 2, h / 2);
+    final paint = Paint()..style = PaintingStyle.fill;
+    final tris = [
+      // left triangle (player 0)
+      [Offset(0, 0), Offset(0, h), center],
+      // top triangle (player 1)
+      [Offset(0, 0), Offset(w, 0), center],
+      // right triangle (player 2)
+      [Offset(w, 0), Offset(w, h), center],
+      // bottom triangle (player 3)
+      [Offset(0, h), Offset(w, h), center],
+    ];
+    for (var i = 0; i < 4; i++) {
+      paint.color = colors[i];
+      final path = Path()
+        ..moveTo(tris[i][0].dx, tris[i][0].dy)
+        ..lineTo(tris[i][1].dx, tris[i][1].dy)
+        ..lineTo(tris[i][2].dx, tris[i][2].dy)
+        ..close();
+      canvas.drawPath(path, paint);
+    }
+    // Thin white separators between the triangles.
+    final line = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 1.4
+      ..style = PaintingStyle.stroke;
+    canvas.drawLine(Offset.zero, Offset(w, h), line);
+    canvas.drawLine(Offset(0, h), Offset(w, 0), line);
+  }
+
+  @override
+  bool shouldRepaint(_LudoCenterPainter oldDelegate) => false;
 }
