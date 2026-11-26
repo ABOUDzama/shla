@@ -14,6 +14,7 @@ import 'profile_screen.dart';
 import 'settings_screen.dart';
 import 'shellty_screen.dart';
 import 'arcade_section_screen.dart';
+import 'lobby_screen.dart';
 
 /// Home — flat/cartoon direction (user-approved WePlay reference):
 /// light cream background, flat pastel game tiles with a big emoji
@@ -27,7 +28,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isNavigating = false;
-  int _tab = 0; // 0 = الألعاب, 1 = شلتي, 2 = ألعاب ١٢٣٤, 3 = الترتيب, 4 = الكأس
+  int _tab = 0; // 0 = الألعاب, 1 = شلتي, 2 = ألعاب ١٢٣٤, 3 = الترتيب, 4 = الكأس, 5 = أونلاين
   final Random _rand = Random();
 
   /// Big emoji "character" per game tile (all verified against the bundled
@@ -151,7 +152,14 @@ class _HomeScreenState extends State<HomeScreen> {
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return FadeTransition(opacity: animation, child: child);
               },
-              child: _tab == 1
+              child: _tab == 5
+                  ? const Padding(
+                      padding: EdgeInsets.only(bottom: 105),
+                      child: LobbyScreen(
+                          key: ValueKey('online_tab'),
+                          showBackButton: false),
+                    )
+                  : _tab == 1
                   ? const ShelltyScreen(embedded: true)
                   : _tab == 3
                   ? const LeaderboardScreen(key: ValueKey('leaderboard'))
@@ -322,6 +330,16 @@ class _HomeScreenState extends State<HomeScreen> {
           active: _tab == 0,
           onTap: () {
             if (_tab != 0) setState(() => _tab = 0);
+          },
+        ),
+        const SizedBox(width: 10),
+        _navCard(
+          label: 'أونلاين',
+          emoji: '🌐',
+          color: const Color(0xFF4D8DFF),
+          active: _tab == 5,
+          onTap: () {
+            if (_tab != 5) setState(() => _tab = 5);
           },
         ),
         const SizedBox(width: 10),

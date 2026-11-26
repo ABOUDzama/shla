@@ -168,3 +168,7 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - lib/widgets/chat_widget.dart flattened (cream sheet, white incoming bubbles, playerBlue outgoing, flat input bar) + real small-width fixes found by the new capture: header Row overflow (title wrapped in Expanded), status text Flexible, timestamps use flatCairo (were tofu in tests).
 - lib/widgets/voice_chat_widget.dart mic button flattened (white circle + cream border, ink/red/mintDark states).
 - Tests: new 'small screen: room chat restyle' capture; small360 lobby/room/scoreboard/room_chat goldens regenerated and pixel-inspected; small_screen suite 57/57 named tests green (one pre-existing async audioplayers MissingPluginException flake, unrelated).
+
+## Batch 29 — أونلاين bottom-nav tab (2026-11-26)
+- User ask: bring online play back into the bottom nav (the lobby was orphaned, nothing pushed LobbyScreen). New tab 5 'أونلاين' 🌐 (sky blue) between الألعاب and شلتي embeds LobbyScreen(showBackButton: false) with 105px bottom clearance for the floating nav.
+- Tests: new golden home_online_tab (fake socket, asserts lobby present + no back arrow); home/arcade/leaderboard goldens regenerated — diffs verified nav-strip-only except home_arcade_full, which also correctly shows the three newest games (grid grew since that golden last regenerated). verification_test green.

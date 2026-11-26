@@ -8,6 +8,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/screens/home_screen.dart';
 import 'package:shella/screens/arcade_section_screen.dart';
 import 'package:shella/services/settings_service.dart';
+import 'package:shella/services/socket_service.dart';
+import 'package:shella/services/voice_chat_service.dart';
+import 'package:shella/screens/lobby_screen.dart';
+import 'package:socket_io_client/socket_io_client.dart' as sio;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -134,6 +138,60 @@ Future<void> warmGoogleFonts(WidgetTester tester) async {
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });
+  testWidgets('goldens: أونلاين bottom-nav tab opens the lobby', (tester) async {
+    tester.view.physicalSize = const Size(412, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    // Fake socket so the embedded lobby never touches the network.
+    SocketService.debugSocket = sio.io('http://127.0.0.1:9', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+      'reconnection': false,
+      'forceNew': true,
+      'multiplex': false,
+    });
+    SocketService.isTesting = true;
+    VoiceChatService.disabled = true;
+    addTearDown(() {
+      VoiceChatService.disabled = false;
+      SocketService.debugSocket?.dispose();
+      SocketService.debugSocket = null;
+      SocketService.isTesting = false;
+    });
+
+    await warmGoogleFonts(tester);
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamilyFallback: const ['Noto Color Emoji']),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: HomeScreen(),
+        ),
+      ),
+    );
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 500));
+    }
+
+    await tester.tap(find.text('أونلاين'));
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+
+    expect(find.byType(LobbyScreen), findsOneWidget);
+    // Embedded tab: no back arrow inside the lobby header.
+    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsNothing);
+    await expectLater(
+      find.byType(HomeScreen),
+      matchesGoldenFile('goldens/home_online_tab.png'),
+    );
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
+
   testWidgets('goldens: ١٢٣٤ arcade section tab', (tester) async {
     tester.view.physicalSize = const Size(412, 900);
     tester.view.devicePixelRatio = 1.0;
