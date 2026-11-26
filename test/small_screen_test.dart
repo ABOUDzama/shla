@@ -47,6 +47,7 @@ import 'package:shella/games/offline/heads_up_game.dart';
 import 'package:shella/games/offline/psych_game.dart';
 import 'package:shella/games/offline/justone_game.dart';
 import 'package:shella/games/offline/wavelength_game.dart';
+import 'package:shella/games/offline/travel_bag_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -539,6 +540,60 @@ void main() {
     await fixedPumps(tester);
     // Next round should open on the other team's psychic pass
     expect(find.textContaining('عدّي الموبايل لـ'), findsOneWidget);
+  });
+
+  testWidgets('small screen: travel bag flow', (tester) async {
+    await pumpSmall(tester, const TravelBagGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('أحمد'));
+    await tapIf(tester, find.text('منى'));
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'travelbag_recite');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.text('قالها صح ✅'));
+    await fixedPumps(tester);
+    await capture360(tester, 'travelbag_add');
+    expectNoOverflow(tester);
+    await tester.enterText(find.byType(TextField), 'بطيخة');
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('رميه في الشنطة! 🧳'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Second player recites, gets it wrong -> loses a heart
+    await tapIf(tester, find.text('غلط! ❌'));
+    await fixedPumps(tester);
+    expect(find.textContaining('💔', findRichText: true), findsNothing);
+    // First player adds another item
+    await tapIf(tester, find.text('قالها صح ✅'));
+    await fixedPumps(tester);
+    await tester.enterText(find.byType(TextField), 'مظلة');
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('رميه في الشنطة! 🧳'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Knock منى out: her two remaining mistakes (each cycle: she errs,
+    // أحمد recites + adds, back to her).
+    await tapIf(tester, find.text('غلط! ❌'));
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('قالها صح ✅'));
+    await fixedPumps(tester);
+    await tester.enterText(find.byType(TextField), 'شمسية');
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('رميه في الشنطة! 🧳'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('غلط! ❌'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'travelbag_over');
+    expectNoOverflow(tester);
+    expect(find.textContaining('آخر واحد واقف'), findsOneWidget);
   });
 
   testWidgets('small screen: charades setup', (tester) async {
