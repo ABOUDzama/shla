@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'pigeon_logic.dart';
 
 /// أطعم الحمامة: 1-4 players, one slingshot pad per corner. The aim swings
@@ -45,6 +46,7 @@ class _PigeonGameState extends State<PigeonGame> {
   }
 
   void _start(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
@@ -62,11 +64,16 @@ class _PigeonGameState extends State<PigeonGame> {
     });
     _ticker = Timer.periodic(const Duration(milliseconds: 33), (_) {
       if (!mounted || _phase != _Phase.playing) return;
+      final fedBefore = List.of(_match.fed);
       setState(() {
         _match.step(0.033);
+        for (var i = 0; i < _match.seats && i < _humans; i++) {
+          if (_match.fed[i] > fedBefore[i]) ArcadeJuice.score();
+        }
         if (_match.over) {
           _ticker?.cancel();
           _phase = _Phase.over;
+          _juiceEnd();
         }
       });
     });
@@ -138,7 +145,9 @@ class _PigeonGameState extends State<PigeonGame> {
     return Listener(
       key: ValueKey('pad_$seat'),
       onPointerDown: (_) {
-        if (_phase == _Phase.playing) _match.fire(seat);
+        if (_phase != _Phase.playing) return;
+        _match.fire(seat);
+        ArcadeJuice.tick();
       },
       child: Container(
         width: 62,
@@ -152,6 +161,21 @@ class _PigeonGameState extends State<PigeonGame> {
         child: Text('${_match.left[seat]}', style: _t(22, color: Colors.white)),
       ),
     );
+  }
+
+  void _juiceEnd() {
+    if (_practice) {
+      ArcadeJuice.win();
+      return;
+    }
+    final w = _match.winner;
+    if (w == null) {
+      ArcadeJuice.fail();
+    } else if (w >= _humans) {
+      ArcadeJuice.lose();
+    } else {
+      ArcadeJuice.win();
+    }
   }
 
   Widget _buildOver() {
@@ -240,6 +264,30 @@ class _PigeonPainter extends CustomPainter {
     canvas.drawRRect(rr, Paint()..color = FlatColors.tileWhite);
     canvas.save();
     canvas.clipRRect(rr);
+    // park scene: sky band, grass, and a dirt patch where the pigeon feeds
+    final groundTop = size.height * 0.72;
+    canvas.drawRect(
+      Rect.fromLTRB(0, 0, size.width, groundTop),
+      Paint()..color = const Color(0xFFE3F2FD),
+    );
+    canvas.drawRect(
+      Rect.fromLTRB(0, groundTop, size.width, size.height),
+      Paint()..color = const Color(0xFFDCEBD0),
+    );
+    for (var gx = 24.0; gx < size.width; gx += 56) {
+      canvas.drawOval(
+        Rect.fromCenter(
+            center: Offset(gx, groundTop + 26), width: 26, height: 10),
+        Paint()..color = const Color(0xFFC8E0B8),
+      );
+    }
+    canvas.drawOval(
+      Rect.fromCenter(
+          center: Offset(size.width / 2, groundTop + 52),
+          width: size.width * 0.5,
+          height: 40),
+      Paint()..color = const Color(0xFFE8D9BC),
+    );
     // aim lines (dashed) and crumbs
     for (var i = 0; i < m.seats; i++) {
       final l = PigeonMatch.launchers[i];

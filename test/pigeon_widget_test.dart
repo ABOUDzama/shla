@@ -6,10 +6,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/games/offline/pigeon_game.dart';
+import 'package:shella/services/audio_service.dart';
 import 'package:shella/games/offline/pigeon_logic.dart';
 import 'package:shella/services/results_service.dart';
 
 void main() {
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
