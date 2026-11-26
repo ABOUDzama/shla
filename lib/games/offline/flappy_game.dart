@@ -7,6 +7,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'flappy_logic.dart';
 
 /// فلابي الشلة: turn-based flappy runs for 1-4 seats on one phone. Each
@@ -79,7 +80,17 @@ class _FlappyGameScreenState extends State<FlappyGameScreen>
   FlappyRun _newRun() => FlappyRun(
       random: widget.randomSeed != null ? Random(widget.randomSeed!) : null);
 
-  void _startMatch(int humans, bool withBots) {
+    void _juiceEnd() {
+    final best = _scores.fold(0, (a, b) => a > b ? a : b);
+    final humanWin = [
+      for (var i = 0; i < _seatCount; i++)
+        if (_scores[i] == best && !_bots.contains(i)) i,
+    ].isNotEmpty;
+    humanWin ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
+void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _humans = humans;
     _practice = humans == 1 && !withBots;
     _seatCount = _practice ? 1 : (withBots ? 4 : humans);
@@ -147,6 +158,7 @@ class _FlappyGameScreenState extends State<FlappyGameScreen>
           _phase = _FlappyPhase.banner;
         } else {
           _phase = _FlappyPhase.over;
+          _juiceEnd();
         }
       });
       if (_phase == _FlappyPhase.banner && _bots.contains(_seat)) {

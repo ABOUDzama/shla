@@ -4,6 +4,7 @@ import 'dart:math';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/flat_theme.dart';
 
@@ -161,6 +162,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
   }
 
   void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _timer?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
@@ -230,6 +232,10 @@ class _TapRaceGameState extends State<TapRaceGame> {
               ? _RacePhase.matchOver
               : _RacePhase.roundResult;
         });
+        final mw = _match.matchWinner;
+        if (mw != null) {
+          _botSeats.contains(mw) ? ArcadeJuice.lose() : ArcadeJuice.win();
+        }
       }
     });
   }

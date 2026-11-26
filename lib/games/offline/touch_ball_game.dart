@@ -4,6 +4,7 @@ import 'dart:math';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/flat_theme.dart';
 
@@ -141,7 +142,18 @@ class _TouchBallGameState extends State<TouchBallGame> {
     super.dispose();
   }
 
-  void _startMatch(int humans, bool withBots) {
+    void _juiceEnd() {
+    final w = _match.matchWinner;
+    if (w == null) return;
+    if (_practice) {
+      ArcadeJuice.win();
+      return;
+    }
+    _botSeats.contains(w) ? ArcadeJuice.lose() : ArcadeJuice.win();
+  }
+
+void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _nextTimer?.cancel();
     _botTapTimer?.cancel();
@@ -273,6 +285,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
     setState(() {
       if (_match.matchWinner != null) {
         _phase = _BallPhase.matchOver;
+        _juiceEnd();
         _banner = _practice
             ? 'خلصت التدريب! ⚽'
             : '${_botSeats.contains(_match.matchWinner) ? 'بوت ${_match.matchWinner! + 1}' : PlayerNames.name(_match.matchWinner!)} كسب الماتش! 🏆';

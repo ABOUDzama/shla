@@ -7,6 +7,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'ballshoot_logic.dart';
 
 /// تصويب الشلة: turn-based balloon shooting for 1-4 seats on one phone.
@@ -76,7 +77,17 @@ class _BallShootGameScreenState extends State<BallShootGameScreen>
   BallShootRound _newRound() => BallShootRound(
       random: widget.randomSeed != null ? Random(widget.randomSeed!) : null);
 
-  void _startMatch(int humans, bool withBots) {
+    void _juiceEnd() {
+    final best = _results.fold(0, (a, b) => a > b.$1 ? a : b.$1);
+    final humanWin = [
+      for (var i = 0; i < _seatCount; i++)
+        if (_results[i].$1 == best && !_bots.contains(i)) i,
+    ].isNotEmpty;
+    humanWin ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
+void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _humans = humans;
     _practice = humans == 1 && !withBots;
     _seatCount = _practice ? 1 : (withBots ? 4 : humans);
@@ -144,6 +155,7 @@ class _BallShootGameScreenState extends State<BallShootGameScreen>
           _phase = _ShootPhase.banner;
         } else {
           _phase = _ShootPhase.over;
+          _juiceEnd();
         }
       });
       if (_phase == _ShootPhase.banner && _bots.contains(_seat)) _autoBegin();

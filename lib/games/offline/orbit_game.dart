@@ -7,6 +7,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'orbit_logic.dart';
 
 /// وحش المدار: turn-based orbit-dodge survival for 1-4 seats on one phone.
@@ -79,7 +80,17 @@ class _OrbitGameScreenState extends State<OrbitGameScreen>
   OrbitRun _newRun() =>
       OrbitRun(random: widget.randomSeed != null ? Random(widget.randomSeed!) : null);
 
-  void _startMatch(int humans, bool withBots) {
+    void _juiceEnd() {
+    final best = _times.fold(0.0, (a, b) => a > b ? a : b);
+    final humanWin = [
+      for (var i = 0; i < _seatCount; i++)
+        if (_times[i] == best && !_bots.contains(i)) i,
+    ].isNotEmpty;
+    humanWin ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
+void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _humans = humans;
     _practice = humans == 1 && !withBots;
     _seatCount = _practice ? 1 : (withBots ? 4 : humans);
@@ -133,6 +144,7 @@ class _OrbitGameScreenState extends State<OrbitGameScreen>
           _phase = _OrbitPhase.banner;
         } else {
           _phase = _OrbitPhase.over;
+          _juiceEnd();
         }
       });
       if (_phase == _OrbitPhase.banner && _bots.contains(_seat)) _autoBegin();

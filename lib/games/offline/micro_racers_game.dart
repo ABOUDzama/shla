@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'micro_racers_logic.dart';
 
 /// ميكرو ريسرز: faithful clone of the reference app's "Micro Speed
@@ -58,7 +59,14 @@ class _MicroRacersGameState extends State<MicroRacersGame> {
     super.dispose();
   }
 
-  void _startGame(int humans, bool withBots) {
+    void _juiceEnd() {
+    final w = _match.winner;
+    if (w == null) return;
+    (w >= _humans) ? ArcadeJuice.lose() : ArcadeJuice.win();
+  }
+
+void _startGame(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _botTimer?.cancel();
     _humans = humans;
@@ -81,6 +89,7 @@ class _MicroRacersGameState extends State<MicroRacersGame> {
         if (_match.over) {
           _ticker?.cancel();
           _phase = _Phase.over;
+          _juiceEnd();
         }
       });
     });

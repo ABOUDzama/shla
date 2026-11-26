@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'coin_grab_logic.dart';
 
 /// لمّ الفلوس: 1-4 players, one claw pad per corner. The claw sweeps and
@@ -44,7 +45,14 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
     super.dispose();
   }
 
-  void _start(int humans, bool withBots) {
+    void _juiceEnd() {
+    final w = _match.winner;
+    if (w == null) return;
+    (w >= _humans) ? ArcadeJuice.lose() : ArcadeJuice.win();
+  }
+
+void _start(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
@@ -67,6 +75,7 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
         if (_match.over) {
           _ticker?.cancel();
           _phase = _Phase.over;
+          _juiceEnd();
         }
       });
     });

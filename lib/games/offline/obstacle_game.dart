@@ -7,6 +7,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'obstacle_logic.dart';
 
 /// سباق العوائق: turn-based obstacle runner for 1-4 seats on one phone.
@@ -77,7 +78,21 @@ class _ObstacleGameScreenState extends State<ObstacleGameScreen>
   ObstacleRun _newRun() => ObstacleRun(
       random: widget.randomSeed != null ? Random(widget.randomSeed!) : null);
 
-  void _startMatch(int humans, bool withBots) {
+    void _juiceEnd() {
+    final order = List.generate(_seatCount, (i) => i)
+      ..sort((a, b) {
+        final ra = _results[a], rb = _results[b];
+        if (ra.$1 && rb.$1) return ra.$2.compareTo(rb.$2);
+        if (ra.$1 != rb.$1) return ra.$1 ? -1 : 1;
+        return rb.$3.compareTo(ra.$3);
+      });
+    final best = _results[order.first];
+    final humanWin = !_bots.contains(order.first) && _results[order.first] == best;
+    humanWin ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
+void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _humans = humans;
     _practice = humans == 1 && !withBots;
     _seatCount = _practice ? 1 : (withBots ? 4 : humans);
@@ -136,6 +151,7 @@ class _ObstacleGameScreenState extends State<ObstacleGameScreen>
           _phase = _ObPhase.banner;
         } else {
           _phase = _ObPhase.over;
+          _juiceEnd();
         }
       });
       if (_phase == _ObPhase.banner && _bots.contains(_seat)) _autoBegin();

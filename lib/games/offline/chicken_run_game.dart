@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'chicken_run_logic.dart';
 
 /// جري الفراخ: one-touch gravity runner for 1-4 on one phone. Each player
@@ -46,7 +47,14 @@ class _ChickenRunGameState extends State<ChickenRunGame> {
     super.dispose();
   }
 
-  void _start(int humans, bool withBots) {
+    void _juiceEnd() {
+    final w = _match.winner;
+    if (w == null) return;
+    (w >= _humans) ? ArcadeJuice.lose() : ArcadeJuice.win();
+  }
+
+void _start(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
@@ -69,6 +77,7 @@ class _ChickenRunGameState extends State<ChickenRunGame> {
         if (_match.over) {
           _ticker?.cancel();
           _phase = _Phase.over;
+          _juiceEnd();
         }
       });
     });

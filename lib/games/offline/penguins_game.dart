@@ -7,6 +7,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'penguins_logic.dart';
 
 /// حرب البطاريق: snowball duel for 1-2 seats on one phone. Lob snowballs
@@ -69,7 +70,15 @@ class _PenguinsGameScreenState extends State<PenguinsGameScreen>
     super.dispose();
   }
 
-  void _startMatch(int humans, bool withBots) {
+    void _juiceEnd() {
+    final w = _duel.winner;
+    if (w == null) return;
+    final humanWinner = !(_vsBot && w == 1) || _practice;
+    humanWinner ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
+void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _humans = humans;
     _practice = humans == 1 && !withBots;
     _vsBot = humans == 1;
@@ -98,6 +107,7 @@ class _PenguinsGameScreenState extends State<PenguinsGameScreen>
       };
       if (_duel.winner != null) {
         setState(() => _phase = _PengPhase.over);
+        _juiceEnd();
       } else {
         _scheduleBot();
       }
