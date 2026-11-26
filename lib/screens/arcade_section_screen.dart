@@ -44,6 +44,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'لودو الشلة': [1, 2, 3, 4],
     'تمساح الشلة': [1, 2, 3, 4],
     'فلابي الشلة': [1, 2, 3, 4],
+    'جولف الشلة': [1, 2, 3, 4],
   };
 
   /// Original illustrated covers (drawn in-house). Cards with a cover show

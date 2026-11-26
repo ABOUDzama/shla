@@ -51,6 +51,7 @@ import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
 import '../games/offline/croc_game.dart';
 import '../games/offline/flappy_game.dart';
+import '../games/offline/minigolf_game.dart';
 import '../games/offline/ludo_game.dart';
 import '../games/offline/touch_ball_game.dart';
 import '../games/offline/rhythm_game.dart';
@@ -466,6 +467,15 @@ class GameRegistry {
       icon: Icons.flutter_dash,
       color: FunkyColors.sky,
       screen: const FlappyGameScreen(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'جولف الشلة',
+      description: '٣ حفر ميني جولف بالتناوب.. اسحب من الكورة وصوّب، وأقل ضربات يكسب ⛳',
+      icon: Icons.golf_course,
+      color: FunkyColors.mint,
+      screen: const MiniGolfGameScreen(),
       badge: 'جديد',
       arcade1234: true,
     ),
