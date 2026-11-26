@@ -47,6 +47,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'جولف الشلة': [1, 2, 3, 4],
     'سباق العوائق': [1, 2, 3, 4],
     'تصويب الشلة': [1, 2, 3, 4],
+    'حرب البطاريق': [1, 2],
   };
 
   /// Original illustrated covers (drawn in-house). Cards with a cover show

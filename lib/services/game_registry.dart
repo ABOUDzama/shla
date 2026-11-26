@@ -54,6 +54,7 @@ import '../games/offline/flappy_game.dart';
 import '../games/offline/minigolf_game.dart';
 import '../games/offline/obstacle_game.dart';
 import '../games/offline/ballshoot_game.dart';
+import '../games/offline/penguins_game.dart';
 import '../games/offline/ludo_game.dart';
 import '../games/offline/touch_ball_game.dart';
 import '../games/offline/rhythm_game.dart';
@@ -496,6 +497,15 @@ class GameRegistry {
       icon: Icons.sports_esports,
       color: FunkyColors.coral,
       screen: const BallShootGameScreen(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'حرب البطاريق',
+      description: 'مبارزة كرات تلج فوق جبل الجليد! اسحب من البطريق وصوّب.. أول واحد يصيب التاني يكسب 🐧',
+      icon: Icons.ac_unit,
+      color: FunkyColors.cyan,
+      screen: const PenguinsGameScreen(),
       badge: 'جديد',
       arcade1234: true,
     ),
