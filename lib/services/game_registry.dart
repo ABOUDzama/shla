@@ -70,6 +70,7 @@ import '../games/offline/justone_game.dart';
 import '../games/offline/wavelength_game.dart';
 import '../games/offline/travel_bag_game.dart';
 import '../games/offline/ghost_word_game.dart';
+import '../games/offline/wink_murder_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -234,6 +235,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'الغمّاز',
+      description: 'بيقتل بالغمزة.. والمحقق معاه 3 اتهامات يمسكه!',
+      icon: Icons.remove_red_eye,
+      color: FunkyColors.coral,
+      screen: WinkMurderGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'كلمة عالحبل',

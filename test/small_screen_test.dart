@@ -49,6 +49,7 @@ import 'package:shella/games/offline/justone_game.dart';
 import 'package:shella/games/offline/wavelength_game.dart';
 import 'package:shella/games/offline/travel_bag_game.dart';
 import 'package:shella/games/offline/ghost_word_game.dart';
+import 'package:shella/games/offline/wink_murder_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -647,6 +648,60 @@ void main() {
     await fixedPumps(tester);
     // Next round starts with منى
     expect(find.text('دور منى'), findsOneWidget);
+  });
+
+  testWidgets('small screen: wink murder flow', (tester) async {
+    await pumpSmall(tester, const WinkMurderGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    for (final name in ['أحمد', 'منى', 'كريم', 'سارة']) {
+      await tapIf(tester, find.text(name));
+    }
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Deal roles to all 4 players
+    for (var i = 0; i < 4; i++) {
+      await capture360(tester, i == 0 ? 'wink_rolepass' : 'wink_rolepass_$i');
+      await tapIf(tester, find.textContaining('تمام، أنا'));
+      await fixedPumps(tester);
+      await flushFontCallbacks(tester);
+      if (i == 0) {
+        await capture360(tester, 'wink_roleshow');
+        expectNoOverflow(tester);
+      }
+      await tapIf(
+        tester,
+        find.text(i < 3 ? 'فهمت دوري، عدّيها ⏭️' : 'يلا نبدأ الليلة! 🌙'),
+      );
+      await fixedPumps(tester);
+      await flushFontCallbacks(tester);
+    }
+    // Play screen: one player dies
+    await capture360(tester, 'wink_play');
+    expectNoOverflow(tester);
+    await tester.tap(find.text('كريم'), warnIfMissed: false);
+    await fixedPumps(tester);
+    await capture360(tester, 'wink_killed');
+    // Detective accuses: pick the first alive non-detective player
+    await tapIf(tester, find.text('اتهام من المحقق 🚩'));
+    await fixedPumps(tester);
+    await capture360(tester, 'wink_accuse');
+    expectNoOverflow(tester);
+    final enabled = tester
+        .widgetList<ElevatedButton>(find.byType(ElevatedButton))
+        .where((b) => b.onPressed != null)
+        .toList();
+    expect(enabled, isNotEmpty);
+    await tester.tap(find.byWidget(enabled.first));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Either a wrong accusation (back to play/accuse) or caught -> round end.
+    await capture360(tester, 'wink_after_accuse');
+    expectNoOverflow(tester);
   });
 
   testWidgets('small screen: charades setup', (tester) async {
