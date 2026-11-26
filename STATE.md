@@ -151,3 +151,8 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - android/gradle.properties: raised daemon heap 512m/256m → 1536m/512m (2GB sandbox OOM-killed the default during dex); workers.max stays 1, daemon off.
 - android/app/build.gradle.kts: added packaging { jniLibs.useLegacyPackaging = true } so .so entries are compressed in future APKs.
 - Universal release APK built and verified (apksigner OK, debug cert; v1.2.2 vc6; arm64-v8a/armeabi-v7a/x86_64). 181MB: 83MB game-tile PNGs + ~88MB native libs; arm64-only split still ~104MB, and split build OOMs on this box. No physical device/emulator available: install/launch/mic/restart unverified.
+
+## Batch 25 — asset diet for a lighter APK (2026-11-26)
+- Game tiles 1254²→640² + pngquant q60-85: assets/tiles 65MB→5.9MB. covers/avatars/avatars_2d pngquant'd too (4 covers kept original: catch, pigeon, snake_arena, touch_ball — quality floor). Total image assets ~82MB→~13.5MB. Originals backed up at /tmp/assets_orig (this sandbox only; git history also has them).
+- Visual QA: before/after contact sheets of all 33 tiles + 14 covers + 5 avatars_2d inspected, no visible artifacts at card scale.
+- 20 goldens regenerated (diffs only from new asset pixels), regenerated images inspected; full suite 369 tests green after regeneration.
