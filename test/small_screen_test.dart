@@ -48,6 +48,7 @@ import 'package:shella/games/offline/psych_game.dart';
 import 'package:shella/games/offline/justone_game.dart';
 import 'package:shella/games/offline/wavelength_game.dart';
 import 'package:shella/games/offline/travel_bag_game.dart';
+import 'package:shella/games/offline/ghost_word_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -594,6 +595,58 @@ void main() {
     await capture360(tester, 'travelbag_over');
     expectNoOverflow(tester);
     expect(find.textContaining('آخر واحد واقف'), findsOneWidget);
+  });
+
+  testWidgets('small screen: ghost word flow', (tester) async {
+    await pumpSmall(tester, const GhostWordGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('أحمد'));
+    await tapIf(tester, find.text('منى'));
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'ghost_play');
+    expectNoOverflow(tester);
+    // أحمد plays ب, منى plays ح -> fragment بح (not a word yet)
+    await tester.tap(find.text('ب'));
+    await fixedPumps(tester);
+    await tester.tap(find.text('ح'));
+    await fixedPumps(tester);
+    // أحمد challenges منى
+    await tapIf(tester, find.text('تحدي 🚩'));
+    await fixedPumps(tester);
+    await capture360(tester, 'ghost_challenge');
+    expectNoOverflow(tester);
+    // منى (challenged) enters a word that doesn't start with بح -> error
+    await tester.enterText(find.byType(TextField), 'سمكة');
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('دي كلمتي! 💪'));
+    await fixedPumps(tester);
+    expect(find.textContaining('لازم كلمة تبدأ'), findsOneWidget);
+    // Now a valid one -> group vote screen
+    await tester.enterText(find.byType(TextField), 'بحر');
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('دي كلمتي! 💪'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'ghost_vote');
+    expectNoOverflow(tester);
+    // Group says real word -> challenger (أحمد) loses the round
+    await tapIf(tester, find.text('كلمة حقيقية ✅'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'ghost_roundend');
+    expectNoOverflow(tester);
+    expect(find.textContaining('خسر الجولة'), findsOneWidget);
+    expect(find.textContaining('جمع: ا'), findsOneWidget);
+    await tapIf(tester, find.text('الجولة الجاية ⏭️'));
+    await fixedPumps(tester);
+    // Next round starts with منى
+    expect(find.text('دور منى'), findsOneWidget);
   });
 
   testWidgets('small screen: charades setup', (tester) async {

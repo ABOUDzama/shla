@@ -69,6 +69,7 @@ import '../games/offline/psych_game.dart';
 import '../games/offline/justone_game.dart';
 import '../games/offline/wavelength_game.dart';
 import '../games/offline/travel_bag_game.dart';
+import '../games/offline/ghost_word_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -233,6 +234,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'كلمة عالحبل',
+      description: 'ضيف حرف وماتكملش الكلمة.. ولا تحدي اللي قبلك!',
+      icon: Icons.abc,
+      color: FunkyColors.violet,
+      screen: GhostWordGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'شنطة السفر',
