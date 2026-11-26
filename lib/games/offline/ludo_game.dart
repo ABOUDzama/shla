@@ -297,9 +297,11 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
             builder: (context, constraints) {
               // Board centered with the dice OUTSIDE the square, one die at
               // each seat's corner (Ludo King reference layout).
+              // Board as large as possible: dice shrink a touch and
+              // straddle the board corners (still outside the square).
               final side = min(constraints.maxWidth, constraints.maxHeight);
-              final dieSize = side * 0.13;
-              final boardSide = side - dieSize * 2.0;
+              final dieSize = side * 0.12;
+              final boardSide = side - dieSize * 1.05;
               final boardLeft = (constraints.maxWidth - boardSide) / 2;
               final boardTop = (constraints.maxHeight - boardSide) / 2;
               return Stack(
