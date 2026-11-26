@@ -65,6 +65,7 @@ import '../games/offline/touch_ball_game.dart';
 import '../games/offline/rhythm_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../games/offline/heads_up_game.dart';
+import '../games/offline/psych_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -229,6 +230,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'أقنعهم',
+      description: 'اكتب إجابة مزيفة مقنعة واضحك على الشلة!',
+      icon: Icons.psychology_alt,
+      color: FunkyColors.violet,
+      screen: PsychGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'خمّنها',

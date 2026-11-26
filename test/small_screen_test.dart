@@ -44,6 +44,7 @@ import 'package:shella/games/offline/truth_or_lie_game.dart';
 import 'package:shella/games/offline/truth_or_dare_game.dart';
 import 'package:shella/games/offline/five_seconds_game.dart';
 import 'package:shella/games/offline/heads_up_game.dart';
+import 'package:shella/games/offline/psych_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -361,6 +362,74 @@ void main() {
     }
     await flushFontCallbacks(tester);
     await capture360(tester, 'heads_up_summary');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: psych flow', (tester) async {
+    await pumpSmall(tester, const PsychGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    for (final name in ['أحمد', 'منى', 'كريم']) {
+      await tapIf(tester, find.text(name));
+    }
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'psych_pass');
+    expectNoOverflow(tester);
+    // Lie entry: each player passes the phone and types a fake answer.
+    final lies = {'أحمد': 'الدب القطبي', 'منى': 'الكسلان', 'كريم': 'الكسلان'};
+    for (final name in ['أحمد', 'منى']) {
+      await tapIf(tester, find.text('تمام، أنا $name'));
+      await fixedPumps(tester);
+      await tester.enterText(find.byType(TextField), lies[name]!);
+      await fixedPumps(tester);
+      await tapIf(tester, find.text('ثبّت الكدبة 😈'));
+      await fixedPumps(tester);
+      await flushFontCallbacks(tester);
+    }
+    // كريم first tries a duplicate lie (same as منى) to trigger the
+    // duplicate-error path, then fixes it.
+    await tapIf(tester, find.text('تمام، أنا كريم'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'psych_lie');
+    expectNoOverflow(tester);
+    await tester.enterText(find.byType(TextField), 'الكسلان');
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('ثبّت الكدبة 😈'));
+    await fixedPumps(tester);
+    await tester.enterText(find.byType(TextField), 'الفيل');
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('ثبّت الكدبة 😈'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Voting: three pass-and-pick turns, first enabled answer each time.
+    for (final name in ['أحمد', 'منى', 'كريم']) {
+      await tapIf(tester, find.text('تمام، أنا $name'));
+      await fixedPumps(tester);
+      final enabled = tester
+          .widgetList<ElevatedButton>(find.byType(ElevatedButton))
+          .where((b) => b.onPressed != null)
+          .toList();
+      await tester.tap(find.byWidget(enabled.first));
+      await fixedPumps(tester);
+      await flushFontCallbacks(tester);
+    }
+    await capture360(tester, 'psych_reveal');
+    expectNoOverflow(tester);
+    // Step through the reveal cards (4 answers) to the round scoreboard.
+    for (var i = 0; i < 3; i++) {
+      await tapIf(tester, find.text('الإجابة الجاية 👉'));
+      await fixedPumps(tester);
+    }
+    await tapIf(tester, find.text('النقاط 📊'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'psych_roundend');
     expectNoOverflow(tester);
   });
 

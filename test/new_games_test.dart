@@ -62,12 +62,12 @@ void main() {
   });
 
   group('Registry', () {
-    test('has 62 games and 38 new-badge games', () {
-      expect(GameRegistry.games.length, 62);
+    test('has 63 games and 39 new-badge games', () {
+      expect(GameRegistry.games.length, 63);
       final newOnes = GameRegistry.games
           .where((g) => g.badge == 'جديد')
           .toList();
-      expect(newOnes.length, 38);
+      expect(newOnes.length, 39);
       expect(
         newOnes.map((g) => g.title),
         containsAll(<String>[
@@ -79,6 +79,7 @@ void main() {
           'كلمة السر',
           'الجاسوس',
           'أكمل المثل',
+          'أقنعهم',
           'خمّنها',
           'مين قالها؟',
           'أندر كافر',
