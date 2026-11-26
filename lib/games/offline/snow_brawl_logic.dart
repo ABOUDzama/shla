@@ -12,7 +12,7 @@ class SnowBrawlMatch {
     required this.playerCount,
     this.fortHp = 3,
     Random? random,
-  })  : assert(playerCount >= 2 && playerCount <= 4),
+  })  : assert(playerCount >= 1 && playerCount <= 4),
         _random = random ?? Random() {
     for (var p = 0; p < playerCount; p++) {
       hp.add(fortHp);
@@ -42,9 +42,18 @@ class SnowBrawlMatch {
   double neededPower = 0.6;
   static const double tolerance = 0.09;
 
+  /// Seats thrown by the built-in bot (mostly well-powered throws).
+  final Set<int> botSeats = {};
+
+  /// Solo practice: 10 throws at a target dummy, then the round ends.
+  static const int practiceThrows = 10;
+
   int tickCount = 0;
   int? winner;
-  bool get isOver => winner != null || aliveCount <= 1;
+  bool get isOver {
+    if (playerCount == 1) return throws.isNotEmpty && throws[0] >= practiceThrows;
+    return winner != null || aliveCount <= 1;
+  }
 
   void _rollWind() {
     neededPower = 0.2 + _random.nextDouble() * 0.75;
@@ -70,12 +79,27 @@ class SnowBrawlMatch {
       phase = 0;
       _phaseDir = 1;
     }
+    // bots throw when the meter is near the needed power
+    for (final p in botSeats) {
+      if (p >= playerCount || !alive(p)) continue;
+      if ((phase - neededPower).abs() <= tolerance * 0.75 &&
+          _random.nextDouble() < 0.8) {
+        throwSnowball(p);
+      }
+    }
   }
 
   /// Throw for [player] at the current power. Returns true on a hit.
   bool throwSnowball(int player) {
     if (isOver || !alive(player)) return false;
     throws[player]++;
+    if (playerCount == 1) {
+      // practice: a target dummy, no fort damage
+      final hit = (phase - neededPower).abs() <= tolerance;
+      if (hit) hits[player]++;
+      _rollWind();
+      return hit;
+    }
     final target = targetOf(player);
     final hit = (phase - neededPower).abs() <= tolerance;
     if (hit) {

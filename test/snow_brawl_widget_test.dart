@@ -63,9 +63,10 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });
 
-  testWidgets('snow brawl: intro starts to player picker', (tester) async {
+  testWidgets('snow brawl: intro starts to player picker incl. solo', (tester) async {
     await boot(tester);
     expect(find.text('كام لاعب؟'), findsOneWidget);
+    expect(find.text('لاعب واحد'), findsOneWidget);
     expect(find.text('2 لاعبين'), findsOneWidget);
     expect(find.text('3 لاعبين'), findsOneWidget);
     expect(find.text('4 لاعبين'), findsOneWidget);
@@ -77,6 +78,9 @@ void main() {
       (tester) async {
     await boot(tester);
     await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    expect(find.text('نضيف بوتات؟'), findsOneWidget);
+    await tester.tap(find.text('لا'));
     await tester.pump();
     expect(find.text('لاعب 1 ❄'), findsOneWidget);
     expect(find.text('لاعب 2 ❄'), findsOneWidget);
@@ -102,11 +106,56 @@ void main() {
     await boot(tester);
     await tester.tap(find.text('2 لاعبين'));
     await tester.pump();
+    await tester.tap(find.text('لا'));
+    await tester.pump();
     await tester.tap(find.text('لاعب 1 ❄'));
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 250));
     }
     expect(find.byType(SnowBrawlGame), findsOneWidget);
+    await flushFontCallbacks(tester);
+    await settleDown(tester);
+  });
+
+  testWidgets('snow brawl: bots fill to 4 and throw on their own', (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('اه 🤖'));
+    await tester.pump();
+    final state = tester.state(find.byType(SnowBrawlGame)) as dynamic;
+    final m = state.debugMatch;
+    expect(m.playerCount, 4);
+    expect(m.botSeats, {2, 3});
+    for (var i = 0; i < 60 && m.throws[2] + m.throws[3] == 0; i++) {
+      await tester.pump(const Duration(milliseconds: 120));
+    }
+    expect(m.throws[2] + m.throws[3], greaterThan(0));
+    await flushFontCallbacks(tester);
+    await settleDown(tester);
+  });
+
+  testWidgets('snow brawl: solo practice is 10 throws at a dummy, no forts lost', (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('لاعب واحد'));
+    await tester.pump();
+    await tester.tap(find.text('لا'));
+    await tester.pump();
+    final state = tester.state(find.byType(SnowBrawlGame)) as dynamic;
+    final m = state.debugMatch;
+    expect(m.playerCount, 1);
+    expect(find.text('لاعب 1 ❄'), findsOneWidget);
+    expect(find.text('لاعب 2 ❄'), findsNothing);
+    // throw 10 times regardless of power; hp untouched, round ends
+    for (var t = 0; t < 10; t++) {
+      await tester.tap(find.text('لاعب 1 ❄'));
+      await tester.pump(const Duration(milliseconds: 80));
+    }
+    expect(m.throws[0], 10);
+    expect(m.hp[0], m.fortHp);
+    expect(m.isOver, isTrue);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.textContaining('من 10'), findsOneWidget);
     await flushFontCallbacks(tester);
     await settleDown(tester);
   });

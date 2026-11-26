@@ -99,3 +99,8 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 ## Successor env note (02:07)
 - Fresh sandbox per agent: install Flutter 3.50.1 stable linux x64 (storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.50.1-stable.tar.xz -> ~/sdk/flutter). 3.50.1 is the best-supported choice: `flutter pub get` leaves pubspec.lock byte-identical (3.38.x/3.41.x do NOT) and the previously-passing goldens still pass unchanged under it, so its dependency resolution AND golden rendering match the predecessor. Byte-identical lock proves dependency resolution, not SDK identity; the unchanged-golden pass is the rendering evidence. The predecessor's exact SDK string was not independently recorded. Do not commit test/failures (gitignored now); small_screen capture360 rewrites PNGs every run - revert non-touched games' captures before committing.
 - Push: tools box vault write-file (GitHub PAT (fitnic)) -> workspace credential.helper push -> rm file.
+
+## Batch 16 (02:34) snow_brawl rework
+- معركة التلج: picker 1-4 -> bots yes/no; 1P+لا = practice: 10 throws at a target dummy (no fort damage), over shows أصبت X من 10, no record. Bots fill to 4 and self-throw near the needed power.
+- Per-side rotated controls (keys snow_throw_N); fort row labels بوت; practice banner differs (إصابة / رميت بعيد).
+- Tests: logic 6 + widget 8 pass (new: bots self-throw, solo practice 10 throws + over text). proof golden regenerated + pixel-viewed. small_screen snow passes.

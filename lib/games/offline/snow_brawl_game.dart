@@ -9,7 +9,8 @@ import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import 'snow_brawl_logic.dart';
 
-/// معركة التلج: 2-4 forts, one throw button per player.
+/// معركة التلج: 1-4 players (+ optional bots), one throw button each,
+/// placed on the player's own side (top buttons rotated face-to-face).
 class SnowBrawlGame extends StatefulWidget {
   const SnowBrawlGame({super.key, this.randomSeed});
 
@@ -20,7 +21,7 @@ class SnowBrawlGame extends StatefulWidget {
   State<SnowBrawlGame> createState() => _SnowBrawlGameState();
 }
 
-enum _SnowPhase { pickPlayers, playing, over }
+enum _SnowPhase { pickPlayers, pickBots, playing, over }
 
 class _SnowBrawlGameState extends State<SnowBrawlGame> {
   static const _emojiFallback = ['Noto Color Emoji'];
@@ -30,6 +31,11 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
   late SnowBrawlMatch _match;
   Timer? _ticker;
   String _banner = '';
+  int _humans = 2;
+  bool _practice = false;
+
+  @visibleForTesting
+  SnowBrawlMatch get debugMatch => _match;
 
   static const List<Color> _colors = [
     Color(0xFFFF8A5C),
@@ -44,15 +50,23 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
     super.dispose();
   }
 
-  void _startMatch(int players) {
+  void _startMatch(int humans, bool withBots) {
     _ticker?.cancel();
+    _humans = humans;
+    _practice = humans == 1 && !withBots;
+    final seats = _practice ? 1 : (withBots ? 4 : humans);
+    final m = SnowBrawlMatch(
+      playerCount: seats,
+      random: widget.randomSeed != null ? Random(widget.randomSeed!) : null,
+    );
+    for (var i = humans; i < seats && withBots; i++) {
+      m.botSeats.add(i);
+    }
     setState(() {
-      _match = SnowBrawlMatch(
-        playerCount: players,
-        random:
-            widget.randomSeed != null ? Random(widget.randomSeed!) : null,
-      );
-      _banner = 'دوس لما عدّاد القوة يوصل للعلامة! ❄';
+      _match = m;
+      _banner = _practice
+          ? 'دوس لما عدّاد القوة يوصل للعلامة! ❄'
+          : 'دوس لما عدّاد القوة يوصل للعلامة! ❄';
       _phase = _SnowPhase.playing;
     });
     _ticker = Timer.periodic(const Duration(milliseconds: 60), (_) {
@@ -68,12 +82,14 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
   }
 
   void _throw(int i) {
-    if (_phase != _SnowPhase.playing || !_match.alive(i)) return;
+    if (_phase != _SnowPhase.playing || i >= _humans || !_match.alive(i)) return;
     final hit = _match.throwSnowball(i);
     setState(() {
-      _banner = hit
-          ? 'لاعب ${i + 1} أصاب قلعة لاعب ${_match.targetOf(i) == i ? i + 1 : _match.targetOf(i) + 1}! ❄'
-          : 'لاعب ${i + 1} رمى بعيد 😬';
+      _banner = _practice
+          ? (hit ? 'إصابة! ❄' : 'رميت بعيد 😬')
+          : hit
+              ? 'لاعب ${i + 1} أصاب قلعة لاعب ${_match.targetOf(i) == i ? i + 1 : _match.targetOf(i) + 1}! ❄'
+              : 'لاعب ${i + 1} رمى بعيد 😬';
       if (_match.isOver) {
         _ticker?.cancel();
         _phase = _SnowPhase.over;
@@ -81,41 +97,55 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
     });
   }
 
-  Widget _buildPicker() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+  TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>
+      flatCairo(fontSize: size, fontWeight: w, color: color ?? FlatColors.ink)
+          .copyWith(fontFamilyFallback: _emojiFallback);
+
+  Widget _bigChoice(String label, VoidCallback onTap) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: SizedBox(
+          width: 220,
+          child: FilledButton(onPressed: onTap, child: Text(label, style: _t(18, color: Colors.white))),
+        ),
+      );
+
+  Widget _buildPicker() => Center(
+        child: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text('كام لاعب؟', style: _t(26)),
+            const SizedBox(height: 20),
+            _bigChoice('لاعب واحد', () {
+              _humans = 1;
+              setState(() => _phase = _SnowPhase.pickBots);
+            }),
+            for (final n in [2, 3, 4])
+              _bigChoice('$n لاعبين', () {
+                _humans = n;
+                if (n == 4) {
+                  _startMatch(4, false);
+                } else {
+                  setState(() => _phase = _SnowPhase.pickBots);
+                }
+              }),
+          ]),
+        ),
+      );
+
+  Widget _buildBots() => Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('نضيف بوتات؟', style: _t(26)),
+          const SizedBox(height: 8),
           Text(
-            'كام لاعب؟',
-            style: flatCairo(
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
+            _humans == 1
+                ? 'من غير بوتات هتتدرب على التصويب: ١٠ رميات على هدف تدريب'
+                : 'البوتات بتكمّل لحد ٤ لاعبين',
+            style: _t(14, w: FontWeight.w600),
           ),
           const SizedBox(height: 20),
-          for (final n in [2, 3, 4])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: SizedBox(
-                width: 200,
-                child: FilledButton(
-                  onPressed: () => _startMatch(n),
-                  child: Text(
-                    '$n لاعبين',
-                    style: flatCairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ).copyWith(fontFamilyFallback: _emojiFallback),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+          _bigChoice('اه 🤖', () => _startMatch(_humans, true)),
+          _bigChoice('لا', () => _startMatch(_humans, false)),
+        ]),
+      );
 
   Widget _powerBar() {
     return LayoutBuilder(
@@ -196,7 +226,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
               ),
               const SizedBox(height: 4),
               Text(
-                'لاعب ${i + 1}: ${_match.hp[i]}',
+                '${_match.botSeats.contains(i) ? 'بوت' : 'لاعب'} ${i + 1}: ${_match.hp[i]}',
                 style: flatCairo(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
@@ -215,6 +245,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: FilledButton(
+          key: Key('snow_throw_$i'),
           style: FilledButton.styleFrom(
             backgroundColor: _colors[i],
             disabledBackgroundColor: _colors[i].withValues(alpha: 0.15),
@@ -235,10 +266,21 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
   }
 
   Widget _buildOver() {
+    final w = _match.winner;
+    Widget head;
+    if (_practice) {
+      head = Text('أصبت ${_match.hits[0]} من ${SnowBrawlMatch.practiceThrows} ❄', style: _t(22));
+    } else if (w != null && _match.botSeats.contains(w)) {
+      head = Text('البوتات كسبوا 🤖', style: _t(22));
+    } else if (w != null) {
+      head = VictoryFriends(gameTitle: 'معركة التلج', winnerName: 'لاعب ${w + 1}');
+    } else {
+      head = Text('تعادل! 😅', style: _t(20));
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        VictoryFriends(gameTitle: 'معركة التلج', winnerName: 'لاعب ${_match.winner! + 1}'),
+        head,
         const SizedBox(height: 16),
         FilledButton(
           onPressed: () => setState(() => _phase = _SnowPhase.pickPlayers),
@@ -260,20 +302,41 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
       return GameIntroWidget(
         title: 'معركة التلج',
         description:
-            '٢-٤ قلاع على نفس الموبايل. عدّاد القوة بيطلع وينزل.. دوس لما يوصل للعلامة الزرقا عشان كورت التلج توصل قلعة خصمك. أول واحد يهد كل القلاع يكسب ❄',
+            '١-٤ قلاع على نفس الموبايل، وتقدر تضيف بوتات. عدّاد القوة بيطلع وينزل.. دوس لما يوصل للعلامة الزرقا عشان كورت التلج توصل قلعة خصمك. أول واحد يهد كل القلاع يكسب ❄',
         icon: '❄',
         onStart: () => setState(() => _showIntro = false),
       );
     }
-    final players = _phase == _SnowPhase.pickPlayers ? 0 : _match.playerCount;
+    if (_phase == _SnowPhase.pickPlayers || _phase == _SnowPhase.pickBots) {
+      return OfflineGameScaffold(
+        title: 'معركة التلج',
+        backgroundColor: FlatColors.bg,
+        body: SafeArea(
+          child: _phase == _SnowPhase.pickPlayers ? _buildPicker() : _buildBots(),
+        ),
+      );
+    }
+    final humanSeats = [for (var i = 0; i < _humans; i++) i];
+    final split = (humanSeats.length / 2).ceil();
+    final bottomSeats = humanSeats.take(split).toList();
+    final topSeats = humanSeats.skip(split).toList();
     return OfflineGameScaffold(
       title: 'معركة التلج',
       backgroundColor: FlatColors.bg,
       body: SafeArea(
-        child: _phase == _SnowPhase.pickPlayers
-            ? _buildPicker()
-            : Column(
+        child: Column(
                 children: [
+                  if (topSeats.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      child: Transform.rotate(
+                        angle: pi,
+                        child: Row(children: [
+                          for (var i = topSeats.length - 1; i >= 0; i--)
+                            _throwButton(topSeats[i]),
+                        ]),
+                      ),
+                    ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
                     child: _fortsRow(),
@@ -315,11 +378,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
-                    child: Row(
-                      children: [
-                        for (var i = 0; i < players; i++) _throwButton(i)
-                      ],
-                    ),
+                    child: Row(children: [for (final i in bottomSeats) _throwButton(i)]),
                   ),
                 ],
               ),
