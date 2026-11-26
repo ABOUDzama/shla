@@ -87,3 +87,8 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - Controls: turn buttons split per side - bottom half of human seats at bottom, rest at top rotated 180 deg (face-to-face); keys snake_turn_N. Bot pills labeled بوت.
 - debugMatch getter; over screen: practice count / البوتات كسبوا / VictoryFriends / draw.
 - Tests: logic 5 pass; widget rewritten 6 pass (picker incl. solo, 2p+لا, 4p direct, bots steer, practice, turn stability). proof golden regenerated AND pixel-viewed (rotated top buttons, 4 pills, corner spawns). small_screen snake passes.
+
+## Batch 15b (02:03) tug_of_war rework
+- شد الحبل: picker 1-4 -> bots yes/no; 1P+لا practice (shows شدّة صح/غلط stats, no record). Bots fill to 4 and self-tap near the green window (80% at <=0.75*perfectWindow).
+- Controls split per side like snake (bottom half bottom, rest top rotated 180); keys tug_pull_N. Over: practice stats / البوتات كسبوا / VictoryFriends.
+- Tests: logic+widget 11 pass (incl. new bots-pull and solo-practice). proof golden regenerated + pixel-viewed. small_screen tug passes. Removed stale funky_theme import.

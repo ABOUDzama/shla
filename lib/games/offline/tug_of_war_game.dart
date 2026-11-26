@@ -3,14 +3,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import 'tug_of_war_logic.dart';
 
-/// شد الحبل: 2-4 players, one timing button each.
+/// شد الحبل: 1-4 players (+ optional bots), one timing button each,
+/// placed on the player's own side (top buttons rotated face-to-face).
 class TugOfWarGame extends StatefulWidget {
   const TugOfWarGame({super.key, this.randomSeed});
 
@@ -21,7 +21,7 @@ class TugOfWarGame extends StatefulWidget {
   State<TugOfWarGame> createState() => _TugOfWarGameState();
 }
 
-enum _TugPhase { pickPlayers, playing, over }
+enum _TugPhase { pickPlayers, pickBots, playing, over }
 
 class _TugOfWarGameState extends State<TugOfWarGame> {
   static const _emojiFallback = ['Noto Color Emoji'];
@@ -31,6 +31,11 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
   late TugMatch _match;
   Timer? _ticker;
   String _banner = '';
+  int _humans = 2;
+  bool _practice = false;
+
+  @visibleForTesting
+  TugMatch get debugMatch => _match;
 
   static const List<Color> _colors = [
     Color(0xFFFF8A5C),
@@ -45,14 +50,20 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
     super.dispose();
   }
 
-  void _startMatch(int players) {
+  void _startMatch(int humans, bool withBots) {
     _ticker?.cancel();
+    _humans = humans;
+    _practice = humans == 1 && !withBots;
+    final seats = _practice ? 1 : (withBots ? 4 : humans);
+    final m = TugMatch(
+      playerCount: seats,
+      random: widget.randomSeed != null ? Random(widget.randomSeed!) : null,
+    );
+    for (var i = humans; i < seats && withBots; i++) {
+      m.botSeats.add(i);
+    }
     setState(() {
-      _match = TugMatch(
-        playerCount: players,
-        random:
-            widget.randomSeed != null ? Random(widget.randomSeed!) : null,
-      );
+      _match = m;
       _banner = 'دوس لما المؤشر يبقى في النص! 💪';
       _phase = _TugPhase.playing;
     });
@@ -69,7 +80,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
   }
 
   void _tap(int i) {
-    if (_phase != _TugPhase.playing) return;
+    if (_phase != _TugPhase.playing || i >= _humans) return;
     final grade = _match.tap(i);
     setState(() {
       _banner = switch (grade) {
@@ -84,41 +95,55 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
     });
   }
 
-  Widget _buildPicker() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+  TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>
+      flatCairo(fontSize: size, fontWeight: w, color: color ?? FlatColors.ink)
+          .copyWith(fontFamilyFallback: _emojiFallback);
+
+  Widget _bigChoice(String label, VoidCallback onTap) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: SizedBox(
+          width: 220,
+          child: FilledButton(onPressed: onTap, child: Text(label, style: _t(18, color: Colors.white))),
+        ),
+      );
+
+  Widget _buildPicker() => Center(
+        child: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text('كام لاعب؟', style: _t(26)),
+            const SizedBox(height: 20),
+            _bigChoice('لاعب واحد', () {
+              _humans = 1;
+              setState(() => _phase = _TugPhase.pickBots);
+            }),
+            for (final n in [2, 3, 4])
+              _bigChoice('$n لاعبين', () {
+                _humans = n;
+                if (n == 4) {
+                  _startMatch(4, false);
+                } else {
+                  setState(() => _phase = _TugPhase.pickBots);
+                }
+              }),
+          ]),
+        ),
+      );
+
+  Widget _buildBots() => Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('نضيف بوتات؟', style: _t(26)),
+          const SizedBox(height: 8),
           Text(
-            'كام لاعب؟',
-            style: flatCairo(
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-              color: FlatColors.ink,
-            ).copyWith(fontFamilyFallback: _emojiFallback),
+            _humans == 1
+                ? 'من غير بوتات هتتدرب لوحدك على توقيت الشدّة'
+                : 'البوتات بتكمّل لحد ٤ لاعبين',
+            style: _t(14, w: FontWeight.w600),
           ),
           const SizedBox(height: 20),
-          for (final n in [2, 3, 4])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: SizedBox(
-                width: 200,
-                child: FilledButton(
-                  onPressed: () => _startMatch(n),
-                  child: Text(
-                    '$n لاعبين',
-                    style: flatCairo(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ).copyWith(fontFamilyFallback: _emojiFallback),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+          _bigChoice('اه 🤖', () => _startMatch(_humans, true)),
+          _bigChoice('لا', () => _startMatch(_humans, false)),
+        ]),
+      );
 
   Widget _timingBar() {
     return LayoutBuilder(
@@ -198,6 +223,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: FilledButton(
+          key: Key('tug_pull_$i'),
           style: FilledButton.styleFrom(
             backgroundColor: _colors[i],
             padding: const EdgeInsets.symmetric(vertical: 14),
@@ -217,10 +243,21 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
   }
 
   Widget _buildOver() {
+    final w = _match.winner;
+    Widget head;
+    if (_practice) {
+      final good = _match.perfects.isNotEmpty ? _match.perfects[0] : 0;
+      final bad = _match.misses.isNotEmpty ? _match.misses[0] : 0;
+      head = Text('شديت $good شدّة صح وغلطت $bad 💪', style: _t(20));
+    } else if (w != null && _match.botSeats.contains(w)) {
+      head = Text('البوتات كسبوا 🤖', style: _t(22));
+    } else {
+      head = VictoryFriends(gameTitle: 'شد الحبل', winnerName: 'لاعب ${w! + 1}');
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        VictoryFriends(gameTitle: 'شد الحبل', winnerName: 'لاعب ${_match.winner! + 1}'),
+        head,
         const SizedBox(height: 16),
         FilledButton(
           onPressed: () => setState(() => _phase = _TugPhase.pickPlayers),
@@ -242,20 +279,41 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
       return GameIntroWidget(
         title: 'شد الحبل',
         description:
-            '٢-٤ لاعبين على نفس الموبايل. المؤشر بيجري يمين وشمال.. دوس لما يبقى في المنطقة الخضرا بالظبط عشان تشد الحبل لناحيتك. اللي يوصل بالعقدة لطرفه يكسب 💪',
+            '١-٤ لاعبين على نفس الموبايل، وتقدر تضيف بوتات. المؤشر بيجري يمين وشمال.. دوس لما يبقى في المنطقة الخضرا بالظبط عشان تشد الحبل لناحيتك. اللي يوصل بالعقدة لطرفه يكسب 💪',
         icon: '💪',
         onStart: () => setState(() => _showIntro = false),
       );
     }
-    final players = _phase == _TugPhase.pickPlayers ? 0 : _match.playerCount;
+    if (_phase == _TugPhase.pickPlayers || _phase == _TugPhase.pickBots) {
+      return OfflineGameScaffold(
+        title: 'شد الحبل',
+        backgroundColor: FlatColors.bg,
+        body: SafeArea(
+          child: _phase == _TugPhase.pickPlayers ? _buildPicker() : _buildBots(),
+        ),
+      );
+    }
+    final humanSeats = [for (var i = 0; i < _humans; i++) i];
+    final split = (humanSeats.length / 2).ceil();
+    final bottomSeats = humanSeats.take(split).toList();
+    final topSeats = humanSeats.skip(split).toList();
     return OfflineGameScaffold(
       title: 'شد الحبل',
       backgroundColor: FlatColors.bg,
       body: SafeArea(
-        child: _phase == _TugPhase.pickPlayers
-            ? _buildPicker()
-            : Column(
+        child: Column(
                 children: [
+                  if (topSeats.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      child: Transform.rotate(
+                        angle: pi,
+                        child: Row(children: [
+                          for (var i = topSeats.length - 1; i >= 0; i--)
+                            _pullButton(topSeats[i]),
+                        ]),
+                      ),
+                    ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                     child: _timingBar(),
@@ -283,11 +341,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
-                    child: Row(
-                      children: [
-                        for (var i = 0; i < players; i++) _pullButton(i)
-                      ],
-                    ),
+                    child: Row(children: [for (final i in bottomSeats) _pullButton(i)]),
                   ),
                 ],
               ),

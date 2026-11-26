@@ -63,9 +63,10 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });
 
-  testWidgets('tug of war: intro starts to player picker', (tester) async {
+  testWidgets('tug of war: intro starts to player picker incl. solo', (tester) async {
     await boot(tester);
     expect(find.text('كام لاعب؟'), findsOneWidget);
+    expect(find.text('لاعب واحد'), findsOneWidget);
     expect(find.text('2 لاعبين'), findsOneWidget);
     expect(find.text('3 لاعبين'), findsOneWidget);
     expect(find.text('4 لاعبين'), findsOneWidget);
@@ -77,6 +78,9 @@ void main() {
       (tester) async {
     await boot(tester);
     await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    expect(find.text('نضيف بوتات؟'), findsOneWidget);
+    await tester.tap(find.text('لا'));
     await tester.pump();
     expect(find.text('لاعب 1 💪'), findsOneWidget);
     expect(find.text('لاعب 2 💪'), findsOneWidget);
@@ -102,11 +106,45 @@ void main() {
     await boot(tester);
     await tester.tap(find.text('2 لاعبين'));
     await tester.pump();
+    await tester.tap(find.text('لا'));
+    await tester.pump();
     await tester.tap(find.text('لاعب 1 💪'));
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 250));
     }
     expect(find.byType(TugOfWarGame), findsOneWidget);
+    await flushFontCallbacks(tester);
+    await settleDown(tester);
+  });
+
+  testWidgets('tug of war: bots fill to 4 and pull on their own', (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('2 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('اه 🤖'));
+    await tester.pump();
+    final state = tester.state(find.byType(TugOfWarGame)) as dynamic;
+    final m = state.debugMatch;
+    expect(m.playerCount, 4);
+    expect(m.botSeats, {2, 3});
+    for (var i = 0; i < 30 && (m.perfects.length < 4 || m.perfects[2] + m.perfects[3] == 0); i++) {
+      await tester.pump(const Duration(milliseconds: 120));
+    }
+    expect(m.perfects[2] + m.perfects[3], greaterThan(0));
+    await flushFontCallbacks(tester);
+    await settleDown(tester);
+  });
+
+  testWidgets('tug of war: solo practice has one button and no bots', (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('لاعب واحد'));
+    await tester.pump();
+    await tester.tap(find.text('لا'));
+    await tester.pump();
+    final state = tester.state(find.byType(TugOfWarGame)) as dynamic;
+    expect(state.debugMatch.playerCount, 1);
+    expect(find.text('لاعب 1 💪'), findsOneWidget);
+    expect(find.text('لاعب 2 💪'), findsNothing);
     await flushFontCallbacks(tester);
     await settleDown(tester);
   });

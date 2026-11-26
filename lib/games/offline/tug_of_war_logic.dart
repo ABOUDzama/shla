@@ -10,7 +10,7 @@ import 'dart:math';
 /// knot past their edge takes the round.
 class TugMatch {
   TugMatch({required this.playerCount, Random? random})
-      : assert(playerCount >= 2 && playerCount <= 4),
+      : assert(playerCount >= 1 && playerCount <= 4),
         _random = random ?? Random();
 
   final int playerCount;
@@ -48,6 +48,9 @@ class TugMatch {
 
   final List<int> perfects = [];
   final List<int> misses = [];
+
+  /// Seats tapped by the built-in bot (mostly well-timed pulls).
+  final Set<int> botSeats = {};
   void _initStats() {
     if (perfects.length < playerCount) {
       for (var i = perfects.length; i < playerCount; i++) {
@@ -73,6 +76,14 @@ class TugMatch {
     // knot drifts toward center
     _kx -= _kx.sign * min(centerDrift, _kx.abs());
     _ky -= _ky.sign * min(centerDrift, _ky.abs());
+    // bots pull when the marker is near the green center
+    for (final p in botSeats) {
+      if (p >= playerCount) continue;
+      if ((phase - 0.5).abs() <= perfectWindow * 0.75 &&
+          _random.nextDouble() < 0.8) {
+        tap(p);
+      }
+    }
   }
 
   /// Grade and apply a tap for [player]. Returns 'perfect', 'ok', 'miss'.
