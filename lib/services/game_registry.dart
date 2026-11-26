@@ -41,6 +41,7 @@ import '../games/offline/snake_arena_game.dart';
 import '../games/offline/chicken_run_game.dart';
 import '../games/offline/car_race_game.dart';
 import '../games/offline/micro_racers_game.dart';
+import '../games/offline/flick_soccer_game.dart';
 import '../games/offline/pigeon_game.dart';
 import '../games/offline/tank_battle_game.dart';
 import '../games/offline/tug_of_war_game.dart';
@@ -392,6 +393,15 @@ class GameRegistry {
       icon: Icons.speed,
       color: FunkyColors.orange,
       screen: MicroRacersGame(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'فليك الشلة',
+      description: 'كورة بالأزارير! اسحب قرصك ورا وسيبه يتفلّك على الكورة، وأول واحد يسجّل ٣ جوون يكسب',
+      icon: Icons.sports_soccer,
+      color: FunkyColors.mint,
+      screen: FlickSoccerGame(),
       badge: 'جديد',
       arcade1234: true,
     ),
