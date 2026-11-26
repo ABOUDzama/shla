@@ -172,3 +172,7 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 ## Batch 29 — أونلاين bottom-nav tab (2026-11-26)
 - User ask: bring online play back into the bottom nav (the lobby was orphaned, nothing pushed LobbyScreen). New tab 5 'أونلاين' 🌐 (sky blue) between الألعاب and شلتي embeds LobbyScreen(showBackButton: false) with 105px bottom clearance for the floating nav.
 - Tests: new golden home_online_tab (fake socket, asserts lobby present + no back arrow); home/arcade/leaderboard goldens regenerated — diffs verified nav-strip-only except home_arcade_full, which also correctly shows the three newest games (grid grew since that golden last regenerated). verification_test green.
+
+## Batch 29b — bigger bottom-nav cards (2026-11-26)
+- User ask: bigger nav buttons. Cards 58→76px tall, emoji 18→24, label 12→14, radius 18→20; floating container side padding 24→14, gaps 10→8. Bottom clearances grew with the taller bar: games feed 130→150, online tab 105→127, شلتي 110→132, الترتيب 130→150, ١٢٣٤ 110→132, الكأس 130→150.
+- Goldens regenerated (nav-strip diffs; home_screen_new_games shifted from the larger bottom inset), 360px readability verified; golden_home/leaderboard/cup/shellty/verification suites green.

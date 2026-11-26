@@ -160,7 +160,7 @@ class _ArcadeSectionScreenState extends State<ArcadeSectionScreen> {
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 14)),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 110),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 132),
             sliver: SliverGrid(
               gridDelegate:
                   const SliverGridDelegateWithFixedCrossAxisCount(

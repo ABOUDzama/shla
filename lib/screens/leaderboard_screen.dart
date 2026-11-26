@@ -67,7 +67,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     final recent = _results.reversed.take(15).toList();
     return SafeArea(
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 130),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 150),
         children: [
           Center(child: Text('الترتيب 🏆', style: FlatDecor.title(size: 28))),
           Center(child: Text('مين بطل الشلة؟', style: FlatDecor.body(size: 13))),

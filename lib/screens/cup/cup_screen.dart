@@ -203,7 +203,7 @@ class _CupScreenState extends State<CupScreen> {
           body: SafeArea(
             child: ListView(
               physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(20, 12, 20, widget.embedded ? 130 : 24),
+              padding: EdgeInsets.fromLTRB(20, 12, 20, widget.embedded ? 150 : 24),
               children: [
                 Row(
                   children: [

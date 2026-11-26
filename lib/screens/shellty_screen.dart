@@ -216,7 +216,7 @@ class _ShelltyScreenState extends State<ShelltyScreen> {
   Widget build(BuildContext context) {
     final content = ListView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 132),
       children: [
         if (!widget.embedded)
           Align(

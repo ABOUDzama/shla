@@ -154,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: _tab == 5
                   ? const Padding(
-                      padding: EdgeInsets.only(bottom: 105),
+                      padding: EdgeInsets.only(bottom: 127),
                       child: LobbyScreen(
                           key: ValueKey('online_tab'),
                           showBackButton: false),
@@ -174,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       key: const ValueKey('games_feed'),
                       child: ListView(
                         physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 130),
+                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 150),
                         children: [
                           _buildHeader(),
                           const SizedBox(height: 10),
@@ -219,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
             bottom: 0,
             child: Container(
               color: FlatColors.bg,
-              padding: const EdgeInsets.fromLTRB(24, 10, 24, 26),
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 26),
               child: _buildBottomNav(),
             ),
           ),
@@ -332,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (_tab != 0) setState(() => _tab = 0);
           },
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 8),
         _navCard(
           label: 'أونلاين',
           emoji: '🌐',
@@ -342,7 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (_tab != 5) setState(() => _tab = 5);
           },
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 8),
         _navCard(
           label: 'شلتي',
           emoji: '👥',
@@ -352,7 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (_tab != 1) setState(() => _tab = 1);
           },
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 8),
         _navCard(
           label: '1234',
           emoji: '⚡',
@@ -362,7 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (_tab != 2) setState(() => _tab = 2);
           },
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 8),
         _navCard(
           label: 'الكأس',
           emoji: '🏆',
@@ -372,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (_tab != 4) setState(() => _tab = 4);
           },
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 8),
         _navCard(
           label: 'الترتيب',
           emoji: '🥇',
@@ -400,10 +400,10 @@ class _HomeScreenState extends State<HomeScreen> {
           duration: const Duration(milliseconds: 200),
           scale: active ? 1.0 : 0.93,
           child: Container(
-              height: 58,
+              height: 76,
               decoration: BoxDecoration(
                 color: active ? color : Color.lerp(color, Colors.white, 0.25),
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(20),
                 border: active
                     ? Border.all(color: Colors.white, width: 3)
                     : null,
@@ -420,10 +420,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text(
                     emoji,
-                    style: const TextStyle(fontSize: 18).copyWith(
+                    style: const TextStyle(fontSize: 24).copyWith(
                         fontFamilyFallback: const ['Noto Color Emoji']),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 3),
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 6, vertical: 2),
@@ -436,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text(
                         label,
                         maxLines: 1,
-                        style: FlatDecor.title(size: 12),
+                        style: FlatDecor.title(size: 14),
                       ),
                     ),
                   ),
