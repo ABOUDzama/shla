@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'car_race_logic.dart';
 
 /// سباق العربيات: top-down 3-lap race for 1-4 on one phone. Cars drive on
@@ -61,7 +62,14 @@ class _CarRaceGameState extends State<CarRaceGame> {
     super.dispose();
   }
 
+  void _juiceEnd() {
+    final w = _match.winner;
+    if (w == null) return;
+    _match.botSeats.contains(w) ? ArcadeJuice.lose() : ArcadeJuice.win();
+  }
+
   void _start(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
@@ -86,6 +94,7 @@ class _CarRaceGameState extends State<CarRaceGame> {
         if (_match.over) {
           _ticker?.cancel();
           _phase = _Phase.over;
+          _juiceEnd();
         }
       });
     });

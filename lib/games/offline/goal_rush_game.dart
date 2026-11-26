@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'goal_rush_logic.dart';
 
 /// جري الجون: faithful clone of the reference's "Goal Rush" - let go to
@@ -54,7 +55,14 @@ class _GoalRushGameState extends State<GoalRushGame> {
     super.dispose();
   }
 
+  void _juiceEnd() {
+    final w = _match.winner;
+    if (w == null) return;
+    _match.botSeats.contains(w) ? ArcadeJuice.lose() : ArcadeJuice.win();
+  }
+
   void _startGame(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _humans = humans;
     final practice = humans == 1 && !withBots;
@@ -74,6 +82,7 @@ class _GoalRushGameState extends State<GoalRushGame> {
         if (_match.over) {
           _ticker?.cancel();
           _phase = _Phase.over;
+          _juiceEnd();
         }
       });
     });

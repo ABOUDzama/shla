@@ -7,6 +7,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'croc_logic.dart';
 
 /// تمساح الشلة: crocodile-dentist elimination for 1-4 seats on one phone.
@@ -57,7 +58,14 @@ class _CrocGameScreenState extends State<CrocGameScreen> {
     super.dispose();
   }
 
+  void _juiceEnd() {
+    final w = _game.winner;
+    if (w == null) return;
+    (w < _humans) ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
   void _startGame(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _botTimer?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
@@ -111,7 +119,10 @@ class _CrocGameScreenState extends State<CrocGameScreen> {
       if (!mounted) return;
       setState(() {
         _chomping = false;
-        if (_game.isOver) _phase = _CrocPhase.over;
+        if (_game.isOver) {
+          _phase = _CrocPhase.over;
+          _juiceEnd();
+        }
       });
       _maybeBotTurn();
     });

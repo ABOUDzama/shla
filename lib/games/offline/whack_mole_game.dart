@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'whack_mole_logic.dart';
 
 /// اضرب الخلد: 2-4 players, each whacks moles in their own 2x2 grid.
@@ -49,7 +50,14 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
     super.dispose();
   }
 
+  void _juiceEnd() {
+    final w = _match.winner();
+    if (w == null) return;
+    (w < _humans) ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
   void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
@@ -72,6 +80,8 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
         if (_match.isOver) {
           _ticker?.cancel();
           _phase = _MolePhase.over;
+        _juiceEnd();
+          _juiceEnd();
         }
       });
     });
@@ -84,6 +94,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
       if (_match.isOver) {
         _ticker?.cancel();
         _phase = _MolePhase.over;
+        _juiceEnd();
       }
     });
   }

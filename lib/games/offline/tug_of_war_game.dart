@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'tug_of_war_logic.dart';
 
 /// شد الحبل: 1-4 players (+ optional bots), one timing button each,
@@ -55,7 +56,14 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
   int _pendingHumans = 2;
   bool _pendingBots = false;
 
+  void _juiceEnd() {
+    final w = _match.winner;
+    if (w == null) return;
+    (w < _humans) ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
   void _startMatch(int humans, bool withBots, {bool teamMode = false}) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
@@ -81,6 +89,8 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
         if (_match.isOver) {
           _ticker?.cancel();
           _phase = _TugPhase.over;
+        _juiceEnd();
+          _juiceEnd();
         }
       });
     });
@@ -98,6 +108,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
       if (_match.isOver) {
         _ticker?.cancel();
         _phase = _TugPhase.over;
+        _juiceEnd();
       }
     });
   }

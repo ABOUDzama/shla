@@ -188,7 +188,7 @@ class _BluffGameState extends State<BluffGame> {
             Expanded(child: _photo()),
             const SizedBox(height: 12),
             Text(
-              '👀 شوفوا الصورة كويس كلكن..\nفي حاجة مش مظبوطة؟ ولا دي صورة عادية؟',
+              '👀 شوفوا الصورة كويس كلكن..\nفي حاجة متلعب فيها؟ ولا الصورة سليمة ومفيهاش خدعة؟',
               textAlign: TextAlign.center,
               style: flatCairo(
                 fontSize: 17,
@@ -317,7 +317,7 @@ class _BluffGameState extends State<BluffGame> {
                 border: Border.all(color: FlatColors.ink, width: 2.5),
               ),
               child: Text(
-                '${_isReal ? 'الصورة حقيقية! ✅' : 'الصورة خدعة! ❌'}\n${_item['explain']}',
+                '${_isReal ? 'الصورة سليمة.. مفيش خدعة! ✅' : 'الصورة متلعب فيها.. خدعة! ❌'}\n${_item['explain']}',
                 textAlign: TextAlign.center,
                 style: flatCairo(
                   fontSize: 16,

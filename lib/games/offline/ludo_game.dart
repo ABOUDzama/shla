@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'ludo_logic.dart';
 
 /// لودو الشلة: classic Ludo for 2-4 seats on one phone. Original flat board
@@ -95,7 +96,14 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
     super.dispose();
   }
 
+  void _juiceEnd() {
+    final w = _game.winner;
+    if (w == null) return;
+    (w < _humans) ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
   void _startGame(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _botTimer?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;

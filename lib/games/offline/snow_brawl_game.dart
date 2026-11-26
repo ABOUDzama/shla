@@ -8,6 +8,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'snow_brawl_logic.dart';
 
 /// معركة التلج: 1-4 players (+ optional bots), one throw button each,
@@ -51,7 +52,14 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
     super.dispose();
   }
 
+  void _juiceEnd() {
+    final w = _match.winner;
+    if (w == null) return;
+    (w < _humans) ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
   void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
@@ -77,6 +85,8 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
         if (_match.isOver) {
           _ticker?.cancel();
           _phase = _SnowPhase.over;
+        _juiceEnd();
+          _juiceEnd();
         }
       });
     });
@@ -94,6 +104,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
       if (_match.isOver) {
         _ticker?.cancel();
         _phase = _SnowPhase.over;
+        _juiceEnd();
       }
     });
   }

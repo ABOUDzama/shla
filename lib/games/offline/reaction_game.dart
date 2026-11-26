@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
@@ -112,6 +113,7 @@ class _ReactionGameState extends State<ReactionGame> {
   }
 
   void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _greenTimer?.cancel();
     _nextTimer?.cancel();
     _humans = humans;
@@ -156,6 +158,11 @@ class _ReactionGameState extends State<ReactionGame> {
     if (_phase != _Phase.waiting && _phase != _Phase.green) return;
     final outcome = _match.tap(player, green: _phase == _Phase.green);
     if (outcome == ReactionOutcome.ignored) return;
+    if (outcome == ReactionOutcome.falseStart) {
+      ArcadeJuice.fail();
+    } else {
+      ArcadeJuice.score();
+    }
     for (final t in _botTimers) {
       t.cancel();
     }
@@ -168,6 +175,10 @@ class _ReactionGameState extends State<ReactionGame> {
           : (reactionNow() - _greenAt!).inMilliseconds;
       _phase = _match.matchWinner != null ? _Phase.matchOver : _Phase.resolved;
     });
+    final mw = _match.matchWinner;
+    if (mw != null) {
+      _botSeats.contains(mw) ? ArcadeJuice.lose() : ArcadeJuice.win();
+    }
     if (_match.matchWinner == null) {
       _nextTimer?.cancel();
       _nextTimer = Timer(const Duration(milliseconds: 1500), () {
