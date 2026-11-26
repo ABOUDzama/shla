@@ -444,6 +444,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
                               : VictoryFriends(
                                   gameTitle: 'سباق الدوس',
                                   winnerName: 'لاعب ${_match.matchWinner! + 1}',
+                                  winnerSeats: [_match.matchWinner!],
                                 )),
                   if (_phase == _RacePhase.sprint)
                     Padding(

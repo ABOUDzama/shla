@@ -164,7 +164,7 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
     } else if (w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'لمّ الفلوس', winnerName: 'لاعب ${w + 1}');
+      head = VictoryFriends(gameTitle: 'لمّ الفلوس', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,

@@ -191,6 +191,8 @@ void main() {
     await tester.pump();
     expect(find.byType(VictoryFriends), findsOneWidget);
     expect(find.text('البوتات كسبوا 🤖'), findsNothing);
+    // crown is grounded in the winner seat (index 1), not the name text
+    expect(find.byKey(const ValueKey('crown_1')), findsOneWidget);
     await settleDown(tester);
   });
 }

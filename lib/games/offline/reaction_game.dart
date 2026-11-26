@@ -301,7 +301,8 @@ class _ReactionGameState extends State<ReactionGame> {
                             .copyWith(fontFamilyFallback: const ['Noto Color Emoji'])))
                 : VictoryFriends(
                     gameTitle: _practice ? null : 'أسرع رد فعل',
-                    winnerName: 'لاعب ${w + 1}');
+                    winnerName: 'لاعب ${w + 1}',
+                    winnerSeats: [w]);
           }),
         if (_phase == _Phase.matchOver)
           Padding(

@@ -250,7 +250,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
     } else if (w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'اضرب الخلد', winnerName: 'لاعب ${w + 1}');
+      head = VictoryFriends(gameTitle: 'اضرب الخلد', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,

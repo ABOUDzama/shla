@@ -286,7 +286,7 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
     } else if (w != null && w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'اقطفها', winnerName: 'لاعب ${w! + 1}');
+      head = VictoryFriends(gameTitle: 'اقطفها', winnerName: 'لاعب ${w! + 1}', winnerSeats: [w!]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,

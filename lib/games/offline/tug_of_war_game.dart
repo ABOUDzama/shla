@@ -252,7 +252,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
     } else if (w != null && _match.botSeats.contains(w)) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'شد الحبل', winnerName: 'لاعب ${w! + 1}');
+      head = VictoryFriends(gameTitle: 'شد الحبل', winnerName: 'لاعب ${w! + 1}', winnerSeats: [w!]);
     }
     return Column(
       mainAxisSize: MainAxisSize.min,

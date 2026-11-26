@@ -273,7 +273,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
     } else if (w != null && _match.botSeats.contains(w)) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else if (w != null) {
-      head = VictoryFriends(gameTitle: 'معركة التلج', winnerName: 'لاعب ${w + 1}');
+      head = VictoryFriends(gameTitle: 'معركة التلج', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
     } else {
       head = Text('تعادل! 😅', style: _t(20));
     }

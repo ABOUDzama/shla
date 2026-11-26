@@ -422,8 +422,11 @@ class _TouchBallGameState extends State<TouchBallGame> {
                                 padding: const EdgeInsets.all(8),
                                 child: Text('البوتات كسبوا 🤖', style: _t(22)),
                               )
-                            : VictoryFriends(gameTitle: 'كورة اللمسة',
-                                winnerName: 'لاعب ${_match.matchWinner! + 1}'),
+                            : VictoryFriends(
+                                gameTitle: 'كورة اللمسة',
+                                winnerName:
+                                    'لاعب ${_match.matchWinner! + 1}',
+                                winnerSeats: [_match.matchWinner!]),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
                     child: Row(

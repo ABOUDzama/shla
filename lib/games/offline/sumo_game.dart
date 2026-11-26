@@ -432,7 +432,7 @@ class _SumoGameState extends State<SumoGame> {
     } else if (_champion != null && _botSeats.contains(_champion)) {
       head = Text('البوتات كسبوا البطولة 🤖', style: _t(22));
     } else if (_champion != null) {
-      head = VictoryFriends(gameTitle: 'سومو الشلة', winnerName: 'لاعب ${_champion! + 1}');
+      head = VictoryFriends(gameTitle: 'سومو الشلة', winnerName: 'لاعب ${_champion! + 1}', winnerSeats: [_champion!]);
     } else {
       head = Text('تعادل!', style: _t(20));
     }

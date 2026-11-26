@@ -167,7 +167,7 @@ class _ChickenRunGameState extends State<ChickenRunGame> {
     } else if (w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'جري الفراخ', winnerName: 'لاعب ${w + 1}');
+      head = VictoryFriends(gameTitle: 'جري الفراخ', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,

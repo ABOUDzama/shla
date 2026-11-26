@@ -164,7 +164,7 @@ class _PigeonGameState extends State<PigeonGame> {
     } else if (w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'أطعم الحمامة', winnerName: 'لاعب ${w + 1}');
+      head = VictoryFriends(gameTitle: 'أطعم الحمامة', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,

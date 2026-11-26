@@ -122,3 +122,7 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 ## Batch 19 (crown seat mapping)
 - VictoryFriends seat parser now maps EVERY 'لاعب N' label in winnerName to a crown (shared wins like 'لاعب 1 و لاعب 3' crown seats 0 and 2; single labels unchanged; non-seat names like friend names or 'بوت N' still crown nobody - we never guess). This closes the "winner crown missing on the friend-name/team-name site" gap generically.
 - victory_crown_test: 4/4 incl. new shared-win-label test; seat-2 golden unchanged.
+
+## Batch 20 (crown grounded in seat data)
+- All 14 arcade VictoryFriends call sites now pass winnerSeats explicitly from match state ([w], [_match.matchWinner!], [_match.winner!], [_champion!]): the crown lands on the winning seat because the game says so, not because the name text parses. The name-label parser stays only as a fallback for label-only callers. Named-friend winners (seega/xo/gobblet) record wins via ResultsService directly and have no crown UI - the crown path is arcade-only and now seat-grounded everywhere it is used. Soccer untouched (removed from playable list).
+- tank_battle widget test asserts crown_1 key on a human seat-1 win. All arcade widget suites green (59 tests), crown 4/4, analyze clean of errors.

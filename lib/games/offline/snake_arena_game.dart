@@ -194,7 +194,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
     } else if (w != null && w >= 0 && _match.botSeats.contains(w)) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else if (w != null && w >= 0) {
-      head = VictoryFriends(gameTitle: 'حية الشلة', winnerName: 'لاعب ${w + 1}');
+      head = VictoryFriends(gameTitle: 'حية الشلة', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
     } else {
       head = Text('تعادل! الكل وقع في بعض 😅', style: _t(20));
     }

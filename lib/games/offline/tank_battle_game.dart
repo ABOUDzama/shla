@@ -254,7 +254,8 @@ class _TankBattleGameState extends State<TankBattleGame> {
         else if (_match.winner != null && _match.winner! < _humans)
           VictoryFriends(
               gameTitle: 'دبابات الشلة',
-              winnerName: 'لاعب ${_match.winner! + 1}')
+              winnerName: 'لاعب ${_match.winner! + 1}',
+              winnerSeats: [_match.winner!])
         else if (_match.winner != null)
           Text(
             'البوتات كسبوا 🤖',
