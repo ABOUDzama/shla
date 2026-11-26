@@ -92,3 +92,6 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - شد الحبل: picker 1-4 -> bots yes/no; 1P+لا practice (shows شدّة صح/غلط stats, no record). Bots fill to 4 and self-tap near the green window (80% at <=0.75*perfectWindow).
 - Controls split per side like snake (bottom half bottom, rest top rotated 180); keys tug_pull_N. Over: practice stats / البوتات كسبوا / VictoryFriends.
 - Tests: logic+widget 11 pass (incl. new bots-pull and solo-practice). proof golden regenerated + pixel-viewed. small_screen tug passes. Removed stale funky_theme import.
+
+## Batch 15c (02:04) rotated whack tap coverage
+- whack widget test added: in 2p face-to-face, tapping the VISUAL position of an up mole in the rotated top grid (player 1) scores for player 1 only. 5/5 whack widget tests pass. The owed rotated-hole tap test is DONE.

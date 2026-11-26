@@ -158,4 +158,30 @@ void main() {
     expect(rec, isEmpty);
     await settle(tester);
   });
+
+  // In 2p face-to-face the top grid is rotated 180 deg. A tap at the
+  // VISUAL position of an up mole in player 1's grid must score for
+  // player 1 (hit testing must see through the rotation).
+  testWidgets('rotated top grid: tapping the visual mole position scores for player 1', (tester) async {
+    await start(tester, '2 لاعبين', 'لا');
+    final match = m(tester);
+    var got = false;
+    for (var i = 0; i < 200 && !got; i++) {
+      await tester.pump(const Duration(milliseconds: 60));
+      for (var h = 0; h < 4 && !got; h++) {
+        if (match.isUp(1, h)) {
+          final rect = tester.getRect(find.byKey(const Key('mole_grid_1')));
+          // child-local center of hole h, flipped both axes by the 180 deg rotation
+          final fx = (h % 2 == 0) ? 0.75 : 0.25;
+          final fy = (h ~/ 2 == 0) ? 0.75 : 0.25;
+          await tester.tapAt(Offset(rect.left + rect.width * fx, rect.top + rect.height * fy));
+          got = true;
+        }
+      }
+    }
+    expect(got, true, reason: 'no mole ever came up in player 1 grid');
+    expect(match.scores[1], 1);
+    expect(match.scores[0], 0);
+    await settle(tester);
+  });
 }
