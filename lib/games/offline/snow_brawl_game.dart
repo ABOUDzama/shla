@@ -95,6 +95,11 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
   void _throw(int i) {
     if (_phase != _SnowPhase.playing || i >= _humans || !_match.alive(i)) return;
     final hit = _match.throwSnowball(i);
+    if (hit) {
+      ArcadeJuice.hit();
+    } else {
+      ArcadeJuice.tick();
+    }
     setState(() {
       _banner = _practice
           ? (hit ? 'إصابة! ❄' : 'رميت بعيد 😬')

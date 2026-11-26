@@ -3,6 +3,7 @@ import 'dart:math';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/flat_theme.dart';
 
@@ -181,7 +182,16 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
     }
   }
 
-  void _start(int humans, bool withBots) {
+    void _juiceEnd() {
+    final mw = _match.matchWinner;
+    if (mw == null) return;
+    final w = _seatOfZone[mw];
+    if (w == null) return;
+    _botSeats.contains(w) ? ArcadeJuice.lose() : ArcadeJuice.win();
+  }
+
+void _start(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _humans = humans;
     _practice = humans == 1 && !withBots;
     _seats = _practice ? 1 : (withBots ? 4 : humans);
@@ -199,8 +209,13 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
 
   void _tap(int seat) {
     if (_phase != _CatchPhase.playing || _match.matchWinner != null || !_spin.isAnimating) return;
+    final before = _score(seat);
     _match.tap(_zoneOfSeat[seat], _spin.value * 360 + _lap * 360);
-    if (_match.matchWinner != null) _spin.stop();
+    if (_score(seat) > before) ArcadeJuice.score();
+    if (_match.matchWinner != null) {
+      _spin.stop();
+      _juiceEnd();
+    }
     setState(() {});
   }
 

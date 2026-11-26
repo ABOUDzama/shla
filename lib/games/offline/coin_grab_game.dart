@@ -147,7 +147,9 @@ void _start(int humans, bool withBots) {
     return Listener(
       key: ValueKey('pad_$seat'),
       onPointerDown: (_) {
-        if (_phase == _Phase.playing) _match.grab(seat);
+        if (_phase == _Phase.playing && _match.grab(seat) > 0) {
+          ArcadeJuice.score();
+        }
       },
       child: Container(
         width: 62,

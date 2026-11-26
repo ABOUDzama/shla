@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/flat_theme.dart';
 
@@ -167,6 +168,7 @@ class _SumoGameState extends State<SumoGame> {
   }
 
   void _startMatch() {
+    ArcadeJuice.tap();
     _timer?.cancel();
     _botTimer?.cancel();
     setState(() {
@@ -219,6 +221,7 @@ class _SumoGameState extends State<SumoGame> {
     _botTimer?.cancel();
     if (_practice) {
       setState(() => _phase = _SumoPhase.over);
+      ArcadeJuice.win();
       return;
     }
     final w = _match.winner;
@@ -237,6 +240,7 @@ class _SumoGameState extends State<SumoGame> {
     if (_contenders.length == 1) {
       _champion = winnerSeat;
       setState(() => _phase = _SumoPhase.over);
+      _botSeats.contains(winnerSeat) ? ArcadeJuice.lose() : ArcadeJuice.win();
     } else {
       setState(() {
         _breakText = '${_seatName(winnerSeat)} كسب الماتش! 💪';

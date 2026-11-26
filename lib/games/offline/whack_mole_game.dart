@@ -89,7 +89,9 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
 
   void _whack(int player, int hole) {
     if (_phase != _MolePhase.playing || player >= _humans) return;
+    final before = _match.scores[player];
     _match.whack(player, hole);
+    if (_match.scores[player] > before) ArcadeJuice.score();
     setState(() {
       if (_match.isOver) {
         _ticker?.cancel();

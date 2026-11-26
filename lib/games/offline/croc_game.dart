@@ -108,11 +108,13 @@ class _CrocGameScreenState extends State<CrocGameScreen> {
   void _pull(int tooth) {
     final chomped = _game.pull(tooth);
     if (!chomped) {
+      ArcadeJuice.tick();
       setState(() {});
       _maybeBotTurn();
       return;
     }
     // Chomp: close the jaws, hold a beat, then reset the round or finish.
+    ArcadeJuice.hit();
     setState(() => _chomping = true);
     _botTimer?.cancel();
     Timer(const Duration(milliseconds: 1100), () {

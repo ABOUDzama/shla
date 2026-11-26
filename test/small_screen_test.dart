@@ -624,7 +624,7 @@ void main() {
     await tester.tap(find.text('ح'));
     await fixedPumps(tester);
     // أحمد challenges منى
-    await tapIf(tester, find.text('تحدي 🚩'));
+    await tapIf(tester, find.text('تحدي ⚡'));
     await fixedPumps(tester);
     await capture360(tester, 'ghost_challenge');
     expectNoOverflow(tester);
@@ -1056,7 +1056,7 @@ void main() {
     await fixedPumps(tester);
     await capture360(tester, 'wink_killed');
     // Detective accuses: pick the first alive non-detective player
-    await tapIf(tester, find.text('اتهام من المحقق 🚩'));
+    await tapIf(tester, find.text('اتهام من المحقق 🔍'));
     await fixedPumps(tester);
     await capture360(tester, 'wink_accuse');
     expectNoOverflow(tester);

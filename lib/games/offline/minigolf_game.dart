@@ -7,6 +7,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'minigolf_logic.dart';
 
 /// جولف الشلة: turn-based minigolf for 1-4 seats on one phone. Three holes,
@@ -78,7 +79,25 @@ class _MiniGolfGameScreenState extends State<MiniGolfGameScreen>
     super.dispose();
   }
 
-  void _startMatch(int humans, bool withBots) {
+    void _juiceEnd() {
+    if (_practice) {
+      ArcadeJuice.win();
+      return;
+    }
+    final totals = [
+      for (var st = 0; st < _seatCount; st++)
+        _strokes[st].fold(0, (a, b) => a + b),
+    ];
+    final best = totals.fold(999, (a, b) => a < b ? a : b);
+    final humanWin = [
+      for (var i = 0; i < _seatCount; i++)
+        if (totals[i] == best && !_bots.contains(i)) i,
+    ].isNotEmpty;
+    humanWin ? ArcadeJuice.win() : ArcadeJuice.lose();
+  }
+
+void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _humans = humans;
     _practice = humans == 1 && !withBots;
     _seatCount = _practice ? 1 : (withBots ? 4 : humans);
@@ -166,6 +185,7 @@ class _MiniGolfGameScreenState extends State<MiniGolfGameScreen>
         _phase = _GolfPhase.banner;
       } else {
         _phase = _GolfPhase.over;
+        _juiceEnd();
       }
       _gaveUp = false;
     });

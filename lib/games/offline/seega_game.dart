@@ -267,7 +267,7 @@ class _SeegaGameState extends State<SeegaGame> {
                 .animate(key: ValueKey(winner ?? currentPlayer.toString()))
                 .scale()
                 .fadeIn(),
-            const SizedBox(height: 30),
+            const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: AspectRatio(
@@ -335,7 +335,7 @@ class _SeegaGameState extends State<SeegaGame> {
                 ),
               ),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 12),
             if (winner != null)
               FunkyButton(
                 onPressed: _resetGame,
