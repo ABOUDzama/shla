@@ -293,16 +293,35 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
           child: Center(
             child: AspectRatio(
               aspectRatio: 1,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final cell = constraints.maxWidth / 15;
-                  return Stack(
-                    children: [
-                      ..._boardCells(cell),
-                      ..._tokens(cell, legal),
-                    ],
-                  );
-                },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(color: FlatColors.border, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                        color: FlatColors.ink.withValues(alpha: 0.06),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4)),
+                  ],
+                ),
+                padding: const EdgeInsets.all(6),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final cell = constraints.maxWidth / 15;
+                      return Stack(
+                        children: [
+                          ..._boardCells(cell),
+                          ..._yardDice(cell),
+                          ..._tokens(cell, legal),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ),
@@ -314,9 +333,77 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
                 style: _t(13, w: FontWeight.w900, color: _colors[current]),
                 textDirection: TextDirection.rtl),
           ),
-        _diceBar(current, legal),
+        if (!_currentIsBot && _game.dice != null && legal.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text('دوس على حجر يتحرك 🎯',
+                style: _t(13, w: FontWeight.w900, color: _colors[current]),
+                textDirection: TextDirection.rtl),
+          ),
+        const SizedBox(height: 8),
       ],
     );
+  }
+
+  /// One die per seat, in that seat's yard corner. The active seat's die is
+  /// full-size and colored; tapping it rolls (humans only). Bots' dice show
+  /// their rolled pips while they play.
+  List<Widget> _yardDice(double cell) {
+    const centers = [(2.5, 2.5), (2.5, 11.5), (11.5, 11.5), (11.5, 2.5)];
+    final widgets = <Widget>[];
+    for (var p = 0; p < _game.playerCount; p++) {
+      final active = p == _game.currentPlayer && !_game.isOver;
+      final rolled = active ? _game.dice : null;
+      final isBot = _game.isBot(p);
+      final size = cell * 2.0;
+      widgets.add(Positioned(
+        left: centers[p].$2 * cell - size / 2,
+        top: centers[p].$1 * cell - size / 2,
+        width: size,
+        height: size,
+        child: GestureDetector(
+          key: ValueKey('die_$p'),
+          onTap: (active && !isBot && _game.dice == null) ? _humanRoll : null,
+          child: AnimatedScale(
+            duration: const Duration(milliseconds: 200),
+            scale: active ? 1.0 : 0.85,
+            child: Opacity(
+              opacity: active ? 1 : 0.55,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(size * 0.22),
+                  border: Border.all(
+                      color: active ? _colors[p] : FlatColors.border,
+                      width: active ? 3 : 2),
+                  boxShadow: active
+                      ? [
+                          BoxShadow(
+                              color: _colors[p].withValues(alpha: 0.35),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3))
+                        ]
+                      : null,
+                ),
+                child: Center(
+                  child: rolled != null
+                      ? _DiceFace(value: rolled, color: _colors[p])
+                      : isBot
+                          ? Text('🤖',
+                              style: TextStyle(
+                                  fontSize: size * 0.34,
+                                  fontFamilyFallback: _emojiFallback))
+                          : Icon(Icons.casino_rounded,
+                              color: active ? _colors[p] : FlatColors.border,
+                              size: size * 0.5),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ));
+    }
+    return widgets;
   }
 
   Widget _turnBar(int current) {
@@ -356,42 +443,6 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
               ),
             ),
           ],
-        ],
-      ),
-    );
-  }
-
-  Widget _diceBar(int current, List<int> legal) {
-    final rolled = _game.dice;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _colors[current], width: 3),
-            ),
-            child: Center(
-              child: rolled == null
-                  ? Text('🎲', style: const TextStyle(fontSize: 26, fontFamilyFallback: _emojiFallback))
-                  : Text('$rolled', style: _t(26, w: FontWeight.w900)),
-            ),
-          ),
-          const SizedBox(width: 14),
-          if (!_currentIsBot)
-            FilledButton(
-              onPressed: rolled == null ? _humanRoll : null,
-              style: FilledButton.styleFrom(backgroundColor: _colors[current]),
-              child: Text(rolled == null ? 'ارمي 🎲' : 'اختار حجر',
-                  style: _t(16, color: Colors.white)),
-            )
-          else
-            Text('البوت بيلعب…', style: _t(13, color: FlatColors.ink.withValues(alpha: 0.6))),
         ],
       ),
     );
@@ -451,7 +502,9 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: _cellColor(row, col),
-              border: Border.all(color: FlatColors.border, width: 0.6),
+              border: inYard
+                  ? null
+                  : Border.all(color: FlatColors.border, width: 0.6),
             ),
             child: safe
                 ? Center(
@@ -506,7 +559,7 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
       const Offset(0.72, 0.72),
     ];
     final o = offsets[stackIndex % 4];
-    final size = cell * 0.62;
+    final size = cell * 0.66;
     return Positioned(
       left: (spot.$2 + o.dx) * cell - size / 2,
       top: (spot.$1 + o.dy) * cell - size / 2,
@@ -530,6 +583,16 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
                     blurRadius: 4,
                     offset: const Offset(0, 2)),
               ],
+            ),
+            child: Center(
+              child: Container(
+                width: size * 0.34,
+                height: size * 0.34,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
+              ),
             ),
           ),
         ),
@@ -577,6 +640,58 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
           _bigChoice('العبوا تاني 🔁', () => setState(() {
                 _phase = _LudoPhase.pickPlayers;
               })),
+        ],
+      ),
+    );
+  }
+}
+
+class _DiceFace extends StatelessWidget {
+  const _DiceFace({required this.value, required this.color});
+
+  final int value;
+  final Color color;
+
+  static const Map<int, List<int>> _pips = {
+    1: [4],
+    2: [0, 8],
+    3: [0, 4, 8],
+    4: [0, 2, 6, 8],
+    5: [0, 2, 4, 6, 8],
+    6: [0, 2, 3, 5, 6, 8],
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final lit = _pips[value]!;
+    return Padding(
+      padding: const EdgeInsets.all(6),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          for (var r = 0; r < 3; r++)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                for (var c = 0; c < 3; c++)
+                  Expanded(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: lit.contains(r * 3 + c)
+                                ? color
+                                : Colors.transparent,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
         ],
       ),
     );

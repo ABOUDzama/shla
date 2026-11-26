@@ -64,13 +64,15 @@ void main() {
     await tester.tap(find.text('اه 🤖'));
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text('ارمي 🎲'), findsOneWidget);
+    // Each seat has its own die in its corner; seat 0 (human) is active.
+    expect(find.byKey(const ValueKey('die_0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('die_3')), findsOneWidget);
     await expectLater(find.byType(LudoGameScreen),
         matchesGoldenFile('goldens/ludo_board.png'));
     await end(tester);
   });
 
-  testWidgets('a human roll enables a token pick', (tester) async {
+  testWidgets('tapping the corner die rolls it for that seat', (tester) async {
     await pumpGame(tester);
     await tester.tap(find.text('ابدأ اللعبة 🚀'));
     await tester.pump(const Duration(milliseconds: 300));
@@ -78,14 +80,17 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('لا'));
     await tester.pump(const Duration(milliseconds: 400));
-    await tester.tap(find.text('ارمي 🎲'));
+    await tester.tap(find.byKey(const ValueKey('die_0')));
     await tester.pump(const Duration(milliseconds: 500));
-    // Either a token became movable ('اختار حجر') or the turn moved on
-    // with no legal move. Both are valid game states.
-    final picked = find.text('اختار حجر');
-    final rollAgain = find.text('ارمي 🎲');
-    expect(picked.evaluate().isNotEmpty || rollAgain.evaluate().isNotEmpty,
-        isTrue);
+    final g = (tester.state(find.byType(LudoGameScreen)) as dynamic).debugGame;
+    if (g.dice != null) {
+      // Rolled and moves available: the pick hint shows.
+      expect(find.text('دوس على حجر يتحرك 🎯'), findsOneWidget);
+      expect(g.legalMoves(), isNotEmpty);
+    } else {
+      // No legal move (or a third six): the turn moved on cleanly.
+      expect(g.dice, isNull);
+    }
     await end(tester);
   });
 }
