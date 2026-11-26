@@ -11,6 +11,17 @@ class Car {
   double speed = 0;
   double theta = 0; // unwrapped progress angle around the track
   double finishedAt = -1;
+
+  /// Drift charge 0..1, built by steering hard at speed on the track
+  /// (reference Rally Drifters mechanic). A full charge can be spent as a
+  /// short boost.
+  double energy = 0;
+
+  /// Boost window end (match time); -1 = not boosting.
+  double boostUntil = -1;
+
+  /// Recent positions while drifting, for the tire-mark visual.
+  final List<Point<double>> driftTrail = [];
 }
 
 class CarRaceMatch {
@@ -24,6 +35,7 @@ class CarRaceMatch {
       car.theta = th - startAngle; // start line at the right side (theta = 0)
       cars.add(car);
       _skill.add(0.90 + _random.nextDouble() * 0.08);
+      _lastSteer.add(0);
     }
   }
 
@@ -36,7 +48,29 @@ class CarRaceMatch {
   static const double band = 0.24; // |rho - 1| < band is asphalt
   static const double maxSpeed = 0.42;
   static const double grassSpeed = 0.16;
+  static const double boostSpeed = 0.60;
+  static const double boostSeconds = 1.3;
   static const double turnRate = 2.7;
+
+  /// Pending boost requests (seat -> true), consumed by the next [step].
+  final Set<int> _boostRequests = {};
+
+  /// Ask to spend a full drift charge as a boost (no-op without a charge).
+  void requestBoost(int seat) => _boostRequests.add(seat);
+
+  bool boosting(int i) => time < cars[i].boostUntil;
+
+  /// True while the car is steering hard at speed on the track (building
+  /// charge and leaving tire marks).
+  bool drifting(int i) {
+    final c = cars[i];
+    return _lastSteer[i] != 0 &&
+        c.speed > maxSpeed * 0.55 &&
+        onTrack(c.x, c.y) &&
+        !boosting(i);
+  }
+
+  final List<int> _lastSteer = [];
 
   final int seats;
   final int laps;
@@ -68,9 +102,27 @@ class CarRaceMatch {
     for (var i = 0; i < cars.length; i++) {
       final c = cars[i];
       if (c.finishedAt >= 0) continue;
-      final t = botSeats.contains(i) ? _botTurn(i) : (turn[i] ?? 0);
+      var t = botSeats.contains(i) ? _botTurn(i) : (turn[i] ?? 0);
+      _lastSteer[i] = t;
+      // Boost: a bot spends a full charge on the straights.
+      if (botSeats.contains(i) && c.energy >= 1 && t == 0) {
+        _boostRequests.add(i);
+      }
+      if (_boostRequests.remove(i) && c.energy >= 1 && c.finishedAt < 0) {
+        c.energy = 0;
+        c.boostUntil = time + boostSeconds;
+      }
+      // Drift charging: steering hard at speed on the track builds energy.
+      if (drifting(i)) {
+        c.energy = min(1.0, c.energy + 0.28 * dt);
+        c.driftTrail.add(Point(c.x, c.y));
+        if (c.driftTrail.length > 40) c.driftTrail.removeAt(0);
+      } else if (c.driftTrail.isNotEmpty && boosting(i)) {
+        c.driftTrail.clear();
+      }
       c.heading += t * turnRate * dt;
-      final top = onTrack(c.x, c.y) ? maxSpeed : grassSpeed;
+      var top = onTrack(c.x, c.y) ? maxSpeed : grassSpeed;
+      if (boosting(i)) top = max(top, boostSpeed);
       final cap = botSeats.contains(i) ? top * _skill[i] : top;
       c.speed += (cap - c.speed) * min(1.0, 3.0 * dt);
       c.x += cos(c.heading) * c.speed * dt;

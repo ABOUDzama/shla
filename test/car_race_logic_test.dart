@@ -80,4 +80,34 @@ void main() {
     for (var i = 0; i < 100; i++) { m.step(0.016, {0: 1}); }
     expect(c.speed, greaterThan(0.05));
   });
+
+  test('drifting builds charge on the track and boost spends it', () {
+    final m = CarRaceMatch(seats: 2, random: Random(1));
+    // Drive seat 0 hard to the left for a while: on the oval this keeps
+    // the car near the start straight, at speed, steering => charge.
+    for (var i = 0; i < 400; i++) {
+      m.step(0.016, {0: 1, 1: 0});
+    }
+    final c = m.cars[0];
+    expect(c.energy, greaterThan(0.0));
+    // force a full charge, then boost
+    c.energy = 1;
+    m.requestBoost(0);
+    final before = c.speed;
+    m.step(0.016, {0: 0, 1: 0});
+    expect(m.boosting(0), isTrue);
+    expect(c.energy, 0);
+    for (var i = 0; i < 20; i++) {
+      m.step(0.016, {0: 0, 1: 0});
+    }
+    expect(c.speed, greaterThan(before));
+  });
+
+  test('boost request without a full charge is a no-op', () {
+    final m = CarRaceMatch(seats: 2, random: Random(1));
+    m.step(0.016, {0: 0, 1: 0});
+    m.requestBoost(0);
+    m.step(0.016, {0: 0, 1: 0});
+    expect(m.boosting(0), isFalse);
+  });
 }

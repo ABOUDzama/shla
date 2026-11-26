@@ -38,6 +38,22 @@ class _CarRaceGameState extends State<CarRaceGame> {
   int _humans = 2;
   bool _practice = false;
   final Map<int, int> _turn = {};
+  final Set<String> _padDown = {};
+
+  void _padEvent(int seat, int dir, bool down) {
+    final key = '$seat:$dir';
+    final other = '$seat:${-dir}';
+    if (down) {
+      _padDown.add(key);
+      _turn[seat] = dir;
+      // Reference mechanic: hold both steering pads to spend a full drift
+      // charge as a boost.
+      if (_padDown.contains(other)) _match.requestBoost(seat);
+    } else {
+      _padDown.remove(key);
+      _turn[seat] = _padDown.contains(other) ? -dir : 0;
+    }
+  }
 
   @override
   void dispose() {
@@ -58,6 +74,7 @@ class _CarRaceGameState extends State<CarRaceGame> {
       m.botSeats.add(s);
     }
     _turn.clear();
+    _padDown.clear();
     setState(() {
       _match = m;
       _phase = _Phase.playing;
@@ -138,9 +155,9 @@ class _CarRaceGameState extends State<CarRaceGame> {
   Widget _pad(int seat, int dir) {
     return Listener(
       key: ValueKey('pad_${seat}_${dir < 0 ? 'l' : 'r'}'),
-      onPointerDown: (_) => _turn[seat] = dir,
-      onPointerUp: (_) => _turn[seat] = 0,
-      onPointerCancel: (_) => _turn[seat] = 0,
+      onPointerDown: (_) => _padEvent(seat, dir, true),
+      onPointerUp: (_) => _padEvent(seat, dir, false),
+      onPointerCancel: (_) => _padEvent(seat, dir, false),
       child: Container(
         width: 60,
         height: 60,
@@ -190,7 +207,7 @@ class _CarRaceGameState extends State<CarRaceGame> {
             playersLabel: '١-٤ لاعبين',
             showBotsChip: true,
         description:
-            'سباق ٣ لفات على حلبة من فوق. عربيتك بتمشي لوحدها: دوس مطوّلاً على السهم الشمال أو اليمين في ركنك عشان تلفّ. لو خرجت من الأسفلت العربية بتبطّأ. أول واحد يخلّص ٣ لفات يكسب',
+            'سباق ٣ لفات على حلبة رملية من فوق. عربيتك بتمشي لوحدها: دوس مطوّلاً على السهم الشمال أو اليمين في ركنك عشان تلفّ. اللف القوي وانت بسرعة بيشحن الانجراف، ودوس السهمين مع بعض عشان تعمل تعزيز ⚡. لو خرجت من المسار العربية بتبطّأ. أول واحد يخلّص ٣ لفات يكسب',
         icon: '🏎',
         onStart: () => setState(() => _showIntro = false),
       ),
@@ -272,7 +289,7 @@ class _TrackPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final k = size.width;
     final rr = RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(18));
-    canvas.drawRRect(rr, Paint()..color = const Color(0xFFB9E3A8)); // grass
+    canvas.drawRRect(rr, Paint()..color = const Color(0xFFE9D6A7)); // sand
     canvas.save();
     canvas.clipRRect(rr);
     Path ring(double r) {
@@ -286,11 +303,11 @@ class _TrackPainter extends CustomPainter {
     final outer = ring(1 + CarRaceMatch.band);
     final inner = ring(1 - CarRaceMatch.band);
     final asphalt = Path.combine(PathOperation.difference, outer, inner);
-    canvas.drawPath(asphalt, Paint()..color = const Color(0xFF8E94A6));
+    canvas.drawPath(asphalt, Paint()..color = const Color(0xFFC9A06C)); // packed dirt
     canvas.drawPath(outer, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 3);
     canvas.drawPath(inner, Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 3);
     // inner island
-    canvas.drawPath(inner, Paint()..color = const Color(0xFF9ED68B));
+    canvas.drawPath(inner, Paint()..color = const Color(0xFFF2E3BB));
     // dashed centre line
     final center = ring(1);
     for (final mt in center.computeMetrics()) {
@@ -312,6 +329,22 @@ class _TrackPainter extends CustomPainter {
         Paint()..color = i.isEven ? FlatColors.ink : Colors.white,
       );
     }
+    // drift tire marks
+    final markPaint = Paint()
+      ..color = const Color(0x55000000)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round;
+    for (var i = 0; i < m.cars.length; i++) {
+      final trail = m.cars[i].driftTrail;
+      if (trail.length < 2) continue;
+      final path = Path()
+        ..moveTo(trail.first.x * k, trail.first.y * k);
+      for (final pt in trail.skip(1)) {
+        path.lineTo(pt.x * k, pt.y * k);
+      }
+      canvas.drawPath(path, markPaint);
+    }
     // cars
     for (var i = 0; i < m.cars.length; i++) {
       final c = m.cars[i];
@@ -326,6 +359,14 @@ class _TrackPainter extends CustomPainter {
         RRect.fromRectAndRadius(Rect.fromLTWH(1, -6, 9, 12), const Radius.circular(3)),
         Paint()..color = Colors.white,
       );
+      // boost flame
+      if (m.boosting(i)) {
+        canvas.drawOval(
+          Rect.fromCenter(
+              center: const Offset(-19, 0), width: 14, height: 8),
+          Paint()..color = const Color(0xFFFFC93C),
+        );
+      }
       canvas.restore();
     }
     // lap counters in the arena centre, one per seat
@@ -339,6 +380,23 @@ class _TrackPainter extends CustomPainter {
         textDirection: TextDirection.rtl,
       )..layout();
       tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - 40 + i * 22));
+      // drift charge bar under the lap line (reference boost meter)
+      final barW = 70.0, barH = 5.0;
+      final bx = size.width / 2 - barW / 2;
+      final by = size.height / 2 - 40 + i * 22 + 17;
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, barW, barH),
+            const Radius.circular(3)),
+        Paint()..color = Colors.white.withValues(alpha: 0.6),
+      );
+      final e = m.cars[i].energy;
+      if (e > 0) {
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(Rect.fromLTWH(bx, by, barW * e, barH),
+              const Radius.circular(3)),
+          Paint()..color = colors[i],
+        );
+      }
     }
     canvas.restore();
     canvas.drawRRect(rr, Paint()..color = FlatColors.border..style = PaintingStyle.stroke..strokeWidth = 3);
