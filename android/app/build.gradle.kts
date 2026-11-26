@@ -40,6 +40,13 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    packaging {
+        jniLibs {
+            // compress native libs inside the APK; keeps the direct-install APK small
+            useLegacyPackaging = true
+        }
+    }
 }
 
 kotlin {

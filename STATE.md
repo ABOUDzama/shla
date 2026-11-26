@@ -146,3 +146,8 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - verification_test '1234 tab': rhythm registration made the card grid lazy-build beyond the cache extent, so scrollUntilVisible hit StateError on unbuilt cards. Replaced with incremental drag loops; added تحدّي الإيقاع to the expected 1234 card list (now 12 cards).
 - new_games_test registry count: stale since 7696f76 (chicken added, count never bumped). Now asserts 49 games / 25 new-badge, containsAll adds جري الفراخ، سباق العربيات، أطعم الحمامة، تحدّي الإيقاع.
 - FULL SUITE GREEN: all 48 test files run and pass in chunks (~335 tests); capture_tank_video self-skips unless CAPTURE_VIDEO=1 (by design). flutter analyze: 0 errors.
+
+## Batch 24 — release APK build config (2026-11-26)
+- android/gradle.properties: raised daemon heap 512m/256m → 1536m/512m (2GB sandbox OOM-killed the default during dex); workers.max stays 1, daemon off.
+- android/app/build.gradle.kts: added packaging { jniLibs.useLegacyPackaging = true } so .so entries are compressed in future APKs.
+- Universal release APK built and verified (apksigner OK, debug cert; v1.2.2 vc6; arm64-v8a/armeabi-v7a/x86_64). 181MB: 83MB game-tile PNGs + ~88MB native libs; arm64-only split still ~104MB, and split build OOMs on this box. No physical device/emulator available: install/launch/mic/restart unverified.
