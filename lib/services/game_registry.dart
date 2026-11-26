@@ -67,6 +67,7 @@ import '../games/offline/who_said_game.dart';
 import '../games/offline/heads_up_game.dart';
 import '../games/offline/psych_game.dart';
 import '../games/offline/justone_game.dart';
+import '../games/offline/wavelength_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -231,6 +232,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'المؤشر',
+      description: 'تلميح واحد.. وفريقك يقرا أفكارك على المؤشر!',
+      icon: Icons.multiple_stop,
+      color: FunkyColors.cyan,
+      screen: WavelengthGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'كلمة واحدة',

@@ -46,6 +46,7 @@ import 'package:shella/games/offline/five_seconds_game.dart';
 import 'package:shella/games/offline/heads_up_game.dart';
 import 'package:shella/games/offline/psych_game.dart';
 import 'package:shella/games/offline/justone_game.dart';
+import 'package:shella/games/offline/wavelength_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -492,6 +493,52 @@ void main() {
     await capture360(tester, 'justone_turnend');
     expectNoOverflow(tester);
     expect(find.textContaining('غلط'), findsWidgets);
+  });
+
+  testWidgets('small screen: wavelength flow', (tester) async {
+    await pumpSmall(tester, const WavelengthGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    for (final name in ['أحمد', 'منى', 'كريم', 'سارة']) {
+      await tapIf(tester, find.text(name));
+    }
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Psychic pass -> psychic view with target shown
+    await tapIf(tester, find.textContaining('تمام، أنا'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'wavelength_psychic');
+    expectNoOverflow(tester);
+    await tester.enterText(find.byType(TextField), 'قهوة الصبح');
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('قولتها! اخفي الهدف 🙈'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Team phase: drag the dial a bit, then lock it
+    await capture360(tester, 'wavelength_team');
+    expectNoOverflow(tester);
+    await tester.drag(find.byType(CustomPaint).last, const Offset(60, -40));
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('ثبّتوا المؤشر 🔒'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Other team guesses left
+    await capture360(tester, 'wavelength_leftright');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.text('شمال'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'wavelength_reveal');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.textContaining('الدور الجاي'));
+    await fixedPumps(tester);
+    // Next round should open on the other team's psychic pass
+    expect(find.textContaining('عدّي الموبايل لـ'), findsOneWidget);
   });
 
   testWidgets('small screen: charades setup', (tester) async {
