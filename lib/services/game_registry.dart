@@ -71,6 +71,7 @@ import '../games/offline/wavelength_game.dart';
 import '../games/offline/travel_bag_game.dart';
 import '../games/offline/ghost_word_game.dart';
 import '../games/offline/wink_murder_game.dart';
+import '../games/offline/three_rounds_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -235,6 +236,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'ثلاث جولات',
+      description: 'نفس الأسماء 3 جولات: وصف، كلمة واحدة، تمثيل!',
+      icon: Icons.timer,
+      color: FunkyColors.violet,
+      screen: ThreeRoundsGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'الغمّاز',

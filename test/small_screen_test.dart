@@ -50,6 +50,7 @@ import 'package:shella/games/offline/wavelength_game.dart';
 import 'package:shella/games/offline/travel_bag_game.dart';
 import 'package:shella/games/offline/ghost_word_game.dart';
 import 'package:shella/games/offline/wink_murder_game.dart';
+import 'package:shella/games/offline/three_rounds_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -648,6 +649,48 @@ void main() {
     await fixedPumps(tester);
     // Next round starts with منى
     expect(find.text('دور منى'), findsOneWidget);
+  });
+
+  testWidgets('small screen: three rounds flow', (tester) async {
+    await pumpSmall(tester, const ThreeRoundsGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    for (final name in ['أحمد', 'منى', 'كريم', 'سارة']) {
+      await tapIf(tester, find.text(name));
+    }
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Teams screen
+    await capture360(tester, 'tr_teams');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.text('يلا نبدأ الجولة 1! 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Round 1 intro
+    await capture360(tester, 'tr_round1');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.text('فهمنا! يلا 💪'));
+    await fixedPumps(tester);
+    // Turn ready
+    await capture360(tester, 'tr_turnready');
+    expectNoOverflow(tester);
+    await tapIf(tester, find.textContaining('ابدأ الـ'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Play: guess two cards right (round 1 has no pass button)
+    await capture360(tester, 'tr_play');
+    expectNoOverflow(tester);
+    expect(find.text('غلط / تخطي ❌'), findsNothing);
+    await tapIf(tester, find.text('صح! ✅'));
+    await fixedPumps(tester);
+    await tapIf(tester, find.text('صح! ✅'));
+    await fixedPumps(tester);
+    await capture360(tester, 'tr_play2');
+    expectNoOverflow(tester);
   });
 
   testWidgets('small screen: wink murder flow', (tester) async {
