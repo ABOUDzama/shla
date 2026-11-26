@@ -63,3 +63,26 @@ void main() {
     expect(run(), run());
   });
 }
+
+  test('team mode requires 4 players', () {
+    expect(() => TugMatch(playerCount: 3, teamMode: true), throwsA(anything));
+  });
+
+  test('team mode: teammates pull the same direction and share the win', () {
+    final m = TugMatch(playerCount: 4, teamMode: true, random: Random(1));
+    expect(m.pullDirFor(0).x, m.pullDirFor(1).x);
+    expect(m.pullDirFor(0).x, -m.pullDirFor(2).x);
+    // Seat 0 and seat 1 hammer perfect pulls; the knot runs left and the
+    // winning side is team 0 (seats 0+1).
+    for (var i = 0; i < 400 && !m.isOver; i++) {
+      m.tick();
+      // wait for the marker near the green center
+      if ((m.phase - 0.5).abs() <= TugMatch.perfectWindow) {
+        m.tap(0);
+        m.tap(1);
+      }
+    }
+    expect(m.isOver, isTrue);
+    expect(m.winnerTeam, 0);
+    expect(m.winner! < 2, isTrue);
+  });

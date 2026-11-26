@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shella/games/offline/tug_of_war_game.dart';
@@ -59,8 +62,27 @@ Future<void> boot(WidgetTester tester) async {
 }
 
 void main() {
-  setUpAll(() {
+  setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
+    for (final name in [
+      'Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold', 'Black'
+    ]) {
+      final bytes = await File('assets/fonts/Cairo-$name.ttf').readAsBytes();
+      final loader = FontLoader('Cairo')
+        ..addFont(Future.value(ByteData.sublistView(bytes)));
+      await loader.load();
+    }
+    final emojiBytes = await File('test/fonts_NotoColorEmoji.ttf').readAsBytes();
+    final emojiLoader = FontLoader('Noto Color Emoji')
+      ..addFont(Future.value(ByteData.sublistView(emojiBytes)));
+    await emojiLoader.load();
+    final icons = await File(
+      Platform.environment['HOME']! +
+          '/sdk/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
+    ).readAsBytes();
+    final iconLoader = FontLoader('MaterialIcons')
+      ..addFont(Future.value(ByteData.sublistView(icons)));
+    await iconLoader.load();
   });
 
   testWidgets('tug of war: intro starts to player picker incl. solo', (tester) async {
@@ -90,13 +112,50 @@ void main() {
     await settleDown(tester);
   });
 
-  testWidgets('tug of war: 4p start shows four turn buttons', (tester) async {
+  testWidgets('tug of war: 4p start asks the mode then shows four buttons',
+      (tester) async {
     await boot(tester);
     await tester.tap(find.text('4 لاعبين'));
+    await tester.pump();
+    expect(find.text('تقسموا إزاي؟ 👥'), findsOneWidget);
+    await tester.tap(find.text('كل واحد لوحده 👤'));
     await tester.pump();
     for (var i = 1; i <= 4; i++) {
       expect(find.text('لاعب $i 💪'), findsOneWidget);
     }
+    await flushFontCallbacks(tester);
+    await settleDown(tester);
+  });
+
+  testWidgets('tug of war: 2v2 team mode pairs the seats', (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('4 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('فرق 2 ضد 2 👥'));
+    await tester.pump();
+    final state = tester.state(find.byType(TugOfWarGame)) as dynamic;
+    final m = state.debugMatch;
+    expect(m.teamMode, isTrue);
+    expect(m.pullDirFor(0), m.pullDirFor(1));
+    expect(m.pullDirFor(2), m.pullDirFor(3));
+    expect(m.pullDirFor(0) == m.pullDirFor(2), isFalse);
+    await flushFontCallbacks(tester);
+    await settleDown(tester);
+  });
+
+  testWidgets('tug of war: 2v2 arena golden', (tester) async {
+    await boot(tester);
+    await tester.tap(find.text('4 لاعبين'));
+    await tester.pump();
+    await tester.tap(find.text('فرق 2 ضد 2 👥'));
+    await tester.pump();
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 250));
+    }
+    await expectLater(
+      find.byType(TugOfWarGame),
+      matchesGoldenFile('goldens/tug_2v2_arena.png'),
+    );
     await flushFontCallbacks(tester);
     await settleDown(tester);
   });
@@ -122,6 +181,8 @@ void main() {
     await tester.tap(find.text('2 لاعبين'));
     await tester.pump();
     await tester.tap(find.text('اه 🤖'));
+    await tester.pump();
+    await tester.tap(find.text('كل واحد لوحده 👤'));
     await tester.pump();
     final state = tester.state(find.byType(TugOfWarGame)) as dynamic;
     final m = state.debugMatch;

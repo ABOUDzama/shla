@@ -9,12 +9,17 @@ import 'dart:math';
 /// back to center, so only well-timed pulls win. First player to drag the
 /// knot past their edge takes the round.
 class TugMatch {
-  TugMatch({required this.playerCount, Random? random})
+  TugMatch({required this.playerCount, Random? random, this.teamMode = false})
       : assert(playerCount >= 1 && playerCount <= 4),
+        assert(!teamMode || playerCount == 4),
         _random = random ?? Random();
 
   final int playerCount;
   final Random _random;
+
+  /// 2v2 team mode: seats 0+1 pull left, seats 2+3 pull right; the knot
+  /// only moves horizontally and the winning side's whole team wins.
+  final bool teamMode;
 
   /// Pull directions in normalized space, one per player: left, right,
   /// up, down.
@@ -24,6 +29,17 @@ class TugMatch {
     Point(0.0, -1.0),
     Point(0.0, 1.0),
   ];
+
+  /// Pull direction for a seat; in team mode teammates share a direction.
+  Point<double> pullDirFor(int seat) =>
+      teamMode ? Point(seat < 2 ? -1.0 : 1.0, 0.0) : pullDirs[seat];
+
+  /// Team index per seat in team mode (0 = left, 1 = right).
+  int teamOf(int seat) => seat < 2 ? 0 : 1;
+
+  /// The winning team in team mode, null in free-for-all.
+  int? get winnerTeam =>
+      winner == null ? null : (teamMode ? teamOf(winner!) : null);
 
   /// Knot position relative to center; a component reaching ±1 wins.
   double _kx = 0, _ky = 0;
@@ -91,7 +107,7 @@ class TugMatch {
     if (isOver) return 'miss';
     _initStats();
     final d = (phase - 0.5).abs();
-    final dir = pullDirs[player];
+    final dir = pullDirFor(player);
     if (d <= perfectWindow) {
       perfects[player]++;
       _kx += dir.x * perfectPull;
@@ -112,7 +128,7 @@ class TugMatch {
 
   void _checkWin() {
     for (var p = 0; p < playerCount; p++) {
-      final dir = pullDirs[p];
+      final dir = pullDirFor(p);
       if ((dir.x != 0 && (_kx * dir.x) >= 1) ||
           (dir.y != 0 && (_ky * dir.y) >= 1)) {
         winner = p;

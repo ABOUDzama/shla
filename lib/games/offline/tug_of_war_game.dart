@@ -22,7 +22,7 @@ class TugOfWarGame extends StatefulWidget {
   State<TugOfWarGame> createState() => _TugOfWarGameState();
 }
 
-enum _TugPhase { pickPlayers, pickBots, playing, over }
+enum _TugPhase { pickPlayers, pickBots, pickMode, playing, over }
 
 class _TugOfWarGameState extends State<TugOfWarGame> {
   static const _emojiFallback = ['Noto Color Emoji'];
@@ -51,14 +51,20 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
     super.dispose();
   }
 
-  void _startMatch(int humans, bool withBots) {
+  bool _teamMode = false;
+  int _pendingHumans = 2;
+  bool _pendingBots = false;
+
+  void _startMatch(int humans, bool withBots, {bool teamMode = false}) {
     _ticker?.cancel();
     _humans = humans;
     _practice = humans == 1 && !withBots;
+    _teamMode = teamMode;
     final seats = _practice ? 1 : (withBots ? 4 : humans);
     final m = TugMatch(
       playerCount: seats,
       random: widget.randomSeed != null ? Random(widget.randomSeed!) : null,
+      teamMode: teamMode && seats == 4,
     );
     for (var i = humans; i < seats && withBots; i++) {
       m.botSeats.add(i);
@@ -121,7 +127,9 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
               _bigChoice('$n لاعبين', () {
                 _humans = n;
                 if (n == 4) {
-                  _startMatch(4, false);
+                  _pendingHumans = 4;
+                  _pendingBots = false;
+                  setState(() => _phase = _TugPhase.pickMode);
                 } else {
                   setState(() => _phase = _TugPhase.pickBots);
                 }
@@ -141,8 +149,30 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
             style: _t(14, w: FontWeight.w600),
           ),
           const SizedBox(height: 20),
-          _bigChoice('اه 🤖', () => _startMatch(_humans, true)),
+          _bigChoice('اه 🤖', () {
+            _pendingHumans = _humans;
+            _pendingBots = true;
+            setState(() => _phase = _TugPhase.pickMode);
+          }),
           _bigChoice('لا', () => _startMatch(_humans, false)),
+        ]),
+      );
+
+  Widget _buildMode() => Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('تقسموا إزاي؟ 👥', style: _t(26)),
+          const SizedBox(height: 8),
+          Text(
+            'الفريق بيشد كله لنفس الناحية.. أول فريق يوصل بالعقدة لطرفه يكسب',
+            style: _t(14, w: FontWeight.w600),
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.rtl,
+          ),
+          const SizedBox(height: 20),
+          _bigChoice('فرق 2 ضد 2 👥',
+              () => _startMatch(_pendingHumans, _pendingBots, teamMode: true)),
+          _bigChoice('كل واحد لوحده 👤',
+              () => _startMatch(_pendingHumans, _pendingBots)),
         ]),
       );
 
@@ -250,6 +280,21 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
       final good = _match.perfects.isNotEmpty ? _match.perfects[0] : 0;
       final bad = _match.misses.isNotEmpty ? _match.misses[0] : 0;
       head = Text('شديت $good شدّة صح وغلطت $bad 💪', style: _t(20));
+    } else if (_match.teamMode) {
+      final team = _match.winnerTeam!;
+      final seats = team == 0 ? [0, 1] : [2, 3];
+      final humansInTeam =
+          seats.where((x) => !_match.botSeats.contains(x)).toList();
+      if (humansInTeam.isEmpty) {
+        head = Text('البوتات كسبوا 🤖', style: _t(22));
+      } else {
+        head = VictoryFriends(
+          gameTitle: 'شد الحبل (فرق)',
+          winnerName:
+              '${humansInTeam.map((x) => PlayerNames.name(x)).join(' و ')}',
+          winnerSeats: humansInTeam,
+        );
+      }
     } else if (w != null && _match.botSeats.contains(w)) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
@@ -291,12 +336,18 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
       ),
       );
     }
-    if (_phase == _TugPhase.pickPlayers || _phase == _TugPhase.pickBots) {
+    if (_phase == _TugPhase.pickPlayers ||
+        _phase == _TugPhase.pickBots ||
+        _phase == _TugPhase.pickMode) {
       return OfflineGameScaffold(
         title: 'شد الحبل',
         backgroundColor: FlatColors.bg,
         body: SafeArea(
-          child: _phase == _TugPhase.pickPlayers ? _buildPicker() : _buildBots(),
+          child: _phase == _TugPhase.pickPlayers
+              ? _buildPicker()
+              : _phase == _TugPhase.pickBots
+                  ? _buildBots()
+                  : _buildMode(),
         ),
       );
     }
@@ -398,13 +449,21 @@ class _TugPainter extends CustomPainter {
     final knot = Offset(center.dx + match.kx * side * 0.42,
         center.dy + match.ky * side * 0.42);
 
-    // anchors at the four edges: cartoon arm + fist gripping a twisted rope
-    const anchors = [
+    // anchors: free-for-all uses the four edges; team mode stacks the two
+    // teammates on each side edge.
+    const ffa = [
       Offset(0.06, 0.5),
       Offset(0.94, 0.5),
       Offset(0.5, 0.08),
       Offset(0.5, 0.92),
     ];
+    const teams = [
+      Offset(0.06, 0.32),
+      Offset(0.06, 0.68),
+      Offset(0.94, 0.32),
+      Offset(0.94, 0.68),
+    ];
+    final anchors = match.teamMode ? teams : ffa;
     for (var p = 0; p < match.playerCount; p++) {
       final a = anchors[p];
       final c = Offset(ox + a.dx * side, oy + a.dy * side);

@@ -233,6 +233,8 @@ void main() {
     await prep(tester, const TugOfWarGame(randomSeed: 7));
     await tester.tap(find.text('4 لاعبين'));
     await tester.pump();
+    await tester.tap(find.text('كل واحد لوحده 👤'));
+    await tester.pump();
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 250));
     }
