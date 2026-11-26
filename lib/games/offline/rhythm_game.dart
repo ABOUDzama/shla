@@ -8,6 +8,7 @@ import '../../theme/funky_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import 'rhythm_logic.dart';
 import 'rhythm_mic.dart';
 
@@ -358,7 +359,7 @@ class _RhythmGameState extends State<RhythmGame> {
         children: [
           Text('مستوى $_level', style: _t(16, w: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('دور لاعب ${_turn + 1}',
+          Text('دور ${PlayerNames.name(_turn)}',
               style: _t(30).copyWith(color: _colors[_turn])),
           const SizedBox(height: 8),
           Text(
@@ -511,7 +512,7 @@ class _RhythmGameState extends State<RhythmGame> {
           for (var i = 0; i < _players; i++)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 3),
-              child: Text('لاعب ${i + 1}: ${_totals[i]} نقطة',
+              child: Text('${PlayerNames.name(i)}: ${_totals[i]} نقطة',
                   style: _t(18).copyWith(color: _colors[i])),
             ),
           const SizedBox(height: 20),
@@ -535,7 +536,7 @@ class _RhythmGameState extends State<RhythmGame> {
     } else {
       head = VictoryFriends(
         gameTitle: 'تحدّي الإيقاع',
-        winnerName: 'لاعب ${w + 1}',
+        winnerName: '${PlayerNames.name(w)}',
         winnerSeats: [w],
       );
     }
@@ -559,12 +560,18 @@ class _RhythmGameState extends State<RhythmGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'تحدّي الإيقاع',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'تحدّي الإيقاع',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             'من ١ ل٤ لاعبين، واحد واحد بيلف عليهم الدور. الموبايل يشغّل إيقاع تصفيق قصير، واللي عليه الدور يقلّده: يا تصفيق قدام المايك 👏 (وضع تجريبي) يا دوس على الزرار 👆. كل مستوى الإيقاع بيطول ويصعب، وأدق توقيت يكسب!',
         icon: '👏',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     final inMatch = _phase != _RhythmPhase.pickPlayers &&

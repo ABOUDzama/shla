@@ -1,3 +1,4 @@
+import 'cup/cup_screen.dart';
 import 'leaderboard_screen.dart';
 import 'dart:math';
 
@@ -26,7 +27,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isNavigating = false;
-  int _tab = 0; // 0 = الألعاب, 1 = شلتي, 2 = ألعاب ١٢٣٤
+  int _tab = 0; // 0 = الألعاب, 1 = شلتي, 2 = ألعاب ١٢٣٤, 3 = الترتيب, 4 = الكأس
   final Random _rand = Random();
 
   /// Big emoji "character" per game tile (all verified against the bundled
@@ -154,8 +155,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? const ShelltyScreen(embedded: true)
                   : _tab == 3
                   ? const LeaderboardScreen(key: ValueKey('leaderboard'))
-                  : _tab == 2
-                      ? const ArcadeSectionScreen(embedded: true)
+                  : _tab == 4
+                      ? const CupScreen(
+                          key: ValueKey('cup_tab'), embedded: true)
+                      : _tab == 2
+                          ? ArcadeSectionScreen(
+                              embedded: true,
+                              onOpenCup: () => setState(() => _tab = 4))
                       : SafeArea(
                       key: const ValueKey('games_feed'),
                       child: ListView(
@@ -340,8 +346,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(width: 10),
         _navCard(
-          label: 'الترتيب',
+          label: 'الكأس',
           emoji: '🏆',
+          color: const Color(0xFFFF6FA5),
+          active: _tab == 4,
+          onTap: () {
+            if (_tab != 4) setState(() => _tab = 4);
+          },
+        ),
+        const SizedBox(width: 10),
+        _navCard(
+          label: 'الترتيب',
+          emoji: '🥇',
           color: const Color(0xFF8B7CFF),
           active: _tab == 3,
           onTap: () {

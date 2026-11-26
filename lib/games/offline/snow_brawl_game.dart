@@ -7,6 +7,7 @@ import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import 'snow_brawl_logic.dart';
 
 /// معركة التلج: 1-4 players (+ optional bots), one throw button each,
@@ -88,8 +89,8 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
       _banner = _practice
           ? (hit ? 'إصابة! ❄' : 'رميت بعيد 😬')
           : hit
-              ? 'لاعب ${i + 1} أصاب قلعة لاعب ${_match.targetOf(i) == i ? i + 1 : _match.targetOf(i) + 1}! ❄'
-              : 'لاعب ${i + 1} رمى بعيد 😬';
+              ? '${PlayerNames.name(i)} أصاب قلعة ${PlayerNames.name(_match.targetOf(i) == i ? i : _match.targetOf(i))}! ❄'
+              : '${PlayerNames.name(i)} رمى بعيد 😬';
       if (_match.isOver) {
         _ticker?.cancel();
         _phase = _SnowPhase.over;
@@ -253,7 +254,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
           ),
           onPressed: active ? () => _throw(i) : null,
           child: Text(
-            'لاعب ${i + 1} ❄',
+            '${PlayerNames.name(i)} ❄',
             style: flatCairo(
               fontSize: 15,
               fontWeight: FontWeight.w800,
@@ -273,7 +274,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
     } else if (w != null && _match.botSeats.contains(w)) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else if (w != null) {
-      head = VictoryFriends(gameTitle: 'معركة التلج', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
+      head = VictoryFriends(gameTitle: 'معركة التلج', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     } else {
       head = Text('تعادل! 😅', style: _t(20));
     }
@@ -299,12 +300,18 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'معركة التلج',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'معركة التلج',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             '١-٤ قلاع على نفس الموبايل، وتقدر تضيف بوتات. عدّاد القوة بيطلع وينزل.. دوس لما يوصل للعلامة الزرقا عشان كورت التلج توصل قلعة خصمك. أول واحد يهد كل القلاع يكسب ❄',
         icon: '❄',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     if (_phase == _SnowPhase.pickPlayers || _phase == _SnowPhase.pickBots) {
@@ -351,6 +358,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
                     child: Text(
                       _banner,
                       textAlign: TextAlign.center,
+                      textDirection: TextDirection.rtl,
                       style: flatCairo(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,

@@ -15,10 +15,14 @@ import 'cup/cup_setup_screen.dart';
 /// game itself. Covers are placeholder gradients + emoji until the
 /// generated cover art lands (tagged 'غلاف مؤقت' honestly).
 class ArcadeSectionScreen extends StatefulWidget {
-  const ArcadeSectionScreen({super.key, this.embedded = false});
+  const ArcadeSectionScreen({super.key, this.embedded = false, this.onOpenCup});
 
   /// When true, renders without its own Scaffold (embedded as a home tab).
   final bool embedded;
+
+  /// When set, the cup banner jumps to this callback (the cup home tab)
+  /// instead of pushing the cup screens.
+  final VoidCallback? onOpenCup;
 
   /// Player counts per ١٢٣٤ game title. سومو is 2-player head-to-head;
   /// the rest support 2, 3 and 4.
@@ -133,7 +137,8 @@ class _ArcadeSectionScreenState extends State<ArcadeSectionScreen> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-              child: _CupBanner(emojiFallback: _emojiFallback),
+              child: _CupBanner(
+                  emojiFallback: _emojiFallback, onOpenCup: widget.onOpenCup),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 14)),
@@ -328,7 +333,8 @@ class _ArcadeCard extends StatelessWidget {
 /// resumes the running one.
 class _CupBanner extends StatelessWidget {
   final List<String> emojiFallback;
-  const _CupBanner({required this.emojiFallback});
+  final VoidCallback? onOpenCup;
+  const _CupBanner({required this.emojiFallback, this.onOpenCup});
 
   @override
   Widget build(BuildContext context) {
@@ -345,13 +351,14 @@ class _CupBanner extends StatelessWidget {
             : 'بطولة جولات من ألعاب ١٢٣٤ — كل فوز بنقطة، والأكتر نقاط ياخد الكأس';
         return InkWell(
           borderRadius: BorderRadius.circular(18),
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) =>
-                  running ? const CupScreen() : const CupSetupScreen(),
-            ),
-          ),
+          onTap: onOpenCup ??
+              () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          running ? const CupScreen() : const CupSetupScreen(),
+                    ),
+                  ),
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),

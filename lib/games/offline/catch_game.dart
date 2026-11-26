@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/flat_theme.dart';
 
@@ -286,7 +287,7 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
     } else if (w != null && w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'اقطفها', winnerName: 'لاعب ${w! + 1}', winnerSeats: [w!]);
+      head = VictoryFriends(gameTitle: 'اقطفها', winnerName: '${PlayerNames.name(w!)}', winnerSeats: [w!]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,
@@ -303,12 +304,18 @@ class _CatchGameState extends State<CatchGame> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'اقطفها',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'اقطفها',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             'السمكة بتلف حوالين الدواير الملونة! دوس على زرارك في ركنك بالظبط لما تكون السمكة جوه اللون بتاعك. لو دست في الوقت الغلط بتتقفل عليك لحد اللفّة الجاية. أول واحد يوصل ٥ نقط يكسب',
         icon: '🐟',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     return OfflineGameScaffold(

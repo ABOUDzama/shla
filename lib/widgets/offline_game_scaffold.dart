@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../screens/settings_screen.dart';
 import '../theme/flat_theme.dart';
 import '../services/settings_service.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,7 +37,10 @@ class OfflineGameScaffold extends StatelessWidget {
           color: Colors.white,
           border: Border.all(color: FlatColors.border, width: 2),
         ),
-        child: Icon(icon, size: 20, color: FlatColors.ink),
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Icon(icon, size: 20, color: FlatColors.ink),
+        ),
       ),
     );
   }
@@ -55,16 +57,6 @@ class OfflineGameScaffold extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
               child: Row(
                 children: [
-                  chromeButton(
-                    icon: Icons.settings_rounded,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SettingsScreen()),
-                      );
-                    },
-                  ),
                   if (SettingsService.isAiEnabled && showAi) ...[
                     const SizedBox(width: 8),
                     chromeButton(
@@ -90,7 +82,7 @@ class OfflineGameScaffold extends StatelessWidget {
                   ),
                   ...?actions,
                   chromeButton(
-                    icon: Icons.home_rounded,
+                    icon: Icons.arrow_back_rounded,
                     onTap: () => Navigator.of(context).maybePop(),
                   ),
                 ],

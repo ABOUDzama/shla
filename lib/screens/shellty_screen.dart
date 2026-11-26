@@ -136,7 +136,8 @@ class _ShelltyScreenState extends State<ShelltyScreen> {
                           },
                           child: Text('احذف',
                               style: GoogleFonts.cairo(
-                                  fontWeight: FontWeight.w800)),
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white)),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -149,7 +150,8 @@ class _ShelltyScreenState extends State<ShelltyScreen> {
                               Navigator.pop(sheetContext, true),
                           child: Text('احفظ',
                               style: GoogleFonts.cairo(
-                                  fontWeight: FontWeight.w800)),
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white)),
                         ),
                       ),
                     ],
@@ -266,8 +268,8 @@ class _ShelltyScreenState extends State<ShelltyScreen> {
                     backgroundColor: FlatColors.ink),
                 onPressed: _addFriend,
                 child: Text('ضيف',
-                    style:
-                        GoogleFonts.cairo(fontWeight: FontWeight.w800)),
+                    style: GoogleFonts.cairo(
+                        fontWeight: FontWeight.w800, color: Colors.white)),
               ),
             ],
           ),

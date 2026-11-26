@@ -7,6 +7,7 @@ import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import 'whack_mole_logic.dart';
 
 /// اضرب الخلد: 2-4 players, each whacks moles in their own 2x2 grid.
@@ -250,7 +251,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
     } else if (w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'اضرب الخلد', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
+      head = VictoryFriends(gameTitle: 'اضرب الخلد', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,
@@ -269,12 +270,18 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'اضرب الخلد',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'اضرب الخلد',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             'لكل لاعب مربع فيه ٤ جحور.. الخلد بيطلع وينزل بسرعة، اضربه في مربعك بس قبل ما يهرب! كل واحد بيطلعله نفس عدد الخلدان، واللي يجيب أكتر قبل ما الوقت يخلص يكسب',
         icon: '🔨',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     return OfflineGameScaffold(

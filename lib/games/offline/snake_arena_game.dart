@@ -7,6 +7,7 @@ import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import 'snake_arena_logic.dart';
 
 /// حية الشلة: 1-4 players (+ optional bots), each steers a snake with one
@@ -163,7 +164,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
           ),
           onPressed: active ? () => _match.turn(i) : null,
           child: Text(
-            'لاعب ${i + 1} لفّ 🐍',
+            '${PlayerNames.name(i)} لفّ 🐍',
             style: flatCairo(
               fontSize: 15,
               fontWeight: FontWeight.w800,
@@ -194,7 +195,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
     } else if (w != null && w >= 0 && _match.botSeats.contains(w)) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else if (w != null && w >= 0) {
-      head = VictoryFriends(gameTitle: 'حية الشلة', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
+      head = VictoryFriends(gameTitle: 'حية الشلة', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     } else {
       head = Text('تعادل! الكل وقع في بعض 😅', style: _t(20));
     }
@@ -214,12 +215,18 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'حية الشلة',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'حية الشلة',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             '١-٤ لاعبين على نفس الموبايل، وتقدر تضيف بوتات. كل واحد ليه زرار على جنبه بيلفّ بيه حيته. كل التفاح عشان تكبر، ومتخبطش في الحيطة ولا في حد! آخر حية واقفة تكسب 🐍',
         icon: '🐍',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     if (_phase == _SnakePhase.pickPlayers || _phase == _SnakePhase.pickBots) {

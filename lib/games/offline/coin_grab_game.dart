@@ -7,6 +7,7 @@ import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import 'coin_grab_logic.dart';
 
 /// لمّ الفلوس: 1-4 players, one claw pad per corner. The claw sweeps and
@@ -164,7 +165,7 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
     } else if (w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'لمّ الفلوس', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
+      head = VictoryFriends(gameTitle: 'لمّ الفلوس', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,
@@ -179,12 +180,18 @@ class _CoinGrabGameState extends State<CoinGrabGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'لمّ الفلوس',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'لمّ الفلوس',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             'كل واحد معاه كلّاب في ركنه بيتحرك ويمدّ لوحده في الأرضية. دوس على زرارك لما طرف الكلّاب يبقى فوق عملة عشان تلمّها. الدهبية بعشرة والفضية بخمسة. معاكم دقيقة، أغنى واحد يكسب',
         icon: '🪙',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     return OfflineGameScaffold(

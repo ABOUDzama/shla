@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/funky_theme.dart';
 import '../../theme/flat_theme.dart';
@@ -191,7 +192,7 @@ class _ReactionGameState extends State<ReactionGame> {
     // max-contrast text on whatever the zone fill is (ink wins on every
     // flat pastel; white would fail on lime/cyan)
     final onZone = FlatDecor.textOn(color);
-    final label = _botSeats.contains(player) ? 'بوت ${player + 1}' : 'لاعب ${player + 1}';
+    final label = _botSeats.contains(player) ? 'بوت ${player + 1}' : PlayerNames.name(player);
     final msg = green
         ? 'دوس!'
         : waiting
@@ -301,7 +302,7 @@ class _ReactionGameState extends State<ReactionGame> {
                             .copyWith(fontFamilyFallback: const ['Noto Color Emoji'])))
                 : VictoryFriends(
                     gameTitle: _practice ? null : 'أسرع رد فعل',
-                    winnerName: 'لاعب ${w + 1}',
+                    winnerName: '${PlayerNames.name(w)}',
                     winnerSeats: [w]);
           }),
         if (_phase == _Phase.matchOver)
@@ -372,12 +373,18 @@ class _ReactionGameState extends State<ReactionGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'أسرع رد فعل',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'أسرع رد فعل',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             'الشاشة هتستنى شوية وبعدين تقلب خضرا.. أول واحد يدوس يكسب الجولة! اللي يدوس قبل الأخضر تتخصم منه نقطة. أول واحد يوصل ٥ نقط يكسب الماتش ⚡',
         icon: '⚡',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     final scaffold = OfflineGameScaffold(

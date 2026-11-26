@@ -9,6 +9,7 @@ import '../../services/game_registry.dart';
 import '../../services/results_service.dart';
 import '../../theme/flat_theme.dart';
 import '../../widgets/victory_friends.dart';
+import 'cup_setup_screen.dart';
 import '../arcade_section_screen.dart';
 
 /// كأس الشلة home: the standings board, the current round, and the
@@ -19,7 +20,11 @@ import '../arcade_section_screen.dart';
 /// records. Coming back with no result recorded means the round was left
 /// early — the cup offers replay or skip, honest and explicit.
 class CupScreen extends StatefulWidget {
-  const CupScreen({super.key});
+  const CupScreen({super.key, this.embedded = false});
+
+  /// When true, renders as a home tab: no back button and extra bottom
+  /// padding so the floating nav bar never covers the content.
+  final bool embedded;
 
   @override
   State<CupScreen> createState() => _CupScreenState();
@@ -171,8 +176,24 @@ class _CupScreenState extends State<CupScreen> {
             body: Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text('مفيش كأس شغال دلوقتي',
-                    style: _t(16, w: FontWeight.w900)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('مفيش كأس شغال دلوقتي',
+                        style: _t(16, w: FontWeight.w900)),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const CupSetupScreen()),
+                      ),
+                      child: Text('ابدأ كأس جديد 🏆',
+                          style: _t(15,
+                              w: FontWeight.w900, c: Colors.white)),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -182,15 +203,16 @@ class _CupScreenState extends State<CupScreen> {
           body: SafeArea(
             child: ListView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+              padding: EdgeInsets.fromLTRB(20, 12, 20, widget.embedded ? 130 : 24),
               children: [
                 Row(
                   children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                          color: FlatColors.ink),
-                    ),
+                    if (!widget.embedded)
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                            color: FlatColors.ink),
+                      ),
                     const Spacer(),
                     TextButton(
                       onPressed: _endCup,
@@ -209,6 +231,7 @@ class _CupScreenState extends State<CupScreen> {
                     cup.finished
                         ? 'الكأس خلص!'
                         : 'الجولة ${cup.roundNumber} من ${cup.rounds}',
+                    textDirection: TextDirection.rtl,
                     style: _t(13, w: FontWeight.w700)
                         .copyWith(color: FlatColors.ink.withValues(alpha: 0.7)),
                   ),
@@ -256,7 +279,9 @@ class _CupScreenState extends State<CupScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          Text(title, style: _t(20, w: FontWeight.w900)),
+          Text(title,
+              style: _t(20, w: FontWeight.w900),
+              textDirection: TextDirection.rtl),
           const SizedBox(height: 4),
           Text(
             'الفايز ياخد نقطة ⭐',
@@ -315,6 +340,7 @@ class _CupScreenState extends State<CupScreen> {
             Text(
               'ولا لاعب كسب جولة — البوتات مسكوا الشلة المرة دي!',
               textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
               style: _t(13, w: FontWeight.w700)
                   .copyWith(color: FlatColors.ink.withValues(alpha: 0.75)),
             ),

@@ -7,6 +7,7 @@ import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import 'car_race_logic.dart';
 
 /// سباق العربيات: top-down 3-lap race for 1-4 on one phone. Cars drive on
@@ -166,7 +167,7 @@ class _CarRaceGameState extends State<CarRaceGame> {
     } else if (w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'سباق العربيات', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
+      head = VictoryFriends(gameTitle: 'سباق العربيات', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,
@@ -181,12 +182,18 @@ class _CarRaceGameState extends State<CarRaceGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'سباق العربيات',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'سباق العربيات',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             'سباق ٣ لفات على حلبة من فوق. عربيتك بتمشي لوحدها: دوس مطوّلاً على السهم الشمال أو اليمين في ركنك عشان تلفّ. لو خرجت من الأسفلت العربية بتبطّأ. أول واحد يخلّص ٣ لفات يكسب',
         icon: '🏎',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     return OfflineGameScaffold(
@@ -326,7 +333,7 @@ class _TrackPainter extends CustomPainter {
       final lap = min(m.laps, m.lapOf(i) + 1);
       final tp = TextPainter(
         text: TextSpan(
-          text: 'لاعب ${i + 1}: لفة $lap/${m.laps}',
+          text: '${PlayerNames.name(i)}: لفة $lap/${m.laps}',
           style: flatCairo(fontSize: 15, fontWeight: FontWeight.w900, color: FlatColors.ink),
         ),
         textDirection: TextDirection.rtl,

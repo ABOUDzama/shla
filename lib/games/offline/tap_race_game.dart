@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/flat_theme.dart';
 
@@ -406,12 +407,18 @@ class _TapRaceGameState extends State<TapRaceGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'سباق الدوس',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'سباق الدوس',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             'لما العد يخلص، دوس على حارتك أسرع ما تقدر لمدة ٥ ثواني! الأكثر دوسات ياخد الجولة، وأول واحد يوصل ٣ جولات يكسب الماتش. تعادل؟ الجولة تتعاد.',
         icon: '👟',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     return OfflineGameScaffold(
@@ -443,7 +450,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
                                 )
                               : VictoryFriends(
                                   gameTitle: 'سباق الدوس',
-                                  winnerName: 'لاعب ${_match.matchWinner! + 1}',
+                                  winnerName: '${PlayerNames.name(_match.matchWinner!)}',
                                   winnerSeats: [_match.matchWinner!],
                                 )),
                   if (_phase == _RacePhase.sprint)

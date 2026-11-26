@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/flat_theme.dart';
 
@@ -204,7 +205,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
       const speed = 9.0;
       _vx = cos(angle) * speed;
       _vy = sin(angle) * speed;
-      _banner = 'كورة ${_botSeats.contains(owner) ? 'بوت' : 'لاعب'} ${owner + 1}! هو بس اللي يلمسها ⚽';
+      _banner = 'كورة ${_botSeats.contains(owner) ? 'بوت ${owner + 1}' : PlayerNames.name(owner)}! هو بس اللي يلمسها ⚽';
     });
     _ticker = Timer.periodic(const Duration(milliseconds: 50), (_) => _tick());
   }
@@ -274,11 +275,11 @@ class _TouchBallGameState extends State<TouchBallGame> {
         _phase = _BallPhase.matchOver;
         _banner = _practice
             ? 'خلصت التدريب! ⚽'
-            : '${_botSeats.contains(_match.matchWinner) ? 'بوت' : 'لاعب'} ${_match.matchWinner! + 1} كسب الماتش! 🏆';
+            : '${_botSeats.contains(_match.matchWinner) ? 'بوت ${_match.matchWinner! + 1}' : PlayerNames.name(_match.matchWinner!)} كسب الماتش! 🏆';
       } else {
         _banner = good
-            ? '${_botSeats.contains(player) ? 'بوت' : 'لاعب'} ${player + 1} لمسها في وقتها! ⚽'
-            : 'لاعب ${player + 1} لمس كورة مش بتاعته! نقطة تتخصم 😬';
+            ? '${_botSeats.contains(player) ? 'بوت ${player + 1}' : PlayerNames.name(player)} لمسها في وقتها! ⚽'
+            : '${PlayerNames.name(player)} لمس كورة مش بتاعته! نقطة تتخصم 😬';
       }
     });
     if (_match.matchWinner == null) _scheduleNext();
@@ -392,12 +393,18 @@ class _TouchBallGameState extends State<TouchBallGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'كورة اللمسة',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'كورة اللمسة',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             '١-٤ لاعبين على نفس الموبايل، وتقدر تضيف بوتات. كورة ملونة بتلف على الشاشة وبتصغّر.. اللون بيحدد صاحبها، وهو بس اللي يلمسها قبل ما تطير! لو حد تاني لمسها يتخصم منه نقطة. أول واحد يوصل ٥ نقط يكسب ⚽',
         icon: '⚽',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     return OfflineGameScaffold(
@@ -427,7 +434,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                             : VictoryFriends(
                                 gameTitle: 'كورة اللمسة',
                                 winnerName:
-                                    'لاعب ${_match.matchWinner! + 1}',
+                                    '${PlayerNames.name(_match.matchWinner!)}',
                                 winnerSeats: [_match.matchWinner!]),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
@@ -514,6 +521,7 @@ class _TouchBallGameState extends State<TouchBallGame> {
                     child: Text(
                       _banner,
                       textAlign: TextAlign.center,
+                      textDirection: TextDirection.rtl,
                       style: flatCairo(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,

@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/flat_theme.dart';
 import '../services/results_service.dart';
+import '../services/player_names.dart';
 
 /// Light victory celebration: the Shla friends cheer the match winner.
 /// Shown only on match-over screens — never during gameplay.
@@ -67,7 +68,9 @@ class _VictoryFriendsState extends State<VictoryFriends> {
           border: Border.all(
               color: crowned ? const Color(0xFFE0A800) : FlatColors.ink,
               width: crowned ? 4 : 2.5),
-          image: DecorationImage(image: AssetImage(_friends[i]), fit: BoxFit.cover),
+          image: DecorationImage(
+              image: PlayerNames.avatar(i) ?? AssetImage(_friends[i]),
+              fit: BoxFit.cover),
         ),
       ),
     );
@@ -81,7 +84,9 @@ class _VictoryFriendsState extends State<VictoryFriends> {
       avatar,
       const SizedBox(height: 2),
       if (widget.seats.isNotEmpty)
-        Text('لاعب ${i + 1}',
+        Text(PlayerNames.name(i),
+            textDirection: TextDirection.rtl,
+            overflow: TextOverflow.ellipsis,
             style: flatCairo(fontSize: 11, fontWeight: FontWeight.w800, color: FlatColors.ink)),
     ]);
     return Padding(
@@ -111,6 +116,7 @@ class _VictoryFriendsState extends State<VictoryFriends> {
         const SizedBox(height: 6),
         Text(
           '${widget.winnerName} كسب! 🎉',
+          textDirection: TextDirection.rtl,
           style: flatCairo(
             fontSize: 20,
             fontWeight: FontWeight.w900,

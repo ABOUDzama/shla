@@ -85,6 +85,7 @@ class _CupSetupScreenState extends State<CupSetupScreen> {
               child: Text(
                 'جولات من ألعاب ١٢٣٤، وكل فوز بنقطة.\nأكتر واحد يجمع نقاط ياخد الكأس!',
                 textAlign: TextAlign.center,
+                textDirection: TextDirection.rtl,
                 style: _t(13, w: FontWeight.w700, h: 1.5)
                     .copyWith(color: FlatColors.ink.withValues(alpha: 0.75)),
               ),

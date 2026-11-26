@@ -7,6 +7,7 @@ import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import 'tug_of_war_logic.dart';
 
 /// شد الحبل: 1-4 players (+ optional bots), one timing button each,
@@ -84,9 +85,9 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
     final grade = _match.tap(i);
     setState(() {
       _banner = switch (grade) {
-        'perfect' => 'لاعب ${i + 1} شدها صح! 💪',
-        'ok' => 'لاعب ${i + 1} شد خفيف',
-        _ => 'لاعب ${i + 1} دوس غلط 😬',
+        'perfect' => '${PlayerNames.name(i)} شدها صح! 💪',
+        'ok' => '${PlayerNames.name(i)} شد خفيف',
+        _ => '${PlayerNames.name(i)} دوس غلط 😬',
       };
       if (_match.isOver) {
         _ticker?.cancel();
@@ -230,7 +231,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
           ),
           onPressed: _phase == _TugPhase.playing ? () => _tap(i) : null,
           child: Text(
-            'لاعب ${i + 1} 💪',
+            '${PlayerNames.name(i)} 💪',
             style: flatCairo(
               fontSize: 15,
               fontWeight: FontWeight.w800,
@@ -252,7 +253,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
     } else if (w != null && _match.botSeats.contains(w)) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'شد الحبل', winnerName: 'لاعب ${w! + 1}', winnerSeats: [w!]);
+      head = VictoryFriends(gameTitle: 'شد الحبل', winnerName: '${PlayerNames.name(w!)}', winnerSeats: [w!]);
     }
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -276,12 +277,18 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'شد الحبل',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'شد الحبل',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             '١-٤ لاعبين على نفس الموبايل، وتقدر تضيف بوتات. المؤشر بيجري يمين وشمال.. دوس لما يبقى في المنطقة الخضرا بالظبط عشان تشد الحبل لناحيتك. اللي يوصل بالعقدة لطرفه يكسب 💪',
         icon: '💪',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     if (_phase == _TugPhase.pickPlayers || _phase == _TugPhase.pickBots) {
@@ -324,6 +331,7 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
                     child: Text(
                       _banner,
                       textAlign: TextAlign.center,
+                      textDirection: TextDirection.rtl,
                       style: flatCairo(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,

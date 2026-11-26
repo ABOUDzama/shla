@@ -7,6 +7,7 @@ import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import 'pigeon_logic.dart';
 
 /// أطعم الحمامة: 1-4 players, one slingshot pad per corner. The aim swings
@@ -164,7 +165,7 @@ class _PigeonGameState extends State<PigeonGame> {
     } else if (w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'أطعم الحمامة', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
+      head = VictoryFriends(gameTitle: 'أطعم الحمامة', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,
@@ -179,12 +180,18 @@ class _PigeonGameState extends State<PigeonGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'أطعم الحمامة',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'أطعم الحمامة',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             'حمامة جعانة بتتمشى في نص الشاشة. كل واحد معاه مقلاع في ركنه وتصويبه بيتحرك يمين وشمال لوحده. دوس على زرارك لما التصويب يبقى على بقّها عشان تطعمها فتافيت العيش. كل واحد معاه ٨ فتافيت، واللي يطعم أكتر يكسب',
         icon: '🐦',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     return OfflineGameScaffold(
@@ -267,7 +274,7 @@ class _PigeonPainter extends CustomPainter {
     for (var i = 0; i < m.seats; i++) {
       final tp = TextPainter(
         text: TextSpan(
-          text: 'لاعب ${i + 1}: ${m.fed[i]}',
+          text: '${PlayerNames.name(i)}: ${m.fed[i]}',
           style: flatCairo(fontSize: 14, fontWeight: FontWeight.w900, color: FlatColors.ink),
         ),
         textDirection: TextDirection.rtl,

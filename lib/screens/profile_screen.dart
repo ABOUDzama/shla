@@ -7,8 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../services/settings_service.dart';
 import '../services/haptic_service.dart';
 import '../services/socket_service.dart' as ss;
-import '../theme/funky_theme.dart';
-
+import '../theme/flat_theme.dart';
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -73,166 +72,158 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FunkyBackground(
-        accent: FunkyColors.cyan,
-        child: SafeArea(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              children: [
-                const SizedBox(height: 14),
-                // Header: back chip + neon title
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        width: 42,
-                        height: 42,
+      backgroundColor: FlatColors.bg,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            children: [
+              const SizedBox(height: 14),
+              // Header: back chip + title
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        border: Border.all(color: FlatColors.border, width: 2),
+                      ),
+                      child: const Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Icon(
+                          Icons.arrow_back_rounded,
+                          color: FlatColors.ink,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'الملف الشخصي',
+                      textAlign: TextAlign.center,
+                      textDirection: TextDirection.rtl,
+                      style: FlatDecor.title(size: 22),
+                    ),
+                  ),
+                  const SizedBox(width: 42),
+                ],
+              ),
+              const SizedBox(height: 32),
+
+              // Avatar with ink ring + camera badge
+              Center(
+                child: GestureDetector(
+                  onTap: _pickAvatar,
+                  child: Stack(
+                    alignment: Alignment.bottomLeft,
+                    children: [
+                      Container(
+                        width: 140,
+                        height: 140,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: FunkyColors.card,
+                          color: Colors.white,
+                          border:
+                              Border.all(color: FlatColors.ink, width: 3),
+                        ),
+                        padding: const EdgeInsets.all(4),
+                        child: ClipOval(
+                          child: AvatarService.providerFor(_avatarBase64) !=
+                                  null
+                              ? Image(
+                                  image: AvatarService.providerFor(
+                                      _avatarBase64)!,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  color: FlatColors.border,
+                                  child: const Icon(
+                                    Icons.person_rounded,
+                                    size: 80,
+                                    color: FlatColors.ink,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: FlatColors.ink,
+                          shape: BoxShape.circle,
                           border: Border.all(
-                            color: FunkyColors.cyan.withValues(alpha: 0.5),
-                            width: 1.3,
+                            color: FlatColors.bg,
+                            width: 3,
                           ),
                         ),
                         child: const Icon(
-                          Icons.arrow_back_ios_new,
+                          Icons.camera_alt_rounded,
                           color: Colors.white,
-                          size: 18,
+                          size: 20,
                         ),
                       ),
-                    ),
-                    Expanded(
+                    ],
+                  ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'تغيير الصورة',
+                textDirection: TextDirection.rtl,
+                style: FlatDecor.body(size: 14)
+                    .copyWith(fontWeight: FontWeight.w800),
+              ),
+
+              const SizedBox(height: 40),
+
+              // Name input card
+              Container(
+                decoration: FlatDecor.card(radius: 22),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: TextField(
+                  controller: _nameController,
+                  style: FlatDecor.body(size: 17),
+                  textAlign: TextAlign.right,
+                  textDirection: TextDirection.rtl,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'أدخل اسمك هنا',
+                    hintStyle: FlatDecor.body(size: 15).copyWith(
+                        color: FlatColors.ink.withValues(alpha: 0.4)),
+                    icon: const Icon(Icons.badge_rounded,
+                        color: FlatColors.ink),
+                  ),
+                ),
+              ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1, end: 0),
+
+              const SizedBox(height: 40),
+
+              // Save button
+              SizedBox(
+                width: double.infinity,
+                child: GestureDetector(
+                  onTap: _saveProfile,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: FlatDecor.button(FlatColors.ink, radius: 18),
+                    child: Center(
                       child: Text(
-                        'الملف الشخصي',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.cairo(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              color: FunkyColors.cyan.withValues(alpha: 0.7),
-                              blurRadius: 14,
-                            ),
-                          ],
-                        ),
+                        'حفظ التغييرات ✓',
+                        textDirection: TextDirection.rtl,
+                        style: FlatDecor.title(
+                            size: 19, color: Colors.white),
                       ),
                     ),
-                    const SizedBox(width: 42),
-                  ],
-                ),
-                const SizedBox(height: 32),
-
-                // Avatar with accent ring + gradient camera badge
-                Center(
-                  child: GestureDetector(
-                    onTap: _pickAvatar,
-                    child: Stack(
-                      alignment: Alignment.bottomLeft,
-                      children: [
-                        Container(
-                          width: 140,
-                          height: 140,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient:
-                                FunkyDecor.accentGradient(FunkyColors.cyan),
-                            boxShadow: [
-                              BoxShadow(
-                                color: FunkyColors.cyan.withValues(alpha: 0.4),
-                                blurRadius: 28,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          child: ClipOval(
-                            child: AvatarService.providerFor(_avatarBase64) != null
-                                ? Image(
-                                    image: AvatarService.providerFor(
-                                        _avatarBase64)!,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    color: FunkyColors.card,
-                                    child: const Icon(
-                                      Icons.person_rounded,
-                                      size: 80,
-                                      color: Colors.white24,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            gradient:
-                                FunkyDecor.accentGradient(FunkyColors.magenta),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: FunkyColors.bgDeep,
-                              width: 3,
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.camera_alt_rounded,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ],
-                    ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  'تغيير الصورة',
-                  style: GoogleFonts.cairo(
-                    color: FunkyColors.cyan,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 40),
-
-                // Name input card
-                Container(
-                  decoration: FunkyDecor.glowCard(FunkyColors.violet, radius: 22),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: TextField(
-                    controller: _nameController,
-                    style: GoogleFonts.cairo(color: Colors.white, fontSize: 17),
-                    textAlign: TextAlign.right,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'أدخل اسمك هنا',
-                      hintStyle: GoogleFonts.cairo(color: Colors.white38),
-                      icon: const Icon(Icons.badge_rounded,
-                          color: FunkyColors.violet),
-                    ),
-                  ),
-                ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1, end: 0),
-
-                const SizedBox(height: 40),
-
-                // Save button
-                SizedBox(
-                  width: double.infinity,
-                  child: FunkyButton(
-                    label: 'حفظ التغييرات',
-                    onPressed: _saveProfile,
-                    accent: FunkyColors.magenta,
-                    icon: Icons.check_rounded,
-                    fontSize: 19,
-                  ),
-                ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.5, end: 0),
-                const SizedBox(height: 24),
-              ],
-            ),
+              ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.5, end: 0),
+              const SizedBox(height: 24),
+            ],
           ),
         ),
       ),

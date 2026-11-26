@@ -7,6 +7,7 @@ import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import 'chicken_run_logic.dart';
 
 /// جري الفراخ: one-touch gravity runner for 1-4 on one phone. Each player
@@ -167,7 +168,7 @@ class _ChickenRunGameState extends State<ChickenRunGame> {
     } else if (w >= _humans) {
       head = Text('البوتات كسبوا 🤖', style: _t(22));
     } else {
-      head = VictoryFriends(gameTitle: 'جري الفراخ', winnerName: 'لاعب ${w + 1}', winnerSeats: [w]);
+      head = VictoryFriends(gameTitle: 'جري الفراخ', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     }
     return Column(mainAxisSize: MainAxisSize.min, children: [
       head,
@@ -182,12 +183,18 @@ class _ChickenRunGameState extends State<ChickenRunGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'جري الفراخ',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'جري الفراخ',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             'كل واحد فرخته بتجري على أرضية فيها حفر. دوس على زرارك في ركنك عشان تقلب الجاذبية وتنط للأرضية التانية قبل الحفرة. متقدرش تنط وانت في الهوا. آخر فرخة واقفة تكسب',
         icon: '🐔',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     return OfflineGameScaffold(
@@ -280,8 +287,8 @@ class _RunPainter extends CustomPainter {
     final label = TextPainter(
       text: TextSpan(
         text: alive
-            ? 'لاعب ${seat + 1}'
-            : 'لاعب ${seat + 1} وقع بعد ${m.survived[seat].toStringAsFixed(1)} ث',
+            ? '${PlayerNames.name(seat)}'
+            : '${PlayerNames.name(seat)} وقع بعد ${m.survived[seat].toStringAsFixed(1)} ث',
         style: flatCairo(fontSize: 12, fontWeight: FontWeight.w800, color: FlatColors.ink),
       ),
       textDirection: TextDirection.rtl,

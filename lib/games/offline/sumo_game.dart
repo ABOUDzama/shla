@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/flat_theme.dart';
 
@@ -110,7 +111,7 @@ class _SumoGameState extends State<SumoGame> {
     super.dispose();
   }
 
-  String _seatName(int s) => _botSeats.contains(s) ? 'بوت ${s + 1}' : 'لاعب ${s + 1}';
+  String _seatName(int s) => _botSeats.contains(s) ? 'بوت ${s + 1}' : PlayerNames.name(s);
 
   TextStyle _t(double size, {Color? color, FontWeight w = FontWeight.w800}) =>
       flatCairo(fontSize: size, fontWeight: w, color: color ?? FlatColors.ink)
@@ -301,7 +302,10 @@ class _SumoGameState extends State<SumoGame> {
 
   Widget _buildBreak() => Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(_breakText, style: _t(20), textAlign: TextAlign.center),
+          Text(_breakText,
+              style: _t(20),
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl),
           const SizedBox(height: 20),
           _bigChoice('ابدأ الماتش 💪', () => _advanceBracket()),
         ]),
@@ -432,7 +436,7 @@ class _SumoGameState extends State<SumoGame> {
     } else if (_champion != null && _botSeats.contains(_champion)) {
       head = Text('البوتات كسبوا البطولة 🤖', style: _t(22));
     } else if (_champion != null) {
-      head = VictoryFriends(gameTitle: 'سومو الشلة', winnerName: 'لاعب ${_champion! + 1}', winnerSeats: [_champion!]);
+      head = VictoryFriends(gameTitle: 'سومو الشلة', winnerName: '${PlayerNames.name(_champion!)}', winnerSeats: [_champion!]);
     } else {
       head = Text('تعادل!', style: _t(20));
     }
@@ -451,12 +455,18 @@ class _SumoGameState extends State<SumoGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'سومو الشلة',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'سومو الشلة',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             '١-٤ لاعبين على نفس الموبايل، وتقدر تضيف بوتات! دوس بأقصى سرعة على ناحيتك عشان تدفع خصمك برا الحلبة. مع ٣ أو ٤ لاعبين تتقسموا ماتشات والفائزين يقابلوا بعض في النهائي 🤼',
         icon: '🤼',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     if (_phase == _SumoPhase.pickPlayers || _phase == _SumoPhase.pickBots) {

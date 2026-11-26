@@ -20,7 +20,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final _name = TextEditingController(text: SettingsService.userName);
   String? _avatar = AvatarService.isBuiltIn(SettingsService.userAvatar ?? '')
       ? SettingsService.userAvatar
-      : null;
+      : '${AvatarService.assetPrefix}assets/avatars/avatar_boy_green.png';
 
   bool get _ready => _name.text.trim().isNotEmpty && _avatar != null;
 

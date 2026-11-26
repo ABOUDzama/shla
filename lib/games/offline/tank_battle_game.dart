@@ -8,6 +8,7 @@ import '../../theme/flat_theme.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
+import '../../services/player_names.dart';
 import 'tank_battle_logic.dart';
 
 /// دبابات الشلة: reference-faithful one-button tanks.
@@ -219,7 +220,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
         ),
         child: Center(
           child: Text(
-            'لاعب ${i + 1}',
+            '${PlayerNames.name(i)}',
             textAlign: TextAlign.center,
             style: flatCairo(
               fontSize: 13,
@@ -254,7 +255,7 @@ class _TankBattleGameState extends State<TankBattleGame> {
         else if (_match.winner != null && _match.winner! < _humans)
           VictoryFriends(
               gameTitle: 'دبابات الشلة',
-              winnerName: 'لاعب ${_match.winner! + 1}',
+              winnerName: '${PlayerNames.name(_match.winner!)}',
               winnerSeats: [_match.winner!])
         else if (_match.winner != null)
           Text(
@@ -345,12 +346,18 @@ class _TankBattleGameState extends State<TankBattleGame> {
   @override
   Widget build(BuildContext context) {
     if (_showIntro) {
-      return GameIntroWidget(
+      return OfflineGameScaffold(
         title: 'دبابات الشلة',
+        backgroundColor: FlatColors.bg,
+        body: GameIntroWidget(
+        title: 'دبابات الشلة',
+            playersLabel: '١-٤ لاعبين',
+            showBotsChip: true,
         description:
             'من ١ لـ٤ لاعبين في ساحة واحدة، وتقدر تكمل ببوتات. دبابتك ماشية لوحدها: دوس مطوّل على الزرار بتاعك في ركنك عشان تلفّ بيها، وسيبه عشان تضرب قذيفة. القذيفة بترتد من الحيطان، وضربة واحدة تدمّر أي دبابة.. حتى دبابتك! آخر دبابة عايشة تكسب 🎯',
         icon: '💥',
         onStart: () => setState(() => _showIntro = false),
+      ),
       );
     }
     final humans = (_phase == _TankPhase.playing || _phase == _TankPhase.over)
