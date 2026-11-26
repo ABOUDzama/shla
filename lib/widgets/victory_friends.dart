@@ -13,9 +13,11 @@ class VictoryFriends extends StatefulWidget {
   /// When set, the win is recorded once in the الترتيب history.
   final String? gameTitle;
 
-  /// Seats (0-3) that won, to crown. Defaults to the seat parsed from a
-  /// 'لاعب N' winnerName; when the name is not a seat label nobody is
-  /// crowned (we never guess a winner among the four avatars).
+  /// Seats (0-3) that won, to crown. Defaults to every 'لاعب N' label found
+  /// in the winnerName: a single winner ('لاعب 2') crowns one seat, a shared
+  /// win ('لاعب 1 و لاعب 3') crowns each named seat. When the name carries no
+  /// seat label (a friend name, a bot) nobody is crowned (we never guess a
+  /// winner among the four avatars).
   final List<int>? winnerSeats;
 
   const VictoryFriends(
@@ -23,8 +25,10 @@ class VictoryFriends extends StatefulWidget {
 
   List<int> get seats {
     if (winnerSeats != null) return winnerSeats!;
-    final m = RegExp(r'^لاعب\s*([1-4])$').firstMatch(winnerName.trim());
-    return m == null ? const [] : [int.parse(m.group(1)!) - 1];
+    return RegExp(r'لاعب\s*([1-4])')
+        .allMatches(winnerName.trim())
+        .map((m) => int.parse(m.group(1)!) - 1)
+        .toList(growable: false);
   }
 
   @override

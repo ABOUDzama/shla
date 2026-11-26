@@ -72,6 +72,16 @@ void main() {
     await end(tester);
   });
 
+  testWidgets('shared-win label without explicit seats crowns each named seat',
+      (tester) async {
+    await show(tester, const VictoryFriends(winnerName: 'لاعب 1 و لاعب 3'));
+    expect(find.byKey(const ValueKey('crown_0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('crown_2')), findsOneWidget);
+    expect(find.byKey(const ValueKey('crown_1')), findsNothing);
+    expect(find.byKey(const ValueKey('crown_3')), findsNothing);
+    await end(tester);
+  });
+
   testWidgets('a name that is not a seat label crowns nobody', (tester) async {
     await show(tester, const VictoryFriends(winnerName: 'سارة'));
     expect(find.byKey(const ValueKey('crown_0')), findsNothing);

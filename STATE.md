@@ -118,3 +118,7 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 ## Batch 18 (tank_battle verdict + touch_ball polish)
 - tank_battle: bot winner now shows 'البوتات كسبوا 🤖' instead of VictoryFriends with a bot name; human winners keep VictoryFriends. New widget test covers both verdicts (debugForceWin hook). Widget 6/6, proof live-4p pass, small_screen pass, logic 11/11.
 - touch_ball polish (Main feedback): static zone numerals faded to alpha 0.28 so the moving ball never obscures them; golden regenerated and pixel-verified (ball readable over zone numeral).
+
+## Batch 19 (crown seat mapping)
+- VictoryFriends seat parser now maps EVERY 'لاعب N' label in winnerName to a crown (shared wins like 'لاعب 1 و لاعب 3' crown seats 0 and 2; single labels unchanged; non-seat names like friend names or 'بوت N' still crown nobody - we never guess). This closes the "winner crown missing on the friend-name/team-name site" gap generically.
+- victory_crown_test: 4/4 incl. new shared-win-label test; seat-2 golden unchanged.
