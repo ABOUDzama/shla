@@ -72,6 +72,7 @@ import '../games/offline/travel_bag_game.dart';
 import '../games/offline/ghost_word_game.dart';
 import '../games/offline/wink_murder_game.dart';
 import '../games/offline/three_rounds_game.dart';
+import '../games/offline/fake_artist_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -236,6 +237,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'الرسام المزيف',
+      description: 'واحد بيرسم من غير ما يعرف بيرسم إيه.. امسكه!',
+      icon: Icons.brush,
+      color: FunkyColors.pink,
+      screen: FakeArtistGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'ثلاث جولات',

@@ -51,6 +51,7 @@ import 'package:shella/games/offline/travel_bag_game.dart';
 import 'package:shella/games/offline/ghost_word_game.dart';
 import 'package:shella/games/offline/wink_murder_game.dart';
 import 'package:shella/games/offline/three_rounds_game.dart';
+import 'package:shella/games/offline/fake_artist_game.dart';
 import 'package:shella/games/offline/charades_game.dart';
 import 'package:shella/games/offline/word_chain_game.dart';
 import 'package:shella/games/offline/first_letter_game.dart';
@@ -649,6 +650,90 @@ void main() {
     await fixedPumps(tester);
     // Next round starts with منى
     expect(find.text('دور منى'), findsOneWidget);
+  });
+
+  testWidgets('small screen: fake artist flow', (tester) async {
+    await pumpSmall(tester, const FakeArtistGame());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // Roster ListView builds rows lazily: scroll each name into view.
+    final rosterScrollable = find
+        .ancestor(
+          of: find.byType(ListTile).first,
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    for (final name in ['أحمد', 'منى', 'كريم', 'سارة']) {
+      await tester.scrollUntilVisible(
+        find.text(name),
+        70,
+        scrollable: rosterScrollable,
+        maxScrolls: 30,
+      );
+      await fixedPumps(tester, 2);
+      await tester.tap(find.text(name).first, warnIfMissed: false);
+      await fixedPumps(tester);
+    }
+    await tapIf(tester, find.text('بدء اللعبة'));
+    tester.takeException();
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    // QM picks a title (first of 3 options)
+    await capture360(tester, 'fa_qmpick');
+    expectNoOverflow(tester);
+    await tester.tap(find.byType(ElevatedButton).first);
+    await fixedPumps(tester);
+    // Secret deal to 3 artists
+    for (var i = 0; i < 3; i++) {
+      await tapIf(tester, find.textContaining('تمام، أنا'));
+      await fixedPumps(tester);
+      await tapIf(tester, find.text('شوف الكارت 🃏'));
+      await fixedPumps(tester);
+      if (i == 0) {
+        await capture360(tester, 'fa_dealshow');
+        expectNoOverflow(tester);
+      }
+      await tapIf(
+        tester,
+        find.text(i < 2 ? 'فهمت، عدّيها ⏭️' : 'يلا نرسم! 🎨'),
+      );
+      await fixedPumps(tester);
+    }
+    // Draw 6 strokes (3 artists x 2 rounds)
+    final canvasFinder = find.byKey(const Key('fakeArtistCanvas'));
+    expect(canvasFinder, findsOneWidget);
+    final rect = tester.getRect(canvasFinder);
+    for (var s = 0; s < 6; s++) {
+      final y = rect.top + 30 + s * 20.0;
+      final g = await tester.startGesture(Offset(rect.left + 40, y));
+      await g.moveTo(Offset(rect.right - 40, y));
+      await g.up();
+      await fixedPumps(tester);
+      if (s == 0) {
+        await capture360(tester, 'fa_draw');
+        expectNoOverflow(tester);
+      }
+      await tapIf(tester, find.text('تمام، سلّم اللي بعده ⏭️'));
+      await fixedPumps(tester);
+    }
+    await capture360(tester, 'fa_masterpiece');
+    // Vote: 3 artists
+    for (var i = 0; i < 3; i++) {
+      await tapIf(tester, find.textContaining('تمام، أنا'));
+      await fixedPumps(tester);
+      if (i == 0) {
+        await capture360(tester, 'fa_vote');
+        expectNoOverflow(tester);
+      }
+      await tester.tap(find.byType(ElevatedButton).first);
+      await fixedPumps(tester);
+    }
+    // Reveal (caught or escaped)
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'fa_reveal');
+    expectNoOverflow(tester);
   });
 
   testWidgets('small screen: three rounds flow', (tester) async {
