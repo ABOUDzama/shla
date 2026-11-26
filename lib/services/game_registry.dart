@@ -49,6 +49,7 @@ import '../games/offline/whack_mole_game.dart';
 import '../games/offline/sumo_game.dart';
 import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
+import '../games/offline/croc_game.dart';
 import '../games/offline/ludo_game.dart';
 import '../games/offline/touch_ball_game.dart';
 import '../games/offline/rhythm_game.dart';
@@ -446,6 +447,15 @@ class GameRegistry {
       icon: Icons.casino,
       color: FunkyColors.lime,
       screen: const LudoGameScreen(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'تمساح الشلة',
+      description: 'دوس على ضرسة من ضروس التمساح.. واحدة فيهم موجوعة! اللي يقضمه يطلع خاسر وآخر واحد عايش يكسب 🐊',
+      icon: Icons.cruelty_free,
+      color: FunkyColors.mint,
+      screen: const CrocGameScreen(),
       badge: 'جديد',
       arcade1234: true,
     ),
