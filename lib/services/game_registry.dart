@@ -73,6 +73,7 @@ import '../games/offline/ghost_word_game.dart';
 import '../games/offline/wink_murder_game.dart';
 import '../games/offline/three_rounds_game.dart';
 import '../games/offline/fake_artist_game.dart';
+import '../games/offline/pair_quiz_game.dart';
 import '../theme/funky_theme.dart';
 
 class GameRegistry {
@@ -237,6 +238,14 @@ class GameRegistry {
       icon: Icons.psychology_rounded,
       color: FunkyColors.sky,
       screen: MemoryGame(),
+    ),
+    GameModel(
+      title: 'مين يعرف مين؟',
+      description: 'جاوب عن نفسك في سرية.. وشوف مين عارفك صح!',
+      icon: Icons.handshake,
+      color: FunkyColors.amber,
+      screen: PairQuizGame(),
+      badge: 'جديد',
     ),
     GameModel(
       title: 'الرسام المزيف',
