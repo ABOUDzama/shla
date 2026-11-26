@@ -402,7 +402,7 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
               opacity: active ? 1 : 0.55,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: rolled != null ? _colors[p] : Colors.white,
                   borderRadius: BorderRadius.circular(size * 0.22),
                   border: Border.all(
                       color: active ? _colors[p] : FlatColors.border,
@@ -418,7 +418,7 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
                 ),
                 child: Center(
                   child: rolled != null
-                      ? _DiceFace(value: rolled, color: _colors[p])
+                      ? _DiceFace(value: rolled, color: Colors.white)
                       : isBot
                           ? Text('🤖',
                               style: TextStyle(
@@ -431,24 +431,6 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
               ),
             ),
           ),
-        ),
-      ));
-      // Seat name beside the die (reference player labels), pushed away
-      // from the board: above the top-corner dice, below the bottom ones.
-      final nameY = (p <= 1) ? cy - size * 1.15 : cy + size * 0.65;
-      widgets.add(Positioned(
-        left: (cx - size).clamp(2.0, maxW - size * 2 - 4),
-        top: nameY.clamp(2.0, maxH - 18),
-        width: size * 2,
-        child: Text(
-          _seatLabel(p),
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textDirection: TextDirection.rtl,
-          style: _t(10,
-              w: FontWeight.w800,
-              color: active ? _colors[p] : FlatColors.ink.withValues(alpha: 0.55)),
         ),
       ));
     }
@@ -596,6 +578,33 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(cell * 0.45),
+          ),
+        ),
+      ));
+      // Seat name in white on the yard's outer edge (reference layout);
+      // only for seats actually in this game.
+      if (pl < _game.playerCount)
+      cells.add(Positioned(
+        left: c0 * cell,
+        top: (pl <= 1 ? r0 + 0.08 : r0 + 5.05) * cell,
+        width: cell * 6,
+        height: cell * 0.9,
+        child: Center(
+          child: Text(
+            _seatLabel(pl),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textDirection: TextDirection.rtl,
+            style: flatCairo(
+              fontSize: cell * 0.52,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+            ).copyWith(shadows: [
+              Shadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 3,
+                  offset: const Offset(0, 1)),
+            ]),
           ),
         ),
       ));

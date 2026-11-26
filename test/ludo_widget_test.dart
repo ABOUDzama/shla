@@ -72,6 +72,33 @@ void main() {
     await end(tester);
   });
 
+  testWidgets('rolled die shows as a colored tile with white pips',
+      (tester) async {
+    await pumpGame(tester);
+    await tester.tap(find.text('ابدأ اللعبة 🚀'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('لاعب واحد'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('لا'));
+    await tester.pump(const Duration(milliseconds: 400));
+    final g = (tester.state(find.byType(LudoGameScreen)) as dynamic).debugGame;
+    // Solo practice: seat 0 is the only human; the bot plays seat 1 on its
+    // timer. Roll until seat 0 has a live die awaiting a pick.
+    var tries = 0;
+    while ((g.dice == null || g.currentPlayer != 0) && tries < 30) {
+      if (g.currentPlayer == 0 && g.dice == null) {
+        await tester.tap(find.byKey(const ValueKey('die_0')));
+      }
+      await tester.pump(const Duration(milliseconds: 700));
+      tries++;
+    }
+    expect(g.dice, isNotNull);
+    expect(g.currentPlayer, 0);
+    await expectLater(find.byType(LudoGameScreen),
+        matchesGoldenFile('goldens/ludo_board_rolled.png'));
+    await end(tester);
+  });
+
   testWidgets('tapping the corner die rolls it for that seat', (tester) async {
     await pumpGame(tester);
     await tester.tap(find.text('ابدأ اللعبة 🚀'));
