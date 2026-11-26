@@ -9,6 +9,7 @@ import '../../widgets/game_intro_widget.dart';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import '../../services/arcade_juice.dart';
 import 'tank_battle_logic.dart';
 
 /// دبابات الشلة: reference-faithful one-button tanks.
@@ -48,7 +49,19 @@ class _TankBattleGameState extends State<TankBattleGame> {
     super.dispose();
   }
 
+  void _juiceEnd() {
+    final w = _match.winner;
+    if (w == null || w < 0) {
+      ArcadeJuice.fail();
+    } else if (w >= _humans) {
+      ArcadeJuice.lose();
+    } else {
+      ArcadeJuice.win();
+    }
+  }
+
   void _startMatch(int humans, bool withBots) {
+    ArcadeJuice.tap();
     _ticker?.cancel();
     setState(() {
       _humans = humans;
@@ -61,11 +74,16 @@ class _TankBattleGameState extends State<TankBattleGame> {
     });
     _ticker = Timer.periodic(const Duration(milliseconds: 60), (_) {
       if (!mounted || _phase != _TankPhase.playing) return;
+      final aliveBefore = List.of(_match.alive);
       setState(() {
         _match.tick();
+        for (var p = 0; p < _match.playerCount; p++) {
+          if (aliveBefore[p] && !_match.alive[p]) ArcadeJuice.hit();
+        }
         if (_match.isOver) {
           _ticker?.cancel();
           _phase = _TankPhase.over;
+          _juiceEnd();
         }
       });
     });
@@ -79,10 +97,16 @@ class _TankBattleGameState extends State<TankBattleGame> {
   void _holdEnd(int i) {
     if (_phase != _TankPhase.playing) return;
     setState(() {
+      final aliveBefore = List.of(_match.alive);
       _match.holdRelease(i);
+      ArcadeJuice.tick();
+      for (var p = 0; p < _match.playerCount; p++) {
+        if (aliveBefore[p] && !_match.alive[p]) ArcadeJuice.hit();
+      }
       if (_match.isOver) {
         _ticker?.cancel();
         _phase = _TankPhase.over;
+        _juiceEnd();
       }
     });
   }

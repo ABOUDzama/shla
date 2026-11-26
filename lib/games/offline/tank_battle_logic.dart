@@ -97,7 +97,7 @@ class TankBattleMatch {
     }
   }
 
-  static const double tankRadius = 0.045;
+  static const double tankRadius = 0.06;
   static const double speed = 0.0035; // per tick
   static const double turnRate = pi / 60; // per held tick
   static const double shellSpeed = 0.012;
