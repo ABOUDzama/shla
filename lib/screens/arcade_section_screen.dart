@@ -49,6 +49,7 @@ class ArcadeSectionScreen extends StatefulWidget {
     'تصويب الشلة': [1, 2, 3, 4],
     'حرب البطاريق': [1, 2],
     'وحش المدار': [1, 2, 3, 4],
+    'كوالا الفضاء': [1, 2, 3, 4],
   };
 
   /// Original illustrated covers (drawn in-house). Cards with a cover show

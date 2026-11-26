@@ -56,6 +56,7 @@ import '../games/offline/obstacle_game.dart';
 import '../games/offline/ballshoot_game.dart';
 import '../games/offline/penguins_game.dart';
 import '../games/offline/orbit_game.dart';
+import '../games/offline/koala_game.dart';
 import '../games/offline/ludo_game.dart';
 import '../games/offline/touch_ball_game.dart';
 import '../games/offline/rhythm_game.dart';
@@ -516,6 +517,15 @@ class GameRegistry {
       icon: Icons.public,
       color: FunkyColors.violet,
       screen: const OrbitGameScreen(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'كوالا الفضاء',
+      description: 'الكوالا في سفينته والنيازك نازلة! السفينة بتلف لوحدها وانت تضرب ليزر.. اللي يدمّر أكتر يكسب 🐨',
+      icon: Icons.rocket_launch,
+      color: FunkyColors.violet,
+      screen: const KoalaGameScreen(),
       badge: 'جديد',
       arcade1234: true,
     ),
