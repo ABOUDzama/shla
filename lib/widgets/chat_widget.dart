@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../services/socket_service.dart';
 import 'package:intl/intl.dart' as intl;
 import 'dart:convert';
@@ -84,7 +83,7 @@ class _ChatWidgetState extends State<ChatWidget> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
       decoration: const BoxDecoration(
-        color: Color(0xFF0F0F1A), // Deep dark purple-ish black
+        color: FlatColors.bg,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(35),
           topRight: Radius.circular(35),
@@ -98,9 +97,7 @@ class _ChatWidgetState extends State<ChatWidget> {
             width: 50,
             height: 5,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Colors.blueAccent, Colors.purpleAccent],
-              ),
+              color: FlatColors.border,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -112,26 +109,26 @@ class _ChatWidgetState extends State<ChatWidget> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.blueAccent.withValues(alpha: 0.15),
+                    color: FlatColors.tilePastels[1],
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.auto_awesome,
-                    color: Colors.blueAccent,
+                    color: FlatColors.ink,
                     size: 20,
                   ),
                 ),
                 const SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                     Text(
                       'غرفة الدردشة',
                       style: flatCairo(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white,
-
+                        color: FlatColors.ink,
                       ),
                     ),
                     Row(
@@ -142,41 +139,34 @@ class _ChatWidgetState extends State<ChatWidget> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: SocketService().isConnected
-                                ? Colors.greenAccent
-                                : Colors.redAccent,
-                            boxShadow: [
-                              BoxShadow(
-                                color:
-                                    (SocketService().isConnected
-                                            ? Colors.greenAccent
-                                            : Colors.redAccent)
-                                        .withValues(alpha: 0.5),
-                                blurRadius: 4,
-                              ),
-                            ],
+                                ? FlatColors.mintDark
+                                : FlatColors.playerRed,
                           ),
                         ),
                         const SizedBox(width: 6),
-                        Text(
+                        Flexible(
+                          child: Text(
                           SocketService().isConnected
                               ? 'متصل'
                               : 'فارغ من الاتصال',
                           style: flatCairo(
                             fontSize: 10,
-                            color: Colors.white60,
+                            color: FlatColors.ink.withValues(alpha: 0.6),
                             fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
-                  ],
+                    ],
+                  ),
                 ),
-                const Spacer(),
                 if (!SocketService().isConnected)
                   IconButton(
                     icon: const Icon(
                       Icons.sync_problem_rounded,
-                      color: Colors.orangeAccent,
+                      color: Color(0xFF9C6E00),
                     ),
                     onPressed: () {
                       SocketService().initSocket();
@@ -185,10 +175,11 @@ class _ChatWidgetState extends State<ChatWidget> {
                     tooltip: 'إعادة الاتصال',
                   ),
                 IconButton(
-                  icon: const Icon(Icons.close_rounded, color: Colors.white38),
+                  icon: Icon(Icons.close_rounded,
+                      color: FlatColors.ink.withValues(alpha: 0.4)),
                   onPressed: () => Navigator.pop(context),
                   style: IconButton.styleFrom(
-                    backgroundColor: Colors.white.withValues(alpha: 0.05),
+                    backgroundColor: Colors.white,
                     padding: const EdgeInsets.all(8),
                   ),
                 ),
@@ -196,7 +187,7 @@ class _ChatWidgetState extends State<ChatWidget> {
             ),
           ),
 
-          const Divider(color: Colors.white12, height: 1),
+          const Divider(color: FlatColors.border, height: 1, thickness: 2),
 
           // Messages List with Premium Styling
           Expanded(
@@ -210,13 +201,16 @@ class _ChatWidgetState extends State<ChatWidget> {
                           Container(
                             padding: const EdgeInsets.all(30),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.03),
+                              color: Colors.white,
                               shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: FlatColors.border, width: 2),
                             ),
                             child: Icon(
                               Icons.chat_bubble_rounded,
                               size: 70,
-                              color: Colors.blueAccent.withValues(alpha: 0.2),
+                              color: FlatColors.tilePastels[1]
+                                  .withValues(alpha: 0.5),
                             ),
                           ),
                           const SizedBox(height: 25),
@@ -224,7 +218,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                             'المكان فاضي يا وحش!\nابدأ المحادثة ووريهم مين القائد 🚀',
                             textAlign: TextAlign.center,
                             style: flatCairo(
-                              color: Colors.white38,
+                              color: FlatColors.ink.withValues(alpha: 0.45),
                               fontSize: 16,
                               height: 1.5,
                             ),
@@ -270,32 +264,28 @@ class _ChatWidgetState extends State<ChatWidget> {
               top: 15,
               bottom: MediaQuery.of(context).viewInsets.bottom + 20,
             ),
-            decoration: BoxDecoration(
-              color: const Color(0xFF161625),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, -5),
-                ),
-              ],
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(color: FlatColors.border, width: 2),
+              ),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: FlatColors.bg,
                       borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: FlatColors.border, width: 2),
                     ),
                     child: TextField(
                       controller: _messageController,
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                      style: flatCairo(color: FlatColors.ink, fontSize: 16),
                       decoration: InputDecoration(
                         hintText: 'اكتب حاجة عظمة...',
                         hintStyle: flatCairo(
-                          color: Colors.white24,
+                          color: FlatColors.ink.withValues(alpha: 0.35),
                           fontSize: 15,
                         ),
                         border: InputBorder.none,
@@ -324,20 +314,9 @@ class _ChatWidgetState extends State<ChatWidget> {
       child: Container(
         height: 52,
         width: 52,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Colors.blueAccent, Color(0xFF7C4DFF)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+        decoration: const BoxDecoration(
+          color: FlatColors.playerBlue,
           shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.blueAccent.withValues(alpha: 0.4),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: const Icon(Icons.send_rounded, color: Colors.white, size: 24),
       ),
@@ -397,7 +376,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                     style: flatCairo(
                       fontSize: 13,
                       fontWeight: FontWeight.w900,
-                      color: isMe ? Colors.blueAccent : Colors.orangeAccent,
+                      color: isMe ? FlatColors.playerBlue : const Color(0xFF9C6E00),
                     ),
                   ),
                 ),
@@ -407,33 +386,16 @@ class _ChatWidgetState extends State<ChatWidget> {
                     vertical: 14,
                   ),
                   decoration: BoxDecoration(
-                    gradient: isMe
-                        ? const LinearGradient(
-                            colors: [Color(0xFF2962FF), Color(0xFF6200EA)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          )
-                        : LinearGradient(
-                            colors: [
-                              Colors.white.withValues(alpha: 0.1),
-                              Colors.white.withValues(alpha: 0.05),
-                            ],
-                          ),
+                    color: isMe ? FlatColors.playerBlue : Colors.white,
+                    border: isMe
+                        ? null
+                        : Border.all(color: FlatColors.border, width: 2),
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(22),
                       topRight: const Radius.circular(22),
                       bottomLeft: Radius.circular(isMe ? 22 : 4),
                       bottomRight: Radius.circular(isMe ? 4 : 22),
                     ),
-                    boxShadow: isMe
-                        ? [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ]
-                        : null,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -441,7 +403,8 @@ class _ChatWidgetState extends State<ChatWidget> {
                       Text(
                         msg['message'] ?? '',
                         style: flatCairo(
-                          color: Colors.white,
+                          color:
+                              isMe ? Colors.white : FlatColors.ink,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -449,8 +412,10 @@ class _ChatWidgetState extends State<ChatWidget> {
                       const SizedBox(height: 6),
                       Text(
                         timeStr,
-                        style: TextStyle(
-                          color: isMe ? Colors.white70 : Colors.white38,
+                        style: flatCairo(
+                          color: isMe
+                              ? Colors.white70
+                              : FlatColors.ink.withValues(alpha: 0.45),
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),
@@ -474,16 +439,12 @@ class _ChatWidgetState extends State<ChatWidget> {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white10),
-        ),
+        decoration: FlatDecor.tag(),
         child: Text(
           msg['message'] ?? '',
           style: flatCairo(
             fontSize: 11,
-            color: Colors.white60,
+            color: FlatColors.ink.withValues(alpha: 0.6),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -542,8 +503,8 @@ class _ChatWidgetState extends State<ChatWidget> {
             shape: BoxShape.circle,
             border: Border.all(
               color: isSelf
-                  ? Colors.purpleAccent.withValues(alpha: 0.4)
-                  : Colors.blueAccent.withValues(alpha: 0.4),
+                  ? FlatColors.playerBlue.withValues(alpha: 0.4)
+                  : FlatColors.border,
               width: 1.5,
             ),
           ),
@@ -572,16 +533,9 @@ class _ChatWidgetState extends State<ChatWidget> {
       width: 35,
       height: 35,
       decoration: BoxDecoration(
-        color: isSelf ? const Color(0xFF6200EA) : const Color(0xFF37474F),
+        color: isSelf ? FlatColors.playerBlue : FlatColors.ink,
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white10, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Colors.white, width: 1.5),
       ),
       child: Center(
         child: Text(

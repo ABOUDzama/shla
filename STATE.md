@@ -162,3 +162,9 @@ HEAD: 55ef081 pushed to origin/main (GitHub push authorized by user WhatsApp 23:
 - New screens: cup/cup_setup_screen.dart (3/5/7 rounds, random or manual game pick grid with covers) + cup/cup_screen.dart (round card, standings, rounds list, champion card reusing VictoryFriends, no-champion case).
 - Entry: golden cup banner on top of the ١٢٣٤ tab (arcade_section_screen.dart) with resume state; added emojiOf() + تحدي الإيقاع emoji.
 - Tests: cup_service_test (9) + cup_widget_test (5, 3 goldens inspected) — full suite green; home_arcade_section/full goldens regenerated for the banner and inspected.
+
+## Batch 28 — flat-light lobby/room/scoreboard + chat (2026-11-26)
+- Last dark surfaces flattened to the approved flat-light look (FlatColors.bg cream, white cards + cream border, ink text, solid pastel buttons with darker bottom edge): lib/screens/lobby_screen.dart, room_screen.dart, scoreboard_screen.dart rewritten flat (gradients/glows/dark cards removed).
+- lib/widgets/chat_widget.dart flattened (cream sheet, white incoming bubbles, playerBlue outgoing, flat input bar) + real small-width fixes found by the new capture: header Row overflow (title wrapped in Expanded), status text Flexible, timestamps use flatCairo (were tofu in tests).
+- lib/widgets/voice_chat_widget.dart mic button flattened (white circle + cream border, ink/red/mintDark states).
+- Tests: new 'small screen: room chat restyle' capture; small360 lobby/room/scoreboard/room_chat goldens regenerated and pixel-inspected; small_screen suite 57/57 named tests green (one pre-existing async audioplayers MissingPluginException flake, unrelated).

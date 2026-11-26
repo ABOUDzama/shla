@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../games/online/xo_game_online.dart';
 import '../games/online/seega_game_online.dart';
 import '../games/online/gobblet_game_online.dart';
@@ -35,7 +34,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
 import '../services/voice_chat_service.dart';
 import '../widgets/reaction_overlay.dart';
-import '../theme/funky_theme.dart';
+import '../theme/flat_theme.dart';
 
 class RoomScreen extends StatefulWidget {
   final String roomCode;
@@ -496,23 +495,23 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
         final bool? shouldClose = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: FunkyColors.card,
+            backgroundColor: Colors.white,
             title: Text(
               'مغادرة الغرفة',
-              style: GoogleFonts.cairo(color: Colors.white),
+              style: flatCairo(color: FlatColors.ink),
             ),
             content: Text(
               widget.isHost
                   ? 'هل تريد إغلاق الغرفة نهائياً أم إبقائها مفتوحة للآخرين؟'
                   : 'هل أنت متأكد من مغادرة الغرفة؟',
-              style: GoogleFonts.cairo(color: Colors.white70),
+              style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.75)),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
                 child: Text(
                   'إلغاء',
-                  style: GoogleFonts.cairo(color: Colors.white54),
+                  style: flatCairo(color: FlatColors.ink.withValues(alpha: 0.55)),
                 ),
               ),
               if (widget.isHost)
@@ -524,7 +523,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                   },
                   child: Text(
                     'إبقاء مفتوحة',
-                    style: GoogleFonts.cairo(color: Colors.blueAccent),
+                    style: flatCairo(color: FlatColors.playerBlue),
                   ),
                 ),
               TextButton(
@@ -538,7 +537,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                 },
                 child: Text(
                   widget.isHost ? 'إغلاق الغرفة' : 'مغادرة',
-                  style: GoogleFonts.cairo(color: Colors.redAccent),
+                  style: flatCairo(color: FlatColors.playerRed),
                 ),
               ),
             ],
@@ -550,9 +549,8 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
         }
       },
       child: Scaffold(
-        body: FunkyBackground(
-          accent: FunkyColors.magenta,
-          child: Stack(
+        backgroundColor: FlatColors.bg,
+        body: Stack(
             children: [
               SafeArea(
               child: Column(
@@ -584,11 +582,11 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                               const SizedBox(width: 10),
                               Text(
                                 'جاري استعادة الاتصال.. 🔄',
-                                style: GoogleFonts.cairo(
+                                style: flatCairo(
                                   color: Colors.white,
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+                                ),
                               ),
                             ],
                           ),
@@ -611,17 +609,17 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                             const SizedBox(height: 28),
                             Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.people_alt_rounded,
-                                  color: Colors.white54,
+                                  color: FlatColors.ink.withValues(alpha: 0.5),
                                   size: 20,
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     'اللاعبون (${_players.length})',
-                                    style: GoogleFonts.cairo(
-                                      color: Colors.white54,
+                                    style: flatCairo(
+                                      color: FlatColors.ink.withValues(alpha: 0.55),
                                       fontSize: 15,
                                     ),
                                     overflow: TextOverflow.ellipsis,
@@ -634,7 +632,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                       vertical: 4,
                                     ),
                                     decoration:
-                                        FunkyDecor.pill(FunkyColors.amber),
+                                        FlatDecor.button(FlatColors.tilePastels[4], radius: 20),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -643,14 +641,14 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                           height: 10,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            color: Colors.white,
+                                            color: FlatColors.ink,
                                           ),
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
                                           'بانتظار لاعبين',
-                                          style: GoogleFonts.cairo(
-                                            color: Colors.white,
+                                          style: flatCairo(
+                                            color: FlatColors.ink,
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -666,20 +664,20 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                       vertical: 4,
                                     ),
                                     decoration:
-                                        FunkyDecor.pill(FunkyColors.mint),
+                                        FlatDecor.button(FlatColors.tilePastels[2], radius: 20),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         const Icon(
                                           Icons.check_circle,
-                                          color: Colors.white,
+                                          color: FlatColors.ink,
                                           size: 14,
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
                                           'جاهز للبدء',
-                                          style: GoogleFonts.cairo(
-                                            color: Colors.white,
+                                          style: flatCairo(
+                                            color: FlatColors.ink,
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -708,10 +706,12 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                         ? '🎮 اختر اللعبة لتبدأ:'
                                         : '🎮 ستظهر الألعاب بعد انضمام لاعب آخر')
                                   : '🎮 الألعاب المتاحة (في انتظار اختيار المضيف):',
-                              style: GoogleFonts.cairo(
+                              style: flatCairo(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                color: isReady ? Colors.white : Colors.white70,
+                                color: isReady
+                                    ? FlatColors.ink
+                                    : FlatColors.ink.withValues(alpha: 0.7),
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -727,7 +727,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'إكس أو',
                                     emoji: '❌⭕',
-                                    color: FunkyColors.mint,
+                                    color: FlatColors.tilePastels[2],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('xo')
                                         : null,
@@ -735,7 +735,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'سيجَا',
                                     emoji: '♟️',
-                                    color: FunkyColors.orange,
+                                    color: FlatColors.tilePastels[3],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('seega')
                                         : null,
@@ -743,7 +743,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'الكبير ياكل',
                                     emoji: '🔴🔵',
-                                    color: FunkyColors.violet,
+                                    color: FlatColors.tilePastels[0],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('gobblet')
                                         : null,
@@ -751,7 +751,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'خمس ثواني',
                                     emoji: '⏱️',
-                                    color: FunkyColors.magenta,
+                                    color: FlatColors.tilePastels[5],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('five_seconds')
                                         : null,
@@ -759,7 +759,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'ارسم وخمّن',
                                     emoji: '🎨',
-                                    color: FunkyColors.sky,
+                                    color: FlatColors.tilePastels[1],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('pictionary')
                                         : null,
@@ -767,7 +767,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'حقيقة أم جرأة',
                                     emoji: '😈',
-                                    color: FunkyColors.magenta,
+                                    color: FlatColors.tilePastels[5],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('truth_or_dare')
                                         : null,
@@ -775,7 +775,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'تحدي التعريف',
                                     emoji: '⏱️',
-                                    color: FunkyColors.lime,
+                                    color: FlatColors.tilePastels[2],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('word_chain')
                                         : null,
@@ -783,7 +783,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'أول حرف',
                                     emoji: '🔤',
-                                    color: FunkyColors.orange,
+                                    color: FlatColors.tilePastels[3],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('first_letter')
                                         : null,
@@ -791,7 +791,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'قنبلة الحروف',
                                     emoji: '💣',
-                                    color: FunkyColors.coral,
+                                    color: FlatColors.tilePastels[3],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('tick_tock_boom')
                                         : null,
@@ -799,7 +799,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'تحدي الأسئلة',
                                     emoji: '🧠',
-                                    color: FunkyColors.amber,
+                                    color: FlatColors.tilePastels[4],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('quiz')
                                         : null,
@@ -807,7 +807,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'مين أنا؟',
                                     emoji: '🎭',
-                                    color: FunkyColors.sky,
+                                    color: FlatColors.tilePastels[1],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('who_am_i')
                                         : null,
@@ -815,7 +815,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'تحدي الترتيب',
                                     emoji: '🎯',
-                                    color: FunkyColors.coral,
+                                    color: FlatColors.tilePastels[3],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('ranking_challenge')
                                         : null,
@@ -823,7 +823,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'أتوبيس كومبليت',
                                     emoji: '🚌',
-                                    color: FunkyColors.amber,
+                                    color: FlatColors.tilePastels[4],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('bus_complete')
                                         : null,
@@ -831,7 +831,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'مين فينا؟',
                                     emoji: '🫵',
-                                    color: FunkyColors.lime,
+                                    color: FlatColors.tilePastels[2],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('most_likely')
                                         : null,
@@ -839,7 +839,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'كلمات ممنوعة',
                                     emoji: '🙊',
-                                    color: FunkyColors.coral,
+                                    color: FlatColors.tilePastels[3],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('taboo')
                                         : null,
@@ -847,7 +847,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'ذاكرة الشلة',
                                     emoji: '🧠',
-                                    color: FunkyColors.sky,
+                                    color: FlatColors.tilePastels[1],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('memory_match')
                                         : null,
@@ -855,7 +855,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   _GameCard(
                                     title: 'إيموجي إيه؟',
                                     emoji: '🧩',
-                                    color: FunkyColors.amber,
+                                    color: FlatColors.tilePastels[4],
                                     onTap: (isReady && widget.isHost)
                                         ? () => _selectGame('emoji_guess')
                                         : null,
@@ -886,7 +886,6 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
               ),
             ),
             ],
-          ),
         ),
       ),
     );
@@ -921,7 +920,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: FunkyDecor.glowCard(FunkyColors.magenta, radius: 22),
+        decoration: FlatDecor.card(radius: 22),
         child: Row(
           children: [
             // Back Button
@@ -931,16 +930,16 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: FunkyColors.bgDeep.withValues(alpha: 0.6),
+                  color: Colors.white,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: FunkyColors.magenta.withValues(alpha: 0.5),
-                    width: 1.3,
+                    color: FlatColors.border,
+                    width: 2,
                   ),
                 ),
                 child: const Icon(
                   Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white,
+                  color: FlatColors.ink,
                   size: 18,
                 ),
               ),
@@ -949,17 +948,11 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
             Expanded(
               child: Text(
                 'غرفة الانتظار 🛋️',
-                style: GoogleFonts.cairo(
-                  color: Colors.white,
+                style: flatCairo(
+                  color: FlatColors.ink,
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  shadows: [
-                    Shadow(
-                      color: FunkyColors.magenta.withValues(alpha: 0.7),
-                      blurRadius: 12,
-                    ),
-                  ],
-                ).copyWith(fontFamilyFallback: const ['Noto Color Emoji']),
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -982,16 +975,16 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: FunkyColors.bgDeep.withValues(alpha: 0.6),
+                          color: Colors.white,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: FunkyColors.cyan.withValues(alpha: 0.5),
-                            width: 1.3,
+                            color: FlatColors.border,
+                            width: 2,
                           ),
                         ),
                         child: const Icon(
                           Icons.forum_rounded,
-                          color: FunkyColors.cyan,
+                          color: FlatColors.playerBlue,
                           size: 18,
                         ),
                       ),
@@ -1003,10 +996,10 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: FunkyColors.coral,
+                            color: FlatColors.playerRed,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: FunkyColors.bgDeep,
+                              color: Colors.white,
                               width: 1.5,
                             ),
                           ),
@@ -1062,24 +1055,14 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                   ),
                   constraints: const BoxConstraints(maxWidth: 160),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF2563EB), Color(0xFF7C3AED)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: Colors.white,
+                    border: Border.all(color: FlatColors.border, width: 2),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16),
                       bottomLeft: Radius.circular(16),
                       bottomRight: Radius.circular(4),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.4),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1087,10 +1070,10 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                     children: [
                       Text(
                         name,
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: FlatColors.playerBlue,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1098,9 +1081,9 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                       const SizedBox(height: 2),
                       Text(
                         text,
-                        style: GoogleFonts.cairo(
+                        style: flatCairo(
                           fontSize: 13,
-                          color: Colors.white,
+                          color: FlatColors.ink,
                           height: 1.2,
                           fontWeight: FontWeight.w500,
                         ),
@@ -1122,29 +1105,25 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-      decoration: FunkyDecor.glowCard(FunkyColors.magenta, radius: 24),
+      decoration: FlatDecor.card(radius: 24),
       child: Column(
         children: [
           Text(
             'كود الغرفة',
-            style: GoogleFonts.cairo(color: Colors.white60, fontSize: 14),
+            style: flatCairo(
+                color: FlatColors.ink.withValues(alpha: 0.6),
+                fontSize: 14),
           ),
           const SizedBox(height: 8),
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
               widget.roomCode,
-              style: GoogleFonts.cairo(
+              style: flatCairo(
                 fontSize: 42,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: FlatColors.ink,
                 letterSpacing: 10,
-                shadows: [
-                  Shadow(
-                    color: FunkyColors.magenta.withValues(alpha: 0.8),
-                    blurRadius: 18,
-                  ),
-                ],
               ),
             ),
           ),
@@ -1153,21 +1132,22 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
             onTap: _copyCode,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: FunkyDecor.pill(FunkyColors.violet),
+              decoration:
+                  FlatDecor.button(FlatColors.tilePastels[0], radius: 20),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(
                     Icons.copy_rounded,
-                    color: Colors.white,
+                    color: FlatColors.ink,
                     size: 16,
                   ),
                   const SizedBox(width: 6),
                   Flexible(
                     child: Text(
                       'انسخ الكود وشاركه مع أصحابك',
-                      style: GoogleFonts.cairo(
-                        color: Colors.white,
+                      style: flatCairo(
+                        color: FlatColors.ink,
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1198,30 +1178,14 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: FunkyColors.card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        gradient: isMe
-            ? LinearGradient(
-                begin: Alignment.centerRight,
-                end: Alignment.centerLeft,
-                colors: [
-                  FunkyColors.magenta.withValues(alpha: 0.35),
-                  FunkyColors.card,
-                ],
-              )
-            : null,
         border: Border.all(
-          color: isMe ? FunkyColors.magenta : Colors.white.withAlpha(14),
-          width: isMe ? 1.8 : 1,
+          color: isMe
+              ? FlatColors.tilePastels[5]
+              : FlatColors.border,
+          width: 2,
         ),
-        boxShadow: isMe
-            ? [
-                BoxShadow(
-                  color: FunkyColors.magenta.withValues(alpha: 0.35),
-                  blurRadius: 12,
-                ),
-              ]
-            : null,
       ),
       child: Row(
         children: [
@@ -1244,8 +1208,8 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                     Flexible(
                       child: Text(
                         player['name'] as String? ?? 'لاعب',
-                        style: GoogleFonts.cairo(
-                          color: Colors.white,
+                        style: flatCairo(
+                          color: FlatColors.ink,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1256,8 +1220,8 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                       const SizedBox(width: 6),
                       Text(
                         '(أنت)',
-                        style: GoogleFonts.cairo(
-                          color: FunkyColors.mint,
+                        style: flatCairo(
+                          color: FlatColors.mintDark,
                           fontSize: 13,
                         ),
                       ),
@@ -1267,12 +1231,13 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                 if (isHost)
                   Text(
                     'مضيف',
-                    style: GoogleFonts.cairo(color: Colors.amber, fontSize: 12),
+                    style: flatCairo(
+                        color: const Color(0xFF9C6E00), fontSize: 12),
                   ),
               ],
             ),
           ),
-          const Icon(Icons.circle, color: FunkyColors.mint, size: 12),
+          const Icon(Icons.circle, color: FlatColors.mintDark, size: 12),
         ],
       ),
     );
@@ -1283,9 +1248,9 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: FunkyColors.card.withValues(alpha: 0.5),
+        color: Colors.white.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white.withAlpha(14)),
+        border: Border.all(color: FlatColors.border, width: 2),
       ),
       child: Row(
         children: [
@@ -1294,22 +1259,24 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
             height: 48,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withAlpha(10),
+              color: FlatColors.bg,
               border: Border.all(
-                color: Colors.white24,
-                style: BorderStyle.solid,
+                color: FlatColors.border,
+                width: 2,
               ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.person_add_rounded,
-              color: Colors.white24,
+              color: FlatColors.ink.withValues(alpha: 0.3),
               size: 24,
             ),
           ),
           const SizedBox(width: 12),
           Text(
             'بانتظار لاعب...',
-            style: GoogleFonts.cairo(color: Colors.white30, fontSize: 15),
+            style: flatCairo(
+                color: FlatColors.ink.withValues(alpha: 0.35),
+                fontSize: 15),
           ),
         ],
       ),
@@ -1346,41 +1313,21 @@ class _GameCard extends StatelessWidget {
         opacity: isDisabled ? 0.6 : 1.0,
         duration: const Duration(milliseconds: 200),
         child: Container(
-          decoration: FunkyDecor.glowCard(color, radius: 24),
+          decoration: FlatDecor.card(radius: 24),
           child: Stack(
                 children: [
-                  // Subtle Glow Background
-                  Positioned(
-                    top: -40,
-                    right: -40,
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Emoji Container with Neon Glow
+                        // Flat solid pastel emoji disc
                         Container(
                           width: 70,
                           height: 70,
                           decoration: BoxDecoration(
-                            color: color.withValues(alpha: 0.1),
+                            color: color,
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: color.withValues(alpha: 0.4),
-                                blurRadius: 15,
-                                spreadRadius: 1,
-                              ),
-                            ],
                           ),
                           child: Center(
                             child: Padding(
@@ -1402,10 +1349,10 @@ class _GameCard extends StatelessWidget {
                         Text(
                           title,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.cairo(
+                          style: flatCairo(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: FlatColors.ink,
                           ),
                         ),
                       ],
@@ -1439,17 +1386,11 @@ class _EmojiPickerState extends State<_EmojiPicker> {
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
-              color: FunkyColors.card,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
-                  color: FunkyColors.violet.withValues(alpha: 0.6),
-                  width: 1.3),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  blurRadius: 10,
-                ),
-              ],
+                  color: FlatColors.border,
+                  width: 2),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -1480,15 +1421,8 @@ class _EmojiPickerState extends State<_EmojiPicker> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              gradient: FunkyDecor.accentGradient(FunkyColors.violet),
+              color: FlatColors.tilePastels[0],
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: FunkyColors.violet.withValues(alpha: 0.5),
-                  blurRadius: 15,
-                  offset: const Offset(0, 6),
-                ),
-              ],
             ),
             child: Center(
               child: Text(

@@ -58,6 +58,7 @@ import 'package:shella/games/offline/never_have_i_game.dart';
 import 'package:shella/games/offline/undercover_game.dart';
 import 'package:shella/games/offline/mafia_game.dart';
 import 'package:shella/widgets/flat_home_preview.dart';
+import 'package:shella/widgets/chat_widget.dart';
 import 'package:shella/screens/scoreboard_screen.dart';
 import 'package:shella/services/score_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as sio;
@@ -1162,6 +1163,45 @@ void main() {
     await fixedPumps(tester);
     await capture360(tester, 'flat_home');
     expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: room chat restyle', (tester) async {
+    useFakeSocket();
+    SocketService().chatMessages.addAll([
+      {
+        'playerName': 'كريم',
+        'message': 'يلا نلعب إكس أو؟',
+        'timestamp': DateTime(2026, 11, 26, 19, 30).toIso8601String(),
+      },
+      {
+        'playerName': 'أحمد',
+        'message': 'تمام، أنا جاهز 😄',
+        'timestamp': DateTime(2026, 11, 26, 19, 31).toIso8601String(),
+      },
+      {
+        'isSystem': true,
+        'message': 'انضم كريم للغرفة',
+        'timestamp': DateTime(2026, 11, 26, 19, 29).toIso8601String(),
+      },
+    ]);
+    addTearDown(() => SocketService().chatMessages.clear());
+    await pumpSmall(
+      tester,
+      SizedBox(
+        height: 900,
+        child: Material(
+          child: ChatWidget(
+          roomCode: '12345',
+          playerName: 'أحمد',
+          initialMessages: SocketService().chatMessages,
+          ),
+        ),
+      ),
+    );
+    await flushFontCallbacks(tester);
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'room_chat');
   });
 
   testWidgets('small screen: scoreboard restyle', (tester) async {

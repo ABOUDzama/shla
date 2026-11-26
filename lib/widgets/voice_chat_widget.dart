@@ -5,7 +5,7 @@ import '../services/socket_service.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:async';
 import 'dart:ui';
-import '../theme/funky_theme.dart';
+import '../theme/flat_theme.dart';
 
 class VoiceChatWidget extends StatefulWidget {
   final String roomCode;
@@ -106,13 +106,14 @@ class _VoiceChatWidgetState extends State<VoiceChatWidget> {
                 width: 40,
                 height: 40,
                 alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: FunkyColors.cardLight,
+                decoration: BoxDecoration(
+                  color: Colors.white,
                   shape: BoxShape.circle,
+                  border: Border.all(color: FlatColors.border, width: 2),
                 ),
                 child: Icon(
                   _error != null ? Icons.error_outline_rounded : (isMuted ? Icons.mic_off_rounded : Icons.mic_rounded),
-                  color: _error != null ? Colors.redAccent : (isMuted ? Colors.redAccent : (isISpeaking ? Colors.greenAccent : Colors.white)),
+                  color: _error != null ? FlatColors.playerRed : (isMuted ? FlatColors.playerRed : (isISpeaking ? FlatColors.mintDark : FlatColors.ink)),
                   size: 20,
                 ),
               ),
@@ -127,9 +128,9 @@ class _VoiceChatWidgetState extends State<VoiceChatWidget> {
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: isConnected ? Colors.greenAccent : Colors.orangeAccent,
+                  color: isConnected ? FlatColors.mintDark : FlatColors.tilePastels[4],
                   shape: BoxShape.circle,
-                  border: Border.all(color: FunkyColors.cardLight, width: 1.5),
+                  border: Border.all(color: Colors.white, width: 1.5),
                 ),
               ).animate(onPlay: (c) => c.repeat())
                .fadeIn(duration: 500.ms)
