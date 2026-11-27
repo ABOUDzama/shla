@@ -342,8 +342,8 @@ void _startMatch(int humans, bool withBots) {
               winnerSeats: [w],
             )
           else ...[
-            Text('البوت كسب 🤖', style: _t(24, w: FontWeight.w900),
-                textDirection: TextDirection.rtl),
+            BotsWinLabel(gameTitle: 'حرب البطاريق',
+                style: _t(24, w: FontWeight.w900)),
             const SizedBox(height: 8),
             Text('كرة التلج بتاعته كانت أدق',
                 style: _t(13, color: FlatColors.ink.withValues(alpha: 0.6)),
