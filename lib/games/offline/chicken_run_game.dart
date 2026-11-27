@@ -218,8 +218,17 @@ void _start(int humans, bool withBots) {
               padding: const EdgeInsets.all(6),
               child: Stack(children: [
                 Positioned.fill(
-                  child: CustomPaint(
-                    painter: _RunPainter(_match, _colors, _rowOrder),
+                  child: Listener(
+                    behavior: HitTestBehavior.opaque,
+                    onPointerDown: (_) {
+                      // Solo: a tap anywhere flips.
+                      if (_humans == 1 && _phase == _Phase.playing) {
+                        _match.flip(0);
+                      }
+                    },
+                    child: CustomPaint(
+                      painter: _RunPainter(_match, _colors, _rowOrder),
+                    ),
                   ),
                 ),
                 for (var s = 0; s < _humans; s++)
