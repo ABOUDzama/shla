@@ -33,6 +33,21 @@ import 'package:shella/games/offline/touch_ball_game.dart';
 import 'package:shella/games/offline/snow_brawl_game.dart';
 import 'package:shella/games/offline/tank_battle_game.dart';
 import 'package:shella/games/offline/rhythm_game.dart';
+import 'package:shella/games/offline/obstacle_game.dart';
+import 'package:shella/games/offline/ballshoot_game.dart';
+import 'package:shella/games/offline/koala_game.dart';
+import 'package:shella/games/offline/penguins_game.dart';
+import 'package:shella/games/offline/orbit_game.dart';
+import 'package:shella/games/offline/minigolf_game.dart';
+import 'package:shella/games/offline/flappy_game.dart';
+import 'package:shella/games/offline/croc_game.dart';
+import 'package:shella/games/offline/ludo_game.dart';
+import 'package:shella/games/offline/car_race_game.dart';
+import 'package:shella/games/offline/chicken_run_game.dart';
+import 'package:shella/games/offline/micro_racers_game.dart';
+import 'package:shella/games/offline/flick_soccer_game.dart';
+import 'package:shella/games/offline/goal_rush_game.dart';
+import 'package:shella/games/offline/pigeon_game.dart';
 import 'package:shella/screens/settings_screen.dart';
 import 'package:shella/screens/profile_screen.dart';
 import 'package:shella/games/offline/password_game.dart';
@@ -1516,6 +1531,367 @@ void main() {
     await fixedPumps(tester, 4);
     await flushFontCallbacks(tester);
     await capture360(tester, 'arc_rhythm_b');
+    expectNoOverflow(tester);
+  });
+
+
+  testWidgets('small screen: arcade obstacle', (tester) async {
+    await pumpSmall(tester, const ObstacleGameScreen(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_obstacle_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_obstacle_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade ballshoot', (tester) async {
+    await pumpSmall(tester, const BallShootGameScreen(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_ballshoot_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_ballshoot_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade koala', (tester) async {
+    await pumpSmall(tester, const KoalaGameScreen(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_koala_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_koala_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade penguins', (tester) async {
+    await pumpSmall(tester, const PenguinsGameScreen());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_penguins_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_penguins_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade orbit', (tester) async {
+    await pumpSmall(tester, const OrbitGameScreen(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_orbit_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_orbit_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade minigolf', (tester) async {
+    await pumpSmall(tester, const MiniGolfGameScreen());
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_minigolf_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_minigolf_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade flappy', (tester) async {
+    await pumpSmall(tester, const FlappyGameScreen(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_flappy_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_flappy_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade croc', (tester) async {
+    await pumpSmall(tester, const CrocGameScreen(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_croc_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_croc_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade ludo', (tester) async {
+    await pumpSmall(tester, const LudoGameScreen(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_ludo_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_ludo_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade car_race', (tester) async {
+    await pumpSmall(tester, const CarRaceGame(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_car_race_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_car_race_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade chicken_run', (tester) async {
+    await pumpSmall(tester, const ChickenRunGame(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_chicken_run_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_chicken_run_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade micro_racers', (tester) async {
+    await pumpSmall(tester, const MicroRacersGame(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_micro_racers_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_micro_racers_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade flick_soccer', (tester) async {
+    await pumpSmall(tester, const FlickSoccerGame(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_flick_soccer_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_flick_soccer_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade goal_rush', (tester) async {
+    await pumpSmall(tester, const GoalRushGame(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_goal_rush_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_goal_rush_b');
+    expectNoOverflow(tester);
+  });
+
+  testWidgets('small screen: arcade pigeon', (tester) async {
+    await pumpSmall(tester, const PigeonGame(randomSeed: 5));
+    await flushFontCallbacks(tester);
+    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
+    await fixedPumps(tester);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_pigeon_a');
+    for (final label in ['2 لاعبين', 'لاعب واحد', '2']) {
+      if (find.text(label).evaluate().isNotEmpty) {
+        await tapIf(tester, find.text(label).first);
+        break;
+      }
+    }
+    await fixedPumps(tester, 2);
+    // Bot question when it exists: decline so the match starts.
+    if (find.text('لا').evaluate().isNotEmpty) {
+      await tapIf(tester, find.text('لا').first);
+    }
+    await fixedPumps(tester, 4);
+    await flushFontCallbacks(tester);
+    await capture360(tester, 'arc_pigeon_b');
     expectNoOverflow(tester);
   });
 
