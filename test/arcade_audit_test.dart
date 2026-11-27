@@ -21,7 +21,6 @@ import 'package:shella/games/offline/goal_rush_game.dart';
 import 'package:shella/games/offline/pigeon_game.dart';
 import 'package:shella/games/offline/coin_grab_game.dart';
 import 'package:shella/games/offline/sumo_game.dart';
-import 'package:shella/games/offline/catch_game.dart';
 import 'package:shella/games/offline/tap_race_game.dart';
 import 'package:shella/games/offline/touch_ball_game.dart';
 import 'package:shella/games/offline/rhythm_game.dart';
@@ -219,7 +218,6 @@ void main() {
     'pigeon': const PigeonGame(),
     'coin': const CoinGrabGame(),
     'sumo': const SumoGame(),
-    'catch': const CatchGame(),
     'taprace': const TapRaceGame(),
     'touchball': const TouchBallGame(),
     'rhythm': const RhythmGame(),

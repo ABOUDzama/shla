@@ -45,6 +45,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('ابدأ اللعبة 🚀'), warnIfMissed: false);
     await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('دوس سريع'), warnIfMissed: false);
+    await tester.pump(const Duration(milliseconds: 300));
   }
 
   Future<void> settle(WidgetTester tester) async {

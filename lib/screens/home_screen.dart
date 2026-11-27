@@ -90,9 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'دبابات الشلة': '💥',
     'شد الحبل': '💪',
     'سومو الشلة': '🤼',
-    'اقطفها': '🐟',
     'سباق الدوس': '👟',
-    'كورة اللمسة': '⚽',
   };
 
   /// Original illustrated artwork per game: generated in-house for Shla

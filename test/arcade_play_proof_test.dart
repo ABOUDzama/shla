@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shella/games/offline/catch_game.dart';
 import 'package:shella/games/offline/reaction_game.dart';
 import 'package:shella/games/offline/snake_arena_game.dart';
 import 'package:shella/games/offline/tank_battle_game.dart';
@@ -138,17 +137,10 @@ void main() {
     await settleDown(tester);
   });
 
-  testWidgets('proof: catch spinning ring 4p', (tester) async {
-    await prep(tester, const CatchGame(randomSeed: 7));
-    await tester.tap(find.text('4 لاعبين'));
-    await tester.pump(const Duration(milliseconds: 900));
-    await tester.pump(const Duration(seconds: 1));
-    await snap(tester, 'catch_spin_4p');
-    await settleDown(tester);
-  });
-
   testWidgets('proof: tap-race sprint 2p', (tester) async {
     await prep(tester, const TapRaceGame());
+    await tester.tap(find.text('دوس سريع'));
+    await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('2 لاعبين'));
     await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('لا'));

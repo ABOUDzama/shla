@@ -165,7 +165,7 @@ void main() {
     expect(find.textContaining('بطولة جولات'), findsOneWidget);
 
     await CupService.instance
-        .start(rounds: 3, games: const ['سومو الشلة', 'اقطفها', 'سباق الدوس']);
+        .start(rounds: 3, games: const ['سومو الشلة', 'لمّ الفلوس', 'سباق الدوس']);
     await tester.pump();
     expect(find.textContaining('الكأس شغال: الجولة 1 من 3'), findsOneWidget);
 
@@ -173,11 +173,11 @@ void main() {
     // not a new setup.
     await CupService.instance.endCup();
     await CupService.instance
-        .start(rounds: 1, games: const ['اقطفها']);
+        .start(rounds: 1, games: const ['لمّ الفلوس']);
     await CupService.instance.markRoundStarted();
     await tester.runAsync(() async {
       await ResultsService.instance.recordWin(
-          game: 'اقطفها',
+          game: 'لمّ الفلوس',
           winner: 'لاعب 2',
           roundId: ResultsService.newRoundId());
       await CupService.instance
@@ -192,7 +192,7 @@ void main() {
       (tester) async {
     size(tester);
     await CupService.instance
-        .start(rounds: 2, games: const ['سومو الشلة', 'اقطفها']);
+        .start(rounds: 2, games: const ['سومو الشلة', 'لمّ الفلوس']);
     await CupService.instance.markRoundStarted();
     await warmGoogleFonts(tester);
     await tester.pumpWidget(app(const CupScreen()));
@@ -220,7 +220,7 @@ void main() {
   testWidgets('champion card after the last round, golden', (tester) async {
     size(tester);
     await CupService.instance
-        .start(rounds: 2, games: const ['سومو الشلة', 'اقطفها']);
+        .start(rounds: 2, games: const ['سومو الشلة', 'لمّ الفلوس']);
     await CupService.instance.markRoundStarted();
     await warmGoogleFonts(tester);
     await tester.pumpWidget(app(const CupScreen()));
@@ -247,7 +247,7 @@ void main() {
       (tester) async {
     size(tester);
     await CupService.instance
-        .start(rounds: 1, games: const ['اقطفها']);
+        .start(rounds: 1, games: const ['لمّ الفلوس']);
     await CupService.instance.markRoundStarted();
     await warmGoogleFonts(tester);
     await tester.pumpWidget(app(const CupScreen(embedded: true)));
@@ -269,7 +269,7 @@ void main() {
       (tester) async {
     size(tester);
     await CupService.instance
-        .start(rounds: 1, games: const ['اقطفها']);
+        .start(rounds: 1, games: const ['لمّ الفلوس']);
     await CupService.instance.markRoundStarted();
     await warmGoogleFonts(tester);
     await tester.pumpWidget(app(const CupScreen()));

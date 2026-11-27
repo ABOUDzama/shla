@@ -4,6 +4,7 @@ import 'dart:math';
 import '../../widgets/offline_game_scaffold.dart';
 import '../../widgets/victory_friends.dart';
 import '../../services/player_names.dart';
+import 'touch_ball_game.dart';
 import '../../services/arcade_juice.dart';
 import '../../widgets/game_intro_widget.dart';
 import '../../theme/flat_theme.dart';
@@ -128,6 +129,8 @@ class TapRaceGame extends StatefulWidget {
 
 class _TapRaceGameState extends State<TapRaceGame> {
   bool _showIntro = true;
+  bool _modeChosen = false;
+  bool _touchBallMode = false;
   _RacePhase _phase = _RacePhase.pickPlayers;
   late TapRaceMatch _match;
   Timer? _timer;
@@ -421,10 +424,39 @@ class _TapRaceGameState extends State<TapRaceGame> {
             playersLabel: '١-٤ لاعبين',
             showBotsChip: true,
         description:
-            'لما العد يخلص، دوس على حارتك أسرع ما تقدر لمدة ٥ ثواني! الأكثر دوسات ياخد الجولة، وأول واحد يوصل ٣ جولات يكسب الماتش. تعادل؟ الجولة تتعاد.',
+            'اختار: دوس سريع (دوس على حارتك أسرع ما تقدر لمدة ٥ ثواني، وأول واحد يوصل ٣ جولات يكسب) أو كورة اللمسة (الم كورتك بس قبل ما تطير.. غلطة بتخصم).',
         icon: '👟',
         onStart: () => setState(() => _showIntro = false),
       ),
+      );
+    }
+    if (!_modeChosen) {
+      return OfflineGameScaffold(
+        title: 'سباق الدوس',
+        backgroundColor: FlatColors.bg,
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('نلعب إزاي؟', style: _t(26)),
+                const SizedBox(height: 20),
+                _bigChoice('دوس سريع', () => setState(() => _modeChosen = true)),
+                _bigChoice('كورة اللمسة', () => setState(() {
+                      _modeChosen = true;
+                      _touchBallMode = true;
+                    })),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    if (_touchBallMode) {
+      return TouchBallGame(
+        randomSeed: widget.randomSeed,
+        gameTitle: 'سباق الدوس',
+        skipIntro: true,
       );
     }
     return OfflineGameScaffold(

@@ -248,9 +248,7 @@ void main() {
       'لمّ الفلوس',
       'اضرب الخلد',
       'سومو الشلة',
-      'اقطفها',
       'سباق الدوس',
-      'كورة اللمسة',
       'تحدّي الإيقاع',
     ]) {
       // the grid lazy-builds: scroll in steps until the card is in the tree

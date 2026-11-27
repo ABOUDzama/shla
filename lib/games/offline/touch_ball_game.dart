@@ -96,7 +96,19 @@ class TouchBallMatch {
 enum _BallPhase { pickPlayers, pickBots, playing, matchOver }
 
 class TouchBallGame extends StatefulWidget {
-  const TouchBallGame({super.key, this.randomSeed});
+  const TouchBallGame({
+    super.key,
+    this.randomSeed,
+    this.gameTitle = 'كورة اللمسة',
+    this.skipIntro = false,
+  });
+
+  /// Title used for the scaffold and recorded wins. Tap Race passes its own
+  /// title so cup rounds close when this mode runs inside it.
+  final String gameTitle;
+
+  /// True when hosted as a Tap Race mode (its intro already played).
+  final bool skipIntro;
 
   /// Fixed RNG seed for deterministic tests; null uses a live random source.
   final int? randomSeed;
@@ -106,7 +118,7 @@ class TouchBallGame extends StatefulWidget {
 }
 
 class _TouchBallGameState extends State<TouchBallGame> {
-  bool _showIntro = true;
+  late bool _showIntro = !widget.skipIntro;
   _BallPhase _phase = _BallPhase.pickPlayers;
   late TouchBallMatch _match;
   late final Random _random = widget.randomSeed != null ? Random(widget.randomSeed!) : Random();
@@ -407,10 +419,10 @@ void _startMatch(int humans, bool withBots) {
   Widget build(BuildContext context) {
     if (_showIntro) {
       return OfflineGameScaffold(
-        title: 'كورة اللمسة',
+        title: widget.gameTitle,
         backgroundColor: FlatColors.bg,
         body: GameIntroWidget(
-        title: 'كورة اللمسة',
+        title: widget.gameTitle,
             playersLabel: '١-٤ لاعبين',
             showBotsChip: true,
         description:
@@ -421,7 +433,7 @@ void _startMatch(int humans, bool withBots) {
       );
     }
     return OfflineGameScaffold(
-      title: 'كورة اللمسة',
+      title: widget.gameTitle,
       backgroundColor: FlatColors.bg,
       body: SafeArea(
         child: _phase == _BallPhase.pickPlayers
@@ -442,10 +454,10 @@ void _startMatch(int humans, bool withBots) {
                         : _botSeats.contains(_match.matchWinner)
                             ? Padding(
                                 padding: const EdgeInsets.all(8),
-                                child: BotsWinLabel(gameTitle: 'كورة اللمسة', style: _t(22)),
+                                child: BotsWinLabel(gameTitle: widget.gameTitle, style: _t(22)),
                               )
                             : VictoryFriends(
-                                gameTitle: 'كورة اللمسة',
+                                gameTitle: widget.gameTitle,
                                 winnerName:
                                     '${PlayerNames.name(_match.matchWinner!)}',
                                 winnerSeats: [_match.matchWinner!]),

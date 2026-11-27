@@ -28,7 +28,6 @@ import 'package:shella/games/offline/sumo_game.dart';
 import 'package:shella/games/offline/snake_arena_game.dart';
 import 'package:shella/games/offline/whack_mole_game.dart';
 import 'package:shella/games/offline/coin_grab_game.dart';
-import 'package:shella/games/offline/catch_game.dart';
 import 'package:shella/games/offline/touch_ball_game.dart';
 import 'package:shella/games/offline/snow_brawl_game.dart';
 import 'package:shella/games/offline/tank_battle_game.dart';
@@ -1330,6 +1329,9 @@ void main() {
     await flushFontCallbacks(tester);
     await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
     await fixedPumps(tester);
+    await capture360(tester, 'arc_tap_race_mode');
+    await tapIf(tester, find.text('دوس سريع'));
+    await fixedPumps(tester);
     await flushFontCallbacks(tester);
     await capture360(tester, 'arc_tap_race_a');
     for (final label in ['2 لاعبين', '2', 'لاعبين']) {
@@ -1436,25 +1438,6 @@ void main() {
     await fixedPumps(tester, 4);
     await flushFontCallbacks(tester);
     await capture360(tester, 'arc_coin_grab_b');
-    expectNoOverflow(tester);
-  });
-
-  testWidgets('small screen: arcade catch', (tester) async {
-    await pumpSmall(tester, const CatchGame());
-    await flushFontCallbacks(tester);
-    await tapIf(tester, find.text('ابدأ اللعبة 🚀'));
-    await fixedPumps(tester);
-    await flushFontCallbacks(tester);
-    await capture360(tester, 'arc_catch_a');
-    for (final label in ['2 لاعبين', '2', 'لاعبين']) {
-      if (find.text(label).evaluate().isNotEmpty) {
-        await tapIf(tester, find.text(label).first);
-        break;
-      }
-    }
-    await fixedPumps(tester, 4);
-    await flushFontCallbacks(tester);
-    await capture360(tester, 'arc_catch_b');
     expectNoOverflow(tester);
   });
 

@@ -50,7 +50,6 @@ import '../games/offline/snow_brawl_game.dart';
 import '../games/offline/coin_grab_game.dart';
 import '../games/offline/whack_mole_game.dart';
 import '../games/offline/sumo_game.dart';
-import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
 import '../games/offline/croc_game.dart';
 import '../games/offline/flappy_game.dart';
@@ -62,7 +61,6 @@ import '../games/offline/penguins_game.dart';
 import '../games/offline/orbit_game.dart';
 import '../games/offline/koala_game.dart';
 import '../games/offline/ludo_game.dart';
-import '../games/offline/touch_ball_game.dart';
 import '../games/offline/rhythm_game.dart';
 import '../games/offline/who_said_game.dart';
 import '../games/offline/heads_up_game.dart';
@@ -573,29 +571,11 @@ class GameRegistry {
       arcade1234: true,
     ),
     GameModel(
-      title: 'اقطفها',
-      description: 'السمكة بتلف! دوس لما تعدي على لونك قبل غيرك',
-      icon: Icons.catching_pokemon,
-      color: FunkyColors.sky,
-      screen: CatchGame(),
-      badge: 'جديد',
-      arcade1234: true,
-    ),
-    GameModel(
       title: 'سباق الدوس',
       description: 'دوس على حارتك أسرع من الكل في ٥ ثواني',
       icon: Icons.directions_run,
       color: FunkyColors.orange,
       screen: TapRaceGame(),
-      badge: 'جديد',
-      arcade1234: true,
-    ),
-    GameModel(
-      title: 'كورة اللمسة',
-      description: 'الم صاحب الكورة بس قبل ما تطير.. غلطة بتخصم',
-      icon: Icons.sports_soccer,
-      color: FunkyColors.violet,
-      screen: TouchBallGame(),
       badge: 'جديد',
       arcade1234: true,
     ),
