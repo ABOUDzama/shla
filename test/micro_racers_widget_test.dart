@@ -9,11 +9,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/games/offline/micro_racers_game.dart';
 import 'package:shella/games/offline/micro_racers_logic.dart';
+import 'package:shella/services/audio_service.dart';
 
 /// Visual-proof renders for ميكرو ريسرز (written to test/goldens/, not
 /// comparison goldens). Timings below are controlled test delays.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
   final boundaryKey = GlobalKey();
 
   setUpAll(() async {

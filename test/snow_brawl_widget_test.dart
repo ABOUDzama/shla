@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shella/games/offline/snow_brawl_game.dart';
+import 'package:shella/services/audio_service.dart';
 
 Future<void> flushFontCallbacks(WidgetTester tester) async {
   await tester.runAsync(() => Future.delayed(const Duration(milliseconds: 500)));
@@ -59,6 +60,8 @@ Future<void> boot(WidgetTester tester) async {
 }
 
 void main() {
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });

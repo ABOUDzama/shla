@@ -23,6 +23,7 @@ import 'package:shella/games/offline/would_rather_game.dart';
 import 'package:shella/games/offline/never_have_i_game.dart';
 import 'package:shella/games/offline/word_story_game.dart';
 import 'package:shella/games/offline/code_names_game.dart';
+import 'package:shella/services/audio_service.dart';
 
 /// Interaction/state-transition tests: play each of the 4 new games through
 /// real taps and assert real state changes (round counters, turn rotation,
@@ -30,6 +31,8 @@ import 'package:shella/games/offline/code_names_game.dart';
 /// harness as small_screen_test.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
 
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
@@ -1004,7 +1007,7 @@ void main() {
       await tapText(tester, 'OPEN');
       await flushFontCallbacks(tester);
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
-      final back = find.byIcon(Icons.home_rounded); // flat chrome home pops to caller
+      final back = find.byIcon(Icons.arrow_back_rounded); // flat chrome back pops to caller
       expect(back, findsOneWidget);
       await tester.tap(back, warnIfMissed: false);
       await fixedPumps(tester, 8);
@@ -1332,7 +1335,7 @@ void main() {
       await tapText(tester, 'OPEN');
       await flushFontCallbacks(tester);
       expect(find.text('ابدأ اللعبة 🚀'), findsOneWidget);
-      final back = find.byIcon(Icons.home_rounded); // flat chrome home pops to caller
+      final back = find.byIcon(Icons.arrow_back_rounded); // flat chrome back pops to caller
       expect(back, findsOneWidget);
       await tester.tap(back, warnIfMissed: false);
       await fixedPumps(tester, 8);

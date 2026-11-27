@@ -62,7 +62,6 @@ void main() {
     }
     expect(run(), run());
   });
-}
 
   test('team mode requires 4 players', () {
     expect(() => TugMatch(playerCount: 3, teamMode: true), throwsA(anything));
@@ -86,3 +85,4 @@ void main() {
     expect(m.winnerTeam, 0);
     expect(m.winner! < 2, isTrue);
   });
+}

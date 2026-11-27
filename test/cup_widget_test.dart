@@ -12,6 +12,7 @@ import 'package:shella/screens/cup/cup_setup_screen.dart';
 import 'package:shella/services/cup_service.dart';
 import 'package:shella/services/results_service.dart';
 import 'package:shella/services/settings_service.dart';
+import 'package:shella/services/audio_service.dart';
 
 /// Same google_fonts warm-up the other golden/widget tests use, so the
 /// async Cairo registration finishes before the tree exists.
@@ -32,6 +33,8 @@ Future<void> warmGoogleFonts(WidgetTester tester) async {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
 
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;

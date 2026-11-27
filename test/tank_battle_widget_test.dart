@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shella/games/offline/tank_battle_game.dart';
 import 'package:shella/widgets/victory_friends.dart';
+import 'package:shella/services/audio_service.dart';
 
 Future<void> flushFontCallbacks(WidgetTester tester) async {
   await tester.runAsync(() => Future.delayed(const Duration(milliseconds: 500)));
@@ -49,6 +50,8 @@ dynamic stateOf(WidgetTester tester) =>
     tester.state(find.byType(TankBattleGame)) as dynamic;
 
 void main() {
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
   testWidgets('intro explains hold-to-steer release-to-fire and bots',
       (tester) async {
     await boot(tester);

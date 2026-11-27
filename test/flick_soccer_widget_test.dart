@@ -9,11 +9,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/games/offline/flick_soccer_game.dart';
 import 'package:shella/games/offline/flick_soccer_logic.dart';
+import 'package:shella/services/audio_service.dart';
 
 /// Visual-proof renders for فليك الشلة (written to test/goldens/, not
 /// comparison goldens). Timings below are controlled test delays.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
   final boundaryKey = GlobalKey();
 
   setUpAll(() async {

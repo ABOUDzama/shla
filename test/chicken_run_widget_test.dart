@@ -7,9 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/games/offline/chicken_run_game.dart';
 import 'package:shella/games/offline/chicken_run_logic.dart';
 import 'package:shella/services/results_service.dart';
+import 'package:shella/services/audio_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
     final emojiBytes = await File('test/fonts_NotoColorEmoji.ttf').readAsBytes();

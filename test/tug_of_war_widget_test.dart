@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shella/games/offline/tug_of_war_game.dart';
+import 'package:shella/services/audio_service.dart';
 
 Future<void> flushFontCallbacks(WidgetTester tester) async {
   await tester.runAsync(() => Future.delayed(const Duration(milliseconds: 500)));
@@ -62,6 +63,8 @@ Future<void> boot(WidgetTester tester) async {
 }
 
 void main() {
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
     for (final name in [

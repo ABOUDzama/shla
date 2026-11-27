@@ -4,8 +4,11 @@ import 'package:shella/data/emoji_guess_data.dart';
 import 'package:shella/data/most_likely_data.dart';
 import 'package:shella/games/offline/bus_complete_game.dart';
 import 'package:shella/services/game_registry.dart';
+import 'package:shella/services/audio_service.dart';
 
 void main() {
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
   group('Taboo data', () {
     test('every card has exactly 5 forbidden words', () {
       for (final c in tabooCards) {

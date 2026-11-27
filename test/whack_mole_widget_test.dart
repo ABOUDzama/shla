@@ -7,9 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shella/games/offline/whack_mole_game.dart';
 import 'package:shella/games/offline/whack_mole_logic.dart';
 import 'package:shella/services/results_service.dart';
+import 'package:shella/services/audio_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() => AudioService.mutedForTests = true);
+  tearDown(() => AudioService.mutedForTests = false);
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
     for (final name in ['Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold', 'Black']) {
