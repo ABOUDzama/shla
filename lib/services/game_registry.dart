@@ -54,6 +54,7 @@ import '../games/offline/catch_game.dart';
 import '../games/offline/tap_race_game.dart';
 import '../games/offline/croc_game.dart';
 import '../games/offline/flappy_game.dart';
+import '../games/offline/blocade_game.dart';
 import '../games/offline/minigolf_game.dart';
 import '../games/offline/obstacle_game.dart';
 import '../games/offline/ballshoot_game.dart';
@@ -624,6 +625,16 @@ class GameRegistry {
       icon: Icons.cruelty_free,
       color: FunkyColors.mint,
       screen: const CrocGameScreen(),
+      badge: 'جديد',
+      arcade1234: true,
+    ),
+    GameModel(
+      title: 'بلوكيد',
+      description:
+          'وصّل بيدقك للضلع التاني قبل الكل.. تحرك خطوة أو حط حيطة تقفل على اللي قدامك 🧱',
+      icon: Icons.grid_on,
+      color: FunkyColors.sky,
+      screen: const BlocadeGameScreen(),
       badge: 'جديد',
       arcade1234: true,
     ),
