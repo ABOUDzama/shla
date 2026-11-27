@@ -436,8 +436,7 @@ class _ShootPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final b = round.ball;
-    if (b != null) {
+    for (final b in round.balls) {
       final c = origin + Offset(b.$1 * scale, b.$2 * scale);
       final tp = TextPainter(
         text: TextSpan(

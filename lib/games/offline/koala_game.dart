@@ -437,28 +437,28 @@ class _KoalaPainter extends CustomPainter {
 
     // Meteors.
     for (final (mx, my, _) in run.meteors) {
-      _emoji(canvas, '☄️', Offset(mx * s, my * s), 30 * s);
+      _emoji(canvas, '☄️', Offset(mx * s, my * s), 40 * s);
     }
 
     // Lasers.
     final laserPaint = Paint()
       ..color = const Color(0xFFFF5252)
-      ..strokeWidth = 4 * s
+      ..strokeWidth = 5 * s
       ..strokeCap = StrokeCap.round;
     for (final (lx, ly) in run.lasers) {
       canvas.drawLine(
-          Offset(lx * s, ly * s), Offset(lx * s, ly * s - 18 * s), laserPaint);
+          Offset(lx * s, ly * s), Offset(lx * s, ly * s - 24 * s), laserPaint);
     }
 
     // Ship: koala in a saucer.
     final ship = Offset(run.shipX * s, KoalaRun.shipY * s);
     if (run.crashed) {
-      _emoji(canvas, '💥', ship, 46 * s);
+      _emoji(canvas, '💥', ship, 56 * s);
     } else {
       canvas.drawOval(
-          Rect.fromCenter(center: ship, width: 56 * s, height: 18 * s),
+          Rect.fromCenter(center: ship, width: 72 * s, height: 23 * s),
           Paint()..color = seatColor);
-      _emoji(canvas, '🐨', ship - Offset(0, 12 * s), 30 * s);
+      _emoji(canvas, '🐨', ship - Offset(0, 15 * s), 42 * s);
     }
   }
 

@@ -34,11 +34,11 @@ class ObstacleRun {
   final List<(double, double)> obstacles = [];
 
   void _generate() {
-    var x = 480.0;
+    var x = 430.0;
     while (x < courseLength - 200) {
-      final h = 26 + _random.nextDouble() * 40; // 26..66 tall
+      final h = 28 + _random.nextDouble() * 42; // 28..70 tall
       obstacles.add((x, h));
-      x += 220 + _random.nextDouble() * 220;
+      x += 150 + _random.nextDouble() * 170; // 150..320 gaps
     }
   }
 
@@ -90,7 +90,7 @@ class ObstacleRun {
   bool botShouldJump({double error = 0}) {
     if (done || !onGround) return false;
     final rx = runnerX + distance;
-    for (final (ox, oh) in obstacles) {
+    for (final (ox, _) in obstacles) {
       if (ox > rx) {
         final gap = ox - rx;
         return gap < 100 + error;

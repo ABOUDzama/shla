@@ -460,18 +460,43 @@ class _ObstaclePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Width-based scale: always show ~420 logical px ahead of the runner.
-    final scale = size.width / 420;
+    // Width-based scale: zoomed in, showing ~330 logical px ahead.
+    final scale = size.width / 330;
     canvas.drawRect(Offset.zero & size, Paint()..color = sky);
 
-    // Track sits in the lower middle of the arena.
-    final trackTop = size.height * 0.55;
+    // Track sits a bit below the middle of the arena.
+    final trackTop = size.height * 0.62;
     final yOff = trackTop - (ObstacleRun.groundY + ObstacleRun.runnerSize / 2) * scale;
+
+    // Sky decoration: sun and soft parallax clouds so the sky isn't empty.
+    final camX = run.distance;
+    canvas.drawCircle(Offset(size.width - 46, 44), 24,
+        Paint()..color = const Color(0xFFFFD66B));
+    canvas.drawCircle(Offset(size.width - 46, 44), 30,
+        Paint()..color = const Color(0xFFFFD66B).withValues(alpha: 0.25));
+    final cloudPaint = Paint()..color = Colors.white.withValues(alpha: 0.85);
+    for (var i = 0; i < 6; i++) {
+      // Clouds drift with parallax so the run feels like motion.
+      final worldX = i * 340.0 + (i.isEven ? 90.0 : 210.0);
+      final sx = (worldX - camX * 0.35) % (size.width + 260) - 130;
+      final cy = 30.0 + (i % 3) * (trackTop * 0.22);
+      final s = scale * (0.8 + (i % 3) * 0.25);
+      canvas.drawOval(
+          Rect.fromCenter(
+              center: Offset(sx, cy), width: 88 * s, height: 26 * s),
+          cloudPaint);
+      canvas.drawOval(
+          Rect.fromCenter(
+              center: Offset(sx + 20 * s, cy - 8 * s),
+              width: 52 * s,
+              height: 22 * s),
+          cloudPaint);
+    }
+
     canvas.drawRect(Rect.fromLTWH(0, trackTop, size.width, size.height - trackTop),
         Paint()..color = track);
 
     // Obstacles in view (worldX → screenX).
-    final camX = run.distance;
     for (final (ox, oh) in run.obstacles) {
       // obstacle worldX is absolute on the course; screen pos:
       final screenX = (ox - camX + ObstacleRun.runnerX) * scale;

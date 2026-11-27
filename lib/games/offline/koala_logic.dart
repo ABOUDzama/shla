@@ -12,10 +12,10 @@ class KoalaRun {
   static const double worldWidth = 360;
   static const double worldHeight = 560;
   static const double shipY = 500;
-  static const double shipHalfW = 22;
+  static const double shipHalfW = 26;
   static const double shipSpeed = 95;
   static const double laserSpeed = 520;
-  static const double meteorR = 16;
+  static const double meteorR = 20;
 
   double shipX = worldWidth / 2;
   int shipDir = 1;

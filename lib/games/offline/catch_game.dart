@@ -345,6 +345,27 @@ void _start(int humans, bool withBots) {
               : LayoutBuilder(builder: (context, c) {
                   final side = min(c.maxWidth - 24, c.maxHeight - 24);
                   return Stack(children: [
+                    Positioned(
+                      top: 8,
+                      left: 70,
+                      right: 70,
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: FlatColors.ink.withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            'دوس لما السمكة تدخل لونك • أول ${_match.targetScore} يكسب',
+                            style: _t(12),
+                            textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
                     Center(
                       child: SizedBox(
                         width: side,

@@ -3,17 +3,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shella/games/offline/ballshoot_logic.dart';
 
 void main() {
-  test('balls launch one at a time and the round ends after 12', () {
+  test('balls stream through the round and the round ends after 12', () {
     final r = BallShootRound(random: Random(5));
     expect(r.ball, isNotNull);
     var steps = 0;
+    var sawMultiple = false;
     while (!r.over && steps < 60 * 120) {
       r.step(1 / 60);
       steps++;
+      if (r.balls.length > 1) sawMultiple = true;
     }
     expect(r.over, isTrue);
     expect(r.launched, 12);
     expect(r.misses, 12); // nobody tapped
+    expect(sawMultiple, isTrue); // several targets fly at once
   });
 
   test('tapping the ball scores a hit', () {
@@ -44,7 +47,7 @@ void main() {
   test('same seed reproduces the same stream', () {
     final a = BallShootRound(random: Random(9));
     final b = BallShootRound(random: Random(9));
-    expect(a.ball, b.ball);
+    expect(a.balls, b.balls);
   });
 
   test('a perfect bot hits most balls', () {
