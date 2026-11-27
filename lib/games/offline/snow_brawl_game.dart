@@ -243,7 +243,7 @@ class _SnowBrawlGameState extends State<SnowBrawlGame> {
               ),
               const SizedBox(height: 4),
               Text(
-                '${_match.botSeats.contains(i) ? 'بوت' : 'لاعب'} ${i + 1}: ${_match.hp[i]}',
+                '${_match.botSeats.contains(i) ? 'بوت ${i + 1}' : PlayerNames.name(i)}: ${_match.hp[i]}',
                 style: flatCairo(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,

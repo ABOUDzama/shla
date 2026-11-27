@@ -175,7 +175,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
         border: Border.all(color: _match.alive[i] ? _colors[i] : FlatColors.border),
       ),
       child: Text(
-        '${isBot ? 'بوت' : 'لاعب'} ${i + 1}: ${_match.score[i]}',
+        '${isBot ? 'بوت ${i + 1}' : PlayerNames.name(i)}: ${_match.score[i]}',
         style: flatCairo(
           fontSize: 13,
           fontWeight: FontWeight.w800,

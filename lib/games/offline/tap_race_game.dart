@@ -336,7 +336,7 @@ class _TapRaceGameState extends State<TapRaceGame> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '${_botSeats.contains(player) ? 'بوت' : 'لاعب'} ${player + 1}',
+              _botSeats.contains(player) ? 'بوت ${player + 1}' : PlayerNames.name(player),
               style: flatCairo(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,

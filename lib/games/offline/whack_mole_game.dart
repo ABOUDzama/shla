@@ -156,7 +156,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          '${p >= _humans ? 'بوت' : 'لاعب'} ${p + 1}: ${_match.scores[p]}',
+          '${p >= _humans ? 'بوت ${p + 1}' : PlayerNames.name(p)}: ${_match.scores[p]}',
           style: flatCairo(
             fontSize: 14,
             fontWeight: FontWeight.w800,
@@ -270,7 +270,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
       head,
       const SizedBox(height: 12),
       for (var p = 0; p < _match.playerCount; p++)
-        Text('${p >= _humans ? 'بوت' : 'لاعب'} ${p + 1}: ${_match.scores[p]}',
+        Text('${p >= _humans ? 'بوت ${p + 1}' : PlayerNames.name(p)}: ${_match.scores[p]}',
             style: _t(16, color: _colors[p], w: FontWeight.w700)),
       const SizedBox(height: 16),
       FilledButton(
