@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:vibration/vibration.dart';
 
+import 'settings_service.dart';
+
 class HapticService {
   static Future<void> vibrate({int duration = 50, List<int>? pattern, int? amplitude}) async {
     if (kIsWeb) return;
+    if (!SettingsService.isVibrationEnabled) return;
     try {
       // Catching potential MissingPluginException during the hasVibrator check
       final hasVibrator = await Vibration.hasVibrator().catchError((_) => false);
