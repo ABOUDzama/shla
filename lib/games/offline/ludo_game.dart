@@ -163,6 +163,7 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
     if (_game.isOver) {
       _botTimer?.cancel();
       _phase = _LudoPhase.over;
+      _juiceEnd();
       return;
     }
     _maybeBotTurn();
