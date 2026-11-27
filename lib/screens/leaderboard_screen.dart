@@ -113,7 +113,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 decoration: FlatDecor.card(radius: 16),
                 child: Row(children: [
                   Expanded(child: Text(r.game, maxLines: 1, overflow: TextOverflow.ellipsis, style: FlatDecor.title(size: 14))),
-                  Text('🏆 ${r.winner}', style: FlatDecor.body(size: 14).copyWith(fontFamilyFallback: const ['Noto Color Emoji'])),
+                  Text(r.winner == kBotsWinnerLabel ? r.winner : '🏆 ${r.winner}',
+                      style: FlatDecor.body(size: 14).copyWith(fontFamilyFallback: const ['Noto Color Emoji'])),
                 ]),
               ),
           ],
