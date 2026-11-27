@@ -154,3 +154,30 @@ class _CrownPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _CrownPainter old) => false;
 }
+
+/// Shared "bots won" label: records the bots win once (the way
+/// [VictoryFriends] records human wins) so a cup round closes with no
+/// points instead of looking abandoned, and renders the label.
+class BotsWinLabel extends StatefulWidget {
+  const BotsWinLabel({super.key, required this.gameTitle, this.style});
+
+  /// The game's registry title, exactly as [VictoryFriends.gameTitle].
+  final String gameTitle;
+  final TextStyle? style;
+
+  @override
+  State<BotsWinLabel> createState() => _BotsWinLabelState();
+}
+
+class _BotsWinLabelState extends State<BotsWinLabel> {
+  @override
+  void initState() {
+    super.initState();
+    ResultsService.instance
+        .recordWin(game: widget.gameTitle, winner: kBotsWinnerLabel);
+  }
+
+  @override
+  Widget build(BuildContext context) => Text(kBotsWinnerLabel,
+      style: widget.style, textDirection: TextDirection.rtl);
+}

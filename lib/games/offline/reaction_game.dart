@@ -308,7 +308,8 @@ class _ReactionGameState extends State<ReactionGame> {
             return w >= _humans
                 ? Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: Text('البوتات كسبوا 🤖',
+                    child: BotsWinLabel(
+                        gameTitle: 'أسرع رد فعل',
                         style: flatCairo(fontSize: 22, fontWeight: FontWeight.w900, color: FlatColors.ink)
                             .copyWith(fontFamilyFallback: const ['Noto Color Emoji'])))
                 : VictoryFriends(

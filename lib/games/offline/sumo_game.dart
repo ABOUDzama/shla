@@ -438,7 +438,7 @@ class _SumoGameState extends State<SumoGame> {
           ? Text('طلّعت الدمية برا في ${_match.taps[0]} دوسة 💪', style: _t(20), textAlign: TextAlign.center)
           : Text('الوقت خلص قبل ما تطلّعها! جرب تدوس أسرع', style: _t(20), textAlign: TextAlign.center);
     } else if (_champion != null && _botSeats.contains(_champion)) {
-      head = Text('البوتات كسبوا البطولة 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'سومو الشلة', style: _t(22));
     } else if (_champion != null) {
       head = VictoryFriends(gameTitle: 'سومو الشلة', winnerName: '${PlayerNames.name(_champion!)}', winnerSeats: [_champion!]);
     } else {

@@ -283,7 +283,7 @@ class _FlickSoccerGameState extends State<FlickSoccerGame> {
     } else if (w == null) {
       head = Text('انتهى الماتش', style: _t(22));
     } else if (_match.botSeats.contains(w)) {
-      head = Text('البوتات كسبوا 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'فليك الشلة', style: _t(22));
     } else {
       head = VictoryFriends(
           gameTitle: 'فليك الشلة',

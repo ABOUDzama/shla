@@ -262,7 +262,7 @@ class _WhackMoleGameState extends State<WhackMoleGame> {
     } else if (w == null) {
       head = Text('تعادل! الكل ضرب نفس العدد', style: _t(20));
     } else if (w >= _humans) {
-      head = Text('البوتات كسبوا 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'اضرب الخلد', style: _t(22));
     } else {
       head = VictoryFriends(gameTitle: 'اضرب الخلد', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     }

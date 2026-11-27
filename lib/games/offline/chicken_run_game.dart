@@ -175,7 +175,7 @@ void _start(int humans, bool withBots) {
     } else if (w == null) {
       head = Text('تعادل! وقعوا مع بعض 😅', style: _t(22));
     } else if (w >= _humans) {
-      head = Text('البوتات كسبوا 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'جري الفراخ', style: _t(22));
     } else {
       head = VictoryFriends(gameTitle: 'جري الفراخ', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     }

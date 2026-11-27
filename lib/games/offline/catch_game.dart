@@ -300,7 +300,7 @@ void _start(int humans, bool withBots) {
     if (_practice) {
       head = Text('خلصت ٥ نقط في ${_lap + 1} لفّة', style: _t(22));
     } else if (w != null && w >= _humans) {
-      head = Text('البوتات كسبوا 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'اقطفها', style: _t(22));
     } else {
       head = VictoryFriends(gameTitle: 'اقطفها', winnerName: '${PlayerNames.name(w!)}', winnerSeats: [w!]);
     }

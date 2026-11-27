@@ -454,8 +454,7 @@ class _CrocGameScreenState extends State<CrocGameScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('البوتات كسبوا 🤖', style: _t(24, w: FontWeight.w900),
-                textDirection: TextDirection.rtl),
+            BotsWinLabel(gameTitle: 'تمساح الشلة', style: _t(24, w: FontWeight.w900)),
             const SizedBox(height: 8),
             Text('بوت ${w + 1} هو آخر تمساح واقف',
                 style: _t(13, color: FlatColors.ink.withValues(alpha: 0.6)),

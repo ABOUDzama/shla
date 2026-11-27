@@ -297,17 +297,18 @@ class _TugOfWarGameState extends State<TugOfWarGame> {
       final humansInTeam =
           seats.where((x) => !_match.botSeats.contains(x)).toList();
       if (humansInTeam.isEmpty) {
-        head = Text('البوتات كسبوا 🤖', style: _t(22));
+        head = BotsWinLabel(gameTitle: 'شد الحبل', style: _t(22));
       } else {
         head = VictoryFriends(
-          gameTitle: 'شد الحبل (فرق)',
+          // Same title as solo mode so the cup and the leaderboard match it.
+          gameTitle: 'شد الحبل',
           winnerName:
               '${humansInTeam.map((x) => PlayerNames.name(x)).join(' و ')}',
           winnerSeats: humansInTeam,
         );
       }
     } else if (w != null && _match.botSeats.contains(w)) {
-      head = Text('البوتات كسبوا 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'شد الحبل', style: _t(22));
     } else {
       head = VictoryFriends(gameTitle: 'شد الحبل', winnerName: '${PlayerNames.name(w!)}', winnerSeats: [w!]);
     }

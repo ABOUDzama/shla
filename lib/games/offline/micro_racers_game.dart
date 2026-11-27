@@ -253,7 +253,7 @@ void _startGame(int humans, bool withBots) {
     } else if (w == null) {
       head = Text('انتهى السباق', style: _t(22));
     } else if (_match.botSeats.contains(w)) {
-      head = Text('البوتات كسبوا 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'ميكرو ريسرز', style: _t(22));
     } else {
       head = VictoryFriends(
           gameTitle: 'ميكرو ريسرز',

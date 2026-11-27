@@ -754,9 +754,12 @@ class _LudoGameScreenState extends State<LudoGameScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(_practice ? 'تمرين خلص! 💪' : 'البوتات كسبوا 🤖',
-              style: _t(24, w: FontWeight.w900),
-              textDirection: TextDirection.rtl),
+          _practice
+              ? Text('تمرين خلص! 💪',
+                  style: _t(24, w: FontWeight.w900),
+                  textDirection: TextDirection.rtl)
+              : BotsWinLabel(
+                  gameTitle: 'لودو الشلة', style: _t(24, w: FontWeight.w900)),
           const SizedBox(height: 8),
           Text(
             _practice

@@ -22,7 +22,7 @@ class CupService extends ChangeNotifier {
   static const _key = 'cup_state_v1';
 
   /// The exact label the arcade win screens record when bots win a match.
-  static const botsLabel = 'البوتات كسبوا 🤖';
+  static const botsLabel = kBotsWinnerLabel;
 
   bool active = false;
   int rounds = 0;

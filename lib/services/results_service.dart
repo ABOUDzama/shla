@@ -2,6 +2,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// The exact label recorded when bots win a match. CupService counts these
+/// rounds with no points; the leaderboard skips the label.
+const kBotsWinnerLabel = 'البوتات كسبوا 🤖';
+
 class MatchResult {
   final String game;
   final String winner;
@@ -91,6 +95,7 @@ class ResultsService extends ChangeNotifier {
     final wins = <String, int>{};
     for (final r in results) {
       if (isSeat(r.winner)) continue;
+      if (r.winner == kBotsWinnerLabel) continue; // bots are not a profile
       wins[r.winner] = (wins[r.winner] ?? 0) + 1;
     }
     final l = wins.entries.toList();

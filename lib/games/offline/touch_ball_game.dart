@@ -442,7 +442,7 @@ void _startMatch(int humans, bool withBots) {
                         : _botSeats.contains(_match.matchWinner)
                             ? Padding(
                                 padding: const EdgeInsets.all(8),
-                                child: Text('البوتات كسبوا 🤖', style: _t(22)),
+                                child: BotsWinLabel(gameTitle: 'كورة اللمسة', style: _t(22)),
                               )
                             : VictoryFriends(
                                 gameTitle: 'كورة اللمسة',

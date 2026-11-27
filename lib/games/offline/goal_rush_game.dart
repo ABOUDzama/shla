@@ -306,7 +306,7 @@ class _GoalRushGameState extends State<GoalRushGame> {
     } else if (w == null) {
       head = Text('انتهى الماتش', style: _t(22));
     } else if (_match.botSeats.contains(w)) {
-      head = Text('البوتات كسبوا 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'جري الجون', style: _t(22));
     } else {
       head = VictoryFriends(
           gameTitle: 'جري الجون',

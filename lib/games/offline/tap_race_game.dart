@@ -449,8 +449,8 @@ class _TapRaceGameState extends State<TapRaceGame> {
                         : (_match.matchWinner! >= _humans
                               ? Padding(
                                   padding: const EdgeInsets.all(8),
-                                  child: Text(
-                                    'البوتات كسبوا 🤖',
+                                  child: BotsWinLabel(
+                                    gameTitle: 'سباق الدوس',
                                     style: _t(22),
                                   ),
                                 )

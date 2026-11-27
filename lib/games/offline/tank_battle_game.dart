@@ -282,8 +282,8 @@ class _TankBattleGameState extends State<TankBattleGame> {
               winnerName: '${PlayerNames.name(_match.winner!)}',
               winnerSeats: [_match.winner!])
         else if (_match.winner != null)
-          Text(
-            'البوتات كسبوا 🤖',
+          BotsWinLabel(
+            gameTitle: 'دبابات الشلة',
             style: flatCairo(
               fontSize: 20,
               fontWeight: FontWeight.w800,

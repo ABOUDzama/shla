@@ -187,7 +187,7 @@ class _PigeonGameState extends State<PigeonGame> {
     } else if (w == null) {
       head = Text('تعادل! الحمامة شبعت منكم كلكم', textAlign: TextAlign.center, style: _t(22));
     } else if (w >= _humans) {
-      head = Text('البوتات كسبوا 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'أطعم الحمامة', style: _t(22));
     } else {
       head = VictoryFriends(gameTitle: 'أطعم الحمامة', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     }

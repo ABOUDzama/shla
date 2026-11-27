@@ -211,7 +211,7 @@ class _CarRaceGameState extends State<CarRaceGame> {
     } else if (w == null) {
       head = Text('انتهى السباق', style: _t(22));
     } else if (w >= _humans) {
-      head = Text('البوتات كسبوا 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'سباق العربيات', style: _t(22));
     } else {
       head = VictoryFriends(gameTitle: 'سباق العربيات', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     }

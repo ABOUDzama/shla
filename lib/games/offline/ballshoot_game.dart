@@ -391,8 +391,7 @@ void _startMatch(int humans, bool withBots) {
               winnerSeats: humanWinners,
             )
           else ...[
-            Text('البوتات كسبوا 🤖', style: _t(24, w: FontWeight.w900),
-                textDirection: TextDirection.rtl),
+            BotsWinLabel(gameTitle: 'تصويب الشلة', style: _t(24, w: FontWeight.w900)),
             const SizedBox(height: 8),
             Text('بوت ${winners.first + 1} ${fmt(_results[winners.first])}',
                 style: _t(13, color: FlatColors.ink.withValues(alpha: 0.6)),

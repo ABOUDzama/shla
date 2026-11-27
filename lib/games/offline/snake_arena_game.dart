@@ -229,7 +229,7 @@ class _SnakeArenaGameState extends State<SnakeArenaGame> {
     if (_practice) {
       head = Text('جبت ${_match.score[0]} تفاحة 🍎', style: _t(22));
     } else if (w != null && w >= 0 && _match.botSeats.contains(w)) {
-      head = Text('البوتات كسبوا 🤖', style: _t(22));
+      head = BotsWinLabel(gameTitle: 'حية الشلة', style: _t(22));
     } else if (w != null && w >= 0) {
       head = VictoryFriends(gameTitle: 'حية الشلة', winnerName: '${PlayerNames.name(w)}', winnerSeats: [w]);
     } else {
