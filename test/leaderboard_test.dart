@@ -24,6 +24,18 @@ void main() {
     expect(ResultsService.standings(all).map((e) => '${e.key}:${e.value}').toList(), ['عبود:2', 'سارة:1']);
   });
 
+  test('bots wins are recorded but never enter standings', () async {
+    final s = ResultsService.instance;
+    final t = DateTime(2026, 11, 27);
+    expect(await s.recordWin(game: 'سومو الشلة', winner: kBotsWinnerLabel, players: ['عبود'], now: t), true);
+    expect(await s.recordWin(game: 'سومو الشلة', winner: 'عبود', now: t.add(const Duration(minutes: 1))), true);
+    final all = await s.load();
+    expect(all.length, 2, reason: 'bots round is kept in history so the cup can close it');
+    final board = ResultsService.standings(all);
+    expect(board.map((e) => e.key), isNot(contains(kBotsWinnerLabel)), reason: 'bots are not a profile');
+    expect(board.single.key, 'عبود');
+  });
+
   test('history capped at maxEntries', () async {
     final s = ResultsService.instance;
     final t = DateTime(2026, 11, 26);
