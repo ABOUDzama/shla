@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shella/theme/flat_theme.dart';
 import 'package:shella/widgets/victory_friends.dart';
 import 'package:shella/services/results_service.dart';
 
@@ -79,6 +80,25 @@ void main() {
     expect(find.byKey(const ValueKey('crown_2')), findsOneWidget);
     expect(find.byKey(const ValueKey('crown_1')), findsNothing);
     expect(find.byKey(const ValueKey('crown_3')), findsNothing);
+    await end(tester);
+  });
+
+  testWidgets('BotsWinLabel renders the label and records one bots win',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await show(
+        tester,
+        BotsWinLabel(
+            gameTitle: 'سومو الشلة',
+            style: flatCairo(fontSize: 22, fontWeight: FontWeight.w900)
+                .copyWith(fontFamilyFallback: const ['Noto Color Emoji'])));
+    expect(find.text(kBotsWinnerLabel), findsOneWidget);
+    final all = await ResultsService.instance.load();
+    expect(all.length, 1);
+    expect(all.single.winner, kBotsWinnerLabel);
+    expect(all.single.game, 'سومو الشلة');
+    await expectLater(
+        find.byType(Scaffold), matchesGoldenFile('goldens/bots_win_label.png'));
     await end(tester);
   });
 
