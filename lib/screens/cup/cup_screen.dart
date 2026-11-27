@@ -153,7 +153,14 @@ class _CupScreenState extends State<CupScreen> {
 
   Future<void> _endCup() async {
     await cup.endCup();
-    if (mounted) Navigator.pop(context);
+    if (!mounted) return;
+    // Embedded as a home tab there is nothing to pop: popping would close
+    // the whole home route. Just rebuild into the no-cup state.
+    if (widget.embedded) {
+      setState(() {});
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   TextStyle _t(double size,

@@ -373,20 +373,26 @@ class _CupBanner extends StatelessWidget {
       builder: (context, _) {
         final cup = CupService.instance;
         final running = cup.active && !cup.finished;
+        final done = cup.active && cup.finished;
         final label = running
             ? 'الكأس شغال: الجولة ${cup.roundNumber} من ${cup.rounds} — كمّل 🏆'
-            : 'كأس الشلة 🏆';
+            : done
+                ? 'الكأس خلص! شوف البطل 🏆'
+                : 'كأس الشلة 🏆';
         final sub = running
             ? 'ارجع كمّل البطولة من حيث وقفت'
-            : 'بطولة جولات من ألعاب ١٢٣٤ — كل فوز بنقطة، والأكتر نقاط ياخد الكأس';
+            : done
+                ? 'البطولة خلصت — افتح شاشة البطل'
+                : 'بطولة جولات من ألعاب ١٢٣٤ — كل فوز بنقطة، والأكتر نقاط ياخد الكأس';
         return InkWell(
           borderRadius: BorderRadius.circular(18),
           onTap: onOpenCup ??
               () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) =>
-                          running ? const CupScreen() : const CupSetupScreen(),
+                      builder: (_) => (running || done)
+                          ? const CupScreen()
+                          : const CupSetupScreen(),
                     ),
                   ),
           child: Container(

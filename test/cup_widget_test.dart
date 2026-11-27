@@ -168,6 +168,24 @@ void main() {
         .start(rounds: 3, games: const ['سومو الشلة', 'اقطفها', 'سباق الدوس']);
     await tester.pump();
     expect(find.textContaining('الكأس شغال: الجولة 1 من 3'), findsOneWidget);
+
+    // Finished-but-active cup: the banner points at the champion screen,
+    // not a new setup.
+    await CupService.instance.endCup();
+    await CupService.instance
+        .start(rounds: 1, games: const ['اقطفها']);
+    await CupService.instance.markRoundStarted();
+    await tester.runAsync(() async {
+      await ResultsService.instance.recordWin(
+          game: 'اقطفها',
+          winner: 'لاعب 2',
+          roundId: ResultsService.newRoundId());
+      await CupService.instance
+          .ingestResults(await ResultsService.instance.load());
+    });
+    expect(CupService.instance.finished, isTrue);
+    await tester.pump();
+    expect(find.text('الكأس خلص! شوف البطل 🏆'), findsOneWidget);
   });
 
   testWidgets('cup screen: round card, win folds into standings, golden',
@@ -223,6 +241,28 @@ void main() {
 
     await expectLater(find.byType(CupScreen),
         matchesGoldenFile('goldens/cup_champion.png'));
+  });
+
+  testWidgets('embedded cup tab: ending the cup stays on the tab',
+      (tester) async {
+    size(tester);
+    await CupService.instance
+        .start(rounds: 1, games: const ['اقطفها']);
+    await CupService.instance.markRoundStarted();
+    await warmGoogleFonts(tester);
+    await tester.pumpWidget(app(const CupScreen(embedded: true)));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await winRound(tester, 'لاعب 2');
+    expect(CupService.instance.finished, isTrue);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // تم ends the cup; embedded as a home tab it must NOT pop the route.
+    await tester.tap(find.text('تم 🏆'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(CupService.instance.active, isFalse);
+    expect(find.byType(CupScreen), findsOneWidget);
+    expect(find.text('مفيش كأس شغال دلوقتي'), findsOneWidget);
   });
 
   testWidgets('bot win round counts with no points and no champion',
